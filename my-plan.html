@@ -1,0 +1,795 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0a1930">
+<title>My Plan — Next Step Guyana</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500..800&family=Inter:wght@400;500;600;700;800;900&family=Sora:wght@500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap');
+:root{
+  --navy:#0a1930;--navy2:#123a52;--teal:#0e7a4f;--teal2:#149b62;--gold:#eeb52f;
+  --ink:#101a28;--muted:#5c6c7e;--paper:#f5f7fa;--white:#fff;--line:#dfe6ec;--soft:#eaf3ee;
+  --glass-bg:rgba(255,255,255,.7);--glass-line:rgba(255,255,255,.5);--glass-navy:rgba(8,22,40,.74);
+  --radius-lg:20px;--shadow:0 20px 55px rgba(8,22,42,.14);
+  --font-display:'Fraunces',ui-serif,Georgia,serif;--font-accent:'Sora',ui-sans-serif,sans-serif;--font-body:'Inter',ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --red:#c1443f;--red-soft:#fdece9;--blue:#2d6bd9;--blue-soft:#e8f0fb;--purple:#6a55b0;--purple-soft:#f0ebff;
+}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.55 var(--font-body)}
+button,input,select,textarea{font:inherit}button{cursor:pointer}
+.wrap{width:min(900px,calc(100% - 28px));margin:auto}
+:focus-visible{outline:2.5px solid var(--teal2);outline-offset:2px;border-radius:6px}
+h1,h2{font-family:var(--font-display);font-weight:650;margin:0}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:14px;padding:12px 17px;min-height:44px;background:linear-gradient(135deg,var(--teal2),var(--teal));color:#fff;font-family:var(--font-accent);font-weight:700;font-size:13.5px;box-shadow:0 8px 22px rgba(14,122,79,.22)}
+.btn:hover{filter:brightness(1.03)}
+.btn.gold{background:linear-gradient(135deg,var(--gold),#d99615);color:#1a1305;box-shadow:0 8px 22px rgba(238,181,47,.28)}
+.btn.ghost{background:#fff;color:var(--ink);border:1px solid var(--line);box-shadow:none}
+.btn.small{padding:8px 13px;font-size:11.5px;min-height:36px}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.glass{background:var(--glass-bg);backdrop-filter:blur(16px) saturate(1.2);-webkit-backdrop-filter:blur(16px) saturate(1.2);border:1px solid var(--glass-line)}
+.card{background:var(--glass-bg);backdrop-filter:blur(16px) saturate(1.2);-webkit-backdrop-filter:blur(16px) saturate(1.2);border:1px solid var(--glass-line);border-radius:var(--radius-lg);padding:18px;box-shadow:0 7px 25px rgba(10,25,48,.05)}
+.tag{display:inline-flex;padding:4px 9px;border-radius:99px;background:var(--soft);color:#0e6b45;font-size:9.5px;font-weight:800}
+.tag.warn{background:#fff3d9;color:#8a6207}.tag.info{background:var(--blue-soft);color:var(--blue)}.tag.mentor{background:var(--purple-soft);color:var(--purple)}
+input[type=text],select,textarea{border:1px solid var(--line);border-radius:11px;padding:10px 12px;width:100%;background:#fff}
+label.f{display:block;font-size:11px;font-weight:700;margin:0 0 5px;color:var(--muted)}
+.field{margin-bottom:12px}
+
+.topbar{position:sticky;top:0;z-index:40;background:var(--glass-navy);backdrop-filter:blur(16px);color:#fff;padding:10px 0}
+.topbar-row{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:9px;color:#fff;text-decoration:none;font-family:var(--font-accent);font-weight:800;font-size:14px}
+.brand .mark{width:28px;height:28px;border-radius:9px;background:linear-gradient(145deg,var(--teal2),var(--teal));display:grid;place-items:center;font-size:14px}
+.navlinks{display:flex;gap:16px;align-items:center}
+.navlinks a{color:#cfdaea;text-decoration:none;font-size:12.5px;font-weight:700}
+.navlinks a.active,.navlinks a:hover{color:#fff}
+.free-badge{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:99px;padding:5px 10px;font-size:9px;font-weight:800;color:#8fd6ae;margin-left:auto}
+.guest-pill{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.16);border-radius:99px;padding:5px 5px 5px 11px;font-size:10.5px}
+.guest-pill button{background:var(--gold);color:#1a1305;border:0;border-radius:99px;padding:6px 10px;font-size:9.5px;font-weight:800;min-height:28px}
+.guest-pill.hidden{display:none}
+@media(max-width:800px){.navlinks{display:none}.free-badge{display:none}}
+
+.view{display:none;padding:28px 0 90px}
+.view.active{display:block}
+
+.locked-hero{text-align:center;padding:48px 22px;background:linear-gradient(135deg,var(--navy),var(--navy2));border-radius:26px;color:#fff}
+.locked-hero .eyebrow{display:inline-flex;background:rgba(255,255,255,.1);border-radius:99px;padding:6px 12px;font-size:10px;font-weight:800;letter-spacing:.06em;font-family:var(--font-accent)}
+.locked-hero h1{font-size:clamp(26px,4.6vw,38px);margin:14px 0 8px;color:#fff}
+.locked-hero p{color:#c9d8e2;max-width:480px;margin:0 auto 22px;font-size:14.5px}
+
+.plan-head{display:flex;justify-content:space-between;align-items:flex-end;gap:14px;margin-bottom:14px;flex-wrap:wrap}
+.plan-head h1{font-size:27px}
+.plan-head p{color:var(--muted);margin:3px 0 0;font-size:13px}
+
+.journey-strip{display:flex;overflow-x:auto;gap:6px;padding:4px 2px 10px;margin-bottom:14px}
+.journey-node{flex:0 0 auto;text-align:center;min-width:82px}
+.journey-node .dot{width:26px;height:26px;border-radius:50%;background:#e2ebe6;border:2px solid #cfe0d8;display:grid;place-items:center;margin:0 auto 5px;font-size:11px;color:var(--muted);font-weight:800}
+.journey-node.done .dot{background:var(--teal2);border-color:var(--teal2);color:#fff}
+.journey-node.current .dot{background:var(--gold);border-color:#ffe27a;color:#1a1305;box-shadow:0 0 0 5px rgba(238,181,47,.18)}
+.journey-node span{font-size:9px;color:var(--muted);font-weight:700}
+.journey-node.current span{color:var(--ink)}
+
+.star-card{background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;border-radius:var(--radius-lg);padding:22px;margin-bottom:14px}
+.star-card .eyebrow{font-family:var(--font-accent);font-size:9.5px;font-weight:800;letter-spacing:.06em;color:#8fd6ae}
+.star-card h2{color:#fff;font-size:24px;margin:7px 0 5px}
+.star-card p{color:#c9d8e2;margin:0 0 14px;font-size:13px}
+.gap-count{display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,.1);border-radius:99px;padding:6px 12px;font-size:11.5px;font-weight:700;margin-bottom:12px}
+.gap-count b{color:var(--gold);font-size:14px}
+.star-actions{display:flex;gap:8px;flex-wrap:wrap}
+.alt-list{display:none;margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,.14);gap:7px;flex-wrap:wrap}
+.alt-list.open{display:flex}
+.alt-chip{border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.08);color:#fff;border-radius:99px;padding:7px 12px;font-size:11px;font-weight:700}
+.alt-chip:hover{background:rgba(255,255,255,.16)}
+.req-note{font-size:10px;color:#9fb6c2;margin-top:10px;border-top:1px solid rgba(255,255,255,.1);padding-top:10px}
+
+.stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.stat-card{padding:13px}
+.stat-card .num{font-family:var(--font-accent);font-size:21px;font-weight:800;color:var(--teal2)}
+.stat-card .lbl{font-size:9px;color:var(--muted);font-weight:700}
+.mini-bar{height:7px;background:#e6ede9;border-radius:9px;overflow:hidden;margin-top:6px}
+.mini-bar i{display:block;height:100%;border-radius:9px;transition:.4s}
+.mini-bar.xp i{background:linear-gradient(90deg,var(--gold),#f4d27a)}
+.mini-bar.elig i{background:linear-gradient(90deg,var(--teal),#28b471)}
+.mini-bar.complete i{background:linear-gradient(90deg,var(--blue),#5c93e6)}
+@media(max-width:600px){.stat-row{grid-template-columns:1fr 1fr}}
+
+.deadline-strip{display:grid;gap:8px;margin-bottom:14px}
+.deadline-row{display:grid;grid-template-columns:56px 1fr auto;gap:11px;align-items:center;padding:11px}
+.deadline-row .dcount{background:var(--soft);color:#0e6b45;border-radius:10px;text-align:center;padding:6px 3px}
+.deadline-row .dcount b{display:block;font-size:15px}.deadline-row .dcount small{font-size:7px;font-weight:800}
+.deadline-row strong{display:block;font-size:12px}
+.deadline-row small.note{color:var(--muted);font-size:9.5px}
+
+.section-label{display:flex;justify-content:space-between;align-items:center;font-family:var(--font-accent);font-size:10.5px;font-weight:800;letter-spacing:.05em;color:var(--teal2);margin:22px 0 9px;text-transform:uppercase}
+.section-label .link-btn{font-size:10px;font-weight:800;color:var(--muted);text-transform:none;letter-spacing:0;background:none;border:0;text-decoration:underline}
+
+.milestone-list{display:grid;gap:9px}
+.milestone{display:grid;grid-template-columns:40px 1fr auto;gap:11px;align-items:center;padding:13px}
+.milestone.done{opacity:.55}
+.milestone.done h3{text-decoration:line-through}
+.m-icon{width:40px;height:40px;border-radius:11px;display:grid;place-items:center;font-size:15px;flex:0 0 40px;background:var(--soft);color:#0e6b45}
+.m-icon.navi{background:var(--purple-soft);color:var(--purple)}.m-icon.session{background:var(--soft);color:var(--teal)}.m-icon.mentor{background:#fff3d9;color:#8a6207}.m-icon.task{background:var(--blue-soft);color:var(--blue)}.m-icon.gap-subject{background:var(--red-soft);color:var(--red)}.m-icon.profile{background:var(--soft);color:#0e6b45}
+.milestone h3{margin:0 0 2px;font-size:13px}
+.milestone p{margin:0;font-size:11px;color:var(--muted)}
+.milestone .meta-row{display:flex;gap:6px;margin-top:4px;flex-wrap:wrap}
+.milestone .xp-tag{font-size:9px;font-weight:800;color:var(--gold)}
+.m-check{width:30px;height:30px;border-radius:50%;border:2px solid #cbd8d1;background:#fff;color:transparent;flex:0 0 30px}
+.m-check.checked{background:var(--teal2);border-color:var(--teal2);color:#fff}
+.gap-action-stack{display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+.gap-action-stack .m-check{align-self:flex-end}
+
+.subject-editor{display:grid;gap:8px}
+.subject-row{display:grid;grid-template-columns:1fr 90px 90px auto;gap:8px;align-items:center;padding:9px 10px}
+.subject-row strong{font-size:12px}
+.subject-row select{padding:6px 8px;font-size:11px}
+.subject-row .rm{background:transparent;border:0;color:var(--red);font-size:11px;font-weight:700}
+.add-subject-row{display:grid;grid-template-columns:1fr 90px auto;gap:8px;margin-top:8px}
+
+.achieve-list{display:grid;gap:8px;margin-bottom:10px}
+.achieve-item{display:grid;grid-template-columns:38px 1fr auto;gap:10px;align-items:center;padding:11px}
+.achieve-item .ic{width:38px;height:38px;border-radius:10px;background:var(--soft);color:#0e6b45;display:grid;place-items:center;font-size:14px}
+.achieve-item strong{font-size:12.5px;display:block}
+.achieve-item small{color:var(--muted);font-size:10.5px}
+.achieve-form{display:none;margin-top:10px}
+.achieve-form.open{display:block}
+.achieve-form .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.check-row{display:flex;align-items:center;gap:8px;font-size:11.5px;color:var(--muted);margin-bottom:12px}
+
+.badges-strip{display:flex;gap:8px;flex-wrap:wrap}
+.badge-pill{display:flex;align-items:center;gap:6px;background:#fff;border:1px solid var(--line);border-radius:99px;padding:6px 12px 6px 8px;font-size:10.5px;font-weight:700}
+.badge-pill .ic{width:20px;height:20px;border-radius:50%;background:var(--gold);color:#1a1305;display:grid;place-items:center;font-size:10px}
+
+.mentor-pick-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+.mentor-pick{padding:13px;text-align:center}
+.mentor-pick .av{width:38px;height:38px;border-radius:50%;background:linear-gradient(145deg,var(--teal2),var(--teal));color:#fff;display:grid;place-items:center;font-weight:800;font-size:12px;margin:0 auto 7px}
+.mentor-pick strong{display:block;font-size:11.5px}
+.mentor-pick small{display:block;color:var(--muted);font-size:9.5px;margin:2px 0 7px}
+.compare-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.compare-col h4{font-family:var(--font-accent);font-size:10px;letter-spacing:.04em;color:var(--muted);margin:0 0 9px;text-transform:uppercase}
+.compare-col ol{margin:0;padding-left:17px;font-size:11.5px;display:grid;gap:7px}
+.compare-col li.reached{color:var(--teal2);font-weight:700}
+@media(max-width:600px){.compare-row,.mentor-pick-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:460px){.compare-row,.mentor-pick-grid{grid-template-columns:1fr}}
+
+.demo-links{display:flex;justify-content:center;gap:14px;margin-top:26px}
+.demo-links button{background:none;border:0;font-size:10.5px;color:var(--muted);text-decoration:underline}
+
+.navi-fab{position:fixed;right:18px;bottom:18px;width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--gold),#d99615);color:#1a1305;border:0;font-size:22px;box-shadow:0 12px 30px rgba(0,0,0,.25);z-index:90;font-family:var(--font-accent);font-weight:800}
+.navi-fab .dot{position:absolute;top:2px;right:2px;width:12px;height:12px;border-radius:50%;background:var(--red);border:2px solid #fff;display:none}
+.navi-fab.has-new .dot{display:block}
+.navi-overlay{position:fixed;inset:0;background:rgba(4,15,28,.5);z-index:100;display:none;align-items:flex-end;justify-content:center}
+.navi-overlay.open{display:flex}
+.navi-panel{width:min(520px,100%);max-height:84vh;background:#fff;border-radius:22px 22px 0 0;padding:18px;display:flex;flex-direction:column;box-shadow:0 -20px 60px rgba(0,0,0,.25)}
+.navi-panel-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.navi-panel-head .who{display:flex;align-items:center;gap:9px}
+.navi-face{width:32px;height:32px;border-radius:10px;background:linear-gradient(145deg,var(--gold),#d99615);color:#1a1305;display:grid;place-items:center;font-weight:800}
+.navi-close{width:28px;height:28px;border-radius:50%;background:var(--paper);border:0}
+.navi-log{overflow-y:auto;flex:1;padding-right:2px;margin-bottom:10px;max-height:48vh}
+.navi-msg{background:var(--paper);border-radius:13px;padding:11px 13px;font-size:12.5px;margin-bottom:8px;line-height:1.5}
+.navi-msg.mentor{background:var(--purple-soft);border-left:3px solid var(--purple)}
+.navi-msg.you{background:var(--soft);margin-left:20%;text-align:right}
+.navi-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;margin-bottom:8px}
+.navi-chip{border:1px solid var(--line);background:#fff;border-radius:99px;padding:7px 11px;font-size:10.5px;font-weight:600}
+.navi-chip:hover{background:var(--soft)}
+.navi-input-row{display:flex;gap:8px}
+.navi-input-row input{flex:1}
+
+.modal{position:fixed;inset:0;background:rgba(4,15,28,.55);z-index:110;display:none;align-items:center;justify-content:center;padding:16px}
+.modal.open{display:flex}
+.modal-card{background:#fff;border-radius:22px;padding:24px;max-width:390px;text-align:center;box-shadow:0 30px 80px rgba(0,0,0,.3)}
+.modal-card .icon{width:50px;height:50px;border-radius:50%;background:var(--soft);color:#0e6b45;display:grid;place-items:center;font-size:20px;margin:0 auto 12px}
+.modal-card h2{font-size:19px;margin-bottom:7px}
+.modal-card p{color:var(--muted);font-size:12.5px;margin:0 0 16px}
+.modal-actions{display:grid;gap:8px}
+.link-btn{border:0;background:transparent;color:var(--muted);font-size:11.5px;text-decoration:underline}
+
+.nudge-banner{position:fixed;left:14px;right:14px;bottom:14px;max-width:480px;margin:0 auto;background:var(--navy);color:#fff;border-radius:16px;padding:13px 15px;display:none;align-items:center;gap:12px;z-index:95;box-shadow:0 15px 40px rgba(0,0,0,.3)}
+.nudge-banner.show{display:flex}
+.nudge-banner p{margin:0;font-size:12px;flex:1}
+.nudge-banner button.close{background:transparent;border:0;color:#9fb6c2;font-size:16px}
+
+.toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,15px);background:var(--navy);color:#fff;padding:11px 17px;border-radius:12px;font-size:12.5px;opacity:0;transition:.25s;z-index:200;pointer-events:none}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+</style>
+</head>
+<body>
+
+<header class="topbar"><div class="wrap topbar-row">
+  <a class="brand" href="index.html"><span class="mark">↗</span> NEXT STEP</a>
+  <nav class="navlinks"><a href="index.html">Home</a><a href="feed.html">Feed</a><a class="active" href="my-plan.html">My Plan</a><a href="my-sessions.html">My Sessions</a><a href="mentors.html">Mentors</a><a href="ask.html">Ask Navi</a><a href="about.html">About Us</a></nav>
+  <span class="free-badge">FREE FOREVER</span>
+  <div class="guest-pill" id="guestPill"><span>👤 Guest</span><button id="guestCreateBtn">Create account</button></div>
+</div></header>
+
+<main class="wrap">
+
+  <section class="view" id="view-locked">
+    <div class="locked-hero">
+      <span class="eyebrow">YOUR PLAN ISN'T BUILT YET</span>
+      <h1>Your plan starts with a 60-second self-check.</h1>
+      <p>Tell us where you are and we'll build a plan that actually checks your subjects against your Star — not a generic checklist.</p>
+      <button class="btn gold" onclick="location.href='check.html'">Start my self-check →</button>
+    </div>
+  </section>
+
+  <section class="view" id="view-plan">
+    <div class="plan-head">
+      <div><h1 id="greetName">Your Plan</h1><p>Here's where you are, and what's between you and your Northern Star.</p></div>
+      <button class="btn ghost small" onclick="location.href='check.html'">Retake self-check</button>
+    </div>
+
+    <div class="journey-strip" id="journeyStrip"></div>
+
+    <div class="star-card">
+      <span class="eyebrow">YOUR NORTHERN STAR</span>
+      <h2 id="starTitle">—</h2>
+      <p id="starDesc">—</p>
+      <div class="gap-count" id="gapCount">— things stand between you and this Star</div>
+      <div class="star-actions">
+        <button class="btn gold small" id="toggleAltBtn">See other Star options</button>
+      </div>
+      <div class="alt-list" id="altList"></div>
+      <div class="req-note" id="reqNote"></div>
+    </div>
+
+    <div class="stat-row">
+      <div class="card stat-card"><div class="num" id="xpNum">0 XP</div><div class="lbl">EXPLORER LEVEL</div><div class="mini-bar xp"><i id="xpFill" style="width:0%"></i></div></div>
+      <div class="card stat-card"><div class="num" id="completeNum">0%</div><div class="lbl">PLAN COMPLETE</div><div class="mini-bar complete"><i id="completeFill" style="width:0%"></i></div></div>
+      <div class="card stat-card"><div class="num" id="eligNum">0/4</div><div class="lbl" id="eligLbl">TO YOUR 1ST 1:1</div><div class="mini-bar elig"><i id="eligFill" style="width:0%"></i></div></div>
+    </div>
+
+    <div class="section-label">Key Dates</div>
+    <div class="deadline-strip" id="deadlineStrip"></div>
+
+    <div class="section-label">Your Milestones</div>
+    <div class="milestone-list" id="milestoneList"></div>
+
+    <div class="section-label">Your Subjects & Grades <button class="link-btn" id="toggleSubjectsBtn">Edit</button></div>
+    <div class="card" id="subjectsCard" style="display:none">
+      <div class="subject-editor" id="subjectEditorList"></div>
+      <div class="add-subject-row" id="addSubjectRow">
+        <select id="newSubjectSelect"></select>
+        <select id="newSubjectGrade"><option value="">Not written yet</option><option value="1">Grade I</option><option value="2">Grade II</option><option value="3">Grade III</option><option value="4">Grade IV</option><option value="5">Grade V</option><option value="6">Grade VI</option></select>
+        <button class="btn small" id="addSubjectBtn">+ Add</button>
+      </div>
+    </div>
+
+    <div class="section-label">Extracurriculars & Achievements <button class="link-btn" id="toggleAchieveBtn">+ Add</button></div>
+    <div class="card">
+      <div class="achieve-list" id="achieveList"></div>
+      <div class="achieve-form" id="achieveForm">
+        <div class="field"><label class="f">Type</label>
+          <select id="achieveType"><option value="leadership">Leadership / club role</option><option value="volunteer">Volunteer / community work</option><option value="award">Award / competition</option><option value="sport">Sport / team</option><option value="creative">Creative (art, music, writing)</option><option value="work">Part-time work</option><option value="other">Other</option></select>
+        </div>
+        <div class="row2">
+          <div class="field"><label class="f">Title</label><input type="text" id="achieveTitle" placeholder="e.g. Debate Club Captain"></div>
+          <div class="field"><label class="f">Organisation / school</label><input type="text" id="achieveOrg" placeholder="e.g. Queen's College"></div>
+        </div>
+        <div class="field"><label class="f">Short description (optional)</label><textarea id="achieveDesc" rows="2" placeholder="What did you actually do?"></textarea></div>
+        <div class="check-row"><input type="checkbox" id="achieveActive"> <label for="achieveActive">Still active / ongoing</label></div>
+        <button class="btn small" id="saveAchieveBtn">Save achievement</button>
+      </div>
+    </div>
+
+    <div class="section-label">Badges</div>
+    <div class="card"><div class="badges-strip" id="badgesStrip"></div></div>
+
+    <div class="section-label">Mentor Inspiration</div>
+    <div id="mentorSection"></div>
+
+    <div class="demo-links">
+      <button id="simulateReturnBtn">⏱ Simulate return visit</button>
+      <button id="resetDemoBtn">Reset my plan</button>
+    </div>
+  </section>
+
+</main>
+
+<button class="navi-fab" id="naviFab">N<span class="dot"></span></button>
+
+<div class="navi-overlay" id="naviOverlay">
+  <div class="navi-panel">
+    <div class="navi-panel-head">
+      <div class="who"><span class="navi-face">N</span><strong>Navi</strong></div>
+      <button class="navi-close" id="naviClose">×</button>
+    </div>
+    <div class="navi-log" id="naviLog"></div>
+    <div class="navi-chips" id="naviChips"></div>
+    <div class="navi-input-row"><input type="text" id="naviInput" placeholder="Ask Navi anything…"><button class="btn small" id="naviSend">Send</button></div>
+  </div>
+</div>
+
+<div class="modal" id="accountModal">
+  <div class="modal-card">
+    <div class="icon">✓</div>
+    <h2>Your plan is ready.</h2>
+    <p>This whole experience is free — always. Create an account (20 seconds) so your plan doesn't disappear if you clear your browser.</p>
+    <div class="modal-actions">
+      <button class="btn gold" id="modalCreateBtn">Create free account</button>
+      <button class="link-btn" id="modalLaterBtn">Not now</button>
+    </div>
+  </div>
+</div>
+
+<div class="nudge-banner" id="nudgeBanner">
+  <p id="nudgeText"></p>
+  <button class="btn gold small" id="nudgeCreateBtn">Save it — free</button>
+  <button class="close" id="nudgeCloseBtn">×</button>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============================================================
+   REFERENCE DATA — kept identical to check.html so switching pages is seamless
+   ============================================================ */
+const SUBJECTS_CSEC = ['English A','English B','Mathematics','Additional Mathematics','Biology','Chemistry','Physics','Integrated Science','Social Studies','Geography','History','Caribbean History','EDPM','Principles of Accounts','Principles of Business','Economics','Technical Drawing','Agricultural Science','Food & Nutrition','Information Technology','Spanish','French','Visual Arts','Music'];
+const SUBJECTS_CAPE = ['Biology','Chemistry','Physics','Pure Mathematics','Applied Mathematics','Caribbean Studies','Communication Studies','Economics','Geography','History','Law','Management of Business','Accounting','Sociology','Literatures in English','Computer Science','Agricultural Science','Environmental Science'];
+const JOURNEY_ORDER = ['lower','form4','form5','postcsec','sixthform','postcape'];
+const JOURNEY_LABELS = {lower:'Junior Secondary', form4:'Form 4', form5:'Exam Year', postcsec:'Post-CSEC Fork', sixthform:'Sixth Form', postcape:'Post-Form 6'};
+
+const REQUIREMENTS = {
+  science:{title:'Environmental & Health Sciences', desc:'Understanding how things work to help people, communities, or the land.', mustHaveCSEC:['Biology','Chemistry'], recommendedCAPE:['Biology','Chemistry'], verified:false},
+  agriculture:{title:'Agriculture & Environmental Science', desc:'Working with the land and natural resources.', mustHaveCSEC:['Agricultural Science'], recommendedCAPE:['Agricultural Science','Environmental Science'], verified:false},
+  engineering:{title:'Engineering & Technical Trades', desc:'Solving problems and building things that work.', mustHaveCSEC:['Mathematics','Physics'], recommendedCAPE:['Physics','Pure Mathematics'], verified:false},
+  technology:{title:'Technology & Digital Systems', desc:'Solving problems and building systems with code and tools.', mustHaveCSEC:['Mathematics'], recommendedCAPE:['Computer Science','Pure Mathematics'], verified:false},
+  business:{title:'Business & Entrepreneurship', desc:'Turning ideas and organisation into something people need.', mustHaveCSEC:['Mathematics','English A'], recommendedCAPE:['Accounting','Economics','Management of Business'], verified:false},
+  law:{title:'Law & Public Policy', desc:'Using justice and policy to change how things work for people.', mustHaveCSEC:['Caribbean History'], recommendedCAPE:['Law','Caribbean Studies'], verified:true},
+  creative:{title:'Creative Industries & Media', desc:'Telling stories and making things that move people.', mustHaveCSEC:[], recommendedCAPE:['Literatures in English'], verified:false},
+  other:{title:'Flexible / Undeclared Track', desc:"It's okay not to have one lane yet.", mustHaveCSEC:[], recommendedCAPE:[], verified:false},
+};
+const STAR_ALTS = {
+  science:['Agriculture & Environmental Science','Community Health & Wellbeing'],
+  agriculture:['Environmental & Health Sciences','Community Health & Wellbeing'],
+  engineering:['Technology & Digital Systems','Applied Sciences'],
+  technology:['Engineering & Technical Trades','Applied Sciences'],
+  business:['Law & Public Policy','Economics & Public Administration'],
+  law:['Business & Entrepreneurship','Economics & Public Administration'],
+  creative:['Education & Community Development','Flexible / Undeclared Track'],
+  other:['Creative Industries & Media','Education & Community Development'],
+};
+const MENTORS = [
+  {id:'aniyah', name:'Aniyah Couchman', tag:'Stanford · Presidential Scholar', interests:['science','law','business'],
+    path:['CSEC top performer','Chose CAPE Sciences + leadership roles','Built her scholarship case over 18 months','Named Presidential Scholar','Stanford University']},
+  {id:'joshua', name:'Joshua Gulab', tag:'Stanford · Valedictorian', interests:['business','technology','law'],
+    path:["Queen's College","CAPE + US Youth Ambassadors programme",'Valedictorian','Scholarship applications','Stanford University']},
+  {id:'alisande', name:'Alisande Jaiserrisingh', tag:'Northwestern · Valedictorian', interests:['creative','other','business'],
+    path:['School of the Nations','Balanced competitive sport with academics','Valedictorian','US college applications','Northwestern University']},
+  {id:'dave', name:'Dave Chowtie', tag:'Presidential Scholar · STEM founder', interests:['science','technology','engineering'],
+    path:['CSEC top performer','Founded a STEM programme','Tutoring & teaching experience','Named Presidential Scholar']},
+  {id:'reginald', name:'Reginald Brown', tag:"St. Stanislaus · Youth Parliament", interests:['law','other'],
+    path:["St. Stanislaus College",'Debate + Youth Parliament','Balanced work with study','Model UN delegate']},
+  {id:'riley', name:'Riley Nurse', tag:"U. Toronto · Int'l Scholar", interests:['business'],
+    path:['CAPE Business track',"International Scholar Award application",'Study-abroad preparation','University of Toronto']},
+];
+const BADGES = {
+  'first-star':{ic:'★',label:'Found your Star'}, 'first-achieve':{ic:'✓',label:'Logged an achievement'},
+  'three-done':{ic:'3',label:'3 milestones done'}, 'inspired':{ic:'♥',label:'Inspired by a mentor'},
+  'half-complete':{ic:'½',label:'Plan 50% complete'}, 'eligible':{ic:'1:1',label:'Unlocked a 1:1'},
+};
+const NAVI_KEYWORDS = [
+  {k:['family','parent'], mentor:'reginald', text:'Reginald balanced what his family expected of him with a public-service track that wasn\u2019t the "safe" choice. His approach: bring your family into the decision early, with a real plan, not just a feeling.'},
+  {k:['afford','money','fund','scholarship'], mentor:'joshua', text:'University of Guyana is tuition-free now, so the real cost to plan for is usually transport, materials, and application fees \u2014 not tuition itself. Joshua built his scholarship case 18 months ahead of time.'},
+  {k:['subject','grade'], mentor:'dave', text:'Dave dropped a subject he was "keeping just in case" once it started dragging his average \u2014 his rule: if a subject isn\u2019t supporting your Star, it\u2019s costing you time you could spend on ones that do.'},
+  {k:['mentor','support','alone'], mentor:'dave', text:'Dave didn\u2019t have someone in his exact field early on either \u2014 he started by tutoring others, which is how he found mentors of his own.'},
+  {k:['law','history'], mentor:'reginald', text:'Reginald leaned on debate and Model UN to build the case for Law before he even had the grades locked in \u2014 the experience mattered as much as the subject.'},
+];
+function naviRespond(text){
+  const lower = text.toLowerCase();
+  const hit = NAVI_KEYWORDS.find(r=>r.k.some(k=>lower.includes(k)));
+  if(hit) return {mentor: MENTORS.find(m=>m.id===hit.mentor), text: hit.text};
+  return {mentor: MENTORS.find(m=>m.id==='aniyah'), text:'Good question. Aniyah\u2019s approach was to pick two things she could go deep on instead of five things she\u2019d do half-heartedly \u2014 might be worth applying that here.'};
+}
+function computeSubjectGaps(starKey, studentSubjects, level){
+  const req = REQUIREMENTS[starKey];
+  if(!req) return [];
+  const list = level==='CAPE' ? (req.recommendedCAPE||[]) : (req.mustHaveCSEC||[]);
+  const have = (studentSubjects||[]).map(s=>s.name);
+  return list.filter(s=>!have.includes(s));
+}
+function nextOccurrence(monthIndex0, day){
+  const now = new Date(); let year = now.getFullYear();
+  let d = new Date(year, monthIndex0, day);
+  if(d < now) d = new Date(year+1, monthIndex0, day);
+  return d;
+}
+function daysUntil(d){ return Math.max(0, Math.ceil((d - new Date())/(1000*60*60*24))); }
+
+/* ============================================================
+   STATE
+   ============================================================ */
+let plan = null;
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+function toast(msg){ const t=$('#toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2200); }
+function showView(id){ $$('.view').forEach(v=>v.classList.remove('active')); $('#'+id).classList.add('active'); }
+function loadState(){ try{ plan = JSON.parse(localStorage.getItem('nsg_myplan')); }catch(e){ plan=null; } }
+function saveState(){ localStorage.setItem('nsg_myplan', JSON.stringify(plan)); }
+function accountCreated(){ return localStorage.getItem('nsg_account_created')==='true'; }
+function updateGuestPill(){ $('#guestPill').classList.toggle('hidden', accountCreated()); }
+
+/* ============================================================
+   RECOMPUTE (gap-engine re-run whenever profile changes)
+   ============================================================ */
+function recomputeGapMilestones(){
+  const level = plan.subjectLevel;
+  const newGaps = level ? computeSubjectGaps(plan.starKey, plan.subjects, level) : [];
+  const lateStage = (plan.stage==='form5' || plan.stage==='postcsec' || plan.stage==='sixthform');
+  const lateTerm = plan.term==='term3';
+  const late = lateStage || lateTerm;
+  plan.milestones = plan.milestones.filter(m=>m.type!=='gap-subject');
+  newGaps.forEach((s,i)=>{
+    plan.milestones.unshift({
+      id:'gap-subj-'+i, type:'gap-subject', subject: s,
+      title: late ? `${s} is missing \u2014 may be too late to add` : `Add ${s} to your subject list`,
+      desc: late ? `Your Star usually needs ${s}. Ask Navi about alternatives if it\u2019s too late to add.` : `Your Star usually needs ${s}${level==='CAPE'?' at CAPE':' at CSEC'} \u2014 you still have time.`,
+      xp: late ? 10 : 20, done:false, urgent: late,
+    });
+  });
+  plan.milestones = plan.milestones.filter(m=>m.type!=='gap-grade');
+  plan.subjects.filter(s=>s.grade && Number(s.grade)>=5).forEach((s,i)=>{
+    plan.milestones.push({id:'gap-grade-'+i, type:'gap-subject', subject: s.name, title:`${s.name}: grade needs work`, desc:'A Grade V/VI may not satisfy typical entry requirements \u2014 worth extra revision time or a tutor.', xp:15, done:false, urgent:true});
+  });
+  const m = plan.milestones.find(x=>x.id==='m-subjects');
+  if(m) m.done = plan.subjects.length>0;
+}
+
+function computeXP(){ return plan.milestones.filter(m=>m.done).reduce((s,m)=>s+m.xp,0); }
+function computeDoneCount(){ return plan.milestones.filter(m=>m.done).length; }
+function computeCompleteness(){
+  let total=4, done=0;
+  if(plan.subjects.length>0) done++;
+  if(plan.achievements.length>0) done++;
+  if(plan.inspirationMentor) done++;
+  if(computeDoneCount() >= Math.ceil(plan.milestones.length/2)) done++;
+  return Math.round((done/total)*100);
+}
+function eligThreshold(){ return Math.min(4, plan.milestones.length); }
+function awardBadge(id){ if(!plan.badges.includes(id)){ plan.badges.push(id); toast('Badge earned: '+BADGES[id].label); } }
+
+/* ============================================================
+   RENDER
+   ============================================================ */
+function renderJourneyStrip(){
+  const curIdx = JOURNEY_ORDER.indexOf(plan.stage);
+  $('#journeyStrip').innerHTML = JOURNEY_ORDER.map((k,i)=>{
+    const cls = i<curIdx ? 'done' : (i===curIdx ? 'current':'');
+    return `<div class="journey-node ${cls}"><div class="dot">${i<curIdx?'\u2713':i+1}</div><span>${JOURNEY_LABELS[k]}</span></div>`;
+  }).join('');
+}
+function renderDeadlines(){
+  const items = [
+    {label:'CSEC/CAPE registration window typically opens', date:nextOccurrence(9,1), note:'Illustrative \u2014 confirm exact dates with your school each year.'},
+    {label:'GOAL Bachelor\u2019s applications typically open', date:nextOccurrence(10,1), note:'Illustrative \u2014 GOAL\u2019s phased windows shift yearly.'},
+  ];
+  $('#deadlineStrip').innerHTML = items.map(it=>{
+    const days = daysUntil(it.date);
+    return `<div class="card deadline-row"><div class="dcount"><b>${days}</b><small>DAYS</small></div><div><strong>${it.label}</strong><small class="note">${it.note}</small></div></div>`;
+  }).join('');
+}
+
+function renderPlan(){
+  if(!plan) return;
+  if(!plan.naviLog) plan.naviLog = [];
+  if(!plan.badges) plan.badges = [];
+  if(!plan.achievements) plan.achievements = [];
+
+  $('#starTitle').textContent = plan.star.title;
+  $('#starDesc').textContent = plan.star.desc;
+  $('#reqNote').textContent = plan.star.verified
+    ? 'This requirement check is based on a published CAPE prerequisite.'
+    : 'Requirement checks here are illustrative \u2014 always confirm current entry requirements with the institution or CXC directly.';
+
+  const gapCount = plan.milestones.filter(m=>m.type==='gap-subject' && !m.done).length;
+  if(plan.subjects.length===0){
+    $('#gapCount').innerHTML = `Add your subjects to see your <b>real</b> gaps \u2014 we can't check anything yet`;
+  } else {
+    $('#gapCount').innerHTML = `<b>${gapCount}</b> thing${gapCount===1?'':'s'} stand${gapCount===1?'s':''} between you and this Star right now`;
+  }
+
+  renderJourneyStrip();
+  renderDeadlines();
+
+  const xp = computeXP();
+  const xpMax = plan.milestones.reduce((s,m)=>s+m.xp,0) || 1;
+  $('#xpNum').textContent = xp+' XP';
+  $('#xpFill').style.width = Math.round((xp/xpMax)*100)+'%';
+  $('#completeNum').textContent = computeCompleteness()+'%';
+  $('#completeFill').style.width = computeCompleteness()+'%';
+  if(computeCompleteness()>=50) awardBadge('half-complete');
+
+  const doneCount = computeDoneCount();
+  const need = eligThreshold();
+  $('#eligNum').textContent = `${Math.min(doneCount,need)}/${need}`;
+  $('#eligFill').style.width = Math.round((Math.min(doneCount,need)/need)*100)+'%';
+  const mentorFirst = plan.inspirationMentor ? MENTORS.find(m=>m.id===plan.inspirationMentor).name.split(' ')[0] : 'a mentor';
+  $('#eligLbl').textContent = doneCount>=need ? `1:1 WITH ${mentorFirst.toUpperCase()} UNLOCKED` : 'TO YOUR 1ST 1:1';
+  if(doneCount>=need) awardBadge('eligible');
+  if(doneCount>=3) awardBadge('three-done');
+  if(plan.starKey && !plan.badges.includes('first-star')) awardBadge('first-star');
+
+  const icons = {profile:'\u25c9', task:'\u2713', navi:'\u2726', session:'\u25c8', mentor:'\u25ce', 'gap-subject':'!'};
+  $('#milestoneList').innerHTML = plan.milestones.map(m=>`
+    <div class="card milestone ${m.done?'done':''}">
+      <span class="m-icon ${m.type}">${icons[m.type]||'\u2022'}</span>
+      <div><h3>${m.title}</h3><p>${m.desc}</p>
+        <div class="meta-row"><span class="xp-tag">+${m.xp} XP</span>${m.urgent?'<span class="tag warn">TIME-SENSITIVE</span>':''}${m.type==='gap-subject'?'<span class="tag info">SUBJECT GAP</span>':''}</div>
+      </div>
+      ${renderMilestoneAction(m)}
+    </div>`).join('');
+
+  $$('.m-check').forEach(btn=>btn.addEventListener('click', ()=>{
+    const m = plan.milestones.find(x=>x.id===btn.dataset.id);
+    m.done = !m.done;
+    if(m.done) pushNaviAuto(`Nice \u2014 you just completed "${m.title}". That's +${m.xp} XP.`);
+    saveState(); renderPlan();
+    if(m.done) toast(`+${m.xp} XP`);
+    maybeShowNudgeBanner();
+  }));
+  $$('[data-navi]').forEach(btn=>btn.addEventListener('click', ()=>openNavi(btn.dataset.navi)));
+  $$('[data-navi-gap]').forEach(btn=>btn.addEventListener('click', ()=>openNaviForGap(btn.dataset.naviGap)));
+  $$('[data-mentor-milestone]').forEach(btn=>btn.addEventListener('click', ()=>window.scrollTo({top:document.getElementById('mentorSection').offsetTop-80, behavior:'smooth'})));
+
+  renderSubjects(); renderAchievements(); renderBadges(); renderMentorSection(); renderAltList();
+}
+
+function renderMilestoneAction(m){
+  if(m.type==='navi' && !m.done) return `<button class="btn ghost small" data-navi="${m.context}">Ask Navi</button>`;
+  if(m.type==='mentor' && !m.done) return `<button class="btn ghost small" data-mentor-milestone>Choose</button>`;
+  if(m.id==='m-subjects') return `<button class="btn ghost small" onclick="document.getElementById('toggleSubjectsBtn').click()">${m.done?'Edit':'Add'}</button>`;
+  if(m.id==='m-achieve') return `<button class="btn ghost small" onclick="document.getElementById('toggleAchieveBtn').click()">Add</button>`;
+  if(m.type==='gap-subject' && !m.done) return `<div class="gap-action-stack"><button class="btn ghost small" data-navi-gap="${(m.subject||m.title).replace(/"/g,'')}">Ask Navi</button><button class="m-check" data-id="${m.id}"></button></div>`;
+  return `<button class="m-check ${m.done?'checked':''}" data-id="${m.id}">${m.done?'\u2713':''}</button>`;
+}
+
+function renderAltList(){
+  const alts = STAR_ALTS[plan.starKey] || [];
+  $('#altList').innerHTML = alts.map(t=>`<button class="alt-chip" data-alt="${t}">${t}</button>`).join('');
+  $$('.alt-chip').forEach(c=>c.addEventListener('click', ()=>{
+    const targetKey = Object.keys(REQUIREMENTS).find(k=>REQUIREMENTS[k].title===c.dataset.alt);
+    if(targetKey){
+      plan.starKey = targetKey;
+      plan.star = {title:REQUIREMENTS[targetKey].title, desc:REQUIREMENTS[targetKey].desc, verified:REQUIREMENTS[targetKey].verified};
+      recomputeGapMilestones();
+      saveState(); renderPlan();
+      toast('Northern Star updated \u2014 requirements re-checked \u2713');
+    }
+  }));
+}
+$('#toggleAltBtn').addEventListener('click', ()=>$('#altList').classList.toggle('open'));
+
+function renderSubjects(){
+  $('#subjectEditorList').innerHTML = plan.subjects.map((s,i)=>`
+    <div class="card subject-row"><strong>${s.name}</strong>
+      <select data-idx="${i}" class="grade-select">
+        <option value="">Not written yet</option>
+        ${[1,2,3,4,5,6].map(g=>`<option value="${g}" ${s.grade==g?'selected':''}>Grade ${['I','II','III','IV','V','VI'][g-1]}</option>`).join('')}
+      </select><span></span>
+      <button class="rm" data-idx="${i}">Remove</button>
+    </div>`).join('') || `<p style="color:var(--muted);font-size:12px;padding:6px 0">No subjects added yet.</p>`;
+  $$('.grade-select').forEach(sel=>sel.addEventListener('change', ()=>{
+    plan.subjects[+sel.dataset.idx].grade = sel.value || null;
+    recomputeGapMilestones(); saveState(); renderPlan();
+  }));
+  $$('#subjectEditorList .rm').forEach(btn=>btn.addEventListener('click', ()=>{
+    plan.subjects.splice(+btn.dataset.idx,1);
+    recomputeGapMilestones(); saveState(); renderPlan();
+  }));
+  const sel = $('#newSubjectSelect'); const addRow = $('#addSubjectRow');
+  if(plan.subjectLevel === null){ addRow.style.display = 'none'; }
+  else {
+    addRow.style.display = 'grid';
+    const list = plan.subjectLevel === 'CAPE' ? SUBJECTS_CAPE : SUBJECTS_CSEC;
+    sel.innerHTML = list.map(s=>`<option value="${s}">${s}</option>`).join('');
+  }
+}
+$('#toggleSubjectsBtn').addEventListener('click', ()=>{ const c=$('#subjectsCard'); c.style.display = c.style.display==='none'?'block':'none'; });
+$('#addSubjectBtn').addEventListener('click', ()=>{
+  const name = $('#newSubjectSelect').value; const grade = $('#newSubjectGrade').value || null;
+  if(plan.subjects.some(s=>s.name===name)){ toast('Already added'); return; }
+  plan.subjects.push({name, grade});
+  recomputeGapMilestones(); saveState(); renderPlan();
+  toast('Subject added \u2713');
+});
+
+const ACHIEVE_ICON = {leadership:'\u2726', volunteer:'\u2665', award:'\u2605', sport:'\u26bd', creative:'\u270e', work:'\u25a4', other:'\u25cf'};
+function renderAchievements(){
+  $('#achieveList').innerHTML = plan.achievements.map((a,i)=>`
+    <div class="card achieve-item"><span class="ic">${ACHIEVE_ICON[a.type]||'\u25cf'}</span>
+      <div><strong>${a.title}</strong><small>${a.org?a.org+' \u00b7 ':''}${a.active?'Ongoing':'Completed'}${a.desc?' \u2014 '+a.desc:''}</small></div>
+      <button class="rm" data-idx="${i}" style="background:transparent;border:0;color:var(--red);font-size:11px;font-weight:700">Remove</button>
+    </div>`).join('') || `<p style="color:var(--muted);font-size:12px;padding:6px 0">Nothing added yet \u2014 clubs, awards, volunteer work, part-time jobs all count.</p>`;
+  $$('#achieveList .rm').forEach(btn=>btn.addEventListener('click', ()=>{ plan.achievements.splice(+btn.dataset.idx,1); saveState(); renderPlan(); }));
+}
+$('#toggleAchieveBtn').addEventListener('click', ()=>$('#achieveForm').classList.toggle('open'));
+$('#saveAchieveBtn').addEventListener('click', ()=>{
+  const title = $('#achieveTitle').value.trim();
+  if(!title){ toast('Add a title first'); return; }
+  plan.achievements.push({ type:$('#achieveType').value, title, org:$('#achieveOrg').value.trim(), desc:$('#achieveDesc').value.trim(), active:$('#achieveActive').checked });
+  const m = plan.milestones.find(x=>x.id==='m-achieve');
+  if(m && !m.done){ m.done = true; awardBadge('first-achieve'); }
+  $('#achieveTitle').value=''; $('#achieveOrg').value=''; $('#achieveDesc').value=''; $('#achieveActive').checked=false;
+  $('#achieveForm').classList.remove('open');
+  saveState(); renderPlan();
+  toast('Achievement added \u2713');
+});
+
+function renderBadges(){
+  $('#badgesStrip').innerHTML = plan.badges.length
+    ? plan.badges.map(id=>`<span class="badge-pill"><span class="ic">${BADGES[id].ic}</span>${BADGES[id].label}</span>`).join('')
+    : `<p style="color:var(--muted);font-size:12px">Complete milestones to start earning badges.</p>`;
+}
+
+const MENTOR_ACHIEVEMENT_AFFINITY = {
+  aniyah: ['leadership','award'], joshua: ['leadership','award','work'],
+  alisande: ['sport','creative'], dave: ['leadership','volunteer'],
+  reginald: ['leadership','volunteer'], riley: ['work','award'],
+};
+function scoreMentor(m, starKey, achievements){
+  let score = m.interests.includes(starKey) ? 2 : 0;
+  const affinity = MENTOR_ACHIEVEMENT_AFFINITY[m.id] || [];
+  score += (achievements||[]).filter(a=>affinity.includes(a.type)).length;
+  return score;
+}
+function renderMentorSection(){
+  const el = $('#mentorSection');
+  if(!plan.inspirationMentor){
+    const scored = MENTORS.map(m=>({m, score: scoreMentor(m, plan.starKey, plan.achievements)}))
+      .sort((a,b)=>b.score-a.score);
+    const pool = scored.slice(0,3).map(s=>s.m);
+    const usingAchievements = plan.achievements && plan.achievements.length>0;
+    el.innerHTML = (usingAchievements ? `<p style="color:var(--muted);font-size:11px;margin:0 0 10px">Sharpened using what you\u2019ve logged in Achievements.</p>` : '') + `<div class="mentor-pick-grid">` + pool.map(m=>`
+      <div class="card mentor-pick"><div class="av">${m.name.split(' ').map(w=>w[0]).slice(0,2).join('')}</div>
+        <strong>${m.name}</strong><small>${m.tag}</small>
+        <button class="btn small" data-inspire="${m.id}">Inspire me</button></div>`).join('') + `</div>`;
+    $$('[data-inspire]').forEach(btn=>btn.addEventListener('click', ()=>{
+      plan.inspirationMentor = btn.dataset.inspire;
+      const m = plan.milestones.find(x=>x.id==='m-mentor');
+      if(m) m.done = true;
+      awardBadge('inspired');
+      saveState(); renderPlan();
+      toast('Inspired by '+MENTORS.find(x=>x.id===btn.dataset.inspire).name.split(' ')[0]+' \u2713');
+    }));
+  } else {
+    const mentor = MENTORS.find(m=>m.id===plan.inspirationMentor);
+    const doneCount = computeDoneCount();
+    const studentSteps = plan.milestones.map(m=>m.title);
+    el.innerHTML = `<div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <div><span class="tag mentor">INSPIRED BY</span> <strong style="margin-left:6px">${mentor.name}</strong></div>
+        <button class="btn ghost small" id="changeMentorBtn">Change</button>
+      </div>
+      <div class="compare-row">
+        <div class="compare-col"><h4>${mentor.name.split(' ')[0]}'s Path</h4><ol>${mentor.path.map((p,i)=>`<li class="${i < Math.floor(mentor.path.length*(doneCount/plan.milestones.length)) ? 'reached':''}">${p}</li>`).join('')}</ol></div>
+        <div class="compare-col"><h4>Your Path (so far)</h4><ol>${studentSteps.map((s,i)=>`<li class="${plan.milestones[i].done?'reached':''}">${s}</li>`).join('')}</ol></div>
+      </div></div>`;
+    $('#changeMentorBtn').addEventListener('click', ()=>{ plan.inspirationMentor=null; saveState(); renderPlan(); });
+  }
+}
+
+/* ============================================================
+   NAVI
+   ============================================================ */
+function pushNaviAuto(text){ plan.naviLog.push({from:'navi', text}); $('#naviFab').classList.add('has-new'); saveState(); }
+function renderNaviLog(){
+  $('#naviLog').innerHTML = plan.naviLog.map(m=>
+    m.from==='you' ? `<div class="navi-msg you">${m.text}</div>` :
+    m.mentorName ? `<div class="navi-msg mentor"><strong>${m.mentorName}</strong> \u2014 ${m.text}</div>` :
+    `<div class="navi-msg">${m.text}</div>`
+  ).join('');
+  const log = $('#naviLog'); log.scrollTop = log.scrollHeight;
+}
+function openNaviForGap(subjectName){
+  $('#naviOverlay').classList.add('open');
+  $('#naviFab').classList.remove('has-new');
+  if(plan.naviLog.length===0) plan.naviLog.push({from:'navi', text:'Hi! I\u2019m Navi. Ask me anything about your plan, your Star, or what a mentor did in a similar spot.'});
+  plan.naviLog.push({from:'navi', text:`You're missing ${subjectName} for your Star \u2014 worth thinking through now while there's still time to act on it.`});
+  const r = naviRespond('subject '+subjectName);
+  plan.naviLog.push({from:'navi', mentorName:r.mentor.name, text:r.text});
+  $('#naviChips').innerHTML = [`Is there an alternative to ${subjectName}?`,'Is it too late to add this?','What did a mentor do about this?'].map(c=>`<button class="navi-chip" data-c="${c}">${c}</button>`).join('');
+  $$('.navi-chip').forEach(c=>c.addEventListener('click', ()=>sendNaviMessage(c.dataset.c)));
+  renderNaviLog(); saveState(); renderPlan();
+}
+function openNavi(context){
+  $('#naviOverlay').classList.add('open');
+  $('#naviFab').classList.remove('has-new');
+  if(context && plan.naviLog.length===0){
+    plan.naviLog.push({from:'navi', text: context==='family' ? 'You flagged family expectations as something on your mind \u2014 here\u2019s someone who navigated it.' : 'You mentioned there isn\u2019t one person you\u2019d usually talk to about this \u2014 that\u2019s exactly what mentors are for.'});
+    const r = naviRespond(context);
+    plan.naviLog.push({from:'navi', mentorName:r.mentor.name, text:r.text});
+    const m = plan.milestones.find(x=>x.context===context);
+    if(m && !m.done) m.done = true;
+  }
+  if(plan.naviLog.length===0) plan.naviLog.push({from:'navi', text:'Hi! I\u2019m Navi. Ask me anything about your plan, your Star, or what a mentor did in a similar spot.'});
+  $('#naviChips').innerHTML = ['How do I close my subject gap?','What did a mentor do about this?','Change my Star'].map(c=>`<button class="navi-chip" data-c="${c}">${c}</button>`).join('');
+  $$('.navi-chip').forEach(c=>c.addEventListener('click', ()=>sendNaviMessage(c.dataset.c)));
+  renderNaviLog(); saveState(); renderPlan();
+}
+$('#naviFab').addEventListener('click', ()=>openNavi(null));
+$('#naviClose').addEventListener('click', ()=>$('#naviOverlay').classList.remove('open'));
+function sendNaviMessage(text){
+  if(!text) return;
+  plan.naviLog.push({from:'you', text});
+  const lower = text.toLowerCase();
+  const starWords = Object.keys(REQUIREMENTS);
+  if(lower.includes('change my star') || lower.includes('switch my star')){
+    const matchedKey = starWords.find(k=> lower.includes(k) || lower.includes(REQUIREMENTS[k].title.toLowerCase().split(' ')[0]));
+    if(matchedKey){
+      plan.starKey = matchedKey;
+      plan.star = {title:REQUIREMENTS[matchedKey].title, desc:REQUIREMENTS[matchedKey].desc, verified:REQUIREMENTS[matchedKey].verified};
+      recomputeGapMilestones();
+      plan.naviLog.push({from:'navi', text:`Done \u2014 your Star is now ${plan.star.title}. I\u2019ve re-checked your subject gaps against it.`});
+    } else {
+      plan.naviLog.push({from:'navi', text:'Tell me which field \u2014 e.g. "change my star to law" or "change my star to technology".'});
+    }
+  } else if(lower.includes('subject gap')){
+    const gaps = plan.milestones.filter(m=>m.type==='gap-subject' && !m.done);
+    plan.naviLog.push({from:'navi', text: gaps.length ? `You\u2019re missing: ${gaps.map(g=>g.title).join('; ')}. Start with whichever one still has time on the clock.` : 'No open subject gaps right now \u2014 you\u2019re clear on requirements for this Star.'});
+  } else {
+    const r = naviRespond(text);
+    plan.naviLog.push({from:'navi', mentorName:r.mentor.name, text:r.text});
+  }
+  $('#naviInput').value=''; renderNaviLog(); saveState(); renderPlan();
+}
+$('#naviSend').addEventListener('click', ()=>sendNaviMessage($('#naviInput').value.trim()));
+$('#naviInput').addEventListener('keydown', e=>{ if(e.key==='Enter') sendNaviMessage($('#naviInput').value.trim()); });
+
+/* ============================================================
+   ACCOUNT NUDGES
+   ============================================================ */
+function createAccount(){
+  localStorage.setItem('nsg_account_created','true'); updateGuestPill();
+  $('#accountModal').classList.remove('open'); $('#nudgeBanner').classList.remove('show');
+  toast('Account created \u2014 free, and your plan is saved \u2713');
+}
+$('#modalCreateBtn').addEventListener('click', createAccount);
+$('#guestCreateBtn').addEventListener('click', createAccount);
+$('#modalLaterBtn').addEventListener('click', ()=>$('#accountModal').classList.remove('open'));
+$('#nudgeCreateBtn').addEventListener('click', createAccount);
+$('#nudgeCloseBtn').addEventListener('click', ()=>$('#nudgeBanner').classList.remove('show'));
+function maybeShowNudgeBanner(){
+  if(accountCreated()) return;
+  const doneCount = computeDoneCount(); const need = eligThreshold();
+  if(doneCount>=3 && !localStorage.getItem('nsg_nudge_3')){
+    localStorage.setItem('nsg_nudge_3','true');
+    $('#nudgeText').textContent = `You've earned ${computeXP()} XP and unlocked a mentor match \u2014 it's free to save, always.`;
+    $('#nudgeBanner').classList.add('show');
+  } else if(doneCount>=need-1 && doneCount<need && !localStorage.getItem('nsg_nudge_elig')){
+    localStorage.setItem('nsg_nudge_elig','true');
+    $('#nudgeText').textContent = `One milestone away from your first 1:1 \u2014 don't lose this progress, save it free.`;
+    $('#nudgeBanner').classList.add('show');
+  }
+}
+
+/* ============================================================
+   DEMO CONTROLS
+   ============================================================ */
+$('#simulateReturnBtn').addEventListener('click', ()=>{
+  pushNaviAuto('Welcome back \u2014 it\u2019s been a while. Anything change since we last talked?');
+  saveState();
+  openNavi(null);
+  $('#naviChips').innerHTML = ['My grades changed','I want to update my Star','Nothing yet'].map(c=>`<button class="navi-chip" data-c="${c}">${c}</button>`).join('');
+  $$('.navi-chip').forEach(c=>c.addEventListener('click', ()=>sendNaviMessage(c.dataset.c)));
+  toast('Simulated a returning visit');
+});
+$('#resetDemoBtn').addEventListener('click', ()=>{
+  ['nsg_myplan','nsg_nudge_shown','nsg_account_created','nsg_nudge_3','nsg_nudge_elig'].forEach(k=>localStorage.removeItem(k));
+  plan = null; updateGuestPill(); showView('view-locked'); toast('Plan reset');
+});
+
+/* ============================================================
+   BOOTSTRAP
+   ============================================================ */
+loadState();
+updateGuestPill();
+if(plan){
+  renderPlan();
+  showView('view-plan');
+  if(!localStorage.getItem('nsg_nudge_shown')){
+    setTimeout(()=>{ $('#accountModal').classList.add('open'); localStorage.setItem('nsg_nudge_shown','true'); }, 600);
+  }
+} else {
+  showView('view-locked');
+}
+</script>
+</body>
+</html>
