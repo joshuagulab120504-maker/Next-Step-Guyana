@@ -1,0 +1,3383 @@
+{
+ "_notice": "FICTIONAL placeholder mentors for prototype and design testing. Not real people. Every record carries fictional:true and verified:false, which MUST gate this data out of any public build. Replace with consented interviews captured via MENTOR-INTERVIEW-FRAMEWORK.md.",
+ "version": "final-1.0",
+ "reviewed": "2026-08-11",
+ "count": 51,
+ "archetypes": [
+  "The Steward",
+  "The Artisan",
+  "The Pioneer",
+  "The Advocate",
+  "The Visionary",
+  "The Gladiator"
+ ],
+ "riasec_dimensions": {
+  "R": "Realistic",
+  "I": "Investigative",
+  "A": "Artistic",
+  "S": "Social",
+  "E": "Enterprising",
+  "C": "Conventional"
+ },
+ "stage_enum": [
+  "form1",
+  "form2",
+  "form3",
+  "form4",
+  "form5",
+  "postcsec",
+  "lowersixth",
+  "uppersixth",
+  "postcape",
+  "out"
+ ],
+ "career_buckets": [
+  "Science & Medicine",
+  "Trade & TVET",
+  "Education",
+  "Sports",
+  "Engineering",
+  "Creative Industry",
+  "Technology",
+  "Business & Entrepreneurship",
+  "Public Service & Government",
+  "Law & Humanities",
+  "Agriculture"
+ ],
+ "bucket_to_archetype": {
+  "Science & Medicine": {
+   "default": "The Steward"
+  },
+  "Agriculture": {
+   "default": "The Steward",
+   "if_primary_E": "The Pioneer"
+  },
+  "Technology": {
+   "default": "The Steward",
+   "if_primary_R": "The Artisan"
+  },
+  "Engineering": {
+   "default": "The Artisan"
+  },
+  "Trade & TVET": {
+   "default": "The Artisan"
+  },
+  "Business & Entrepreneurship": {
+   "default": "The Pioneer",
+   "if_primary_C": "The Gladiator"
+  },
+  "Law & Humanities": {
+   "default": "The Advocate"
+  },
+  "Public Service & Government": {
+   "default": "The Advocate",
+   "if_primary_E": "The Gladiator"
+  },
+  "Education": {
+   "default": "The Advocate",
+   "if_primary_A": "The Visionary"
+  },
+  "Creative Industry": {
+   "default": "The Visionary"
+  },
+  "Sports": {
+   "default": "The Gladiator",
+   "if_primary_A": "The Visionary"
+  }
+ },
+ "field_guide": {
+  "id": "stable record id",
+  "name": "full name",
+  "mono": "one-line signature, 12 words or fewer",
+  "archetype": "one of the six",
+  "stage": "array of stage_enum values this mentor has a moment for",
+  "dim": "RIASEC primary, single letter",
+  "code": "RIASEC two-letter code",
+  "buckets": "career buckets this mentor covers, first is primary",
+  "routeType": "degree | abroad | certificate-route | diploma | scholarship | none-needed | selection",
+  "region": "Guyana administrative region 1 to 10",
+  "concerns": "student concern keys this mentor can speak to",
+  "situations": "situation tags",
+  "moments": "object keyed by stage_enum, value is what they were doing at that stage",
+  "outcome": "where they are now, one line",
+  "qs": "answered questions, each with q, a, concerns array, esc boolean",
+  "dyk": "one did-you-know per mentor: t text, s sources array, v last verified date",
+  "wb": "true if the story touches low mood and needs the wellbeing notice rendered"
+ },
+ "mentors": [
+  {
+   "id": "m54",
+   "name": "Renata Baldeo",
+   "mono": "Applied abroad from the Essequibo Coast and got funded",
+   "stage": [
+    "form4",
+    "form5",
+    "lowersixth",
+    "uppersixth"
+   ],
+   "dim": "I",
+   "code": "IE",
+   "buckets": [
+    "Science & Medicine",
+    "Public Service & Government"
+   ],
+   "routeType": "abroad",
+   "region": 2,
+   "concerns": [
+    "afford",
+    "exists",
+    "leaving"
+   ],
+   "situations": [
+    "cost",
+    "aid-gap"
+   ],
+   "moments": {
+    "form4": "Eleven subjects, and people telling her she was wasting herself on the Essequibo Coast.",
+    "lowersixth": "Started the foreign applications a full year early because a teacher warned her nobody believes how long they take.",
+    "uppersixth": "Four offers, one she could actually afford to take."
+   },
+   "outcome": "Second year of an environmental policy degree abroad",
+   "fork": "abroad-or-stay",
+   "wb": false,
+   "qs": [
+    {
+     "q": "Can somebody like me actually get funded abroad?",
+     "a": "Yes, and the part nobody explains is that saying you need money changes how the application is read. Where a university promises to meet your full need, that promise is real once you are in. Getting in while asking for it is harder than getting in without asking. Ask anyway, and apply to more places than you think you need to.",
+     "concerns": [
+      "afford"
+     ],
+     "esc": false
+    },
+    {
+     "q": "When should I start?",
+     "a": "Lower Sixth, not Upper Sixth. Three people in my year lost a whole cycle because they found out about the deadlines in January.",
+     "concerns": [
+      "starting-late"
+     ],
+     "esc": false
+    }
+   ],
+   "dyk": {
+    "t": "Stanford says it will meet the full demonstrated need of every admitted student regardless of citizenship, but for international citizens, saying you will apply for aid is itself a factor in the admission decision and makes it more selective. An international student who declines aid and is then admitted cannot apply for it at any point in four years.",
+    "s": [
+     "Stanford Undergraduate Admission, International Applicants"
+    ],
+    "v": "2026-08-11"
+   },
+   "archetype": "The Steward"
+  },
+  {
+   "id": "m55",
+   "name": "Terrence Bhola",
+   "mono": "Fourteen Grade Ones and no award, over one Grade Two",
+   "stage": [
+    "form4",
+    "form5",
+    "postcsec"
+   ],
+   "dim": "I",
+   "code": "IC",
+   "buckets": [
+    "Science & Medicine"
+   ],
+   "routeType": "degree",
+   "region": 6,
+   "concerns": [
+    "good-enough"
+   ],
+   "situations": [
+    "no-clear-path",
+    "top-performer"
+   ],
+   "moments": {
+    "form4": "New Amsterdam, first in his family past Form 3 sciences, and no idea whether he was good or just the best in a small room.",
+    "form5": "Fourteen subjects. Topped his school. Got no regional award and did not understand why.",
+    "postcsec": "Learned the award needs Grade One in every subject of a fixed cluster. He had a Two in one of them. Fourteen Ones did not matter."
+   },
+   "outcome": "Third year of MBBS, tutors CSEC sciences in Berbice",
+   "fork": null,
+   "wb": false,
+   "qs": [
+    {
+     "q": "I did well but I did not win anything. Does that mean I am not good enough?",
+     "a": "I wrote fourteen and got a Two in one subject that happened to sit in the cluster, so I was not eligible. It is a rule about a specific list, not a ranking of who is clever. No admissions officer has ever asked me about it.",
+     "concerns": [
+      "good-enough"
+     ],
+     "esc": false
+    }
+   ],
+   "dyk": {
+    "t": "The CSEC Regional Top Performer award is set entirely by CXC criteria, which require Grade One in every subject of a mandatory cluster. Missing Grade One in any one cluster subject makes a candidate ineligible however many subjects were written.",
+    "s": [
+     "Ministry of Education Guyana clarification, November 2025"
+    ],
+    "v": "2026-08-11"
+   },
+   "archetype": "The Steward"
+  },
+  {
+   "id": "m56",
+   "name": "Ayanna Griffith",
+   "mono": "Detention to debate team, then a funded exchange at sixteen",
+   "stage": [
+    "form1",
+    "form2",
+    "form3",
+    "form4",
+    "form5"
+   ],
+   "dim": "E",
+   "code": "ES",
+   "buckets": [
+    "Public Service & Government",
+    "Education"
+   ],
+   "routeType": "abroad",
+   "region": 4,
+   "concerns": [
+    "afford",
+    "exists"
+   ],
+   "situations": [
+    "cost"
+   ],
+   "moments": {
+    "form1": "She talked in class and it was treated as a discipline problem for two solid years.",
+    "form3": "A teacher put her on the debate team instead of in detention. She calls it the most consequential decision anybody made about her.",
+    "form4": "Selected for a three week exchange in the United States at sixteen, fully funded. She had assumed such things were for people whose parents paid."
+   },
+   "outcome": "Youth programme coordinator in Georgetown",
+   "fork": "abroad-or-stay",
+   "wb": false,
+   "qs": [
+    {
+     "q": "I have no money and no connections. Is any of this open to me?",
+     "a": "The programme that changed my life cost me nothing and I applied to it myself, off an embassy webpage, at sixteen. Nobody nominated me. That is the part I want you to hear.",
+     "concerns": [
+      "afford",
+      "exists"
+     ],
+     "esc": false
+    },
+    {
+     "q": "Does leadership actually matter or is it a tiebreaker?",
+     "a": "It is the difference between an application that lists your grades and one that shows what you did with them. Do one thing seriously rather than nine things thinly. Nine things thinly is visible.",
+     "concerns": [
+      "good-enough"
+     ],
+     "esc": false
+    }
+   ],
+   "dyk": {
+    "t": "The Youth Ambassadors Program with the Caribbean is a fully funded three week civic leadership exchange in the United States for students aged 15 to 18, and Guyana is a participating country.",
+    "s": [
+     "U.S. Embassy, Youth Ambassadors Program with the Caribbean"
+    ],
+    "v": "2026-08-11"
+   },
+   "archetype": "The Gladiator"
+  },
+  {
+   "id": "m57",
+   "name": "Dev Chandrapaul",
+   "mono": "Degree paid for, first job chosen for him",
+   "stage": [
+    "form4",
+    "form5",
+    "lowersixth",
+    "postcape"
+   ],
+   "dim": "C",
+   "code": "CI",
+   "buckets": [
+    "Engineering",
+    "Public Service & Government"
+   ],
+   "routeType": "scholarship",
+   "region": 3,
+   "concerns": [
+    "afford",
+    "earn"
+   ],
+   "situations": [
+    "bond",
+    "cost"
+   ],
+   "moments": {
+    "form4": "Maths, Physics, Chemistry, Technical Drawing. He was clear early, which he now knows is uncommon and mostly luck.",
+    "postcape": "A government scholarship: tuition, allowance, accommodation. In exchange he owed the public service a fixed number of years in a posting he did not choose."
+   },
+   "outcome": "Public sector engineer with two years of bond left",
+   "fork": null,
+   "wb": false,
+   "qs": [
+    {
+     "q": "Is a bonded scholarship worth it?",
+     "a": "It was for me and it is not free. Somebody paid for my degree and the price is that I do not pick my first job. Read the agreement. Ask exactly how many years, exactly where you could be sent, and what happens if you leave early, in writing, before you sign. The people I know who are bitter about theirs did not ask.",
+     "concerns": [
+      "afford",
+      "family"
+     ],
+     "esc": false
+    },
+    {
+     "q": "What if I want to leave?",
+     "a": "There is usually a repayment figure. Find out what it is on the day you sign, not the day you want to go.",
+     "concerns": [
+      "wrong-choice"
+     ],
+     "esc": false
+    }
+   ],
+   "dyk": {
+    "t": "Ministry of Public Service scholarships provide tuition, allowances and accommodation depending on the award, and beneficiaries are contractually bonded, which also means a guaranteed public sector job on completion.",
+    "s": [
+     "Ministry of Public Service, Guyana, Scholarships"
+    ],
+    "v": "2026-08-11"
+   },
+   "archetype": "The Artisan"
+  },
+  {
+   "id": "m58",
+   "name": "Shevon Marks",
+   "mono": "Got in, could not pay, got there six years later",
+   "stage": [
+    "form5",
+    "uppersixth",
+    "postcape"
+   ],
+   "dim": "I",
+   "code": "IA",
+   "buckets": [
+    "Science & Medicine",
+    "Creative Industry"
+   ],
+   "routeType": "degree",
+   "region": 4,
+   "concerns": [
+    "afford",
+    "wrong-choice"
+   ],
+   "situations": [
+    "cost",
+    "aid-gap"
+   ],
+   "moments": {
+    "form5": "Strong grades, strong writing, and an unshakeable belief that she was leaving.",
+    "postcape": "She got in. The aid covered about half. There was no version of the arithmetic that worked and she spent a summer doing it anyway. Then UG, and a resentment that took a year to fade."
+   },
+   "outcome": "Research officer, completed a funded master's abroad at twenty four",
+   "fork": "abroad-or-stay",
+   "wb": false,
+   "qs": [
+    {
+     "q": "I got in and I cannot afford it. Is that it?",
+     "a": "No. It is a delay, and I know that sounds like something people say to be kind. I got there. The undergraduate degree I did not want is the reason my postgraduate application was good enough. The door does not close, it moves.",
+     "concerns": [
+      "afford",
+      "starting-late"
+     ],
+     "esc": false
+    },
+    {
+     "q": "What would you do differently?",
+     "a": "Apply to more institutions, including the unglamorous ones that fund generously. I applied to four places I had heard of.",
+     "concerns": [
+      "afford"
+     ],
+     "esc": false
+    }
+   ],
+   "dyk": {
+    "t": "The Fulbright Foreign Student Program in Guyana funds postgraduate study in the United States for up to 24 months, requires three recommendations of which at least two must be academic, and prefers applicants who have not already spent six months or longer in the United States.",
+    "s": [
+     "U.S. Embassy in Guyana, Fulbright Foreign Student Program"
+    ],
+    "v": "2026-08-11"
+   },
+   "archetype": "The Steward"
+  },
+  {
+   "id": "m59",
+   "name": "Priyanka Sukhram",
+   "mono": "Worked out the four year cost before choosing a country",
+   "stage": [
+    "lowersixth",
+    "uppersixth",
+    "postcape"
+   ],
+   "dim": "C",
+   "code": "CE",
+   "buckets": [
+    "Business & Entrepreneurship"
+   ],
+   "routeType": "abroad",
+   "region": 4,
+   "concerns": [
+    "afford",
+    "leaving"
+   ],
+   "situations": [
+    "cost",
+    "aid-gap"
+   ],
+   "moments": {
+    "form4": "She ran the tuck shop float at twelve and was fascinated that money behaved according to rules.",
+    "uppersixth": "Compared total cost across three countries, including flights home, rather than the tuition figure on the front page. The answer surprised her.",
+    "postcape": "Found out the aid application was an entire second application, with its own deadline and her parents' financial documents."
+   },
+   "outcome": "Third year finance and economics undergraduate in Canada",
+   "fork": "abroad-or-stay",
+   "wb": false,
+   "qs": [
+    {
+     "q": "I finished the application. Am I done?",
+     "a": "If you want money, no. There is usually a separate financial form with a separate deadline, wanting documents from your parents that take weeks to get. Start it the same week you start the application. People lose funding they qualified for by treating it as paperwork for the end.",
+     "concerns": [
+      "afford"
+     ],
+     "esc": false
+    },
+    {
+     "q": "How did you pick the country?",
+     "a": "Total cost over four years including flights home, not the tuition figure. Write it out.",
+     "concerns": [
+      "afford",
+      "leaving"
+     ],
+     "esc": false
+    }
+   ],
+   "dyk": {
+    "t": "Many United States institutions require the CSS Profile, a separate financial application with its own deadline and document requirements, before an international applicant can be considered for institutional need based aid.",
+    "s": [
+     "College Board, Paying for College"
+    ],
+    "v": "2026-08-11"
+   },
+   "archetype": "The Gladiator"
+  },
+  {
+   "id": "m60",
+   "name": "Joel Fraser",
+   "mono": "Lost his first four debates and stayed anyway",
+   "stage": [
+    "form1",
+    "form2",
+    "form3",
+    "form4",
+    "form5"
+   ],
+   "dim": "E",
+   "code": "ES",
+   "buckets": [
+    "Law & Humanities",
+    "Public Service & Government"
+   ],
+   "routeType": "degree",
+   "region": 4,
+   "concerns": [
+    "wrong-choice",
+    "no-idea"
+   ],
+   "situations": [
+    "no-clear-path",
+    "cost"
+   ],
+   "moments": {
+    "form1": "He argued with everybody and was praised for it by nobody.",
+    "form3": "School debating. He lost the first four rounds he was in and stayed, which he thinks is the only interesting fact about him.",
+    "form5": "English A, English B, Social Studies, Caribbean History, Geography, and a science because somebody sensible insisted."
+   },
+   "outcome": "Legal officer with a public agency, coaches a school debate team",
+   "fork": null,
+   "wb": false,
+   "qs": [
+    {
+     "q": "How do I know if I would like law?",
+     "a": "Go and argue a motion you did not choose in front of people who disagree with you, and see whether losing bothers you in an interesting way or a miserable way. That costs nothing and it is a better test than any careers talk.",
+     "concerns": [
+      "no-idea",
+      "wrong-choice"
+     ],
+     "esc": false
+    },
+    {
+     "q": "Do I have to go abroad for law?",
+     "a": "No, and I did not. Check the current entry requirements yourself, from the institution, this year. Half of what students repeat to each other is three years out of date.",
+     "concerns": [
+      "leaving",
+      "exists"
+     ],
+     "esc": false
+    }
+   ],
+   "dyk": {
+    "t": "Youth Parliament is run by the Parliament of Guyana and has operated for over a decade, recognising alumni across four categories: Leadership Excellence, Community Impact, Advocacy Champion and Innovative Solutions.",
+    "s": [
+     "Opportunities.md, Category 5"
+    ],
+    "v": "2026-08-11"
+   },
+   "archetype": "The Advocate"
+  },
+  {
+   "id": "m61",
+   "name": "Nalini Persaud",
+   "mono": "Never studied in Georgetown for a single term",
+   "stage": [
+    "form1",
+    "form2",
+    "form3",
+    "form4",
+    "form5"
+   ],
+   "dim": "I",
+   "code": "IR",
+   "buckets": [
+    "Agriculture",
+    "Science & Medicine"
+   ],
+   "routeType": "degree",
+   "region": 2,
+   "concerns": [
+    "good-enough",
+    "leaving",
+    "exists"
+   ],
+   "situations": [
+    "cost"
+   ],
+   "moments": {
+    "form1": "She had been told, in a general way nobody meant unkindly, that the serious students were in Georgetown.",
+    "form4": "A girl from her own school topped the entire Caribbean. The year after, her school was named CXC School of the Year. The story she had been told about herself stopped being true.",
+    "postcsec": "CAPE sciences locally, then UG, then agricultural research."
+   },
+   "outcome": "Research officer on rice varieties, Region 2",
+   "fork": null,
+   "wb": false,
+   "qs": [
+    {
+     "q": "My school is not one of the big schools. Am I already behind?",
+     "a": "The overall top CSEC candidate in the entire Caribbean came out of Anna Regina Secondary. Not Georgetown. Whatever you have been told about which building you have to be sitting in, the results say otherwise.",
+     "concerns": [
+      "good-enough",
+      "leaving"
+     ],
+     "esc": false
+    }
+   ],
+   "dyk": {
+    "t": "Regional CXC top awards have gone to students from Anna Regina Secondary on the Essequibo Coast, New Amsterdam Secondary, the ISA Islamic School and Saraswati Vidya Niketan alongside Queen's College, and Anna Regina Secondary has been named CXC School of the Year.",
+    "s": [
+     "CXC Regional Top Awards announcements"
+    ],
+    "v": "2026-08-11"
+   },
+   "archetype": "The Steward"
+  },
+  {
+   "id": "m62",
+   "name": "Kevin Alleyne",
+   "mono": "Learned to code on a phone in Linden",
+   "stage": [
+    "form1",
+    "form2",
+    "form4",
+    "form5"
+   ],
+   "dim": "I",
+   "code": "IE",
+   "buckets": [
+    "Technology",
+    "Education"
+   ],
+   "routeType": "degree",
+   "region": 10,
+   "concerns": [
+    "exists",
+    "good-enough",
+    "leaving"
+   ],
+   "situations": [
+    "cost",
+    "no-clear-path"
+   ],
+   "moments": {
+    "form1": "Linden. One computer lab, booked solid, so he learned to code on a phone.",
+    "form4": "Started a Saturday coding club for younger students mostly because he wanted somewhere to be that had a working machine.",
+    "form5": "Nine students in a borrowed room. It is the reason he had anything to write about."
+   },
+   "outcome": "Software engineer working remotely from Linden, still runs the club",
+   "fork": null,
+   "wb": false,
+   "qs": [
+    {
+     "q": "I have nothing impressive to put on an application.",
+     "a": "Neither did I, so I made something. Nine people in a room I had to ask permission to use. You do not need a budget or a title. You need to do the thing every Saturday for two years, and almost nobody does, which is exactly why it counts.",
+     "concerns": [
+      "good-enough"
+     ],
+     "esc": false
+    },
+    {
+     "q": "Do I have to leave Linden?",
+     "a": "I studied in Georgetown and I work remotely from Linden now. Test whether you actually need to move or whether you have just been told you do.",
+     "concerns": [
+      "leaving"
+     ],
+     "esc": false
+    }
+   ],
+   "dyk": {
+    "t": "The Caribbean STEM Olympiads accept independent competitors not affiliated with any school, so a student whose school will not organise entry can register directly. For the Coding Olympiad, team members may be in different locations or countries.",
+    "s": [
+     "Opportunities.md, Caribbean STEM Olympiads"
+    ],
+    "v": "2026-08-11"
+   },
+   "archetype": "The Steward"
+  },
+  {
+   "id": "m63",
+   "name": "Marissa Ram",
+   "mono": "Her whole cohort left. She chose to stay",
+   "stage": [
+    "form5",
+    "lowersixth",
+    "uppersixth",
+    "postcape"
+   ],
+   "dim": "S",
+   "code": "SI",
+   "buckets": [
+    "Science & Medicine",
+    "Education"
+   ],
+   "routeType": "degree",
+   "region": 4,
+   "concerns": [
+    "leaving",
+    "wrong-choice",
+    "afford"
+   ],
+   "situations": [
+    "cost"
+   ],
+   "moments": {
+    "form5": "Everyone around her was applying abroad and she assumed she would too, without examining why.",
+    "lowersixth": "She worked out what she actually wanted, which was to practise here, with people from here. Nothing about that required a foreign degree.",
+    "postcape": "UG, then a local postgraduate route. Her whole cohort of friends left."
+   },
+   "outcome": "Clinical psychologist in Georgetown, eight years in, no debt",
+   "fork": "abroad-or-stay",
+   "wb": false,
+   "qs": [
+    {
+     "q": "Am I settling if I stay?",
+     "a": "I have been asked that kindly and unkindly and it is the wrong question. I am eight years into a career I chose, in the country I wanted to work in, with no debt. Ask what you want your life to look like at thirty, then ask which route gets there. Sometimes the answer is leaving. Often it is not.",
+     "concerns": [
+      "leaving",
+      "wrong-choice"
+     ],
+     "esc": false
+    },
+    {
+     "q": "Will people think less of me?",
+     "a": "Some will, for about a year, and then everyone is just working.",
+     "concerns": [
+      "leaving"
+     ],
+     "esc": false
+    }
+   ],
+   "dyk": {
+    "t": "Guyana's National TVET Policy and the wider tertiary strategy align local training with growth areas including climate resilient agriculture and low carbon technology, so local qualifications in these fields are a growth area rather than a fallback.",
+    "s": [
+     "CareersV3.md, Part 3"
+    ],
+    "v": "2026-08-11"
+   },
+   "archetype": "The Steward"
+  },
+  {
+   "id": "m64",
+   "name": "Omar Bacchus",
+   "mono": "Left school at seventeen, started a degree at twenty four",
+   "stage": [
+    "form5",
+    "out"
+   ],
+   "dim": "C",
+   "code": "CE",
+   "buckets": [
+    "Business & Entrepreneurship",
+    "Technology"
+   ],
+   "routeType": "none-needed",
+   "region": 6,
+   "concerns": [
+    "earn",
+    "starting-late",
+    "afford"
+   ],
+   "situations": [
+    "earn-soon",
+    "cost",
+    "left-school"
+   ],
+   "moments": {
+    "form5": "Five subjects, then straight to work at seventeen because there was no other option available to him that year.",
+    "out": "At twenty two he had a job, no qualification, and had privately decided the education part of his life was finished. At twenty four he found out the government funds online degrees, with no age limit and no need to stop working."
+   },
+   "outcome": "Logistics manager, final year of a funded online degree",
+   "fork": null,
+   "wb": false,
+   "qs": [
+    {
+     "q": "I already left school. Is it too late?",
+     "a": "I started a degree at twenty four while working full time and I am two years off finishing. It is open from eighteen with no upper limit, some routes need no prior qualification at all, and it is online, so I did not move or resign. The only real cost was my evenings.",
+     "concerns": [
+      "starting-late",
+      "earn"
+     ],
+     "esc": false
+    },
+    {
+     "q": "Is an online degree taken seriously?",
+     "a": "It is delivered by the partner university and the certificate says so. My employer paid attention to the fact that I did it while working.",
+     "concerns": [
+      "good-enough"
+     ],
+     "esc": false
+    }
+   ],
+   "dyk": {
+    "t": "GOAL is a Government of Guyana scholarship programme delivering fully funded online study through partner institutions, 28 partners in the 2026 cycle, open to resident Guyanese aged 18 and over, with no prior formal education required for certificate level and GROW foundation programmes.",
+    "s": [
+     "GOAL programme information, Ministry of Education and Ministry of Public Service"
+    ],
+    "v": "2026-08-11"
+   },
+   "archetype": "The Gladiator"
+  },
+  {
+   "id": "m65",
+   "name": "Tessa Yhap",
+   "mono": "Recruited for running, employed because of a degree",
+   "stage": [
+    "form3",
+    "form4",
+    "form5",
+    "postcsec"
+   ],
+   "dim": "R",
+   "code": "RS",
+   "buckets": [
+    "Sports",
+    "Science & Medicine"
+   ],
+   "routeType": "selection",
+   "region": 4,
+   "concerns": [
+    "earn",
+    "wrong-choice",
+    "good-enough"
+   ],
+   "situations": [
+    "selection-route",
+    "cost"
+   ],
+   "moments": {
+    "form3": "She was fast, and being fast was her entire identity, which she now sees was fragile.",
+    "form4": "Kept her grades up while training. The grades are what made the sports route possible, which is the opposite of what she believed then.",
+    "postcsec": "Competed at Nationals in March, fed into regional qualification, and a foreign programme found her in the stadium. A knee injury in her second year ended the competing. The degree did not end."
+   },
+   "outcome": "Sports scientist with a national association",
+   "fork": "sport-or-subjects",
+   "wb": false,
+   "qs": [
+    {
+     "q": "Should I bet on sport?",
+     "a": "Bet on it and write your subjects. I was recruited for running and I am employed because of a degree. My knee decided the first part of my career and I had no vote. The subjects were the part I controlled.",
+     "concerns": [
+      "wrong-choice",
+      "earn"
+     ],
+     "esc": false
+    },
+    {
+     "q": "Does the timing of competitions matter?",
+     "a": "More than you would think. Find out when the qualifying window is for your sport this year, because the calendar quietly decides who gets seen.",
+     "concerns": [
+      "exists"
+     ],
+     "esc": false
+    }
+   ],
+   "dyk": {
+    "t": "The National Secondary Schools Track and Field Championships moved from November to March deliberately, so athletes would stop missing qualification windows for CARIFTA and other international events. Regional qualification rounds are the actual entry point, not the national event.",
+    "s": [
+     "Opportunities.md, Category 4"
+    ],
+    "v": "2026-08-11"
+   },
+   "archetype": "The Gladiator"
+  },
+  {
+   "id": "m66",
+   "name": "Devon Sears",
+   "mono": "A deliberate year out, then a better application",
+   "stage": [
+    "uppersixth",
+    "postcape"
+   ],
+   "dim": "E",
+   "code": "EC",
+   "buckets": [
+    "Business & Entrepreneurship",
+    "Public Service & Government"
+   ],
+   "routeType": "abroad",
+   "region": 4,
+   "concerns": [
+    "afford",
+    "starting-late",
+    "no-idea"
+   ],
+   "situations": [
+    "cost",
+    "aid-gap"
+   ],
+   "moments": {
+    "form5": "Good grades, no plan, and a strong feeling that he was supposed to have a plan already.",
+    "postcape": "Applied to five places in a rush, got into two, could afford neither, and told nobody for a month. Spent the year out rewriting the essays and adding eight institutions that fund well and that nobody at his school had heard of."
+   },
+   "outcome": "Business analyst, graduated abroad a year later than his friends",
+   "fork": "abroad-or-stay",
+   "wb": false,
+   "qs": [
+    {
+     "q": "I did not get in or I cannot afford it. Should I just take what I can get?",
+     "a": "A deliberate year is not a lost year. My second application was the first one with the holes fixed. What I would not do is repeat the same application and hope.",
+     "concerns": [
+      "starting-late",
+      "afford"
+     ],
+     "esc": false
+    },
+    {
+     "q": "The application fees alone are too much.",
+     "a": "Ask for the waiver. Most institutions have one, your school counsellor confirms it, and I paid nothing to apply the second time. Not knowing that the first time cut my list down to five.",
+     "concerns": [
+      "afford"
+     ],
+     "esc": false
+    }
+   ],
+   "dyk": {
+    "t": "Many United States institutions accept the Common App or NACAC fee waiver from international applicants for whom the fee is a significant burden, confirmed by the student's school counsellor, and some consider waiver requests even from applicants who do not formally qualify.",
+    "s": [
+     "Georgetown University Office of Undergraduate Admissions"
+    ],
+    "v": "2026-08-11"
+   },
+   "archetype": "The Pioneer"
+  },
+  {
+   "id": "m67",
+   "name": "Anisa Khan",
+   "mono": "Turned down the foreign offer and does not regret it",
+   "stage": [
+    "lowersixth",
+    "uppersixth",
+    "postcape"
+   ],
+   "dim": "I",
+   "code": "IS",
+   "buckets": [
+    "Science & Medicine"
+   ],
+   "routeType": "degree",
+   "region": 3,
+   "concerns": [
+    "leaving",
+    "family",
+    "afford"
+   ],
+   "situations": [
+    "cost",
+    "top-performer",
+    "family-constraint"
+   ],
+   "moments": {
+    "uppersixth": "A full academic load across two years and about as well as it is possible to do. A foreign offer and a place at UG.",
+    "postcape": "Took UG. Partly cost, partly her mother's health, partly that clinical training here is training in the conditions she would actually be treating. She was quietly certain she had erred for two years, mostly because of how people reacted."
+   },
+   "outcome": "Medical doctor at a regional hospital",
+   "fork": "cape-or-straight-to-ug",
+   "wb": false,
+   "qs": [
+    {
+     "q": "I got in abroad and I do not think I should go. Am I mad?",
+     "a": "No, but be honest about which reason is yours. Cost is a real reason. Family is a real reason. Fear is a reason worth examining before you act on it. I had the first two and I am glad. If it is only the third, sit with it for a week before you decline anything.",
+     "concerns": [
+      "leaving",
+      "family",
+      "wrong-choice"
+     ],
+     "esc": false
+    },
+    {
+     "q": "What did the top award route actually require?",
+     "a": "Seven units at Grade One inside two years, including Caribbean Studies and Communication Studies. People forget those two are compulsory and lose eligibility on the subject they thought was a formality.",
+     "concerns": [
+      "good-enough"
+     ],
+     "esc": false
+    }
+   ],
+   "dyk": {
+    "t": "The CAPE Dennis Irvine Award for top overall candidate requires seven units at Grade One within a period not exceeding two years, and those must include Grade One in both Caribbean Studies and Communication Studies.",
+    "s": [
+     "CXC CAPE Regional Awards Criteria"
+    ],
+    "v": "2026-08-11"
+   },
+   "archetype": "The Steward"
+  },
+  {
+   "id": "m68",
+   "name": "Raymond Nurse",
+   "mono": "Failed a year abroad at nineteen, finished at twenty six",
+   "stage": [
+    "uppersixth",
+    "postcape",
+    "out"
+   ],
+   "dim": "R",
+   "code": "RI",
+   "buckets": [
+    "Technology",
+    "Business & Entrepreneurship"
+   ],
+   "routeType": "degree",
+   "region": 4,
+   "concerns": [
+    "wrong-choice",
+    "starting-late",
+    "leaving"
+   ],
+   "situations": [
+    "cost",
+    "left-school",
+    "no-clear-path"
+   ],
+   "moments": {
+    "form5": "Bright, unbothered, coasting, and told constantly that he had potential, which he heard as reassurance rather than a warning.",
+    "postcape": "A foreign university on a partial package at nineteen, five thousand kilometres from anyone who would notice, with nobody making him attend anything.",
+    "out": "Failed a year, could not renew the funding, came home at twenty one with no degree and considerable shame. Eighteen months of work he disliked. Then UG part time, finished at twenty six."
+   },
+   "outcome": "Data analyst with a private firm in Georgetown",
+   "fork": "abroad-or-stay",
+   "wb": false,
+   "qs": [
+    {
+     "q": "What if I go and it goes wrong?",
+     "a": "It went wrong for me and I am fine, and I want you to hear that from somebody it happened to rather than assume it is unsurvivable. What I did not have was anybody there. Before you go, find out what the institution actually does when a student is struggling, and find one person you can tell.",
+     "concerns": [
+      "leaving",
+      "wrong-choice"
+     ],
+     "esc": false
+    },
+    {
+     "q": "Do employers ask about the gap?",
+     "a": "Two have, in nine years. I say I started, it did not work, I finished later. That is the whole conversation.",
+     "concerns": [
+      "starting-late"
+     ],
+     "esc": false
+    }
+   ],
+   "dyk": {
+    "t": "GOAL and the University of Guyana both publish part time and flexible study routes, and CPCE publishes routes that articulate into UG degrees, so an interrupted qualification can usually be resumed rather than restarted.",
+    "s": [
+     "CareersV3.md"
+    ],
+    "v": "2026-08-11"
+   },
+   "archetype": "The Artisan"
+  },
+  {
+   "id": "m69",
+   "name": "Renaldo Persaud",
+   "mono": "Read the admission categories and found two doors",
+   "stage": [
+    "form5",
+    "postcsec",
+    "lowersixth"
+   ],
+   "dim": "I",
+   "code": "IS",
+   "buckets": [
+    "Science & Medicine"
+   ],
+   "routeType": "degree",
+   "region": 6,
+   "concerns": [
+    "wrong-choice",
+    "earn",
+    "good-enough"
+   ],
+   "situations": [
+    "no-clear-path",
+    "cost"
+   ],
+   "moments": {
+    "form5": "New Amsterdam. Sixteen subjects, about six of which he now says did nothing for him.",
+    "lowersixth": "One year of CAPE done and an offer to read Biology at UG. Everyone had an opinion and none of them had read the admission criteria. He read them: an approved tertiary science route was one of several published categories."
+   },
+   "outcome": "Doctor completing supervised internship, two years later than his friend",
+   "fork": "cape-or-straight-to-ug",
+   "wb": false,
+   "qs": [
+    {
+     "q": "CAPE Year Two or start the degree?",
+     "a": "Go and read the published admission categories for the exact programme you want, this year, yourself. There is more than one door and they are all listed. What I would not do is decide this on what somebody's cousin did in 2019.",
+     "concerns": [
+      "wrong-choice",
+      "earn"
+     ],
+     "esc": false
+    },
+    {
+     "q": "Did the longer route hurt me?",
+     "a": "It cost me two years and gained me a Biology degree I still use. Nobody has ever asked which category I entered through.",
+     "concerns": [
+      "starting-late"
+     ],
+     "esc": false
+    }
+   ],
+   "dyk": {
+    "t": "The UG MBBS admits through several separately published admission categories, including recognised CAPE and GCE science routes and approved tertiary science routes. The full published admission process controls, and a one line CSEC summary does not.",
+    "s": [
+     "CareersV3.md, Medical Doctor"
+    ],
+    "v": "2026-08-11"
+   },
+   "archetype": "The Steward"
+  },
+  {
+   "id": "m70",
+   "name": "Amara Wong",
+   "mono": "Asked two lecturers if she could help with anything",
+   "stage": [
+    "postcsec",
+    "postcape"
+   ],
+   "dim": "I",
+   "code": "IA",
+   "buckets": [
+    "Science & Medicine",
+    "Education"
+   ],
+   "routeType": "degree",
+   "region": 4,
+   "concerns": [
+    "no-idea",
+    "wrong-choice"
+   ],
+   "situations": [
+    "no-clear-path",
+    "cost"
+   ],
+   "moments": {
+    "postcape": "Second year of Biology, told she would specialise in third year, and paralysed by it. She wanted neurology or neuropsychology and could not find anybody who could explain the difference in practical terms.",
+    "out": "What resolved it was not a decision. She emailed two lecturers, asked to help with anything, and spent a year on unglamorous parts of somebody else's project."
+   },
+   "outcome": "Research assistant applying for postgraduate neuroscience",
+   "fork": null,
+   "wb": false,
+   "qs": [
+    {
+     "q": "How do I choose a specialisation when I have never done the work?",
+     "a": "Go and do the work, in the smallest possible version, before you choose. Ask a lecturer if you can help with something. Most students never ask and the ones who ask usually get in.",
+     "concerns": [
+      "no-idea",
+      "wrong-choice"
+     ],
+     "esc": false
+    },
+    {
+     "q": "Should I exit early with the associate qualification or finish the degree?",
+     "a": "That depends entirely on what the programme you are aiming at accepts, and those are two different admission categories with different competitiveness. Ask the programme, not the internet. I nearly exited early on a rumour.",
+     "concerns": [
+      "wrong-choice",
+      "earn"
+     ],
+     "esc": false
+    }
+   ],
+   "dyk": {
+    "t": "Psychologist and Clinical Psychologist are listed professions under the Allied Health Professions Council, and clinical practice normally requires training beyond an undergraduate degree, so the degree is a stage in the route rather than the whole route.",
+    "s": [
+     "CareersV3.md, Psychologist"
+    ],
+    "v": "2026-08-11"
+   },
+   "archetype": "The Steward"
+  },
+  {
+   "id": "m71",
+   "name": "Ravi Doobay",
+   "mono": "Chose dentistry over medicine after one afternoon watching",
+   "stage": [
+    "form1",
+    "form4",
+    "form5",
+    "lowersixth"
+   ],
+   "dim": "I",
+   "code": "IR",
+   "buckets": [
+    "Science & Medicine"
+   ],
+   "routeType": "degree",
+   "region": 3,
+   "concerns": [
+    "wrong-choice",
+    "good-enough"
+   ],
+   "situations": [
+    "cost",
+    "top-performer"
+   ],
+   "moments": {
+    "form1": "He was good with his hands and good at science and had been told those were two different kinds of person.",
+    "form5": "Biology, Chemistry, Physics, Maths, English A. He wanted medicine because that was the word available to him.",
+    "lowersixth": "A visit to a dental clinic where he watched somebody do precise physical work on a person for forty minutes. He wanted that, not the ward."
+   },
+   "outcome": "Dentist in private practice, West Demerara",
+   "fork": "cape-or-straight-to-ug",
+   "wb": false,
+   "qs": [
+    {
+     "q": "Is dentistry the backup for people who cannot do medicine?",
+     "a": "It is a different job that happens to sit near medicine on a form. I chose it over medicine. And the entry requirements are their own thing: dentistry, medicine, law and engineering at UG all publish programme specific rules you cannot work out from five subjects.",
+     "concerns": [
+      "good-enough",
+      "wrong-choice"
+     ],
+     "esc": false
+    },
+    {
+     "q": "How do I know if I would like it?",
+     "a": "Ask to observe for an afternoon. Half the people who think they want medicine want the version of it they have seen on television, which is nobody's actual job.",
+     "concerns": [
+      "no-idea"
+     ],
+     "esc": false
+    }
+   ],
+   "dyk": {
+    "t": "UG medicine, dentistry, law and engineering each carry programme specific science, CAPE, grade or route rules. These must never be inferred from the general five CSEC subjects entry summary, and the live programme page controls.",
+    "s": [
+     "CareersV3.md, Part 2 pathway gates"
+    ],
+    "v": "2026-08-11"
+   },
+   "archetype": "The Steward"
+  },
+  {
+   "id": "m72",
+   "name": "Sarah Ann Bacchus",
+   "mono": "Left nursing over night rotations her parents would not allow",
+   "stage": [
+    "form5",
+    "postcsec",
+    "out"
+   ],
+   "dim": "S",
+   "code": "SC",
+   "buckets": [
+    "Science & Medicine",
+    "Public Service & Government"
+   ],
+   "routeType": "diploma",
+   "region": 4,
+   "concerns": [
+    "family",
+    "good-enough",
+    "no-idea"
+   ],
+   "situations": [
+    "no-clear-path",
+    "family-constraint",
+    "earn-soon"
+   ],
+   "moments": {
+    "form5": "Sciences, and a grade spread she states flatly: two Ones, a Two, a Three, a Four and a Five. Good enough for a lot of things and not good enough for medicine, the only thing she had ever named.",
+    "postcsec": "Started a nursing programme at eighteen and left it, because it required night rotations at the hospital and her parents would not have her travelling late.",
+    "out": "Nine months of feeling finished at eighteen. She considered resitting CSEC in business subjects mostly because she could not think of anything else."
+   },
+   "outcome": "Medex at a health centre, Region 4",
+   "fork": null,
+   "wb": false,
+   "qs": [
+    {
+     "q": "My family will not let me do the thing the programme requires. Is that it?",
+     "a": "It was not for me, and the constraint was real, not an excuse. What I did wrong was treat one programme's timetable as the whole health sector. There are routes in that field with different hours, different placements and different entry rules, and I found one.",
+     "concerns": [
+      "family"
+     ],
+     "esc": false
+    },
+    {
+     "q": "My grades are a mix of Ones and Fours. Am I finished?",
+     "a": "Health training routes range from two or three passes for some support roles up to five including English, Maths and a science for professional nursing. That is a range, not a wall. Find the specific notice and read what it asks for.",
+     "concerns": [
+      "good-enough"
+     ],
+     "esc": false
+    }
+   ],
+   "dyk": {
+    "t": "Ministry of Health training programmes range from two or three CSEC passes for some support routes up to five including English, Mathematics and a science for professional nursing and Medex alternatives. Nurses, midwives and nursing assistants must register with the Nurses and Midwives Council, Guyana before practising.",
+    "s": [
+     "CareersV3.md, Nurse / Midwife and Part 2 pathway gates"
+    ],
+    "v": "2026-08-11"
+   },
+   "archetype": "The Steward"
+  },
+  {
+   "id": "m73",
+   "name": "Tanya Alfred",
+   "mono": "The vet for an area that did not have one",
+   "stage": [
+    "form1",
+    "form4",
+    "form5",
+    "postcsec"
+   ],
+   "dim": "I",
+   "code": "IR",
+   "buckets": [
+    "Science & Medicine",
+    "Agriculture"
+   ],
+   "routeType": "abroad",
+   "region": 9,
+   "concerns": [
+    "exists",
+    "leaving",
+    "afford"
+   ],
+   "situations": [
+    "relocation",
+    "cost"
+   ],
+   "moments": {
+    "form1": "Rupununi. Livestock everywhere, and the nearest vet a serious journey away, which is the entire reason she does this.",
+    "form5": "Biology, Chemistry, Agricultural Science, Maths, English A.",
+    "postcsec": "She assumed GSA was the route to becoming a vet. It is not, and finding that out early saved her two years."
+   },
+   "outcome": "Veterinarian working across Region 9",
+   "fork": "abroad-or-stay",
+   "wb": false,
+   "qs": [
+    {
+     "q": "Can I train as a vet in Guyana?",
+     "a": "Not currently, as far as I could establish, and I checked hard. It is a regional or international study pathway. Find that out in Form 4, not after you have enrolled in something adjacent.",
+     "concerns": [
+      "exists",
+      "leaving"
+     ],
+     "esc": false
+    },
+    {
+     "q": "Is it worth going away for?",
+     "a": "I am the vet for an area that did not have one. Yes. But go with the funding arranged and a plan for coming back, because the coming back is the part people improvise badly.",
+     "concerns": [
+      "leaving",
+      "afford"
+     ],
+     "esc": false
+    }
+   ],
+   "dyk": {
+    "t": "No current local veterinary degree was confirmed in Guyana, so veterinary medicine is presently a regional or international study pathway. Guyana School of Agriculture certificates and diplomas in animal or livestock production support agricultural work but do not qualify someone as a veterinarian.",
+    "s": [
+     "CareersV3.md, Veterinarian"
+    ],
+    "v": "2026-08-11"
+   },
+   "archetype": "The Steward"
+  },
+  {
+   "id": "m74",
+   "name": "Dwight Fredericks",
+   "mono": "Licences, not a degree, paid in instalments while working",
+   "stage": [
+    "form1",
+    "form4",
+    "form5",
+    "postcsec",
+    "out"
+   ],
+   "dim": "R",
+   "code": "RI",
+   "buckets": [
+    "Engineering",
+    "Technology"
+   ],
+   "routeType": "certificate-route",
+   "region": 8,
+   "concerns": [
+    "exists",
+    "afford",
+    "earn"
+   ],
+   "situations": [
+    "cost",
+    "relocation",
+    "certificate-route",
+    "no-clear-path"
+   ],
+   "moments": {
+    "form1": "Mahdia. Aircraft were not a fantasy where he grew up, they were the transport, and he watched every one of them land.",
+    "form4": "Maths, Physics, English A, Technical Drawing, IT. He assumed you needed CAPE and a degree. Nobody told him otherwise for three years.",
+    "postcsec": "He was sixteen before he learned sixteen was the Student Pilot Licence age. Local flight training, then Private, Commercial, Instrument and Multi Engine, paid in instalments across four years while working."
+   },
+   "outcome": "Commercial pilot flying interior routes",
+   "fork": "degree-or-certificate-first",
+   "wb": false,
+   "qs": [
+    {
+     "q": "How do I actually become a pilot?",
+     "a": "Licences, not a degree. There is a minimum age of sixteen for a Student Pilot Licence and eighteen for a Private Pilot Licence, plus medical, knowledge, experience and skill requirements at each stage. Go and get the current fee schedule and medical requirements from the school directly, because that is the real answer to whether you can afford it.",
+     "concerns": [
+      "exists",
+      "afford"
+     ],
+     "esc": false
+    },
+    {
+     "q": "Can I train abroad instead?",
+     "a": "You can, and then you have to validate or convert the licence under current rules, which people find out about too late. Ask before you pay anybody.",
+     "concerns": [
+      "leaving",
+      "afford"
+     ],
+     "esc": false
+    }
+   ],
+   "dyk": {
+    "t": "The GCAA publishes a minimum age of 16 for a Student Pilot Licence and 18 for a Private Pilot Licence, with medical, knowledge, experience and skill requirements. Air Services Limited says its GCAA approved Flight Training School has operated since 2003, providing Private, Commercial, Instrument Rating and Multi Engine training. Foreign licence validation must follow current GCAA rules.",
+    "s": [
+     "CareersV3.md, Pilot"
+    ],
+    "v": "2026-08-11"
+   },
+   "archetype": "The Artisan"
+  },
+  {
+   "id": "m75",
+   "name": "Curtis Bacchus",
+   "mono": "Took the associate degree, then the bachelor's",
+   "stage": [
+    "form4",
+    "form5",
+    "postcsec",
+    "postcape"
+   ],
+   "dim": "R",
+   "code": "RI",
+   "buckets": [
+    "Engineering",
+    "Science & Medicine",
+    "Technology"
+   ],
+   "routeType": "degree",
+   "region": 4,
+   "concerns": [
+    "good-enough",
+    "earn",
+    "afford"
+   ],
+   "situations": [
+    "certificate-route",
+    "cost",
+    "earn-soon"
+   ],
+   "moments": {
+    "form4": "Maths, Additional Maths, Physics, Chemistry, Technical Drawing, English A, IT, chosen to protect the prerequisites before choosing the destination.",
+    "postcsec": "He did not have the profile for direct bachelor's entry and he did have a clear plan. The associate qualification first, then the bachelor's, which builds on it."
+   },
+   "outcome": "Petroleum engineer with a contractor",
+   "fork": "degree-or-certificate-first",
+   "wb": false,
+   "qs": [
+    {
+     "q": "Can I get into petroleum engineering without a perfect profile?",
+     "a": "There is an associate qualification and the bachelor's principal route builds on it. That is a published staircase, not a loophole. It is also a separate pathway from the Geology degree and people confuse the two constantly.",
+     "concerns": [
+      "good-enough"
+     ],
+     "esc": false
+    },
+    {
+     "q": "Is it the best paying engineering field?",
+     "a": "It pays well here right now and that is a sentence about this decade, not about your life. The operators change. Pick something you can stand doing for thirty years and let the pay be a consequence.",
+     "concerns": [
+      "earn"
+     ],
+     "esc": false
+    }
+   ],
+   "dyk": {
+    "t": "UG currently separates an Associate of Science in Petroleum Engineering from the Bachelor of Applied Science in Petroleum Engineering, and the bachelor's principal route builds on the relevant associate qualification. It is a separate pathway from the Geology degree.",
+    "s": [
+     "CareersV3.md, Petroleum Engineer"
+    ],
+    "v": "2026-08-11"
+   },
+   "archetype": "The Artisan"
+  },
+  {
+   "id": "m76",
+   "name": "Fazal Rahaman",
+   "mono": "Stopped looking for the course title, looked at the modules",
+   "stage": [
+    "form4",
+    "form5",
+    "postcsec"
+   ],
+   "dim": "R",
+   "code": "RI",
+   "buckets": [
+    "Technology",
+    "Engineering",
+    "Trade & TVET"
+   ],
+   "routeType": "certificate-route",
+   "region": 6,
+   "concerns": [
+    "exists",
+    "earn"
+   ],
+   "situations": [
+    "no-clear-path",
+    "certificate-route",
+    "earn-soon"
+   ],
+   "moments": {
+    "form4": "He built things that moved. The word he found online was mechatronics, and then he could not find anywhere in Guyana that taught exactly that.",
+    "postcsec": "What existed were electrical, electronic, mechanical, industrial, instrumentation and computer science routes, each covering part of it. He is assembling the rest deliberately instead of waiting for a programme with the right name."
+   },
+   "outcome": "Instrumentation technician studying part time",
+   "fork": "degree-or-certificate-first",
+   "wb": false,
+   "qs": [
+    {
+     "q": "I want robotics or mechatronics and nobody here teaches it. What now?",
+     "a": "Stop looking for the title and look at the modules. Ask any programme two questions: what equipment will I actually put my hands on, and what are the module names. A course called Mechatronics with no lab is worse than an instrumentation course with one.",
+     "concerns": [
+      "exists"
+     ],
+     "esc": false
+    },
+    {
+     "q": "What jobs exist while I am building this up?",
+     "a": "Instrumentation trainee, automation assistant, industrial maintenance technician, controls support trainee. Those are real entry titles and they pay while you learn.",
+     "concerns": [
+      "earn"
+     ],
+     "esc": false
+    }
+   ],
+   "dyk": {
+    "t": "A single current local programme covering the full mechatronics pathway was not confirmed in Guyana. Electrical, electronic, mechanical, industrial, instrumentation and computer science routes can each provide part of the foundation, so modules and equipment exposure must be verified programme by programme.",
+    "s": [
+     "CareersV3.md, Robotics / Automation / Mechatronics Technician"
+    ],
+    "v": "2026-08-11"
+   },
+   "archetype": "The Artisan"
+  },
+  {
+   "id": "m77",
+   "name": "Shanice Peters",
+   "mono": "Arts stream, wanted engineering, resat two subjects",
+   "stage": [
+    "form3",
+    "form5",
+    "postcsec"
+   ],
+   "dim": "R",
+   "code": "RI",
+   "buckets": [
+    "Engineering",
+    "Law & Humanities"
+   ],
+   "routeType": "degree",
+   "region": 4,
+   "concerns": [
+    "wrong-choice",
+    "good-enough",
+    "starting-late"
+   ],
+   "situations": [
+    "wrong-stream",
+    "cost",
+    "no-clear-path"
+   ],
+   "moments": {
+    "form3": "Streamed into arts. She did not fight it, because at thirteen she did not know a stream was advice rather than a verdict.",
+    "form5": "One science subject, no technical subject, good grades in everything she wrote. Then she decided she wanted engineering.",
+    "postcsec": "Resat Physics and Additional Mathematics privately alongside a job. Two subjects, one year, far less than she had feared."
+   },
+   "outcome": "Second year civil engineering student, works in a drawing office",
+   "fork": null,
+   "wb": false,
+   "qs": [
+    {
+     "q": "My subjects do not match the career I want. Have I ruined it?",
+     "a": "No, you have added a year. I resat two subjects while working and that was the whole repair. What people do instead is abandon the goal, which costs a great deal more than a year.",
+     "concerns": [
+      "wrong-choice",
+      "starting-late"
+     ],
+     "esc": false
+    },
+    {
+     "q": "Was the arts stream a waste?",
+     "a": "The stream is advice, not an admission rule. And no. I write the reports on my team and nobody else wants to.",
+     "concerns": [
+      "wrong-choice"
+     ],
+     "esc": false
+    }
+   ],
+   "dyk": {
+    "t": "The Ministry's own guidance is that science stream or business stream is advice, not a substitute for a named admission rule. The controlling requirement is the programme page for the course you want, and subjects can be resat privately at a later sitting.",
+    "s": [
+     "CareersV3.md, Form 3 subject choice guidance"
+    ],
+    "v": "2026-08-11"
+   },
+   "archetype": "The Artisan"
+  },
+  {
+   "id": "m78",
+   "name": "Odessa Marks",
+   "mono": "Lost a year applying to the wrong agency",
+   "stage": [
+    "form5",
+    "postcsec",
+    "out"
+   ],
+   "dim": "C",
+   "code": "CS",
+   "buckets": [
+    "Public Service & Government",
+    "Law & Humanities"
+   ],
+   "routeType": "certificate-route",
+   "region": 1,
+   "concerns": [
+    "no-idea",
+    "exists",
+    "earn"
+   ],
+   "situations": [
+    "wrong-stream",
+    "no-clear-path",
+    "relocation",
+    "earn-soon"
+   ],
+   "moments": {
+    "form5": "Mabaruma. Tech stream and none of the building subjects, which left her with what she calls a mini arts certificate and a lot of confusion.",
+    "postcsec": "She wanted to work at a border checking documents and had no idea which agency that even was. She applied to the Revenue Authority for a year, because everybody around her said customs and immigration as one word."
+   },
+   "outcome": "Immigration officer, Region 1",
+   "fork": null,
+   "wb": false,
+   "qs": [
+    {
+     "q": "I do not know which agency does the job I want.",
+     "a": "Find the agency before you find the qualification. I lost a year on the wrong one. They are different employers with different notices.",
+     "concerns": [
+      "no-idea",
+      "exists"
+     ],
+     "esc": false
+    },
+    {
+     "q": "My certificate is a mixture with no clear direction. Is that fatal?",
+     "a": "English, Social Studies, Geography and IT are directly relevant to what I do. A mixed certificate is only a problem if you are aiming at something with hard science prerequisites. Show me the vacancy and I will tell you whether yours works.",
+     "concerns": [
+      "good-enough",
+      "wrong-choice"
+     ],
+     "esc": false
+    }
+   ],
+   "dyk": {
+    "t": "Immigration is not a GRA occupation. It falls under the Ministry of Home Affairs and the Guyana Police Force's immigration function, and recruitment rules depend on the relevant Police or Home Affairs vacancy.",
+    "s": [
+     "CareersV3.md, Immigration Officer"
+    ],
+    "v": "2026-08-11"
+   },
+   "archetype": "The Advocate"
+  },
+  {
+   "id": "m79",
+   "name": "Alvin Sooknanan",
+   "mono": "Three qualifications stacked, each affordable on its own",
+   "stage": [
+    "form5",
+    "postcsec",
+    "out"
+   ],
+   "dim": "R",
+   "code": "RC",
+   "buckets": [
+    "Trade & TVET",
+    "Engineering",
+    "Creative Industry"
+   ],
+   "routeType": "certificate-route",
+   "region": 5,
+   "concerns": [
+    "afford",
+    "earn",
+    "starting-late"
+   ],
+   "situations": [
+    "certificate-route",
+    "cost",
+    "earn-soon",
+    "no-work-experience"
+   ],
+   "moments": {
+    "form5": "Technical Drawing, Maths, English A, IT, Physics. He drew constantly and had no idea it was a job title.",
+    "postcsec": "A technician certificate in architectural drawing, which he thought was the ceiling. Then an associate degree and a funded online diploma running at the same time, each affordable alone and each counting toward the next."
+   },
+   "outcome": "Architectural technician trainee, eight months looking for a site placement",
+   "fork": "degree-or-certificate-first",
+   "wb": false,
+   "qs": [
+    {
+     "q": "Do I have to pick one qualification?",
+     "a": "I have a technician certificate, an associate degree in progress and a funded online diploma running alongside. That is a normal way to do this here and nobody explained it to me.",
+     "concerns": [
+      "afford",
+      "starting-late"
+     ],
+     "esc": false
+    },
+    {
+     "q": "How do I get the practical experience?",
+     "a": "Portfolio first. Twelve drawings, printed, in a folder, then walk into design offices and ask for a named person. Two of my three responses came that way. None came from an email address on a website.",
+     "concerns": [
+      "earn"
+     ],
+     "esc": false
+    }
+   ],
+   "dyk": {
+    "t": "UG lists an Associate in Architectural and Building Technology, and technical drafting or CAD study plus supervised design office work is a recognised route to CAD technician, drawing office assistant, architectural technician and BIM trainee roles. A secondary school AutoCAD lab opened in Region Five in 2026.",
+    "s": [
+     "CareersV3.md, Draughtsperson"
+    ],
+    "v": "2026-08-11"
+   },
+   "archetype": "The Artisan"
+  },
+  {
+   "id": "m80",
+   "name": "Nadira Khan",
+   "mono": "Eleven approaches, two offers, one eight week placement",
+   "stage": [
+    "postcape",
+    "out"
+   ],
+   "dim": "S",
+   "code": "SE",
+   "buckets": [
+    "Business & Entrepreneurship",
+    "Public Service & Government"
+   ],
+   "routeType": "degree",
+   "region": 4,
+   "concerns": [
+    "earn",
+    "good-enough",
+    "starting-late"
+   ],
+   "situations": [
+    "no-work-experience",
+    "no-clear-path",
+    "cost"
+   ],
+   "moments": {
+    "postcape": "Third year of university, good grades, zero work experience, and a growing panic that she had done the whole degree wrong.",
+    "out": "She had assumed internships were advertised and she was failing to find the list. A few are. Most are arranged by a student who asked a specific person a specific question."
+   },
+   "outcome": "Human resources officer with a private firm",
+   "fork": null,
+   "wb": false,
+   "qs": [
+    {
+     "q": "Where do I find internships?",
+     "a": "Mostly you do not find them, you propose them. Name the organisation, name a person, name the weeks, name what you will do. A vague request for any opportunity available gets nothing, and I sent four of those first.",
+     "concerns": [
+      "earn",
+      "good-enough"
+     ],
+     "esc": false
+    },
+    {
+     "q": "I am in third year with nothing. Am I too late?",
+     "a": "I was you. One eight week placement at twenty one is the entire reason I was employable at twenty two. It does not need to be prestigious or paid. It needs to be real, and to have somebody in it who will take your call later.",
+     "concerns": [
+      "starting-late"
+     ],
+     "esc": false
+    }
+   ],
+   "dyk": {
+    "t": "The National Job Bank is a live source for actual vacancy requirements, and CareersV3 recommends learning to write a one page student CV and requesting supervised workplace visits or job shadowing from as early as Form 4.",
+    "s": [
+     "CareersV3.md, Part 1 Form 4 guidance"
+    ],
+    "v": "2026-08-11"
+   },
+   "archetype": "The Pioneer"
+  },
+  {
+   "id": "m81",
+   "name": "Beverley Grant",
+   "mono": "Eighteen places in person with a printed CV",
+   "stage": [
+    "form5",
+    "postcsec",
+    "out"
+   ],
+   "dim": "C",
+   "code": "CS",
+   "buckets": [
+    "Business & Entrepreneurship",
+    "Trade & TVET"
+   ],
+   "routeType": "none-needed",
+   "region": 4,
+   "concerns": [
+    "earn",
+    "good-enough",
+    "afford"
+   ],
+   "situations": [
+    "earn-soon",
+    "no-work-experience",
+    "cost"
+   ],
+   "moments": {
+    "form5": "Principles of Business, Office Administration, EDPM, English A, Maths. No Accounting, and she spent a year believing that one absence disqualified her from office work.",
+    "postcsec": "She stopped reading job descriptions as requirement lists and started reading the actual vacancy. Most front desk and records posts asked for English, numeracy, EDPM and a presentable manner."
+   },
+   "outcome": "Administrative officer, studying part time for a business diploma",
+   "fork": null,
+   "wb": false,
+   "qs": [
+    {
+     "q": "I did not do Accounting. Can I still work in an office?",
+     "a": "I did not do it either and I have worked in offices for six years. Use the vacancy, not a universal five subjects rule, for the actual minimum. Records clerk, receptionist, administrative assistant and customer service posts frequently do not ask for it.",
+     "concerns": [
+      "good-enough",
+      "earn"
+     ],
+     "esc": false
+    },
+    {
+     "q": "How do I get hired with no experience?",
+     "a": "Small firms, in person, printed CV, and ask for the person who does the hiring by name. The big places want experience. The small places want somebody who turned up.",
+     "concerns": [
+      "earn"
+     ],
+     "esc": false
+    }
+   ],
+   "dyk": {
+    "t": "For office administration, customer service and sales roles the actual minimum is set by the vacancy rather than a universal five subjects rule. First jobs include receptionist, administrative assistant, records or data clerk and customer service representative, and school CVQ occupational areas have included customer service, business administration and data administration.",
+    "s": [
+     "CareersV3.md, Office Administration"
+    ],
+    "v": "2026-08-11"
+   },
+   "archetype": "The Gladiator"
+  },
+  {
+   "id": "m82",
+   "name": "Jamal Edwards",
+   "mono": "Three twenty minute conversations settled it",
+   "stage": [
+    "form4",
+    "form5",
+    "postcsec",
+    "lowersixth"
+   ],
+   "dim": "C",
+   "code": "CI",
+   "buckets": [
+    "Business & Entrepreneurship",
+    "Public Service & Government"
+   ],
+   "routeType": "degree",
+   "region": 4,
+   "concerns": [
+    "no-idea",
+    "wrong-choice"
+   ],
+   "situations": [
+    "no-clear-path",
+    "cost"
+   ],
+   "moments": {
+    "form5": "Business stream, good at all of it, and completely unable to tell law, accounting and economics apart. He could not have explained the difference if asked.",
+    "postcsec": "Three conversations, one each, twenty minutes, with people doing the actual jobs. That eliminated two of them."
+   },
+   "outcome": "Economist with a public agency",
+   "fork": null,
+   "wb": false,
+   "qs": [
+    {
+     "q": "Law, accounting or economics? They all look the same from here.",
+     "a": "They look the same on a subject list and nothing alike on a Tuesday. Find one person in each and ask what they did last Tuesday, hour by hour. Twenty minutes each, three people, and the answer arrives on its own.",
+     "concerns": [
+      "no-idea",
+      "wrong-choice"
+     ],
+     "esc": false
+    },
+    {
+     "q": "What if I choose wrong?",
+     "a": "The first two years overlap heavily and people transfer. Choosing wrong costs a year. Choosing nothing costs more.",
+     "concerns": [
+      "wrong-choice"
+     ],
+     "esc": false
+    }
+   ],
+   "dyk": {
+    "t": "For UG's economics, accounting and law routes the prerequisite subjects overlap substantially at CSEC level, but the programme specific admission rules differ, and UG law in particular publishes its own rules that cannot be inferred from general entry.",
+    "s": [
+     "CareersV3.md, Economics and Supply Chain, Accountant, Part 2 pathway gates"
+    ],
+    "v": "2026-08-11"
+   },
+   "archetype": "The Gladiator"
+  },
+  {
+   "id": "m83",
+   "name": "Kimani Yhap",
+   "mono": "Business half and art half, both required",
+   "stage": [
+    "form4",
+    "form5",
+    "postcsec"
+   ],
+   "dim": "E",
+   "code": "EA",
+   "buckets": [
+    "Business & Entrepreneurship",
+    "Creative Industry"
+   ],
+   "routeType": "degree",
+   "region": 4,
+   "concerns": [
+    "no-idea",
+    "earn"
+   ],
+   "situations": [
+    "no-clear-path",
+    "cost"
+   ],
+   "moments": {
+    "form5": "English A, Principles of Business, Visual Arts, IT, EDPM, Maths. Business stream with an art habit, which she was told to pick between.",
+    "postcsec": "She found the job where both halves are required and neither is enough on its own."
+   },
+   "outcome": "Marketing manager for a Georgetown company",
+   "fork": null,
+   "wb": false,
+   "qs": [
+    {
+     "q": "What is it actually like working in marketing and digital marketing?",
+     "a": "Mostly spreadsheets and deadlines with about an hour a week of the creative part everybody imagines. You need writing, numeracy and patience with feedback. If the appeal is that it seems fun, sit with that, because the fun is real and it is a small fraction.",
+     "concerns": [
+      "no-idea",
+      "wrong-choice"
+     ],
+     "esc": false
+    },
+    {
+     "q": "What is the first job?",
+     "a": "Marketing assistant, social media coordinator, communications assistant, sales development representative, junior designer. Build a portfolio of actual work now. Unpaid work for a family business counts, and it counted for me.",
+     "concerns": [
+      "earn"
+     ],
+     "esc": false
+    }
+   ],
+   "dyk": {
+    "t": "Relevant routes include UG's BSc Marketing, Communication Studies and portfolio based digital work or recognised short courses. Typical first roles are marketing assistant, sales development representative, communications assistant, social media coordinator and junior designer.",
+    "s": [
+     "CareersV3.md, Marketing / Advertising Professional"
+    ],
+    "v": "2026-08-11"
+   },
+   "archetype": "The Pioneer"
+  },
+  {
+   "id": "m84",
+   "name": "Chandra Persaud",
+   "mono": "Called rude until somebody put her in a debate",
+   "stage": [
+    "form1",
+    "form2",
+    "form4",
+    "form5",
+    "lowersixth"
+   ],
+   "dim": "E",
+   "code": "ES",
+   "buckets": [
+    "Law & Humanities",
+    "Public Service & Government"
+   ],
+   "routeType": "degree",
+   "region": 4,
+   "concerns": [
+    "no-idea",
+    "afford",
+    "leaving"
+   ],
+   "situations": [
+    "cost"
+   ],
+   "moments": {
+    "form1": "She argued with teachers and it was called rudeness until somebody put her in a debate.",
+    "form5": "English A, English B, Social Studies, Caribbean History, Geography, a modern language, Maths.",
+    "lowersixth": "CAPE Law, Communication Studies, Caribbean Studies, History, Sociology. Then the LLB, part regionally and part here."
+   },
+   "outcome": "Attorney at law in private practice, criminal defence",
+   "fork": null,
+   "wb": false,
+   "qs": [
+    {
+     "q": "How do I become a criminal defence lawyer?",
+     "a": "Qualify and be admitted as an attorney first. There is no separate school leaver route into defence work. You choose the area afterwards, by who you work for and what you take on. Look at the LLB routes here and regionally, including funding, and check what each institution requires this year.",
+     "concerns": [
+      "no-idea",
+      "afford"
+     ],
+     "esc": false
+    },
+    {
+     "q": "Is being a magistrate the step before being a judge?",
+     "a": "No, and that idea circulates constantly. Those are appointed legal offices reached through substantial practice and an appointment process, and serving as a magistrate is not a universal prerequisite to becoming a judge.",
+     "concerns": [
+      "exists"
+     ],
+     "esc": false
+    }
+   ],
+   "dyk": {
+    "t": "Magistrate and judge are appointed legal offices, not school leaver occupations. The route begins with qualification and admission as an attorney, followed by substantial relevant practice and appointment through the applicable process, and serving as a magistrate is not a universal prerequisite to becoming a judge.",
+    "s": [
+     "CareersV3.md, Magistrate / Judge"
+    ],
+    "v": "2026-08-11"
+   },
+   "archetype": "The Advocate"
+  },
+  {
+   "id": "m85",
+   "name": "Petal Simon",
+   "mono": "Did the associate here and the master's abroad",
+   "stage": [
+    "form5",
+    "postcsec",
+    "out"
+   ],
+   "dim": "S",
+   "code": "SE",
+   "buckets": [
+    "Education",
+    "Public Service & Government",
+    "Law & Humanities"
+   ],
+   "routeType": "degree",
+   "region": 4,
+   "concerns": [
+    "leaving",
+    "afford",
+    "wrong-choice"
+   ],
+   "situations": [
+    "cost",
+    "relocation",
+    "no-clear-path"
+   ],
+   "moments": {
+    "form5": "English A, English B, Social Studies, Caribbean History, Geography.",
+    "postcsec": "An associate in social work here, then a job in a school, then the realisation that she wanted the clinical and policy end and would need a master's.",
+    "out": "Master's abroad, then home after four years, because the work she wanted was here and the credential travelled better in that direction than she expected."
+   },
+   "outcome": "Social worker with an agency in Georgetown",
+   "fork": "abroad-or-stay",
+   "wb": false,
+   "qs": [
+    {
+     "q": "Should I do the associate here and the master's abroad?",
+     "a": "It worked for me and you should check the articulation before you commit: whether the institution you are aiming at accepts your associate, and for how much credit. Ask them directly, in writing, before you enrol. I got lucky rather than organised.",
+     "concerns": [
+      "leaving",
+      "afford"
+     ],
+     "esc": false
+    },
+    {
+     "q": "Do social work roles all need the same qualification?",
+     "a": "No. Government, hospital, school, community and NGO posts each set their own requirement and experience mix, and the vacancy controls. Some of the best people I work with came in through community roles rather than the degree.",
+     "concerns": [
+      "good-enough",
+      "exists"
+     ],
+     "esc": false
+    }
+   ],
+   "dyk": {
+    "t": "UG's Social Work degree and associate level routes are relevant to government, hospital, school, community and NGO work, but the vacancy controls the exact qualification and experience required, and social work roles do not all share the same professional gate.",
+    "s": [
+     "CareersV3.md, Social Worker"
+    ],
+    "v": "2026-08-11"
+   },
+   "archetype": "The Advocate"
+  },
+  {
+   "id": "m86",
+   "name": "Errol Bristol",
+   "mono": "Two years labouring, then a preventable injury",
+   "stage": [
+    "form5",
+    "postcsec",
+    "out"
+   ],
+   "dim": "C",
+   "code": "CR",
+   "buckets": [
+    "Engineering",
+    "Public Service & Government"
+   ],
+   "routeType": "diploma",
+   "region": 7,
+   "concerns": [
+    "earn",
+    "no-idea",
+    "afford"
+   ],
+   "situations": [
+    "earn-soon",
+    "certificate-route",
+    "relocation",
+    "no-clear-path"
+   ],
+   "moments": {
+    "form5": "Bartica. Sciences and technical subjects, decent grades, no plan.",
+    "postcsec": "Two years labouring on a site, where he watched a man get badly hurt because of something entirely preventable. That is when the career appeared.",
+    "out": "A diploma, plus industry certifications, plus supervised site experience, which is the part that cannot be substituted."
+   },
+   "outcome": "Safety officer with a construction contractor",
+   "fork": null,
+   "wb": false,
+   "qs": [
+    {
+     "q": "Is health and safety a real career or a box ticking job?",
+     "a": "There is a national framework behind it and there are sites where I am the reason somebody went home whole. It is also unpopular, procedural and involves telling experienced men they are wrong. Know which parts you are signing up for.",
+     "concerns": [
+      "no-idea",
+      "earn"
+     ],
+     "esc": false
+    },
+    {
+     "q": "How do I get in?",
+     "a": "Diploma and bachelor completion routes exist locally, plus recognised industry certifications. Start as a safety assistant, site safety representative or HSE trainee. HSE manager is not an entry role and people apply for it constantly.",
+     "concerns": [
+      "earn",
+      "exists"
+     ],
+     "esc": false
+    }
+   ],
+   "dyk": {
+    "t": "UG currently lists a Diploma and bachelor completion routes in Occupational Health and Safety, and approved industry certifications plus supervised site experience also matter. First jobs are safety assistant, site safety representative and HSE trainee, and HSE manager is an experienced role.",
+    "s": [
+     "CareersV3.md, Occupational Safety and Health Officer"
+    ],
+    "v": "2026-08-11"
+   },
+   "archetype": "The Artisan"
+  },
+  {
+   "id": "m87",
+   "name": "Jerome Adonis",
+   "mono": "Interest turned up after contact, not before it",
+   "stage": [
+    "form4",
+    "form5",
+    "postcsec",
+    "out"
+   ],
+   "dim": "C",
+   "code": "CS",
+   "buckets": [
+    "Technology",
+    "Business & Entrepreneurship"
+   ],
+   "routeType": "certificate-route",
+   "region": 9,
+   "concerns": [
+    "no-idea",
+    "wrong-choice",
+    "starting-late"
+   ],
+   "situations": [
+    "no-clear-path",
+    "cost",
+    "earn-soon"
+   ],
+   "moments": {
+    "form5": "Adequate at everything, passionate about nothing, surrounded by people who seemed to have known since Form 2. Seven subjects written, six passed.",
+    "postcsec": "Eighteen months of not knowing. It got heavy, and he eventually said so out loud to an aunt, which is the only reason it was not longer.",
+    "out": "A short data entry course because it was cheap and near. He discovered he was good at organising information, which nobody had ever named as a thing you could be good at."
+   },
+   "outcome": "Data clerk with a regional office, doing a part time IT certificate",
+   "fork": null,
+   "wb": true,
+   "qs": [
+    {
+     "q": "I do not know what I want and everyone else seems to. What do I do?",
+     "a": "Stop waiting for certainty and go and touch three things cheaply: a short course, a volunteer week, one conversation with somebody doing a job. Interest usually turns up after contact, not before it. I had none of the feeling people describe and I have a career.",
+     "concerns": [
+      "no-idea",
+      "wrong-choice"
+     ],
+     "esc": false
+    },
+    {
+     "q": "It is starting to get to me.",
+     "a": "It got to me too and I left it far too long before saying so. Tell one person you trust: a parent, a teacher, an aunt, anyone. If it is sitting on you heavily, that is a thing to talk to somebody about properly, separately from the career question. The career question is easier to solve than it feels, and it is not the same problem as feeling low.",
+     "concerns": [
+      "no-idea"
+     ],
+     "esc": true
+    }
+   ],
+   "dyk": {
+    "t": "CareersV3's own Form 5 guidance is to keep a Plan A, a Plan B and a bridging route, and that one disappointing grade should trigger a revised pathway rather than abandonment of the goal. It also recommends comparing at least three routes rather than committing to one.",
+    "s": [
+     "CareersV3.md, Part 1 Forms 3 and 5 guidance"
+    ],
+    "v": "2026-08-11"
+   },
+   "archetype": "The Artisan"
+  },
+  {
+   "id": "m88",
+   "name": "Nikita Ramroop",
+   "mono": "Fifteen subjects, and four of them did nothing",
+   "stage": [
+    "form4",
+    "form5",
+    "lowersixth",
+    "uppersixth"
+   ],
+   "dim": "I",
+   "code": "IC",
+   "buckets": [
+    "Science & Medicine",
+    "Technology"
+   ],
+   "routeType": "abroad",
+   "region": 4,
+   "concerns": [
+    "good-enough",
+    "afford",
+    "starting-late"
+   ],
+   "situations": [
+    "top-performer",
+    "cost",
+    "aid-gap"
+   ],
+   "moments": {
+    "form5": "Fifteen subjects, because that was the currency at her school and she was competitive.",
+    "lowersixth": "Sat the SAT, did well, and assumed the arithmetic was obvious: fifteen subjects plus a strong score equals a selective admission.",
+    "uppersixth": "Nobody was counting her subjects. Four of the fifteen had done nothing for her application and had cost her a year of evenings. What mattered was two things she had done for three years each, and one essay rewritten nine times."
+   },
+   "outcome": "Second year undergraduate abroad, tutors CSEC students online",
+   "fork": "abroad-or-stay",
+   "wb": false,
+   "qs": [
+    {
+     "q": "I have fifteen subjects and a good SAT. Will I get in?",
+     "a": "Maybe, and not because of the fifteen. The selective places do not publish a required subject count or minimum score, and they read you in the context of your school. Eight strong subjects plus two things you did seriously for years is a better application than fifteen subjects and nothing else.",
+     "concerns": [
+      "good-enough"
+     ],
+     "esc": false
+    },
+    {
+     "q": "What would you cut?",
+     "a": "Any subject that is not a prerequisite for your target programme and not something you enjoy. Put those evenings into one sustained activity instead.",
+     "concerns": [
+      "good-enough",
+      "wrong-choice"
+     ],
+     "esc": false
+    }
+   ],
+   "dyk": {
+    "t": "Stanford states there are no required courses or minimum scores for admission and recommends completing the coursework needed to apply to a bachelor's programme in your own country, plus a secondary school diploma by enrolment. Applications are read in the context of the applicant's secondary school.",
+    "s": [
+     "Stanford Undergraduate Admission, International Applicants"
+    ],
+    "v": "2026-08-11"
+   },
+   "archetype": "The Steward"
+  },
+  {
+   "id": "m89",
+   "name": "Camille Wong",
+   "mono": "Fours and Fives until she learned to mark her own work",
+   "stage": [
+    "form1",
+    "form2",
+    "form3",
+    "form4",
+    "form5",
+    "postcsec"
+   ],
+   "dim": "S",
+   "code": "SC",
+   "buckets": [
+    "Education",
+    "Science & Medicine"
+   ],
+   "routeType": "diploma",
+   "region": 8,
+   "concerns": [
+    "good-enough",
+    "no-idea"
+   ],
+   "situations": [
+    "no-clear-path",
+    "cost"
+   ],
+   "moments": {
+    "form1": "Mahdia. She revised by reading her notes over and over and could not understand why it did not work.",
+    "form4": "Fours and Fives. Then a teacher taught her to answer past paper questions under time and mark her own work against the mark scheme. Two grades moved in one term.",
+    "postcsec": "Resat two subjects, then CPCE. She teaches the method now more than the content, because the method was the thing missing."
+   },
+   "outcome": "Secondary teacher in Region 8, runs a Saturday CSEC clinic",
+   "fork": null,
+   "wb": false,
+   "qs": [
+    {
+     "q": "How do I actually study for CSEC?",
+     "a": "Past papers under time, then mark yourself against the mark scheme and find out what the examiner is paying for. Rereading notes feels productive and moves nothing. I lost two years to rereading.",
+     "concerns": [
+      "good-enough"
+     ],
+     "esc": false
+    },
+    {
+     "q": "How do I answer essay questions?",
+     "a": "Answer the command word. If it says explain, explaining earns marks and describing does not. Read three mark schemes for the same question type before you write another essay.",
+     "concerns": [
+      "good-enough"
+     ],
+     "esc": false
+    },
+    {
+     "q": "What about the SBA?",
+     "a": "Ask your school what applies to your examination year, because it is changing, and do not take a senior student's word for what your year does.",
+     "concerns": [
+      "good-enough",
+      "exists"
+     ],
+     "esc": false
+    }
+   ],
+   "dyk": {
+    "t": "In July 2026 CXC announced a transition for non practical subjects from school based assessment toward Paper 032. CAPE candidates transition in May 2027, CSEC schools may choose SBA or Paper 032 in 2027, with full CSEC transition planned for 2028. Implementation depends on examination year and subject type, so students must follow their school's current instructions.",
+    "s": [
+     "CareersV3.md, Part 2 CXC assessment change"
+    ],
+    "v": "2026-08-11"
+   },
+   "archetype": "The Advocate"
+  },
+  {
+   "id": "m90",
+   "name": "Dexter Yhap",
+   "mono": "Whole degree without once being inside a workplace",
+   "stage": [
+    "postcape",
+    "out"
+   ],
+   "dim": "I",
+   "code": "IC",
+   "buckets": [
+    "Science & Medicine",
+    "Agriculture"
+   ],
+   "routeType": "degree",
+   "region": 3,
+   "concerns": [
+    "earn",
+    "good-enough",
+    "starting-late"
+   ],
+   "situations": [
+    "no-work-experience",
+    "cost",
+    "no-clear-path"
+   ],
+   "moments": {
+    "form5": "Biology, Chemistry, Maths, English A, Agricultural Science.",
+    "postcape": "A food science degree straight through with no work experience at any point, because nobody told him that was a problem and he assumed the degree was the qualification.",
+    "out": "Eight months of applications and no job, which he found humiliating and now knows is common and mostly structural. An unpaid three month placement at an agroprocessing operation turned into the job."
+   },
+   "outcome": "Quality officer at an agroprocessing operation",
+   "fork": null,
+   "wb": true,
+   "qs": [
+    {
+     "q": "I have the degree and no job. What did I do wrong?",
+     "a": "I did the degree without ever once being inside a workplace, and that was the gap, not my grades. If you are in first or second year, get inside a relevant operation for even a few weeks before you graduate. It is much harder to arrange after.",
+     "concerns": [
+      "earn",
+      "good-enough"
+     ],
+     "esc": false
+    },
+    {
+     "q": "How do you handle it when you feel stuck?",
+     "a": "Eight months of rejection made me stop applying for about six weeks, and that was the worst decision in it. What helped was doing something small and concrete every week and telling one person how it was going, so I could not quietly disappear.",
+     "concerns": [
+      "starting-late"
+     ],
+     "esc": true
+    }
+   ],
+   "dyk": {
+    "t": "UG offers a BSc in Food Science and Carnegie offers nutrition related training, but Nutritionist and Dietitian are Allied Health Professions Council categories, so training alone is not the complete professional pathway and the council registration category must be checked alongside the qualification.",
+    "s": [
+     "CareersV3.md, Nutritionist / Dietitian / Food Scientist"
+    ],
+    "v": "2026-08-11"
+   },
+   "archetype": "The Steward"
+  },
+  {
+   "id": "m91",
+   "name": "Marcia Jacobs",
+   "mono": "Wanted to know why coastal soil grew differently",
+   "archetype": "The Steward",
+   "stage": [
+    "form3",
+    "form5",
+    "postcape",
+    "out"
+   ],
+   "dim": "I",
+   "code": "IS",
+   "buckets": [
+    "Agriculture",
+    "Science & Medicine"
+   ],
+   "routeType": "degree",
+   "region": 2,
+   "concerns": [
+    "good-enough",
+    "exists",
+    "leaving"
+   ],
+   "situations": [
+    "relocation",
+    "cost",
+    "first-in-family"
+   ],
+   "moments": {
+    "form3": "Anna Regina. She wanted to know why the soil near the sea grew different things from the soil further inland, and nobody around her thought that was a strange question to spend a Saturday on.",
+    "form5": "Biology, Chemistry, Agricultural Science, Geography, English A, Maths. She was told Agricultural Science was for students who were not going to university, which she heard as a challenge.",
+    "postcape": "She was the only person in her UG cohort who had actually farmed. That turned out to matter more than she expected."
+   },
+   "outcome": "Soil scientist at a research station, Region 2",
+   "fork": null,
+   "wb": false,
+   "qs": [
+    {
+     "q": "Is Agricultural Science a serious subject?",
+     "a": "It got me into a science degree and a research career. The people who told me it was not serious were thinking about the subject alone rather than what it leads to combined with Biology and Chemistry. Check what the combination unlocks.",
+     "concerns": [
+      "good-enough",
+      "exists"
+     ],
+     "esc": false
+    }
+   ],
+   "dyk": {
+    "t": "Agricultural Science at CSEC is accepted as a science subject for UG Faculty of Agriculture and Forestry entry, and combined with Biology and Chemistry it supports entry to several science-adjacent programmes. The programme page controls exact requirements.",
+    "s": [
+     "CareersV3.md, Agricultural Scientist and Part 2 pathway gates"
+    ],
+    "v": "2026-08-11"
+   }
+  },
+  {
+   "id": "m92",
+   "name": "Dario Baptiste",
+   "mono": "Left a desk job to process cassava",
+   "archetype": "The Pioneer",
+   "stage": [
+    "form5",
+    "postcsec",
+    "out"
+   ],
+   "dim": "E",
+   "code": "ES",
+   "buckets": [
+    "Agriculture",
+    "Business & Entrepreneurship"
+   ],
+   "routeType": "none-needed",
+   "region": 5,
+   "concerns": [
+    "earn",
+    "exists",
+    "no-idea"
+   ],
+   "situations": [
+    "earn-soon",
+    "changed-direction",
+    "no-clear-path"
+   ],
+   "moments": {
+    "form5": "Principles of Business, Maths, English A, Agricultural Science, Food and Nutrition. Practical from the start: wanted to work with his hands and make money from something Guyana already had.",
+    "postcsec": "Three years in an office doing data entry. Good at it, profoundly bored.",
+    "out": "Left, started processing cassava from the family plot, figured out the rest from there. The SBB found him before he found the SBB."
+   },
+   "outcome": "Agroprocessing entrepreneur, Region 5, distributes to two Georgetown supermarkets",
+   "fork": null,
+   "wb": false,
+   "qs": [
+    {
+     "q": "Can I build a business out of agriculture?",
+     "a": "I am doing it. Locally processed food is undervalued and underproduced while imported food is everywhere. That is a gap and a gap is an opportunity. The hard part is not the farming, it is the processing, packaging and getting people to trust that local is good.",
+     "concerns": [
+      "exists",
+      "earn"
+     ],
+     "esc": false
+    },
+    {
+     "q": "What did you wish you knew earlier?",
+     "a": "That the government has money for this through the SBB and the NDC and nobody tells you at school. I found out three years late by accident.",
+     "concerns": [
+      "exists"
+     ],
+     "esc": false
+    }
+   ],
+   "dyk": {
+    "t": "The Small Business Bureau runs grant and financing programmes specifically for agroprocessing ventures, and the NDC has supported community-level food production enterprises. Both are underused by young people who do not know they exist.",
+    "s": [
+     "CareersV3.md, Agroprocessor and Small Business Bureau"
+    ],
+    "v": "2026-08-11"
+   }
+  },
+  {
+   "id": "m93",
+   "name": "Kezia Rodrigues",
+   "mono": "Extension officer who convinces farmers to try something new",
+   "archetype": "The Pioneer",
+   "stage": [
+    "form3",
+    "form5",
+    "lowersixth",
+    "uppersixth",
+    "postcape"
+   ],
+   "dim": "E",
+   "code": "EC",
+   "buckets": [
+    "Agriculture",
+    "Public Service & Government"
+   ],
+   "routeType": "degree",
+   "region": 6,
+   "concerns": [
+    "exists",
+    "earn",
+    "leaving"
+   ],
+   "situations": [
+    "cost",
+    "relocation",
+    "no-clear-path"
+   ],
+   "moments": {
+    "form3": "New Amsterdam. She organised everything: the class trip, the fundraiser, the food stall at sports day. Agriculture was the subject where she felt most useful.",
+    "form5": "Agricultural Science, POB, English A, Social Studies, Biology, Maths.",
+    "lowersixth": "CAPE at New Amsterdam Multilateral. She was not the student who loved the laboratory. She was the student who loved convincing farmers to try something different.",
+    "postcape": "UG Faculty of Agriculture, then into extension work. Convincing farmers to try something different turned out to be a real job title."
+   },
+   "outcome": "Agricultural extension officer, Region 6",
+   "fork": null,
+   "wb": false,
+   "qs": [
+    {
+     "q": "What does an extension officer actually do?",
+     "a": "I go to farmers and help them adopt better practices. It is agriculture and persuasion and community work at once. If you like organising people toward a goal as much as the land itself, this is a real career that exists in every region.",
+     "concerns": [
+      "exists",
+      "earn"
+     ],
+     "esc": false
+    },
+    {
+     "q": "Is there a future in agriculture in Guyana?",
+     "a": "The country is actively trying to diversify away from oil dependence and agriculture is one of the stated pillars. That does not mean every path is easy, but the sector is being taken seriously in a way it was not ten years ago.",
+     "concerns": [
+      "exists"
+     ],
+     "esc": false
+    }
+   ],
+   "dyk": {
+    "t": "The Ministry of Agriculture employs agricultural extension officers across all regions of Guyana. The role combines technical agricultural knowledge with community engagement and farmer education, accessible from a UG agriculture degree or equivalent training.",
+    "s": [
+     "CareersV3.md, Agricultural Scientist and Extension Officer"
+    ],
+    "v": "2026-08-11"
+   }
+  },
+  {
+   "id": "m94",
+   "name": "Sonia Persaud",
+   "mono": "Disagreed with software that ignored the person using it",
+   "archetype": "The Steward",
+   "stage": [
+    "form5",
+    "postcape",
+    "out"
+   ],
+   "dim": "S",
+   "code": "SI",
+   "buckets": [
+    "Technology",
+    "Public Service & Government"
+   ],
+   "routeType": "degree",
+   "region": 4,
+   "concerns": [
+    "no-idea",
+    "wrong-choice",
+    "earn"
+   ],
+   "situations": [
+    "changed-direction",
+    "no-clear-path",
+    "cost"
+   ],
+   "moments": {
+    "form5": "Good at IT but cared more about whether the interface made sense to the person using it. Nobody had a name for that in her school.",
+    "postcape": "Computer Science at UG. She spent half of it disagreeing with the assumption that making software work was the same as making software work for people.",
+    "out": "Found a job title that matched what she had always been doing: user experience design. It did not exist as a named thing in the Guyanese market when she graduated. It does now."
+   },
+   "outcome": "UX designer at a government digital services agency",
+   "fork": null,
+   "wb": false,
+   "qs": [
+    {
+     "q": "I like technology but I care more about people than systems. Where do I fit?",
+     "a": "UX design, product management, digital communications, civic technology. These are roles where technology is in service of a human outcome. You do not have to choose between caring about people and working in tech. That combination is what the field needs more of.",
+     "concerns": [
+      "no-idea",
+      "wrong-choice"
+     ],
+     "esc": false
+    },
+    {
+     "q": "How do I get into UX in Guyana?",
+     "a": "There is no formal UX degree here yet. I came through Computer Science and built a portfolio on the side. The portfolio mattered more than the degree title. Start with free tools, redesign something you use every day and document your thinking. That is a portfolio entry.",
+     "concerns": [
+      "exists",
+      "earn"
+     ],
+     "esc": false
+    }
+   ],
+   "dyk": {
+    "t": "UX design and digital product roles are listed in CareersV3 as emerging high-demand fields in Guyana's growing digital economy, accessible through computing degrees combined with self-built portfolio work or recognised international certifications.",
+    "s": [
+     "CareersV3.md, UX and Digital Product Design"
+    ],
+    "v": "2026-08-11"
+   }
+  },
+  {
+   "id": "m95",
+   "name": "Marcus Ferdinand",
+   "mono": "Master electrician who earns more than most university graduates he knows",
+   "archetype": "The Artisan",
+   "stage": [
+    "form3",
+    "form5",
+    "postcsec",
+    "out"
+   ],
+   "dim": "S",
+   "code": "SR",
+   "buckets": [
+    "Trade & TVET",
+    "Engineering"
+   ],
+   "routeType": "certificate-route",
+   "region": 4,
+   "concerns": [
+    "earn",
+    "exists",
+    "good-enough"
+   ],
+   "situations": [
+    "earn-soon",
+    "certificate-route",
+    "first-in-family"
+   ],
+   "moments": {
+    "form3": "Liked knowing how things worked well enough to fix them when they stopped. School was fine. The workshop was better.",
+    "form5": "Technical Drawing, IT, Maths, English A, Physics. Clear about what he wanted: a trade, done properly, at a high level.",
+    "postcsec": "GTI electrical programme, then apprenticeship, then journeyman, then master electrician.",
+    "out": "Now trains apprentices. That is the part he did not expect to love."
+   },
+   "outcome": "Master electrician, runs a small contracting firm, trains two apprentices",
+   "fork": null,
+   "wb": false,
+   "qs": [
+    {
+     "q": "Is TVET a serious route or is it a backup?",
+     "a": "I earn more than most of the people I went to school with who went to university. I have work available whenever I want it because skilled electricians are scarce. And I own my time in a way a salaried employee does not. The backup framing is an old idea. Check the market for skilled tradespeople and then tell me it is a backup.",
+     "concerns": [
+      "good-enough",
+      "earn"
+     ],
+     "esc": false
+    },
+    {
+     "q": "What does the training actually look like?",
+     "a": "GTI, CPCE and private technical institutes all offer electrical programmes. Then you apprentice under a licensed electrician, accumulate supervised hours, and sit the licensing exam. The Guyana Energy Agency and the Electrical Inspectorate govern the licensing. That is the route and it is clear.",
+     "concerns": [
+      "exists"
+     ],
+     "esc": false
+    }
+   ],
+   "dyk": {
+    "t": "Master electrician licensing in Guyana is governed by the Electrical Inspectorate under the Ministry of Public Works. The route runs from TVET training through apprenticeship and supervised hours to a licensing examination, and demand for licensed electricians has grown significantly with Guyana's construction and energy sector expansion.",
+    "s": [
+     "CareersV3.md, Electrician and Trade & TVET routes"
+    ],
+    "v": "2026-08-11"
+   }
+  },
+  {
+   "id": "m96",
+   "name": "Desmond Charles",
+   "mono": "Turned down two Georgetown offers to stay in Region 8",
+   "archetype": "The Advocate",
+   "stage": [
+    "form3",
+    "form5",
+    "lowersixth",
+    "postcape",
+    "out"
+   ],
+   "dim": "S",
+   "code": "SC",
+   "buckets": [
+    "Public Service & Government",
+    "Education"
+   ],
+   "routeType": "degree",
+   "region": 8,
+   "concerns": [
+    "leaving",
+    "exists",
+    "impact"
+   ],
+   "situations": [
+    "relocation",
+    "cost",
+    "impact"
+   ],
+   "moments": {
+    "form3": "Lethem. He watched things in his community not work and wanted to understand who was supposed to fix them and why they were not.",
+    "form5": "Social Studies, English A, History, Geography, Maths, POB.",
+    "lowersixth": "Boarded in Georgetown for sixth form. That year he understood that the country had two speeds, and he went back to the interior deliberately.",
+    "postcape": "Community development work in Region 8 from graduation day. Has turned down two Georgetown offers."
+   },
+   "outcome": "Community development officer, Region 8",
+   "fork": null,
+   "wb": false,
+   "qs": [
+    {
+     "q": "Do I have to go to Georgetown to have a career in public service?",
+     "a": "No, and I am the evidence. Region 8 has government presence, NDC offices, regional administration, health, education and infrastructure management. Every one of those is a public service career. Most people make the choice to go back years after they leave. Make it earlier.",
+     "concerns": [
+      "leaving",
+      "exists"
+     ],
+     "esc": false
+    },
+    {
+     "q": "What qualification do I need?",
+     "a": "Social work, public administration, development studies, management. The specific degree matters less than local knowledge combined with formal training. My regional background is the thing that makes me useful that a Georgetown graduate does not automatically have.",
+     "concerns": [
+      "good-enough"
+     ],
+     "esc": false
+    }
+   ],
+   "dyk": {
+    "t": "The Ministry of Local Government and Regional Development manages community development officers across all ten regions, and hinterland postings carry additional allowances. NDC and RDC offices in every region also employ development-oriented staff.",
+    "s": [
+     "CareersV3.md, Civil and Public Servant and Community Development roles"
+    ],
+    "v": "2026-08-11"
+   }
+  },
+  {
+   "id": "m97",
+   "name": "Tricia Hinds",
+   "mono": "Regional councillor who started as a youth programme coordinator",
+   "archetype": "The Gladiator",
+   "stage": [
+    "form3",
+    "form5",
+    "postcsec",
+    "out"
+   ],
+   "dim": "E",
+   "code": "EC",
+   "buckets": [
+    "Public Service & Government",
+    "Law & Humanities"
+   ],
+   "routeType": "degree",
+   "region": 3,
+   "concerns": [
+    "earn",
+    "exists",
+    "wrong-choice"
+   ],
+   "situations": [
+    "leadership-heavy",
+    "cost",
+    "no-clear-path"
+   ],
+   "moments": {
+    "form3": "She ran for everything: class representative, school council, debate captain. She did not know yet that those were political instincts.",
+    "form5": "English A, Social Studies, History, Geography, POB, Spanish.",
+    "postcsec": "Youth programme coordinator for five years while studying part time.",
+    "out": "Stood for regional council and won. Now completing a Public Administration degree part time."
+   },
+   "outcome": "Regional councillor, Region 3, completing a Public Administration degree part time",
+   "fork": null,
+   "wb": false,
+   "qs": [
+    {
+     "q": "Can a young person from a small town actually get into public life?",
+     "a": "I am a regional councillor from West Demerara. The people who win local elections are the people who have been useful in their community for years before they stand. Start being useful now, before you are old enough to stand for anything. That is the preparation.",
+     "concerns": [
+      "exists",
+      "wrong-choice"
+     ],
+     "esc": false
+    },
+    {
+     "q": "Is it possible to combine study and public service work?",
+     "a": "I did my degree part time while working full time in a youth programme while sitting on a regional committee. It is possible and it is exhausting. What makes it sustainable is that the work and the study were feeding each other, not competing.",
+     "concerns": [
+      "earn"
+     ],
+     "esc": false
+    }
+   ],
+   "dyk": {
+    "t": "Regional Democratic Councils operate in all ten regions of Guyana and councillors are elected at the local government level. Youth programme coordinator roles are available through the Ministry of Culture, Youth and Sport and regional administrations, and several current regional leaders entered public life through youth programme work.",
+    "s": [
+     "CareersV3.md, Civil and Public Servant and Elected Office"
+    ],
+    "v": "2026-08-11"
+   }
+  },
+  {
+   "id": "m98",
+   "name": "Akilah Morrison",
+   "mono": "Built the school drama programme nobody asked her to build",
+   "archetype": "The Visionary",
+   "stage": [
+    "form3",
+    "form5",
+    "postcsec",
+    "out"
+   ],
+   "dim": "A",
+   "code": "AS",
+   "buckets": [
+    "Education",
+    "Creative Industry"
+   ],
+   "routeType": "degree",
+   "region": 4,
+   "concerns": [
+    "exists",
+    "earn",
+    "no-idea"
+   ],
+   "situations": [
+    "no-clear-path",
+    "cost"
+   ],
+   "moments": {
+    "form3": "She had been performing since she could speak. School treated it as a hobby. She treated school as the thing she did between rehearsals.",
+    "form5": "English A, English B, Caribbean History, Visual Arts, Social Studies, Spanish.",
+    "postcsec": "Trained as a teacher at CPCE then UG because it was the practical path. Spent every Saturday building the school drama programme nobody had asked her to build."
+   },
+   "outcome": "Drama teacher and theatre director, three productions at the National Cultural Centre",
+   "fork": null,
+   "wb": false,
+   "qs": [
+    {
+     "q": "Can performance and creativity be a career in Guyana?",
+     "a": "It can be the centre of a career, or the reason a career in education is not just a job. I teach drama, direct productions and train young performers. The income is steady because I teach, and the creative work is real because I never stopped. Those two things reinforce each other.",
+     "concerns": [
+      "exists",
+      "earn"
+     ],
+     "esc": false
+    },
+    {
+     "q": "How do I start building something creative while still in school?",
+     "a": "Start the thing nobody has started yet. The debate team already exists, the choir already exists. What does not exist yet? Start that. Even if nobody comes at first, starting it is the thing that shows you meant it.",
+     "concerns": [
+      "no-idea"
+     ],
+     "esc": false
+    }
+   ],
+   "dyk": {
+    "t": "The Ministry of Education's Unit of Allied Arts actively recruits drama, music and visual arts educators, and the National Cultural Centre offers performance training. E.R. Burrowes School of Art and the National School of Drama are government-run training institutions.",
+    "s": [
+     "Opportunities.md, Category 3"
+    ],
+    "v": "2026-08-11"
+   }
+  },
+  {
+   "id": "m99",
+   "name": "Shawn Nankishore",
+   "mono": "Tried accounting for a year, produces music full time now",
+   "archetype": "The Visionary",
+   "stage": [
+    "form5",
+    "postcsec",
+    "out"
+   ],
+   "dim": "A",
+   "code": "AI",
+   "buckets": [
+    "Creative Industry",
+    "Education"
+   ],
+   "routeType": "degree",
+   "region": 4,
+   "concerns": [
+    "exists",
+    "earn",
+    "wrong-choice"
+   ],
+   "situations": [
+    "no-clear-path",
+    "changed-direction",
+    "cost"
+   ],
+   "moments": {
+    "form5": "Headphones around his neck and a notebook full of beats. Did not know producing music was a job until someone paid him for one.",
+    "postcsec": "Tried accounting for a year because it seemed sensible. Was producing music every evening anyway.",
+    "out": "Found a music technology programme, completed it, now teaches music production at the same institution where he trained."
+   },
+   "outcome": "Music producer and music technology lecturer, Region 4",
+   "fork": null,
+   "wb": false,
+   "qs": [
+    {
+     "q": "Is music a serious career path in Guyana?",
+     "a": "There is work in music: production, sound engineering, music education, event production. What there is not yet is a large formal industry. So the path is building your own practice, which is harder and more sustainable than waiting for a job listing.",
+     "concerns": [
+      "exists",
+      "earn"
+     ],
+     "esc": false
+    },
+    {
+     "q": "I am not classically trained. Does that matter?",
+     "a": "The music technology field barely cares. What it cares about is your ear and your output. I was self-taught on a laptop before I ever sat in a class about it.",
+     "concerns": [
+      "good-enough"
+     ],
+     "esc": false
+    }
+   ],
+   "dyk": {
+    "t": "The National School of Music is being rebuilt as part of government's creative industry strategy. Audio production and event production are listed in CareersV3 as viable careers, with routes through the National School of Music, private training and self-taught practice plus portfolio.",
+    "s": [
+     "CareersV3.md, Audio Production and Event Production; Opportunities.md, Category 3"
+    ],
+    "v": "2026-08-11"
+   }
+  },
+  {
+   "id": "m100",
+   "name": "Candace Fraser",
+   "mono": "Had paying clients before she graduated",
+   "archetype": "The Visionary",
+   "stage": [
+    "form3",
+    "form5",
+    "postcsec",
+    "out"
+   ],
+   "dim": "A",
+   "code": "AE",
+   "buckets": [
+    "Creative Industry",
+    "Business & Entrepreneurship"
+   ],
+   "routeType": "certificate-route",
+   "region": 4,
+   "concerns": [
+    "earn",
+    "exists",
+    "afford"
+   ],
+   "situations": [
+    "no-clear-path",
+    "cost",
+    "earn-soon"
+   ],
+   "moments": {
+    "form3": "She redesigned the school notice board because it bothered her. The principal put it back the old way. She redesigned it again.",
+    "form5": "Visual Arts, English A, Social Studies, IT, EDPM, Spanish.",
+    "postcsec": "E.R. Burrowes School of Art, then freelance work while still studying. Had paying clients before she graduated."
+   },
+   "outcome": "Graphic designer and brand consultant, Region 4, worked with 40 Guyanese businesses",
+   "fork": null,
+   "wb": false,
+   "qs": [
+    {
+     "q": "Can I make a living as a designer in Guyana?",
+     "a": "I do. The market is small and clients often do not know what they need or what it costs. Someone has to educate the market and do the work at the same time. I do both and I charge for both.",
+     "concerns": [
+      "earn",
+      "exists"
+     ],
+     "esc": false
+    },
+    {
+     "q": "What do I need to start?",
+     "a": "A laptop, two free design tools, and the patience to do good work for small clients before you reach the bigger ones. I designed menus, flyers and church bulletins before I designed anything I would put in a portfolio. That work paid and taught me things the classroom did not.",
+     "concerns": [
+      "earn",
+      "afford"
+     ],
+     "esc": false
+    }
+   ],
+   "dyk": {
+    "t": "E.R. Burrowes School of Art is a government-run institution offering training in drawing, painting, graphic design, photography, textile and fashion design, and jewellery, with no CSEC requirement for several programmes. It is one of the most accessible creative training routes in Guyana.",
+    "s": [
+     "Opportunities.md, Category 3"
+    ],
+    "v": "2026-08-11"
+   }
+  },
+  {
+   "id": "m101",
+   "name": "Tenille Yaw",
+   "mono": "Deferred a year, found a partial scholarship, went anyway",
+   "archetype": "The Visionary",
+   "stage": [
+    "form5",
+    "uppersixth",
+    "postcape",
+    "out"
+   ],
+   "dim": "E",
+   "code": "EI",
+   "buckets": [
+    "Creative Industry",
+    "Law & Humanities"
+   ],
+   "routeType": "abroad",
+   "region": 4,
+   "concerns": [
+    "afford",
+    "exists",
+    "leaving"
+   ],
+   "situations": [
+    "abroad-route",
+    "cost",
+    "aid-gap"
+   ],
+   "moments": {
+    "form5": "English A, English B, Visual Arts, History, Social Studies, Spanish. Filmed everything on her phone and edited on free software.",
+    "uppersixth": "Applied to one film school abroad, got in, could not pay, deferred a year, found a partial scholarship and went.",
+    "postcape": "Makes documentaries about Guyana from Guyana. That was the plan all along."
+   },
+   "outcome": "Documentary filmmaker, Region 4, two international festival selections",
+   "fork": null,
+   "wb": false,
+   "qs": [
+    {
+     "q": "There is no film school in Guyana. Does that mean I have to leave?",
+     "a": "To train formally, probably yes. But you can start making films here before you leave and those films are the reason anyone will take your application seriously. I had four short films before I applied anywhere. They mattered more than my grades.",
+     "concerns": [
+      "exists",
+      "leaving"
+     ],
+     "esc": false
+    },
+    {
+     "q": "What do you actually do day to day?",
+     "a": "Research, shooting, editing, funding applications, more funding applications. The creative work is maybe a third of it. The rest is administration and persuasion. If you want to make things but hate paperwork, find a producer. That is what producers are for.",
+     "concerns": [
+      "earn"
+     ],
+     "esc": false
+    }
+   ],
+   "dyk": {
+    "t": "The Guyana Cultural and Creative Industries Registry maintains a national directory of Guyanese creative workers. Registering is a concrete step toward visibility in the sector. The Ministry of Culture, Youth and Sport also operates a Culture and Creative Industries Grant.",
+    "s": [
+     "Opportunities.md, Category 3"
+    ],
+    "v": "2026-08-11"
+   }
+  },
+  {
+   "id": "m102",
+   "name": "Brendan Yhap",
+   "mono": "Hamstring injury ended competing, coaching began the same week",
+   "archetype": "The Gladiator",
+   "stage": [
+    "form3",
+    "form5",
+    "postcsec",
+    "out"
+   ],
+   "dim": "E",
+   "code": "EC",
+   "buckets": [
+    "Sports",
+    "Education"
+   ],
+   "routeType": "certificate-route",
+   "region": 4,
+   "concerns": [
+    "earn",
+    "wrong-choice",
+    "good-enough"
+   ],
+   "situations": [
+    "selection-route",
+    "changed-direction",
+    "earn-soon"
+   ],
+   "moments": {
+    "form3": "He was fast. Trained before school and after school and thought about track during school. No plan beyond the next race.",
+    "form5": "Wrote seven subjects while training at national level. Passed five. Would have passed seven with better time management.",
+    "postcsec": "Competed nationally and regionally for four years. A hamstring injury ended his competing career at twenty-two.",
+    "out": "Discovered he understood training better than almost anyone else. Teaching athletes was as satisfying as being one."
+   },
+   "outcome": "Track coach at a secondary school, Region 4, two athletes qualified for CARIFTA",
+   "fork": null,
+   "wb": false,
+   "qs": [
+    {
+     "q": "Should I bet everything on sport?",
+     "a": "I bet most things on sport and it worked for a while and then it stopped. The thing that saved me was that I had not bet everything. I kept my subjects and relationships with coaches who remembered me as a person not just an athlete. When competing ended I had something to move toward.",
+     "concerns": [
+      "wrong-choice",
+      "earn"
+     ],
+     "esc": false
+    },
+    {
+     "q": "How do I become a coach?",
+     "a": "Athletics Association of Guyana, Ministry of Sport coaching certification, or the university sports science route. The certification route is faster and you can start assisting before you are fully certified. I was assisting a senior coach at twenty-three while I studied for my own certification.",
+     "concerns": [
+      "exists",
+      "earn"
+     ],
+     "esc": false
+    }
+   ],
+   "dyk": {
+    "t": "The Athletics Association of Guyana offers coaching development programmes, and the Ministry of Culture, Youth and Sport runs coaching certification through the National Sports Commission. The National Secondary Schools Track and Field Championships moved to March specifically to align with CARIFTA qualification windows.",
+    "s": [
+     "Opportunities.md, Category 4"
+    ],
+    "v": "2026-08-11"
+   }
+  },
+  {
+   "id": "m103",
+   "name": "Simone Rodrigues",
+   "mono": "Sports and writing were one career all along",
+   "archetype": "The Visionary",
+   "stage": [
+    "form5",
+    "postcape",
+    "out"
+   ],
+   "dim": "A",
+   "code": "AE",
+   "buckets": [
+    "Sports",
+    "Creative Industry"
+   ],
+   "routeType": "degree",
+   "region": 4,
+   "concerns": [
+    "no-idea",
+    "earn",
+    "exists"
+   ],
+   "situations": [
+    "no-clear-path",
+    "changed-direction",
+    "cost"
+   ],
+   "moments": {
+    "form5": "Loved sport and loved writing and was told repeatedly those were two different things. English A, English B, Social Studies, History, Spanish, Visual Arts.",
+    "postcape": "Communication Studies at UG. Covered sports for the student publication, then for a national outlet.",
+    "out": "Started her own platform. Sports journalism and sport turned out to be one career, not two."
+   },
+   "outcome": "Sports journalist and platform founder, Region 4, covers national and regional competition",
+   "fork": null,
+   "wb": false,
+   "qs": [
+    {
+     "q": "Can sport and creativity be the same career?",
+     "a": "Sports journalism, content creation, photography, documentary, broadcast. The creative industry around sport is large and needs people who understand both sides. I understand sport from the inside because I grew up in it. That is what makes what I produce different.",
+     "concerns": [
+      "no-idea",
+      "exists"
+     ],
+     "esc": false
+    },
+    {
+     "q": "How do I start?",
+     "a": "Cover a school sports event. Write it up. Publish it somewhere, even just your own social media. Do it every week. In six months you have a portfolio and a small audience. Both open doors that a CV does not.",
+     "concerns": [
+      "earn"
+     ],
+     "esc": false
+    }
+   ],
+   "dyk": {
+    "t": "Communication Studies at UG and at CAPE level provides a recognised route into media, journalism and content production. Sports-focused media careers are listed in CareersV3 as viable within the broader media and communication sector.",
+    "s": [
+     "CareersV3.md, Journalist and Media Professional"
+    ],
+    "v": "2026-08-11"
+   }
+  },
+  {
+   "id": "m104",
+   "name": "Isaiah Joseph",
+   "mono": "Danced at Mashramani every year from Form 1, teaches it now",
+   "archetype": "The Visionary",
+   "stage": [
+    "form1",
+    "form2",
+    "form3",
+    "form4",
+    "form5",
+    "postcsec",
+    "out"
+   ],
+   "dim": "A",
+   "code": "AS",
+   "buckets": [
+    "Sports",
+    "Creative Industry",
+    "Education"
+   ],
+   "routeType": "certificate-route",
+   "region": 6,
+   "concerns": [
+    "earn",
+    "exists",
+    "afford"
+   ],
+   "situations": [
+    "cost",
+    "certificate-route",
+    "earn-soon",
+    "first-in-family"
+   ],
+   "moments": {
+    "form1": "New Amsterdam. Danced competitively at Mashramani from Form 1. Did not see it as a career. Saw it as the thing that made him feel most like himself.",
+    "form3": "Competing in the regional round, then watching the national finals in Georgetown for the first time. He realised how seriously the country took this.",
+    "form5": "English A, Social Studies, Physical Education, Visual Arts, Music, Maths.",
+    "postcsec": "National School of Dance, then fitness instruction certification for steady income alongside the creative work.",
+    "out": "Choreographs, teaches, instructs fitness classes and performs. None of those alone would be enough. Together they are more than enough."
+   },
+   "outcome": "Choreographer, dance teacher and fitness instructor, Region 6",
+   "fork": null,
+   "wb": false,
+   "qs": [
+    {
+     "q": "Can dance be a career in Guyana?",
+     "a": "It can be part of a career that is sustainable. The mistake is thinking you have to pick one thing. I do four related things and they reinforce each other. Build the combination, not just the single skill.",
+     "concerns": [
+      "exists",
+      "earn"
+     ],
+     "esc": false
+    },
+    {
+     "q": "How do I compete at Mashramani seriously?",
+     "a": "Start at the district level in January. That is the actual entry point. The national final is what people see but the district round is where you qualify. If your school is not entering, ask your teacher to find out why and whether you can represent independently.",
+     "concerns": [
+      "exists"
+     ],
+     "esc": false
+    }
+   ],
+   "dyk": {
+    "t": "The National School of Dance is a government-run institution with free or subsidised training. Mashramani competitions run a three-tier pipeline from district to regional to national finals, with meals and accommodation provided for hinterland students competing at the national level in Georgetown.",
+    "s": [
+     "Opportunities.md, Category 3"
+    ],
+    "v": "2026-08-11"
+   }
+  }
+ ],
+ "career_roles_by_bucket": {
+  "Science & Medicine": [
+   "Actuary / Statistician / Quantitative-Risk Analyst",
+   "Agricultural Scientist / Agronomist",
+   "Agroprocessor / Food-Production Technician",
+   "Aquaculture / Fish-Handling and Processing Worker",
+   "Biomedical-Equipment / Medical-Technology Technician"
+  ],
+  "Trade & TVET": [
+   "Agricultural Engineer / Smart-Farming Technician",
+   "Agroprocessing / Food-Production Operator",
+   "Agroprocessor / Food-Production Technician",
+   "Aircraft Maintenance / Aeronautical Engineering",
+   "Appliance / Consumer-Electronics Repair Technician"
+  ],
+  "Education": [
+   "Caregiver / Childcare or Patient-Care Worker",
+   "Coach, Official and Sports Administrator",
+   "Early-Childhood / Childcare Worker",
+   "Guidance Counsellor / School Psychologist",
+   "Lecturer / Academic Researcher"
+  ],
+  "Sports": [
+   "Coach, Official and Sports Administrator",
+   "Cricketer",
+   "Footballer",
+   "Sports Medicine and Rehabilitation",
+   "Track and Field / Other Competitive Sports"
+  ],
+  "Engineering": [
+   "Agricultural Engineer / Smart-Farming Technician",
+   "Air-Traffic Controller",
+   "Aircraft Maintenance / Aeronautical Engineering",
+   "Architect",
+   "Auto-Electrical / Vehicle-Electronics Technician"
+  ],
+  "Creative Industry": [
+   "Audio Production / Event Production Professional",
+   "Carpenter / Joiner / Cabinetmaker",
+   "Chef / Culinary Professional",
+   "Content Creator / Digital-Media Entrepreneur",
+   "Cook / Baker / Pastry or Commercial-Food Worker"
+  ],
+  "Technology": [
+   "Actuary / Statistician / Quantitative-Risk Analyst",
+   "Agricultural Engineer / Smart-Farming Technician",
+   "Air-Traffic Controller",
+   "Aircraft Maintenance / Aeronautical Engineering",
+   "Appliance / Consumer-Electronics Repair Technician"
+  ],
+  "Business & Entrepreneurship": [
+   "Accountant / Auditor",
+   "Actuary / Statistician / Quantitative-Risk Analyst",
+   "Agroprocessing / Food-Production Operator",
+   "Agroprocessor / Food-Production Technician",
+   "Audio Production / Event Production Professional"
+  ],
+  "Public Service & Government": [
+   "Air-Traffic Controller",
+   "Civil / Public Servant",
+   "Customs Officer / GRA Officer",
+   "Diplomat / Foreign Service Officer",
+   "Disaster-Risk / Emergency-Management Professional"
+  ],
+  "Law & Humanities": [
+   "Civil / Public Servant",
+   "Customs Officer / GRA Officer",
+   "Diplomat / Foreign Service Officer",
+   "Elected Office / Politics",
+   "Human Resources Professional"
+  ],
+  "Agriculture": [
+   "Agricultural Engineer / Smart-Farming Technician",
+   "Agricultural Scientist / Agronomist",
+   "Agroprocessing / Food-Production Operator",
+   "Agroprocessor / Food-Production Technician",
+   "Aquaculture / Fish-Handling and Processing Worker"
+  ]
+ }
+}

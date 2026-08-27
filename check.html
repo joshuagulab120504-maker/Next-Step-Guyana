@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0a1930">
-<title>60-Second Self-Check — Next Step Guyana</title>
+<title>Self-check - Next Step Guyana</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500..800&family=Inter:wght@400;500;600;700;800;900&family=Sora:wght@500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap');
 :root{
@@ -13,6 +13,9 @@
   --glass-bg:rgba(255,255,255,.7);--glass-line:rgba(255,255,255,.5);--radius-lg:20px;
   --shadow:0 20px 55px rgba(8,22,42,.14);
   --font-display:'Fraunces',ui-serif,Georgia,serif;--font-accent:'Sora',ui-sans-serif,sans-serif;--font-body:'Inter',ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --green:#0e7a4f;--green2:#eaf3ee;
+  --amber:#7d6000;
+  --sp1:4px; --sp2:8px; --sp3:12px; --sp4:16px; --sp5:22px; --sp6:32px;
 }
 *{box-sizing:border-box}html{scroll-behavior:smooth}
 body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.55 var(--font-body)}
@@ -20,361 +23,1293 @@ button,input,select,textarea{font:inherit}button{cursor:pointer}
 .wrap{width:min(680px,calc(100% - 28px));margin:auto}
 :focus-visible{outline:2.5px solid var(--teal2);outline-offset:2px;border-radius:6px}
 h1,h2{font-family:var(--font-display);font-weight:650;margin:0}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:14px;padding:12px 18px;min-height:46px;background:linear-gradient(135deg,var(--teal2),var(--teal));color:#fff;font-family:var(--font-accent);font-weight:700;font-size:14px;box-shadow:0 8px 22px rgba(14,122,79,.22)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:14px;padding:12px 18px;min-height:46px;background:linear-gradient(135deg,var(--teal2),var(--teal));color:#fff;font-family:var(--font-accent);font-weight:700;font-size:14px;box-shadow:0 8px 22px rgba(14,122,79,.22);text-decoration:none}
 .btn.gold{background:linear-gradient(135deg,var(--gold),#d99615);color:#1a1305;box-shadow:0 8px 22px rgba(238,181,47,.28)}
 .btn.ghost{background:#fff;color:var(--ink);border:1px solid var(--line);box-shadow:none}
-.btn.small{padding:9px 14px;font-size:12px;min-height:38px}
+.btn.small{padding:9px 14px;font-size:12px;min-height:44px}
+.btn.full{width:100%}
 .btn:disabled{opacity:.4;cursor:not-allowed}
+.eyebrow{display:inline-flex;align-items:center;font-family:var(--font-accent);font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;padding:6px 10px;border-radius:999px;background:var(--soft);color:var(--teal)}
 
-.header{height:64px;background:var(--navy);color:#fff;display:flex;align-items:center;padding:0 18px;border-bottom:4px solid var(--teal)}
-.brand{display:flex;align-items:center;gap:9px;color:#fff;text-decoration:none;font-family:var(--font-accent);font-weight:800;font-size:14px}
-.brand .mark{width:28px;height:28px;border-radius:9px;background:linear-gradient(145deg,var(--teal2),var(--teal));display:grid;place-items:center;font-size:14px}
-.exit{margin-left:auto;border:1px solid rgba(255,255,255,.2);background:transparent;color:#fff;border-radius:10px;padding:8px 12px;font-size:10.5px;font-weight:700}
+.header{height:74px;background:rgba(6,26,45,.98);color:#fff;display:flex;align-items:center;padding:0 18px;border-bottom:5px solid var(--teal)}
+.brand{display:flex;align-items:center;gap:11px;color:#fff;text-decoration:none;font-family:var(--font-accent);font-weight:800;font-size:19px;letter-spacing:.045em}
+.brand .mark{width:55px;height:55px;border-radius:9px;background:#f8f5ed;overflow:hidden;display:block;flex-shrink:0}
+@media(max-width:620px){.header{height:62px}.brand{font-size:15px;gap:8px}.brand .mark{width:45px;height:45px}}
+.header-actions{margin-left:auto;display:flex;align-items:center;gap:14px}
+.restart-demo{background:none;border:0;color:rgba(255,255,255,.72);font-size:12.5px;font-weight:650;text-decoration:underline;text-underline-offset:3px;min-height:44px;padding:8px 4px}
+.restart-demo:hover,.leave:hover{color:#fff}
+.leave{background:none;border:0;color:rgba(255,255,255,.72);font-size:13px;font-weight:650;text-decoration:underline;text-underline-offset:3px;min-height:44px;padding:8px 4px}
 
-.quiz-shell{padding:34px 0 80px}
+.quiz-shell{padding:22px 0 80px}
 .quiz-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
 .quiz-count{font-family:var(--font-accent);font-size:10.5px;font-weight:800;color:var(--teal2)}
-.quiz-bar{height:6px;background:#e6ede9;border-radius:8px;overflow:hidden;margin-bottom:22px}
+.quiz-bar{height:6px;background:#e6ede9;border-radius:8px;overflow:hidden;margin-bottom:16px}
 .quiz-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--teal),#28b471);border-radius:8px;transition:.3s}
-.quiz-card{background:var(--glass-bg);backdrop-filter:blur(16px);border:1px solid var(--glass-line);border-radius:var(--radius-lg);padding:28px;box-shadow:0 7px 25px rgba(10,25,48,.05)}
-.quiz-card h2{font-size:24px;letter-spacing:-.02em;margin-bottom:5px}
-.quiz-hint{color:var(--muted);margin:0 0 18px;font-size:12.5px}
-.choices{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
-.choices.compact{grid-template-columns:repeat(3,1fr)}
-.choices.single-col{grid-template-columns:1fr}
-.choice{border:1px solid var(--line);background:#fff;border-radius:12px;padding:13px;text-align:left;min-height:56px}
-.choice strong{display:block;font-size:12.5px}
-.choice small{display:block;color:var(--muted);font-size:10.5px;margin-top:2px}
+.quiz-card{background:var(--glass-bg);backdrop-filter:blur(16px);border:1px solid var(--glass-line);border-radius:var(--radius-lg);padding:22px;box-shadow:0 7px 25px rgba(10,25,48,.05)}
+.quiz-card h2{font-size:22px;letter-spacing:-.02em;margin-bottom:5px}
+.quiz-tip{background:var(--soft);color:#0e6b45;border-radius:12px;padding:10px 12px;font-size:12px;font-weight:700;margin:0 0 14px;line-height:1.4}
+.choices{display:grid;grid-template-columns:1fr;gap:8px}
+.choice{position:relative;border:1px solid var(--line);background:#fff;border-radius:12px;padding:13px 40px 13px 13px;text-align:left;min-height:44px}
+.choice strong{display:block;font-size:13px;line-height:1.3}
+.choice small{display:block;color:var(--muted);font-size:11px;margin-top:2px}
 .choice:hover{border-color:#9fd2b6}
 .choice.selected{border-color:var(--teal2);background:var(--soft);box-shadow:0 0 0 2px #cdeadd}
-.multi-note{font-size:10.5px;color:var(--muted);margin-top:10px}
-.quiz-actions{display:flex;justify-content:space-between;align-items:center;margin-top:20px;border-top:1px solid var(--line);padding-top:15px}
-@media(max-width:520px){.choices{grid-template-columns:1fr}.choices.compact{grid-template-columns:1fr 1fr}}
+.choice.selected::after{content:"✓";position:absolute;top:50%;right:10px;transform:translateY(-50%);width:22px;height:22px;border-radius:50%;background:var(--teal2);color:#fff;font-size:12px;font-weight:800;display:grid;place-items:center;line-height:1}
+.choice.rank-first{border-color:var(--gold);background:#fff8e8;box-shadow:0 0 0 2px #f0e2b0}
+.choice.rank-first::after{display:none}
+.choice .rank-badge{position:absolute;top:50%;right:8px;transform:translateY(-50%);width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,var(--gold),#d99615);color:#1a1305;font-family:var(--font-accent);font-size:12px;font-weight:900;display:grid;place-items:center;line-height:1}
+.quiz-actions{display:flex;justify-content:space-between;align-items:center;margin-top:16px;border-top:1px solid var(--line);padding-top:14px;gap:10px}
+@media(max-width:520px){
+  .quiz-actions{position:sticky;bottom:0;z-index:5;background:rgba(245,247,250,.96);backdrop-filter:blur(10px);margin:16px -22px -22px;padding:12px 22px calc(12px + env(safe-area-inset-bottom));border-top:1px solid var(--line);border-radius:0 0 var(--radius-lg) var(--radius-lg)}
+}
 
-.loading-view{text-align:center;padding:90px 20px}
-.spinner{width:50px;height:50px;border-radius:50%;border:6px solid #dce9e1;border-top-color:var(--teal);animation:spin .8s linear infinite;margin:0 auto 18px}
-@keyframes spin{to{transform:rotate(360deg)}}
+.rate-item{margin:0 0 10px;padding:10px 0 0;border-top:1px solid var(--line)}
+.rate-item:first-of-type{border-top:0;padding-top:0}
+.rate-item p{margin:0 0 8px;font-size:13px;font-weight:650;line-height:1.35}
+.rate-row{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.rate-btn{min-height:44px;border:1px solid var(--line);border-radius:12px;background:#fff;font-family:var(--font-accent);font-weight:800;font-size:11px;line-height:1.2;color:var(--muted);padding:8px 4px;text-align:center}
+.rate-btn:hover{border-color:#9fd2b6}
+.rate-btn[aria-checked="true"].lo{border-color:#9aa8b5;background:#eef1f4;color:#3a4654;box-shadow:0 0 0 2px #d7dee5}
+.rate-btn[aria-checked="true"].hi{border-color:var(--teal2);background:var(--soft);color:#0e6b45;box-shadow:0 0 0 2px #cdeadd}
+
+.donut-wrap{display:flex;gap:20px;align-items:center;margin:16px 0 14px}
+.donut-chart{flex-shrink:0;width:160px;height:160px}
+.donut-legend{flex:1;display:grid;gap:8px;min-width:0}
+.donut-leg-row{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:650;line-height:1.25}
+.donut-swatch{width:12px;height:12px;border-radius:3px;flex-shrink:0}
+.donut-leg-row span{flex:1;min-width:0}
+.donut-leg-row b{font-family:var(--font-accent);font-size:12px;font-weight:800;color:var(--muted);white-space:nowrap}
+.donut-body{margin:0 0 12px;color:var(--muted);font-size:13.5px;line-height:1.5}
+.warn-note{background:#fff8e0;border:1px solid #f0d98a;border-radius:12px;padding:12px 14px;margin:0 0 14px;font-size:13px;line-height:1.45;color:#5a4a10}
+.flat-panel{background:#fff;border:1px solid var(--line);border-radius:24px;padding:clamp(22px,5vw,32px);box-shadow:var(--shadow);text-align:center;max-width:520px;margin:0 auto}
+.flat-panel h2{font-family:var(--font-display);font-size:clamp(22px,6vw,28px);margin:0 0 12px;letter-spacing:-.02em}
+.flat-panel p{margin:0 0 18px;color:var(--muted);font-size:14px;line-height:1.55}
+@media(max-width:420px){.donut-wrap{flex-direction:column;align-items:stretch}.donut-chart{margin:0 auto}}
+
 .hidden{display:none!important}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);background:var(--navy);color:#fff;padding:12px 16px;border-radius:12px;font-size:13px;font-weight:700;opacity:0;pointer-events:none;transition:.25s;z-index:100;max-width:min(92vw,420px);text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.result-shell{padding:22px 0 72px;width:min(720px,calc(100% - 24px));margin:auto}
+.flip-scene{perspective:1600px}
+.flipper{position:relative;transform-style:preserve-3d;transition:transform .7s ease}
+.flipper.flipped{transform:rotateY(180deg)}
+.face{backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:24px}
+.face-front{position:relative}
+.face-back{position:absolute;inset:0;transform:rotateY(180deg);pointer-events:none}
+.flipper.flipped .face-front{position:absolute;inset:0;pointer-events:none}
+.flipper.flipped .face-back{position:relative;inset:auto;pointer-events:auto}
+@media (prefers-reduced-motion: reduce){
+  .quiz-bar i,.toast,.flipper{transition:none}
+  .flipper{transform:none!important}
+  .face-back{transform:none}
+  .flipper:not(.flipped) .face-back{display:none}
+  .flipper.flipped .face-front{display:none;position:absolute}
+  .flipper.flipped .face-back{display:block;position:relative}
+}
+
+.explorer-card{border-radius:24px;overflow:hidden;box-shadow:var(--shadow);border:1px solid var(--line);background:#fff}
+.report-card{background:#fff;color:var(--ink);padding:clamp(18px,4vw,28px);box-shadow:var(--shadow);border:1px solid var(--line);border-radius:24px}
+.report-head{display:flex;align-items:center;gap:12px;margin-bottom:var(--sp4)}
+.report-head .mini-glyph{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;color:#fff;font-weight:900;font-family:var(--font-accent);flex-shrink:0}
+.report-head h2{font-size:20px;margin:0;line-height:1.15;font-family:var(--font-display)}
+.report-head p{margin:2px 0 0;font-size:12px;color:var(--muted)}
+.report-head .back-card{margin-left:auto;min-height:44px}
+.advice{background:var(--soft);border-radius:14px;padding:14px 16px;font-size:14px;line-height:1.5;color:#0e6b45;font-weight:650;margin:0 0 14px}
+.report-cta{display:block;width:100%;text-align:center;margin:4px 0 8px}
+.share-quiet{display:inline-flex;margin-top:12px;background:none;border:0;color:var(--muted);text-decoration:underline;font-size:13px;font-weight:700;min-height:44px;padding:8px 4px;width:100%;justify-content:center}
+.card-hero{background:radial-gradient(120% 80% at 100% 0%, rgba(238,181,47,.22), transparent 42%), linear-gradient(160deg,#0a1930 0%, #0d3a48 55%, #0a4a52 100%);color:#fff;padding:clamp(20px,5vw,32px);text-align:center}
+.card-hero .eyebrow{background:rgba(255,255,255,.12);color:#b8f0d0;margin-bottom:var(--sp4)}
+.arch-glyph{width:84px;height:84px;border-radius:20px;display:grid;place-items:center;margin:0 auto var(--sp3);font-size:36px;font-weight:900;color:#fff;font-family:var(--font-accent);box-shadow:0 14px 30px rgba(0,0,0,.28)}
+.arch-name{font-family:var(--font-display);font-weight:900;font-size:clamp(28px,8vw,40px);letter-spacing:-.04em;line-height:1.05;margin:0 0 var(--sp3)}
+.arch-chip{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:8px 14px;background:rgba(255,255,255,.12);font-size:12px;font-weight:700;margin-bottom:var(--sp3)}
+.arch-quote{font-style:italic;color:#b7c9d6;max-width:420px;margin:0 auto var(--sp3);font-size:14.5px;line-height:1.5}
+.arch-blurb{margin:0 auto;max-width:440px;color:#e8eef3;font-size:13.5px;line-height:1.55}
+.card-panel{padding:clamp(16px,4vw,24px)}
+.close-note{background:#fff8e0;border:1px solid #f0d98a;border-radius:12px;padding:12px 14px;margin:0 0 16px;font-size:13px;line-height:1.45;color:#5a4a10}
+.close-note strong{color:#7d6000}
+.info-note{background:#eef6ff;border:1px solid #c5daf0;border-radius:12px;padding:14px 16px;margin:0 0 16px;font-size:13.5px;line-height:1.5;color:#1e3a5f}
+.info-note strong{display:block;margin-bottom:6px;color:#123a52}
+.info-note .btn{margin-top:12px}
+
+.bars-cap{font-size:12px;color:var(--muted);margin:0 0 10px;line-height:1.4}
+.bars-axis{display:grid;grid-template-columns:1fr 1fr 1fr;font-size:10px;font-weight:800;color:var(--muted);letter-spacing:.04em;text-transform:uppercase;margin:0 0 8px;font-family:var(--font-accent)}
+.bars-axis span:nth-child(2){text-align:center}
+.bars-axis span:nth-child(3){text-align:right}
+.div-rows{display:grid;gap:10px;margin:0 0 18px}
+.div-row{display:grid;grid-template-columns:92px 1fr 40px;gap:8px;align-items:center}
+.div-row .lab{font-size:11px;font-weight:700;color:var(--muted)}
+.div-row.top .lab{color:var(--teal);font-weight:900}
+.div-track{position:relative;height:12px;border-radius:999px;background:#eef2f5;overflow:hidden}
+.div-mid{position:absolute;left:50%;top:0;bottom:0;width:2px;background:#b7c2cc;transform:translateX(-50%);z-index:1}
+.div-fill{position:absolute;top:2px;bottom:2px;border-radius:999px;min-width:3px}
+.div-fill.pos{left:50%;background:linear-gradient(90deg,#28b471,var(--teal))}
+.div-fill.neg{right:50%;background:#c5ced6}
+.div-row b{font-size:11px;font-weight:800;color:var(--muted);text-align:right}
+
+.work-style{margin:0;display:grid;gap:10px}
+.work-style .ws-row{border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:#fff}
+.work-style dt{font-family:var(--font-accent);font-size:10px;font-weight:800;letter-spacing:.1em;color:var(--teal);margin:0 0 4px}
+.work-style dd{margin:0;font-size:13.5px;line-height:1.45}
+.work-style dd.empty{color:var(--muted);font-style:italic;font-size:12.5px}
+
+.reveal-cta{margin-top:18px;background:#fff;border:1px solid var(--line);border-radius:18px;padding:20px 18px;box-shadow:0 8px 22px rgba(10,25,48,.05)}
+.reveal-cta h3{font-family:var(--font-display);font-size:22px;margin:0 0 8px;letter-spacing:-.02em}
+.reveal-cta p{margin:0 0 14px;color:var(--muted);font-size:13.5px;line-height:1.5}
+.reveal-cta .row{display:flex;flex-direction:column;gap:10px}
+
+.report-sec{margin:22px 0 0}
+.report-card > .report-sec:first-of-type,.report-card > .info-note + .report-sec{margin-top:8px}
+.report-sec h3{font-family:var(--font-display);font-size:22px;margin:0 0 6px;letter-spacing:-.02em}
+.report-sec .cap{margin:0 0 14px;color:var(--muted);font-size:13px;line-height:1.4}
+.quiet{border:1.5px dashed var(--line);border-radius:14px;padding:18px;color:var(--muted);font-size:13.5px;text-align:center}
+
+.mentor-card{border:1px solid var(--line);border-radius:18px;padding:18px 18px 16px;margin-bottom:12px;background:#fff;box-shadow:0 8px 22px rgba(10,25,48,.05)}
+.mentor-top{display:flex;gap:14px;align-items:flex-start;margin-bottom:12px}
+.mentor-av{width:52px;height:52px;border-radius:14px;display:grid;place-items:center;color:#fff;font-size:22px;font-weight:900;font-family:var(--font-accent);flex-shrink:0}
+.mentor-top .who{min-width:0;flex:1}
+.mentor-top .name-row{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px}
+.mentor-top strong{font-family:var(--font-display);font-size:20px;font-weight:700;letter-spacing:-.02em;line-height:1.15}
+.mentor-top .reg{font-size:12.5px;color:var(--muted);margin-top:3px;font-weight:600}
+.arch-tint{display:inline-flex;font-size:11px;font-weight:800;padding:5px 10px;border-radius:999px;flex-shrink:0}
+.mentor-summary .line{margin:0 0 8px;font-size:14px;line-height:1.45;color:var(--ink)}
+.mentor-summary .line:last-child{margin-bottom:0}
+.mentor-summary .k{display:inline;font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--teal);margin-right:6px}
+.mentor-summary .then-line{color:var(--muted);font-size:13.5px}
+.mentor-actions{display:flex;justify-content:flex-end;margin-top:12px}
+.explore-btn{min-height:44px;padding:10px 16px;border:0;border-radius:12px;background:var(--soft);color:var(--teal);font-family:var(--font-accent);font-weight:800;font-size:13px;text-decoration:none;display:inline-flex;align-items:center}
+
+.tags{display:flex;flex-wrap:wrap;gap:6px}
+.tags span{background:var(--soft);color:#0e6b45;border-radius:999px;padding:6px 10px;font-size:11.5px;font-weight:700}
+.concern-row{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-height:48px;border:1px solid var(--line);border-radius:12px;background:#fff;padding:12px 14px;margin:0 0 8px;text-align:left;text-decoration:none;color:var(--ink);font-weight:650;font-size:13.5px}
+.concern-row:hover{border-color:#9fd2b6;background:var(--soft)}
+.concern-row span{color:var(--teal);font-family:var(--font-accent);font-weight:800;font-size:12px}
+
+.signup{background:var(--navy);color:#fff;border-radius:18px;padding:22px 20px;margin-top:24px}
+.signup h3{font-family:var(--font-display);font-size:22px;margin:0 0 8px;color:#fff}
+.signup p{margin:0 0 14px;color:#b7c9d6;font-size:13.5px}
+.signup .row{display:flex;flex-direction:column;gap:10px}
+.signup .btn.ghost{color:#fff;border-color:rgba(255,255,255,.25);background:transparent}
+.final-foot{margin-top:22px;text-align:center}
+.final-foot .foot-links{display:flex;flex-wrap:wrap;justify-content:center;gap:14px;margin-bottom:12px}
+.final-foot button.linkish{background:none;border:0;color:var(--teal);font-weight:750;font-size:13px;text-decoration:underline;min-height:44px;padding:8px}
+.final-foot .line{margin:0 0 8px;font-size:12.5px;color:var(--muted)}
+.final-foot .proto{margin:0;font-size:11px;color:var(--muted);line-height:1.45}
 </style>
 </head>
 <body>
-<header class="header"><a class="brand" href="index.html"><span class="mark">↗</span> NEXT STEP</a><button class="exit" onclick="location.href='index.html'">Exit</button></header>
+<header class="header">
+  <a class="brand" href="index.html">
+    <span class="mark"><img src="logotop.jpg" alt="Next Step Guyana" style="width:100%;height:100%;object-fit:cover;object-position:center top;display:block"></span>
+    <span><strong style="display:block;line-height:1">NEXT STEP</strong><small style="display:block;font-size:9px;letter-spacing:.25em;color:#c9d8df;margin-top:5px;font-weight:700">GUYANA</small></span>
+  </a>
+  <div class="header-actions">
+    <button type="button" class="restart-demo" id="restartDemoBtn" title="Clears saved self-check answers">↻ Restart demo</button>
+    <a class="leave" href="index.html">Leave</a>
+  </div>
+</header>
 
-<main class="wrap quiz-shell">
+<main class="wrap quiz-shell" id="quizShell">
   <div id="quizArea">
-    <div class="quiz-top"><span class="quiz-count" id="quizCount">QUESTION 1</span></div>
-    <div class="quiz-bar"><i id="quizProgress" style="width:6%"></i></div>
+    <div class="quiz-top"><span class="quiz-count" id="quizCount"></span></div>
+    <div class="quiz-bar"><i id="quizProgress" style="width:0%"></i></div>
     <div class="quiz-card">
       <div id="quizQuestion"></div>
       <div class="quiz-actions">
-        <button class="btn ghost small" id="quizBack">Back</button>
-        <button class="btn small" id="quizNext" disabled>Continue →</button>
+        <button class="btn ghost small" id="quizBack" type="button">Back</button>
+        <button class="btn small" id="quizNext" type="button" disabled>Continue →</button>
       </div>
     </div>
   </div>
-
-  <div class="loading-view hidden" id="loadingView">
-    <div class="spinner"></div>
-    <h2 id="loadingText">Building your plan…</h2>
-    <p style="color:var(--muted)">One second.</p>
-  </div>
 </main>
 
+<div class="result-shell hidden" id="resultShell"></div>
+
 <script>
-/* ============================================================
-   REFERENCE DATA (shared shape with my-plan.html)
-   ============================================================ */
-const SUBJECTS_CSEC = ['English A','English B','Mathematics','Additional Mathematics','Biology','Chemistry','Physics','Integrated Science','Social Studies','Geography','History','Caribbean History','EDPM','Principles of Accounts','Principles of Business','Economics','Technical Drawing','Agricultural Science','Food & Nutrition','Information Technology','Spanish','French','Visual Arts','Music'];
-const SUBJECTS_CAPE = ['Biology','Chemistry','Physics','Pure Mathematics','Applied Mathematics','Caribbean Studies','Communication Studies','Economics','Geography','History','Law','Management of Business','Accounting','Sociology','Literatures in English','Computer Science','Agricultural Science','Environmental Science'];
+(function(){
+'use strict';
 
-const STAGES = [
-  {v:'lower', t:'Forms 1–3', s:'No stream chosen yet'},
-  {v:'form4', t:'Form 4', s:'Narrowing CSEC subjects'},
-  {v:'form5', t:'Form 5 / CSEC', s:'Exam year'},
-  {v:'postcsec', t:'Just finished CSEC', s:'Deciding the next fork'},
-  {v:'sixthform', t:'Sixth Form / CAPE', s:'Studying toward university'},
-  {v:'postcape', t:'Just finished CAPE', s:'UG / UWI / abroad / work'},
+const RIASEC = {R:'Realistic',I:'Investigative',A:'Artistic',S:'Social',E:'Enterprising',C:'Conventional'};
+const DIM_ORDER = ['R','I','A','S','E','C'];
+const STORAGE_KEY = 'nsg_selfcheck';
+const VERSION = 'riasec-12-adaptive-v2';
+
+const RATE_LABELS = {1:'Hate it',2:'Not really',3:'Alright',4:'Love it'};
+const DIM_COLORS = {R:'#07864d',I:'#2479df',A:'#7256c7',S:'#078697',E:'#e57c2d',C:'#ffcf27'};
+
+const BASE_ITEMS = [
+  {dim:'S', t:'Sit with a younger student until they finally understand their homework'},
+  {dim:'R', t:'Get a broken generator running when you have blackout'},
+  {dim:'C', t:'Keep the money records for your parents so every dollar adds up'},
+  {dim:'A', t:'Design a float for Diwali or Mash'},
+  {dim:'I', t:'Find out why the water out your pipe is rusty'},
+  {dim:'E', t:'Buy something cheap, sell it for more, and keep doing that'},
+  {dim:'I', t:'Work out a maths problem that has no obvious method'},
+  {dim:'E', t:'Convince a room full of your friends to change their mind'},
+  {dim:'R', t:'Wire up the lights and sound for the next school or work event'},
+  {dim:'C', t:'Turn a messy pile of papers into a system anyone could use'},
+  {dim:'S', t:'Look after someone who is recovering from being unwell'},
+  {dim:'A', t:'Write a song, poem or story that other people will hear'}
 ];
 
-const REQUIREMENTS = {
-  science:{title:'Environmental & Health Sciences', desc:'Understanding how things work to help people, communities, or the land.', mustHaveCSEC:['Biology','Chemistry'], recommendedCAPE:['Biology','Chemistry'], verified:false},
-  agriculture:{title:'Agriculture & Environmental Science', desc:'Working with the land and natural resources.', mustHaveCSEC:['Agricultural Science'], recommendedCAPE:['Agricultural Science','Environmental Science'], verified:false},
-  engineering:{title:'Engineering & Technical Trades', desc:'Solving problems and building things that work.', mustHaveCSEC:['Mathematics','Physics'], recommendedCAPE:['Physics','Pure Mathematics'], verified:false},
-  technology:{title:'Technology & Digital Systems', desc:'Solving problems and building systems with code and tools.', mustHaveCSEC:['Mathematics'], recommendedCAPE:['Computer Science','Pure Mathematics'], verified:false},
-  business:{title:'Business & Entrepreneurship', desc:'Turning ideas and organisation into something people need.', mustHaveCSEC:['Mathematics','English A'], recommendedCAPE:['Accounting','Economics','Management of Business'], verified:false},
-  law:{title:'Law & Public Policy', desc:'Using justice and policy to change how things work for people.', mustHaveCSEC:['Caribbean History'], recommendedCAPE:['Law','Caribbean Studies'], verified:true},
-  creative:{title:'Creative Industries & Media', desc:'Telling stories and making things that move people.', mustHaveCSEC:[], recommendedCAPE:['Literatures in English'], verified:false},
-  other:{title:'Flexible / Undeclared Track', desc:"It's okay not to have one lane yet.", mustHaveCSEC:[], recommendedCAPE:[], verified:false},
-};
-
-const UNIVERSAL_QUESTIONS = [
-  {key:'region', title:'Which region of Guyana is your school in?', hint:'So we can show realistic sessions and mentors.', compact:true, options:[
-    {v:'r1',t:'Region 1',s:'Barima-Waini'},{v:'r2',t:'Region 2',s:'Pomeroon-Supenaam'},{v:'r3',t:'Region 3',s:'Essequibo Isl.-W. Dem.'},
-    {v:'r4',t:'Region 4',s:'Demerara-Mahaica'},{v:'r5',t:'Region 5',s:'Mahaica-Berbice'},{v:'r6',t:'Region 6',s:'E. Berbice-Corentyne'},
-    {v:'r7',t:'Region 7',s:'Cuyuni-Mazaruni'},{v:'r8',t:'Region 8',s:'Potaro-Siparuni'},{v:'r9',t:'Region 9',s:'Upper Takutu-Upper Essequibo'},
-    {v:'r10',t:'Region 10',s:'Upper Demerara-Berbice'},
-  ]},
-  {key:'interests', title:'Which areas make you curious?', hint:'Choose up to three.', multi:3, options:[
-    {v:'science',t:'Science & Medicine'},{v:'engineering',t:'Engineering'},{v:'business',t:'Business & Entrepreneurship'},
-    {v:'law',t:'Law & Humanities'},{v:'creative',t:'Creative Industry'},{v:'agriculture',t:'Agriculture'},
-    {v:'technology',t:'Technology'},{v:'other',t:'Other'},
-  ]},
-  {key:'priority', title:"What's weighing most on this decision?", hint:'Choose up to two.', multi:2, options:[
-    {v:'affordable',t:'Affordability / funding'},{v:'family',t:'Family expectations or responsibilities'},
-    {v:'work-soon',t:'Needing to work soon'},{v:'requirements',t:'Not knowing which requirements apply'},
-    {v:'distance',t:'Distance or transport to institutions'},{v:'abroad',t:'Wanting to study or migrate abroad'},
-    {v:'flexible',t:'Keeping options open'},
-  ]},
-  {key:'support', title:'Who do you usually talk to about decisions like this?', hint:"This helps us know if a mentor chat would help.", options:[
-    {v:'parents',t:'Parents or guardian'},{v:'teacher',t:'A teacher or counselor'},{v:'friends',t:'Friends'},
-    {v:'mentor',t:'A mentor or someone in the field'},{v:'none',t:'No one right now'},
-  ]},
-];
-
-function getStageQuestions(stage){
-  switch(stage){
-    case 'lower': return [
-      {key:'lowerInterestSubjects', title:'Which subjects genuinely interest you?', hint:'Choose up to four — this is about curiosity, not grades yet.', multi:4, compact:true, options:[
-        {v:'English',t:'English'},{v:'Mathematics',t:'Maths'},{v:'Science',t:'Science'},{v:'Social Studies',t:'Social Studies'},
-        {v:'Art',t:'Art'},{v:'Technical/Craft',t:'Technical/Craft'},{v:'Agriculture',t:'Agriculture'},{v:'Music',t:'Music'},
-      ]},
-      {key:'pull', title:'What pulls you the most?', hint:'There is no wrong answer — this is just a starting hunch.', options:[
-        {v:'engineering',t:'Building or fixing things'},{v:'technology',t:'Numbers, patterns, or computers'},
-        {v:'law',t:'People, arguing your point, or persuading'},{v:'creative',t:'Reading, writing, or making things'},
-      ]},
-    ];
-    case 'form4': return [
-      {key:'term', title:'Which term are you in right now?', hint:'Helps us judge how much time is left this school year.', options:[
-        {v:'term1',t:'Term 1',s:'Start of the school year'},{v:'term2',t:'Term 2',s:'Midway through'},{v:'term3',t:'Term 3',s:'Final term'},
-      ]},
-      {key:'afterCsecGuess', title:'What\u2019s your best guess for after CSEC?', hint:'This can change \u2014 we just need a starting point.', options:[
-        {v:'sixthform',t:'Sixth Form / CAPE'},{v:'gti',t:'GTI / Technical'},{v:'work',t:'Work'},{v:'undecided',t:'Not sure yet'},
-      ]},
-    ];
-    case 'form5': return [
-      {key:'term', title:'Which term are you in right now?', hint:'Term 3 means exams are close \u2014 we\u2019ll flag things as more urgent.', options:[
-        {v:'term1',t:'Term 1',s:'Start of the school year'},{v:'term2',t:'Term 2',s:'Midway through'},{v:'term3',t:'Term 3',s:'Exams approaching'},
-      ]},
-      {key:'registered', title:'Have you registered for CSEC yet?', options:[
-        {v:'yes',t:'Yes, registered'},{v:'no',t:'Not yet'},{v:'not-sure',t:'Not sure'},
-      ]},
-      {key:'planA', title:'What\u2019s your Plan A after results?', hint:'Think about this before results land, not after.', options:[
-        {v:'sixthform',t:'Sixth Form / CAPE'},{v:'gti',t:'GTI'},{v:'cpce',t:'CPCE (Teaching)'},{v:'nursing',t:'Nursing'},{v:'goal',t:'GOAL programme'},{v:'work',t:'Work'},
-      ]},
-    ];
-    case 'postcsec': return [
-      {key:'nextLean', title:'What are you leaning toward next?', options:[
-        {v:'sixthform',t:'Sixth Form / CAPE'},{v:'gti',t:'GTI'},{v:'cpce',t:'CPCE (Teaching)'},{v:'nursing',t:'Nursing'},{v:'goal',t:'GOAL programme'},{v:'work',t:'Work'},{v:'undecided',t:'Still deciding'},
-      ]},
-    ];
-    case 'sixthform': return [
-      {key:'term', title:'Which term are you in right now?', options:[
-        {v:'term1',t:'Term 1',s:'Start of the school year'},{v:'term2',t:'Term 2',s:'Midway through'},{v:'term3',t:'Term 3',s:'CAPE exams approaching'},
-      ]},
-      {key:'targetField', title:'What field are you targeting?', options:[
-        {v:'science',t:'Science & Medicine'},{v:'engineering',t:'Engineering'},{v:'business',t:'Business'},
-        {v:'law',t:'Law & Humanities'},{v:'creative',t:'Creative Industry'},{v:'agriculture',t:'Agriculture'},{v:'technology',t:'Technology'},{v:'other',t:'Other'},
-      ]},
-    ];
-    case 'postcape': return [
-      {key:'postCapeLean', title:'Where are you leaning?', options:[
-        {v:'ug',t:'University of Guyana'},{v:'uwi',t:'UWI'},{v:'abroad',t:'Studying abroad'},{v:'goal',t:'GOAL programme'},{v:'work',t:'Work'},{v:'undecided',t:'Still deciding'},
-      ]},
-    ];
-    default: return [];
-  }
-}
-
-/* ============================================================
-   PARENT / TEACHER LIGHT INTAKE
-   ============================================================ */
-function getParentFlow(role){
-  return [
-    {key:'childStage', title: role==='teacher' ? 'What stage are most of your students at?' : 'What stage is your child at?', options: STAGES.map(s=>({v:s.v,t:s.t,s:s.s}))},
-    {key:'childInterests', title: role==='teacher' ? 'What are your students generally curious about?' : 'What does your child seem interested in?', hint:'Choose up to three \u2014 this is a general steer, not a locked-in plan.', multi:3, options:[
-      {v:'science',t:'Science & Medicine'},{v:'engineering',t:'Engineering'},{v:'business',t:'Business & Entrepreneurship'},
-      {v:'law',t:'Law & Humanities'},{v:'creative',t:'Creative Industry'},{v:'agriculture',t:'Agriculture'},
-      {v:'technology',t:'Technology'},{v:'other',t:'Other'},
-    ]},
-    {key:'region', title:'Which region are you in?', compact:true, options:[
-      {v:'r1',t:'Region 1'},{v:'r2',t:'Region 2'},{v:'r3',t:'Region 3'},{v:'r4',t:'Region 4'},{v:'r5',t:'Region 5'},
-      {v:'r6',t:'Region 6'},{v:'r7',t:'Region 7'},{v:'r8',t:'Region 8'},{v:'r9',t:'Region 9'},{v:'r10',t:'Region 10'},
-    ]},
-  ];
-}
-
-/* ============================================================
-   STATE
-   ============================================================ */
-let fullFlow = [];
-let step = 0;
-let answers = {};
-let role = null;
-
-const $ = s => document.querySelector(s);
-const $$ = s => [...document.querySelectorAll(s)];
-
-const ROLE_QUESTION = {
-  key:'role', title:'Who is this for?', hint:'This decides what we show you next.', options:[
-    {v:'student', t:'I\u2019m a student', s:'Build my own plan.'},
-    {v:'parent', t:'I\u2019m a parent / guardian', s:'See what could help my child.'},
-    {v:'teacher', t:'I\u2019m a teacher / other', s:'See resources for my students.'},
+const TIEBREAK_POOL = {
+  R:[
+    {dim:'R', t:'Grow crops or raise animals on a farm'},
+    {dim:'R', t:'Learn to weld, or service an air conditioning unit'}
+  ],
+  I:[
+    {dim:'I', t:'Take a machine apart just to understand how it works'},
+    {dim:'I', t:'Test soil or water samples and record what you find'}
+  ],
+  A:[
+    {dim:'A', t:'Edit photos or video into something people want to watch'},
+    {dim:'A', t:'Design a logo and posters for an organisation'}
+  ],
+  S:[
+    {dim:'S', t:'Coach a team, or lead a training session'},
+    {dim:'S', t:'Run activities for children at a community event'}
+  ],
+  E:[
+    {dim:'E', t:'Start a small business of your own'},
+    {dim:'E', t:'Speak on behalf of a group at a public meeting'}
+  ],
+  C:[
+    {dim:'C', t:'Check a long document for mistakes before it goes out'},
+    {dim:'C', t:'Keep track of stock and supplies so nothing runs out'}
   ]
 };
-const STAGE_QUESTION = {key:'stage', title:'Where are you in your school journey?', hint:'This decides which questions we ask next.', options: STAGES.map(s=>({v:s.v,t:s.t,s:s.s}))};
 
-function totalLabel(){
-  // total is unknown until we know the branch (role, then stage if student)
-  if(fullFlow.length <= 1) return '?';
-  if(role==='student' && !answers.stage) return '?';
-  return fullFlow.length;
+const FLOW_TAIL = ['curio','pressure','conditions','recover','extra','concerns','advice'];
+
+const STEP_DEFS = {
+  curio:{type:'curiosity', title:'Which areas make you curious?', hint:'Tap in order of interest — your first pick names your archetype. Curiosity is enough.'},
+  extra:{type:'multi', key:'extra', title:'What are you into outside of class?', hint:'Any that apply, or none. This shapes what we suggest, not your archetype.', allowEmpty:true, options:[
+    {v:'club', t:'School club or society'},
+    {v:'sports', t:'Sports team'},
+    {v:'music', t:'Music, choir or band'},
+    {v:'debate', t:'Debating or public speaking'},
+    {v:'essay', t:'Essay or writing competitions'},
+    {v:'church', t:'Church or community group'},
+    {v:'family-biz', t:'Helping with a family business'},
+    {v:'else', t:'Something else'},
+    {v:'none', t:'Nothing right now — that\'s completely fine'}
+  ]},
+  pressure:{type:'single', key:'pressure', title:'When something important isn\'t going to plan, what do you actually do?', hint:'What happens, not what should.', options:[
+    {v:'fix', t:'Try to fix it myself before asking anyone'},
+    {v:'why', t:'Work out what went wrong, and why'},
+    {v:'different', t:'Find a completely different way to approach it'},
+    {v:'talk', t:'Talk it through with someone I trust'},
+    {v:'charge', t:'Take charge and reorganise the whole thing'},
+    {v:'contain', t:'Make sure nothing else slips through the gaps'}
+  ]},
+  conditions:{type:'single', key:'conditions', title:'When do you do your best work?', hint:'There\'s no better answer here.', options:[
+    {v:'expected', t:'When I know exactly what\'s expected of me'},
+    {v:'own', t:'When I can figure out my own approach'},
+    {v:'fast', t:'When I\'m moving fast and reacting'},
+    {v:'depends', t:'It depends on the situation'}
+  ]},
+  recover:{type:'single', key:'recover', title:'After a long week, what actually helps you recover?', hint:'Not what you think you should say.', options:[
+    {v:'people', t:'Being around people'},
+    {v:'alone', t:'Time to myself'},
+    {v:'both', t:'A proper mix of both'}
+  ]},
+  concerns:{type:'multi', key:'concerns', title:'What concerns you most about your future?', hint:'Up to three. This decides which answers we show first.', max:3, options:[
+    {v:'no-idea', t:'I don\'t know what I\'m good at'},
+    {v:'afford', t:'Whether I can afford it'},
+    {v:'exists', t:'Whether the opportunity exists in Guyana'},
+    {v:'family', t:'Family expectations'},
+    {v:'earn', t:'Needing to earn money soon'},
+    {v:'good-enough', t:'Not knowing what qualifications I need'},
+    {v:'early', t:'Locking myself in too early'},
+    {v:'leaving', t:'Whether I\'d have to leave home'}
+  ]},
+  advice:{type:'single', key:'advice', title:'Who do you talk to about decisions like this?', hint:'Last one. There\'s no wrong answer.', nextLabel:'See my results →', options:[
+    {v:'parents', t:'A parent, sibling or guardian'},
+    {v:'teacher', t:'A teacher or counsellor'},
+    {v:'friends', t:'Friends my own age'},
+    {v:'mentor', t:'A mentor or someone in the field'},
+    {v:'noone', t:'Honestly, nobody'}
+  ]}
+};
+
+const PRIMARY_QUOTE = {
+  R:'I\'d rather build the thing than talk about building it.',
+  I:'I need to know why before I\'ll accept how.',
+  A:'I can see the version of this that doesn\'t exist yet.',
+  S:'I do my best work when somebody else gets better because of it.',
+  E:'I\'d rather persuade the room than wait for permission.',
+  C:'I keep things right when nobody\'s checking.'
+};
+
+const HOW_YOU_WORK = {
+  R:'You work things out by doing them, hands on the thing itself.',
+  I:'You want to know why before you act — and you keep asking.',
+  A:'You make something of your own out of whatever you\'re given.',
+  S:'You do your best work when somebody else gets better because of it.',
+  E:'You would rather persuade a room than wait for permission.',
+  C:'You keep things right when nobody\'s checking, and you notice what\'s off.'
+};
+
+const ARCH_DESC = {
+  'The Steward':'Stewards look after something bigger than themselves: a body of knowledge, people\'s health, land, or a system other people depend on. They\'re usually trusted long before they\'re noticed.',
+  'The Artisan':'Artisans trust what their hands can prove. They\'d rather show you the finished thing than describe it, and the skill travels with them wherever they go.',
+  'The Pioneer':'Pioneers start things. Being first also means being wrong in public sometimes, and they\'ll take that over waiting for permission.',
+  'The Advocate':'Advocates speak for people who aren\'t in the room. They work through argument and persuasion, and they usually noticed the unfairness first.',
+  'The Visionary':'Visionaries see the version that doesn\'t exist yet. They work in ideas, images and language, and the contribution is often obvious only once it\'s made.',
+  'The Gladiator':'Gladiators do their best work when it counts and somebody\'s watching. They\'ve learned things about pressure that most people never have to.'
+};
+
+const ARCH = {
+  'The Steward':{grad:'linear-gradient(145deg,#07864d,#05603a)', tintBg:'#e8f7ef', tintInk:'#05603a'},
+  'The Artisan':{grad:'linear-gradient(145deg,#2479df,#1a55a8)', tintBg:'#e8f2ff', tintInk:'#1a55a8'},
+  'The Pioneer':{grad:'linear-gradient(145deg,#e57c2d,#b85c18)', tintBg:'#fff0e2', tintInk:'#a3500f'},
+  'The Advocate':{grad:'linear-gradient(145deg,#7256c7,#513a96)', tintBg:'#f0ebff', tintInk:'#513a96'},
+  'The Visionary':{grad:'linear-gradient(145deg,#078697,#04616e)', tintBg:'#e2f5f7', tintInk:'#04616e'},
+  'The Gladiator':{grad:'linear-gradient(145deg,#df453d,#a92e28)', tintBg:'#ffe9e7', tintInk:'#a92e28'}
+};
+
+const DEFAULT_ARCH = {R:'The Artisan',I:'The Steward',A:'The Visionary',S:'The Advocate',E:'The Pioneer',C:'The Steward'};
+const BUCKET_OVERRIDE = {
+  'Law & Humanities':{R:'The Advocate'},
+  'Public Service & Government':{R:'The Advocate'},
+  'Trade & TVET':{I:'The Artisan'},
+  'Creative Industry':{C:'The Visionary'},
+  'Sports':{R:'The Gladiator',C:'The Gladiator'}
+};
+const GLADIATOR_BUCKETS = {
+  'Sports':1,'Business & Entrepreneurship':1,'Public Service & Government':1,'Trade & TVET':1
+};
+
+const GENERAL_JOBS = {
+  'Science & Medicine':['Doctor','Nurse','Lab technician','Pharmacist','Dentist','Physiotherapist'],
+  'Technology':['Software developer','IT support','Network technician','Data analyst','Web designer','Cybersecurity officer'],
+  'Engineering':['Civil engineer','Electrical technician','Mechanical technician','Surveyor','Architect','Quantity surveyor'],
+  'Trade & TVET':['Electrician','Mechanic','Welder','Carpenter','Chef','Plumber'],
+  'Agriculture':['Farmer','Agronomist','Extension officer','Food processor','Veterinarian','Forestry officer'],
+  'Business & Entrepreneurship':['Accountant','Entrepreneur','Bank officer','Project manager','Marketing officer','HR officer'],
+  'Law & Humanities':['Lawyer','Journalist','Social worker','Policy officer','Historian','Translator'],
+  'Public Service & Government':['Civil servant','Police officer','Community development officer','Customs officer','Diplomat','Local government officer'],
+  'Education':['Teacher','Guidance counsellor','Early childhood educator','Coach','Librarian','Lecturer'],
+  'Creative Industry':['Graphic designer','Writer','Musician','Photographer','Content creator','Film maker'],
+  'Sports':['Athlete','Coach','Sports administrator','PE teacher','Fitness trainer','Sports journalist']
+};
+
+const EXTRA_DIM = {
+  club:null, sports:'R', music:'A', debate:'E', essay:'A', church:'S', 'family-biz':'E', else:null, none:null
+};
+
+const PRESSURE_LINE = {
+  fix:'You\'d rather solve it yourself before anyone else knows.',
+  why:'You stop and find the cause before you move.',
+  different:'You start over from a different angle.',
+  talk:'You think it out loud with somebody.',
+  charge:'You take hold of it and rebuild the plan.',
+  contain:'You contain it before anything else goes wrong.'
+};
+
+const CONDITIONS_LINE = {
+  expected:'You do better knowing what\'s expected before you start.',
+  own:'You want the goal, then room to reach it your own way.',
+  fast:'You\'d rather be moving and correcting than waiting to be sure.',
+  depends:'Your best setup shifts with the task.'
+};
+
+const RECOVER_LINE = {
+  people:'You recover around other people, not away from them.',
+  alone:'You need real time on your own to come back.',
+  both:'You need both, in roughly equal measure.'
+};
+
+const CONCERN_META = {
+  'no-idea':{t:'I don\'t know what I\'m good at', href:'ask.html'},
+  afford:{t:'Whether I can afford it', href:'ask.html'},
+  exists:{t:'Whether the opportunity exists in Guyana', href:'ask.html'},
+  family:{t:'Family expectations', href:'ask.html'},
+  earn:{t:'Needing to earn money soon', href:'ask.html'},
+  'good-enough':{t:'Not knowing what qualifications I need', href:'ask.html'},
+  early:{t:'Locking myself in too early', href:'ask.html'},
+  leaving:{t:'Whether I\'d have to leave home', href:'ask.html'}
+};
+
+const CURIOSITY = [
+  {v:'Science & Medicine', t:'Science & Medicine', s:'Biology, medicine, research, wellbeing'},
+  {v:'Technology', t:'Technology', s:'Computing, software, digital design'},
+  {v:'Engineering', t:'Engineering', s:'Building, infrastructure, systems'},
+  {v:'Trade & TVET', t:'Trade & TVET', s:'Skilled hands-on work and certification'},
+  {v:'Agriculture', t:'Agriculture', s:'Land, food, climate, communities'},
+  {v:'Business & Entrepreneurship', t:'Business & Entrepreneurship', s:'Money, organisations, leadership'},
+  {v:'Law & Humanities', t:'Law & Humanities', s:'Justice, policy, government, society'},
+  {v:'Public Service & Government', t:'Public Service & Government', s:'Civic work, administration, community'},
+  {v:'Education', t:'Education', s:'Teaching, mentoring, helping people grow'},
+  {v:'Creative Industry', t:'Creative Industry', s:'Writing, media, design, performance'},
+  {v:'Sports', t:'Sports', s:'Training, competing, coaching, sport science'}
+];
+
+const $ = (s, r)=> (r||document).querySelector(s);
+const $$ = (s, r)=> Array.from((r||document).querySelectorAll(s));
+function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function toast(msg){
+  let t=$('.toast');
+  if(!t){ t=document.createElement('div'); t.className='toast'; document.body.appendChild(t); }
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2300);
 }
 
-function renderQuestion(){
-  const q = fullFlow[step];
-  const stepNum = step+1;
-  const total = totalLabel();
-  $('#quizCount').textContent = `QUESTION ${stepNum}${total!=='?' ? ' OF '+total : ''}`;
-  $('#quizProgress').style.width = total==='?' ? Math.min(90, stepNum*8)+'%' : Math.round(stepNum/total*100)+'%';
-  const multi = q.multi || 1;
-  const selected = answers[q.key] || [];
-  const optsHtml = q.options.map(o=>{
-    const isSel = selected.includes(o.v);
-    return `<button class="choice ${isSel?'selected':''}" data-v="${o.v}"><strong>${o.t}</strong>${o.s?`<small>${o.s}</small>`:''}</button>`;
-  }).join('');
-  const layout = q.compact ? 'compact' : (q.key==='role' || q.key==='pull' ? 'single-col' : '');
-  $('#quizQuestion').innerHTML = `<h2>${q.title}</h2><p class="quiz-hint">${q.hint||''}</p><div class="choices ${layout}">${optsHtml}</div>${multi>1?`<p class="multi-note">Select up to ${multi}.</p>`:''}`;
-  $$('#quizQuestion .choice').forEach(btn=>{
-    btn.addEventListener('click', ()=>{
-      const v = btn.dataset.v;
-      let arr = answers[q.key] || [];
-      if(multi===1){ arr=[v]; } else {
-        if(arr.includes(v)) arr = arr.filter(x=>x!==v);
-        else { if(arr.length>=multi){ return; } arr=[...arr,v]; }
-      }
-      answers[q.key] = arr;
-      renderQuestion();
-    });
-  });
-  $('#quizBack').style.visibility = step===0 ? 'hidden':'visible';
-  $('#quizNext').disabled = !(answers[q.key] && answers[q.key].length);
-  const knownTotal = total!=='?';
-  const isLast = knownTotal && stepNum===total;
-  $('#quizNext').textContent = isLast ? (role==='student' ? 'Build my plan \u2192' : 'See what helps \u2192') : 'Continue \u2192';
+function lsGet(key){
+  try{ return localStorage.getItem(key); }catch(e){ return null; }
+}
+function lsSet(key, val){
+  try{ localStorage.setItem(key, val); return true; }catch(e){ return false; }
+}
+function lsRemove(key){
+  try{ localStorage.removeItem(key); return true; }catch(e){ return false; }
+}
+function clearAllNsg(){
+  try{
+    const keys=[];
+    for(let i=0;i<localStorage.length;i++){
+      const k=localStorage.key(i);
+      if(k && k.indexOf('nsg_')===0) keys.push(k);
+    }
+    keys.forEach(k=>{ try{ localStorage.removeItem(k); }catch(e){} });
+  }catch(e){}
 }
 
-function start(){
-  fullFlow = [ROLE_QUESTION];
-  step = 0;
-  renderQuestion();
-}
+let MENTORS = [];
+let flow = [];
+let step = 0;
+let view = 'quiz'; /* quiz | final */
+let answers = blankAnswers();
 
-$('#quizNext').addEventListener('click', ()=>{
-  const q = fullFlow[step];
-  // extend the flow the moment we learn enough to know what's next
-  if(q.key==='role'){
-    role = answers.role[0];
-    fullFlow = role==='student' ? [ROLE_QUESTION, STAGE_QUESTION] : [ROLE_QUESTION, ...getParentFlow(role)];
-  } else if(q.key==='stage'){
-    fullFlow = [ROLE_QUESTION, STAGE_QUESTION, ...getStageQuestions(answers.stage[0]), ...UNIVERSAL_QUESTIONS];
-  }
-  if(step < fullFlow.length-1){
-    step++;
-    renderQuestion();
-  } else {
-    finish();
-  }
-});
-
-$('#quizBack').addEventListener('click', ()=>{
-  if(step===0) return;
-  step--;
-  renderQuestion();
-});
-
-function finish(){
-  $('#quizArea').classList.add('hidden');
-  $('#loadingView').classList.remove('hidden');
-  if(role==='student'){
-    $('#loadingText').textContent = 'Building your plan\u2026';
-    setTimeout(()=>{
-      const plan = generatePlan(answers);
-      localStorage.setItem('nsg_myplan', JSON.stringify(plan));
-      location.href = 'my-plan.html';
-    }, 1100);
-  } else {
-    $('#loadingText').textContent = 'Finding what can help\u2026';
-    setTimeout(()=>{
-      localStorage.setItem('nsg_parent_view', JSON.stringify({role, childStage: answers.childStage[0], childInterests: answers.childInterests||[], region: answers.region?answers.region[0]:null}));
-      location.href = 'parent-landing.html';
-    }, 1100);
-  }
-}
-
-/* ============================================================
-   GAP-ANALYSIS PLAN GENERATION (same logic as my-plan.html)
-   ============================================================ */
-function pickStarKey(a){
-  if(a.targetField && a.targetField[0]) return a.targetField[0];
-  const interests = a.interests || [];
-  const found = interests.find(i=>REQUIREMENTS[i]);
-  if(found) return found;
-  if(a.pull && a.pull[0]) return a.pull[0];
-  return 'other';
-}
-function subjectLevelForStage(stage){
-  if(stage==='sixthform') return 'CAPE';
-  if(stage==='postcape') return null;
-  return 'CSEC';
-}
-function computeSubjectGaps(starKey, studentSubjects, level){
-  const req = REQUIREMENTS[starKey];
-  if(!req) return [];
-  const list = level==='CAPE' ? (req.recommendedCAPE||[]) : (req.mustHaveCSEC||[]);
-  const have = (studentSubjects||[]).map(s=>s.name);
-  return list.filter(s=>!have.includes(s));
-}
-function generatePlan(a){
-  const starKey = pickStarKey(a);
-  const req = REQUIREMENTS[starKey];
-  const stage = a.stage[0];
-  const level = subjectLevelForStage(stage);
-  const term = a.term ? a.term[0] : null;
-
-  // Subjects are no longer collected in the quiz \u2014 they're added (with grades) in My Plan,
-  // and the gap-check runs the moment they are. Starting empty means the Star card should say
-  // "add your subjects to see your real gaps," not imply a clean bill of health.
-  const subjects = [];
-  const milestones = [];
-
-  milestones.push({id:'m-subjects', type:'profile', title:'Add your subjects & grades', desc:'This is what your plan actually checks against \u2014 nothing else can be verified until this is filled in.', xp:20, done:false});
-  milestones.push({id:'m-achieve', type:'profile', title:'Log your first achievement', desc:'Clubs, awards, volunteer work \u2014 it all counts, and sharpens your mentor match too.', xp:15, done:false});
-
-  const decision = a.priority || [];
-  if(decision.includes('affordable')) milestones.push({id:'m-fund', type:'task', title:'Start your scholarship / GOAL readiness checklist', desc:'University tuition is now free at UG \u2014 but transport, materials and applications still cost something.', xp:20, done:false});
-  if(decision.includes('family')) milestones.push({id:'m-family', type:'navi', title:'Ask Navi: talking to your family about this', desc:'Get a mentor\u2019s take on navigating expectations.', xp:15, done:false, context:'family'});
-  if(decision.includes('work-soon')) milestones.push({id:'m-work', type:'task', title:'Explore work + study routes', desc:'Income and experience while studying part-time.', xp:15, done:false});
-  if(decision.includes('distance')) milestones.push({id:'m-dist', type:'task', title:'Find sessions near your region', desc:'Check what\u2019s realistic where you are.', xp:10, done:false});
-  if(decision.includes('abroad')) milestones.push({id:'m-abroad', type:'task', title:'Research scholarships abroad', desc:'Start a shortlist of programmes.', xp:15, done:false});
-  if((a.support && a.support[0]==='none') && !decision.includes('family')) milestones.push({id:'m-support', type:'navi', title:'Ask Navi who could support you', desc:'You don\u2019t have to figure this out alone.', xp:10, done:false, context:'support'});
-
-  if(stage==='form5' && a.registered && a.registered[0]==='no')
-    milestones.push({id:'m-register', type:'task', title:'Submit your CSEC registration', desc:'Registration windows are short \u2014 don\u2019t miss it.', xp:20, done:false, urgent: term==='term3' || term==='term2'});
-
-  if(term==='term3' && (stage==='form5' || stage==='sixthform'))
-    milestones.push({id:'m-examprep', type:'task', title:'Start focused exam revision', desc:'Final term \u2014 this is the moment to lock in a revision schedule, not wait for it to feel urgent.', xp:20, done:false, urgent:true});
-
-  milestones.push({id:'m-session', type:'session', title:'Attend a pod session', desc:'Group clinic on your Star or CSEC/CAPE.', xp:20, done:false});
-  milestones.push({id:'m-mentor', type:'mentor', title:'Pick a mentor to inspire you', desc:'See how someone similar got there.', xp:10, done:false});
-
+function blankAnswers(){
   return {
-    answers:a, starKey, star:{title:req.title, desc:req.desc, verified:req.verified},
-    stage, term, subjectLevel: level, subjects, achievements:[], milestones, inspirationMentor:null,
-    naviLog:[], badges:[], lastVisit: Date.now(),
+    ratings: Array(12).fill(null),
+    tbRatings: null,
+    tbDims: null,
+    ranked: [],
+    extra: [],
+    pressure: null,
+    conditions: null,
+    recover: null,
+    concerns: [],
+    advice: null
   };
 }
 
-start();
+function rateScreenStart(stepId){
+  if(stepId==='i0') return 0;
+  if(stepId==='i1') return 3;
+  if(stepId==='i2') return 6;
+  if(stepId==='i3') return 9;
+  return 0;
+}
+
+function getTiebreakItems(primary, secondary){
+  const a = TIEBREAK_POOL[primary];
+  const b = TIEBREAK_POOL[secondary];
+  return [a[0], b[0], a[1], b[1]];
+}
+
+function hashFallback(ratings, tbRatings){
+  const sig = ratings.map(r=> r==null?'0':String(r)).join('')
+    + (tbRatings ? tbRatings.map(r=> r==null?'0':String(r)).join('') : '');
+  let h = 0;
+  for(let i=0;i<sig.length;i++){
+    h = (h * 31 + sig.charCodeAt(i)) >>> 0;
+  }
+  const fallback = {};
+  DIM_ORDER.forEach((d,i)=>{
+    fallback[d] = (h >> (i * 3)) & 7;
+  });
+  return fallback;
+}
+
+function scoreRiasec(baseOnly){
+  const buckets = {};
+  DIM_ORDER.forEach(d=>{ buckets[d] = []; });
+  const count4 = {R:0,I:0,A:0,S:0,E:0,C:0};
+  const count3 = {R:0,I:0,A:0,S:0,E:0,C:0};
+  BASE_ITEMS.forEach((item,i)=>{
+    const v = answers.ratings[i];
+    if(v==null) return;
+    buckets[item.dim].push(v);
+    if(v===4) count4[item.dim]++;
+    if(v===3) count3[item.dim]++;
+  });
+  if(!baseOnly && answers.tbRatings && answers.tbDims){
+    getTiebreakItems(answers.tbDims[0], answers.tbDims[1]).forEach((item,i)=>{
+      const v = answers.tbRatings[i];
+      if(v==null) return;
+      buckets[item.dim].push(v);
+      if(v===4) count4[item.dim]++;
+      if(v===3) count3[item.dim]++;
+    });
+  }
+  const mean = {};
+  DIM_ORDER.forEach(d=>{
+    const arr = buckets[d];
+    mean[d] = arr.length ? arr.reduce((a,v)=>a+v,0) / arr.length : 0;
+  });
+  if(!baseOnly){
+    const extra = {R:0,I:0,A:0,S:0,E:0,C:0};
+    (answers.extra||[]).forEach(v=>{
+      const d = EXTRA_DIM[v];
+      if(d) extra[d] += 0.5;
+    });
+    DIM_ORDER.forEach(d=>{
+      mean[d] += Math.min(extra[d], 1.0);
+    });
+  }
+  const grand = DIM_ORDER.reduce((a,d)=>a+mean[d],0) / 6;
+  const adj = {};
+  DIM_ORDER.forEach(d=>{ adj[d] = mean[d] - grand; });
+  const fallback = hashFallback(answers.ratings, baseOnly ? null : answers.tbRatings);
+  const rankedDims = DIM_ORDER.slice().sort((a,b)=>{
+    if(adj[b]!==adj[a]) return adj[b]-adj[a];
+    if(count4[b]!==count4[a]) return count4[b]-count4[a];
+    if(count3[b]!==count3[a]) return count3[b]-count3[a];
+    return fallback[a]-fallback[b];
+  });
+  const primary = rankedDims[0];
+  const secondary = rankedDims[1];
+  const close = Math.abs(adj[primary]-adj[secondary]) <= 0.5;
+  const spread = adj[rankedDims[0]] - adj[rankedDims[5]];
+  const flat = spread < 0.25;
+  const meanSum = DIM_ORDER.reduce((a,d)=>a+mean[d],0);
+  const shares = {};
+  DIM_ORDER.forEach(d=>{
+    shares[d] = meanSum > 0 ? (mean[d] / meanSum) * 100 : 100 / 6;
+  });
+  return {mean, adj, shares, rankedDims, primary, secondary, close, flat, spread, code: primary+secondary};
+}
+
+function needsTiebreak(sc){
+  if(sc.flat) return false;
+  return (sc.adj[sc.primary] - sc.adj[sc.secondary]) <= 0.35;
+}
+
+function syncTiebreak(sc){
+  if(!needsTiebreak(sc)){
+    answers.tbRatings = null;
+    answers.tbDims = null;
+    return;
+  }
+  const dims = [sc.primary, sc.secondary];
+  if(answers.tbDims && (answers.tbDims[0]!==dims[0] || answers.tbDims[1]!==dims[1])){
+    answers.tbRatings = [null,null,null,null];
+  } else if(!answers.tbRatings){
+    answers.tbRatings = [null,null,null,null];
+  }
+  answers.tbDims = dims;
+}
+
+function rebuildFlow(){
+  flow = ['i0','i1','i2','i3','donut'];
+  const sc = scoreRiasec(true);
+  if(needsTiebreak(sc)){
+    syncTiebreak(sc);
+    flow.push('tb');
+  } else {
+    answers.tbRatings = null;
+    answers.tbDims = null;
+  }
+  flow = flow.concat(FLOW_TAIL);
+}
+
+function remainingAfter(stepId){
+  const i = flow.indexOf(stepId);
+  if(i < 0) return 0;
+  return flow.length - i - 1;
+}
+
+function currentStepId(){
+  return flow[step] || flow[0];
+}
+
+function perfScore(){
+  let perf = 0;
+  if(answers.pressure==='charge') perf += 1.0;
+  else if(answers.pressure==='fix') perf += 0.5;
+  if(answers.conditions==='fast') perf += 1.0;
+  else if(answers.conditions==='own') perf += 0.5;
+  return perf;
+}
+
+function resolveArchetype(primary, bucket){
+  let arch = DEFAULT_ARCH[primary] || 'The Steward';
+  const ov = BUCKET_OVERRIDE[bucket];
+  if(ov && ov[primary]) arch = ov[primary];
+  const perf = perfScore();
+  if(perf >= 1.5 && GLADIATOR_BUCKETS[bucket]) arch = 'The Gladiator';
+  return arch;
+}
+
+function buildProfile(){
+  const sc = scoreRiasec(false);
+  const bucket = (answers.ranked&&answers.ranked[0]) || null;
+  const archetype = sc.flat ? null : resolveArchetype(sc.primary, bucket);
+  const completed = !!answers.advice;
+  const prev = (()=>{ try{ return JSON.parse(lsGet(STORAGE_KEY)||'null'); }catch(e){ return null; } })();
+  return {
+    version: VERSION,
+    ratings: answers.ratings.slice(),
+    tbRatings: answers.tbRatings ? answers.tbRatings.slice() : null,
+    tbDims: answers.tbDims ? answers.tbDims.slice() : null,
+    ranked: (answers.ranked||[]).slice(),
+    extra: (answers.extra||[]).slice(),
+    pressure: answers.pressure,
+    conditions: answers.conditions,
+    recover: answers.recover,
+    concerns: (answers.concerns||[]).slice(),
+    advice: answers.advice,
+    primary: sc.primary,
+    secondary: sc.secondary,
+    code: sc.code,
+    mean: sc.mean,
+    adj: sc.adj,
+    shares: sc.shares,
+    rankedDims: sc.rankedDims,
+    close: sc.close,
+    flat: sc.flat,
+    archetype,
+    bucket,
+    completed,
+    /* account.html / My Plan funnel gate */
+    answeredAt: completed
+      ? ((prev && prev.answeredAt) || new Date().toISOString())
+      : (prev && prev.answeredAt) || null
+  };
+}
+
+function persist(){
+  const profile = buildProfile();
+  lsSet(STORAGE_KEY, JSON.stringify(profile));
+  return profile;
+}
+
+function loadPersisted(){
+  const raw = lsGet(STORAGE_KEY);
+  if(!raw) return null;
+  try{
+    const data = JSON.parse(raw);
+    if(!data || data.version!==VERSION) return null;
+    return data;
+  }catch(e){ return null; }
+}
+
+function applyLoaded(data){
+  answers = blankAnswers();
+  if(Array.isArray(data.ratings) && data.ratings.length===12) answers.ratings = data.ratings.slice();
+  if(Array.isArray(data.tbRatings)) answers.tbRatings = data.tbRatings.slice();
+  if(Array.isArray(data.tbDims)) answers.tbDims = data.tbDims.slice();
+  answers.ranked = Array.isArray(data.ranked) ? data.ranked.slice() : [];
+  answers.extra = Array.isArray(data.extra) ? data.extra.slice() : [];
+  answers.pressure = data.pressure||null;
+  answers.conditions = data.conditions||null;
+  answers.recover = data.recover||null;
+  answers.concerns = Array.isArray(data.concerns) ? data.concerns.slice() : [];
+  answers.advice = data.advice||null;
+}
+
+function isStepComplete(stepId){
+  if(stepId==='donut') return true;
+  if(stepId==='i0' || stepId==='i1' || stepId==='i2' || stepId==='i3'){
+    const start = rateScreenStart(stepId);
+    for(let i=start;i<start+3;i++){
+      if(answers.ratings[i]==null) return false;
+    }
+    return true;
+  }
+  if(stepId==='tb'){
+    if(!answers.tbRatings) return false;
+    return answers.tbRatings.every(v=>v!=null);
+  }
+  const s = STEP_DEFS[stepId];
+  if(!s) return true;
+  if(s.type==='curiosity') return (answers.ranked||[]).length >= 1;
+  if(s.type==='multi'){
+    if(s.allowEmpty) return true;
+    if(s.max) return (answers[s.key]||[]).length >= 1;
+    return true;
+  }
+  if(s.type==='single') return !!answers[s.key];
+  return true;
+}
+
+function canContinue(){
+  return isStepComplete(currentStepId());
+}
+
+function updateProgressUI(){
+  const countEl = $('#quizCount');
+  const bar = $('#quizProgress');
+  countEl.textContent = 'STEP '+(step+1)+' OF '+flow.length;
+  bar.style.width = (((step+1)/flow.length)*100).toFixed(1)+'%';
+}
+
+function anchorStep(prevId){
+  rebuildFlow();
+  if(prevId){
+    const idx = flow.indexOf(prevId);
+    if(idx >= 0) step = idx;
+    else if(step >= flow.length) step = Math.max(0, flow.length - 1);
+  }
+}
+
+function donutArc(cx, cy, r, ri, startPct, endPct){
+  const s = (startPct/100)*Math.PI*2 - Math.PI/2;
+  const e = (endPct/100)*Math.PI*2 - Math.PI/2;
+  const x1 = cx + r*Math.cos(s), y1 = cy + r*Math.sin(s);
+  const x2 = cx + r*Math.cos(e), y2 = cy + r*Math.sin(e);
+  const x3 = cx + ri*Math.cos(e), y3 = cy + ri*Math.sin(e);
+  const x4 = cx + ri*Math.cos(s), y4 = cy + ri*Math.sin(s);
+  const large = (endPct-startPct) > 50 ? 1 : 0;
+  return 'M'+x1+' '+y1+' A'+r+' '+r+' 0 '+large+' 1 '+x2+' '+y2
+    +' L'+x3+' '+y3+' A'+ri+' '+ri+' 0 '+large+' 0 '+x4+' '+y4+' Z';
+}
+
+function renderDonutScreen(){
+  const sc = scoreRiasec(true);
+  const sorted = DIM_ORDER.map(d=>({d, share: sc.shares[d]})).sort((a,b)=>b.share-a.share);
+  let cum = 0;
+  const slices = sorted.map(row=>{
+    const start = cum;
+    cum += row.share;
+    return {d:row.d, share:row.share, start, end:cum};
+  });
+  const cx=80, cy=80, r=68, ri=42;
+  let paths = '';
+  slices.forEach(sl=>{
+    paths += '<path d="'+donutArc(cx,cy,r,ri,sl.start,sl.end)+'" fill="'+DIM_COLORS[sl.d]+'"></path>';
+  });
+  const ariaParts = sorted.map(sl=> RIASEC[sl.d]+' '+Math.round(sl.share)+'%').join(', ');
+  let legend = '<div class="donut-legend">';
+  sorted.forEach(sl=>{
+    legend += '<div class="donut-leg-row"><span class="donut-swatch" style="background:'+DIM_COLORS[sl.d]+'"></span>'
+      +'<span>'+esc(RIASEC[sl.d])+'</span><b>'+Math.round(sl.share)+'%</b></div>';
+  });
+  legend += '</div>';
+  const n = remainingAfter('donut');
+  let heading, body, btnLabel, warn = '';
+  if(sc.flat){
+    heading = 'You rated almost everything the same.';
+    body = 'Your mix came out almost perfectly even, which usually means these items didn\'t fit you rather than that you have no interests.';
+    warn = '<div class="warn-note">Going back and being harsher — using <strong>Hate it</strong> and <strong>Love it</strong> rather than the middle — will give a much truer result.</div>';
+    btnLabel = 'Continue anyway →';
+  } else if(needsTiebreak(sc)){
+    heading = 'Here\'s your interest mix.';
+    body = 'Two of these are still too close to call. Four more items will separate them, then '+n+' short questions and you get your archetype.';
+    btnLabel = 'Settle it →';
+  } else {
+    heading = 'Here\'s your interest mix.';
+    body = 'Your strongest interests came through clearly. '+n+' short questions and you get your archetype.';
+    btnLabel = 'Keep going →';
+  }
+  return '<span class="eyebrow">SO FAR</span>'
+    +'<p class="quiz-count" style="margin:10px 0 0;font-family:var(--font-accent);font-size:10.5px;font-weight:800;color:var(--teal2);letter-spacing:.06em">YOUR MIX SO FAR</p>'
+    +'<h2 style="margin-top:8px">'+esc(heading)+'</h2>'
+    +'<p class="donut-body">'+esc(body)+'</p>'
+    +warn
+    +'<div class="donut-wrap"><svg class="donut-chart" viewBox="0 0 160 160" role="img" aria-label="Interest mix: '+esc(ariaParts)+'">'+paths+'</svg>'
+    +legend+'</div>';
+}
+
+function renderRateScreen(stepId){
+  let html = '<h2>Would you enjoy doing this?</h2>';
+  if(stepId==='tb'){
+    html = '<h2>Four more, to settle it.</h2>';
+    const sc = scoreRiasec(true);
+    const prim = answers.tbDims ? answers.tbDims[0] : sc.primary;
+    const sec = answers.tbDims ? answers.tbDims[1] : sc.secondary;
+    html += '<p class="quiz-tip">These separate '+esc(RIASEC[prim])+' from '+esc(RIASEC[sec])+'. Same scale.</p>';
+    const items = getTiebreakItems(prim, sec);
+    items.forEach((item,i)=>{
+      const val = answers.tbRatings ? answers.tbRatings[i] : null;
+      html += '<div class="rate-item"><p>'+esc(item.t)+'</p><div class="rate-row" role="group" aria-label="'+esc(item.t)+'">';
+      for(let v=1;v<=4;v++){
+        const checked = val===v;
+        const cls = v<=2 ? 'lo' : 'hi';
+        html += '<button type="button" class="rate-btn '+cls+'" data-tbrate="'+i+'" data-val="'+v+'" aria-checked="'+(checked?'true':'false')+'" aria-label="'+esc(item.t)+': '+esc(RATE_LABELS[v])+'">'+esc(RATE_LABELS[v])+'</button>';
+      }
+      html += '</div></div>';
+    });
+    return html;
+  }
+  const start = rateScreenStart(stepId);
+  for(let i=0;i<3;i++){
+    const idx = start + i;
+    const item = BASE_ITEMS[idx];
+    const val = answers.ratings[idx];
+    html += '<div class="rate-item"><p>'+esc(item.t)+'</p><div class="rate-row" role="group" aria-label="'+esc(item.t)+'">';
+    for(let v=1;v<=4;v++){
+      const checked = val===v;
+      const cls = v<=2 ? 'lo' : 'hi';
+      html += '<button type="button" class="rate-btn '+cls+'" data-rate="'+idx+'" data-val="'+v+'" aria-checked="'+(checked?'true':'false')+'" aria-label="'+esc(item.t)+': '+esc(RATE_LABELS[v])+'">'+esc(RATE_LABELS[v])+'</button>';
+    }
+    html += '</div></div>';
+  }
+  return html;
+}
+
+function renderChoices(s){
+  let html = '<h2>'+esc(s.title)+'</h2>';
+  if(s.hint) html += '<p class="quiz-tip">'+esc(s.hint)+'</p>';
+  html += '<div class="choices" role="group">';
+  if(s.type==='curiosity'){
+    CURIOSITY.forEach(o=>{
+      const idx = (answers.ranked||[]).indexOf(o.v);
+      const on = idx>=0;
+      const first = idx===0;
+      html += '<button type="button" class="choice'+(on?(first?' rank-first selected':' selected'):'')+'" data-rank="'+esc(o.v)+'" aria-checked="'+(on?'true':'false')+'">'
+        +'<strong>'+esc(o.t)+'</strong><small>'+esc(o.s)+'</small>'
+        +(first?'<span class="rank-badge">1</span>':'')
+        +'</button>';
+    });
+  } else if(s.type==='single'){
+    (s.options||[]).forEach(o=>{
+      const on = answers[s.key]===o.v;
+      html += '<button type="button" class="choice'+(on?' selected':'')+'" data-single="'+esc(o.v)+'" aria-checked="'+(on?'true':'false')+'"><strong>'+esc(o.t)+'</strong></button>';
+    });
+  } else if(s.type==='multi'){
+    const arr = answers[s.key]||[];
+    (s.options||[]).forEach(o=>{
+      const on = arr.indexOf(o.v)>=0;
+      html += '<button type="button" class="choice'+(on?' selected':'')+'" data-multi="'+esc(o.v)+'" aria-checked="'+(on?'true':'false')+'"><strong>'+esc(o.t)+'</strong></button>';
+    });
+  }
+  html += '</div>';
+  return html;
+}
+
+function renderScreen(){
+  const prevId = flow[step];
+  anchorStep(prevId);
+  const stepId = currentStepId();
+  const q = $('#quizQuestion');
+  if(stepId==='donut'){
+    q.innerHTML = renderDonutScreen();
+  } else if(stepId==='i0' || stepId==='i1' || stepId==='i2' || stepId==='i3' || stepId==='tb'){
+    q.innerHTML = renderRateScreen(stepId);
+  } else {
+    q.innerHTML = renderChoices(STEP_DEFS[stepId]);
+  }
+  const def = STEP_DEFS[stepId];
+  const next = $('#quizNext');
+  next.textContent = (stepId==='donut')
+    ? (scoreRiasec(true).flat ? 'Continue anyway →' : (needsTiebreak(scoreRiasec(true)) ? 'Settle it →' : 'Keep going →'))
+    : (def && def.nextLabel) || 'Continue →';
+  next.disabled = !canContinue();
+  $('#quizBack').textContent = (step===0) ? 'Home' : 'Back';
+  updateProgressUI();
+  bindQuestionHandlers();
+}
+
+function bindQuestionHandlers(){
+  $$('#quizQuestion [data-rate]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const idx = +btn.getAttribute('data-rate');
+      const val = +btn.getAttribute('data-val');
+      answers.ratings[idx] = val;
+      persist();
+      renderScreen();
+    });
+  });
+  $$('#quizQuestion [data-tbrate]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const idx = +btn.getAttribute('data-tbrate');
+      const val = +btn.getAttribute('data-val');
+      if(!answers.tbRatings) answers.tbRatings = [null,null,null,null];
+      answers.tbRatings[idx] = val;
+      persist();
+      renderScreen();
+    });
+  });
+  $$('#quizQuestion [data-rank]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const v = btn.getAttribute('data-rank');
+      let arr = (answers.ranked||[]).slice();
+      const i = arr.indexOf(v);
+      if(i>=0) arr.splice(i,1);
+      else arr.push(v);
+      answers.ranked = arr;
+      persist();
+      renderScreen();
+    });
+  });
+  $$('#quizQuestion [data-single]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const stepId = currentStepId();
+      const s = STEP_DEFS[stepId];
+      answers[s.key] = btn.getAttribute('data-single');
+      persist();
+      renderScreen();
+    });
+  });
+  $$('#quizQuestion [data-multi]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const stepId = currentStepId();
+      const s = STEP_DEFS[stepId];
+      const v = btn.getAttribute('data-multi');
+      let arr = (answers[s.key]||[]).slice();
+      const i = arr.indexOf(v);
+      if(i>=0) arr.splice(i,1);
+      else {
+        if(s.max && arr.length >= s.max){ toast('Choose up to 3'); return; }
+        arr.push(v);
+      }
+      answers[s.key] = arr;
+      persist();
+      renderScreen();
+    });
+  });
+}
+
+function barsHtml(profile){
+  const maxAbs = Math.max.apply(null, DIM_ORDER.map(d=>Math.abs(profile.adj[d]))) || 1;
+  const rows = profile.rankedDims.map((d,i)=>{
+    const adj = profile.adj[d];
+    const pct = (Math.abs(adj)/maxAbs)*50;
+    const top = i<2 ? ' top' : '';
+    const signed = (adj>=0?'+':'') + adj.toFixed(1);
+    const fill = adj>=0
+      ? '<i class="div-fill pos" style="width:'+pct.toFixed(1)+'%"></i>'
+      : '<i class="div-fill neg" style="width:'+pct.toFixed(1)+'%"></i>';
+    return '<div class="div-row'+top+'"><span class="lab">'+esc(RIASEC[d])+'</span>'
+      +'<div class="div-track"><span class="div-mid"></span>'+fill+'</div><b>'+signed+'</b></div>';
+  }).join('');
+  return '<p class="bars-cap">Measured against your own average, not against other students. Bars right of the line are stronger than your average; bars left are weaker.</p>'
+    +'<div class="bars-axis"><span>weaker</span><span>your average</span><span>stronger</span></div>'
+    +'<div class="div-rows">'+rows+'</div>';
+}
+
+function workStyleHtml(profile){
+  const empty = 'answer the next questions to fill this in';
+  const rows = [
+    {lab:'HOW YOU WORK', val: HOW_YOU_WORK[profile.primary] || ''},
+    {lab:'UNDER PRESSURE', val: answers.pressure ? PRESSURE_LINE[answers.pressure] : null},
+    {lab:'BEST CONDITIONS', val: answers.conditions ? CONDITIONS_LINE[answers.conditions] : null},
+    {lab:'RECHARGING', val: answers.recover ? RECOVER_LINE[answers.recover] : null}
+  ];
+  return '<dl class="work-style">'+rows.map(r=>{
+    if(r.val) return '<div class="ws-row"><dt>'+esc(r.lab)+'</dt><dd>'+esc(r.val)+'</dd></div>';
+    return '<div class="ws-row"><dt>'+esc(r.lab)+'</dt><dd class="empty">'+esc(empty)+'</dd></div>';
+  }).join('')+'</dl>';
+}
+
+function renderCardFront(profile, opts){
+  opts = opts || {};
+  const a = ARCH[profile.archetype] || ARCH['The Steward'];
+  const letter = (profile.archetype||'The ?').replace(/^The\s+/,'')[0] || '?';
+  const quote = PRIMARY_QUOTE[profile.primary] || '';
+  const desc = ARCH_DESC[profile.archetype] || '';
+  let close = '';
+  if(profile.close){
+    close = '<div class="close-note"><strong>Your top two are close.</strong> '
+      +esc(RIASEC[profile.primary])+' and '+esc(RIASEC[profile.secondary])
+      +' came out within half a point, so the order between them isn\'t meaningful — read both as equally yours.</div>';
+  }
+  const flipBtn = opts.flip
+    ? '<button type="button" class="btn gold full" id="seeResults">See my full results →</button>'
+    : '';
+  return '<article class="explorer-card face face-front">'
+    +'<div class="card-hero">'
+    +'<span class="eyebrow">YOUR EXPLORER ARCHETYPE</span>'
+    +'<div class="arch-glyph" style="background:'+a.grad+'">'+esc(letter)+'</div>'
+    +'<h1 class="arch-name">'+esc(profile.archetype)+'</h1>'
+    +'<div class="arch-chip">'+esc(RIASEC[profile.primary])+' · '+esc(RIASEC[profile.secondary])+' · '+esc(profile.code)+'</div>'
+    +'<p class="arch-quote">“'+esc(quote)+'”</p>'
+    +'<p class="arch-blurb">'+esc(desc)+'</p>'
+    +'</div>'
+    +'<div class="card-panel">'+close+barsHtml(profile)+workStyleHtml(profile)+flipBtn+'</div>'
+    +'</article>';
+}
+
+function renderCard(profile){
+  return renderCardFront(profile, {flip:false}).replace(' face face-front','');
+}
+
+function renderReportBack(profile){
+  const a = ARCH[profile.archetype] || ARCH['The Steward'];
+  const letter = (profile.archetype||'The ?').replace(/^The\s+/,'')[0] || '?';
+  const bucket = profile.bucket || 'your areas';
+  let nobody = '';
+  if(profile.advice==='noone'){
+    nobody = '<div class="info-note"><strong>One thing worth saying.</strong> You mentioned you don\'t really talk to anyone about this. That is far more common than it looks from the outside, and it is the single easiest thing to change — not because your thinking is wrong, but because decisions like this get much lighter out loud. A group session is a low-stakes place to start.'
+      +'<a class="btn small" href="sessions.html">See group sessions</a></div>';
+  }
+  return '<div class="face face-back report-card">'
+    +'<div class="report-head"><div class="mini-glyph" style="background:'+a.grad+'">'+esc(letter)+'</div>'
+    +'<div><h2>'+esc(profile.archetype)+'</h2><p>'+esc(RIASEC[profile.primary])+' and '+esc(RIASEC[profile.secondary])+'</p></div>'
+    +'<button type="button" class="btn ghost small back-card" id="backCard">← Card</button></div>'
+    +nobody
+    +'<section class="report-sec"><h3>People who were where you are</h3>'
+    +'<p class="cap">Matched on shared interests — named, not scored.</p>'
+    +mentorCardsHtml(profile)+'</section>'
+    +'<section class="report-sec"><h3>Careers this opens onto</h3>'
+    +'<p class="cap">In '+esc(bucket)+'. A list to look into, not a shortlist you\'re stuck with.</p>'
+    +careersHtml(profile)+'</section>'
+    +concernsHtml(profile)
+    +'<div class="advice">Next Step can help you explore your future self</div>'
+    +'<a class="btn gold full report-cta" href="account.html" id="readyFuture">Ready to build my future</a>'
+    +'<div class="final-foot">'
+    +'<div class="foot-links">'
+    +'<button type="button" class="linkish" id="changeAnswers">Change my answers</button>'
+    +'<button type="button" class="linkish" id="deleteAll">Delete everything from this device</button>'
+    +'</div>'
+    +'<p class="line">Interests change — retake this whenever you want.</p>'
+    +'<p class="proto">Prototype for design testing. Mentor stories are placeholders until consented interviews replace them.</p>'
+    +'</div>'
+    +'</div>';
+}
+
+function renderFlatPanel(){
+  return '<div class="flat-panel">'
+    +'<h2>There\'s no shape to read yet.</h2>'
+    +'<p>You rated almost every item the same, so all six interests came out level. That normally means the items didn\'t fit you — not that you have no interests. Naming an archetype from this would be guesswork, so we won\'t.</p>'
+    +'<button type="button" class="btn full" id="tryAgainHarsher">Try again, being harsher</button>'
+    +'</div>';
+}
+
+function bindFlipHandlers(){
+  const flipper = $('#flipper');
+  function scrollTop(){
+    window.scrollTo({ top: 0, behavior: 'auto' });
+  }
+  function afterFlip(fn){
+    const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if(reduce || !flipper){ requestAnimationFrame(fn); return; }
+    let done = false;
+    const finish = ()=>{ if(done) return; done=true; flipper.removeEventListener('transitionend', onEnd); fn(); };
+    const onEnd = (e)=>{ if(e.target===flipper && e.propertyName==='transform') finish(); };
+    flipper.addEventListener('transitionend', onEnd);
+    setTimeout(finish, 800);
+  }
+  const see = $('#seeResults');
+  if(see){
+    see.addEventListener('click', ()=>{
+      if(flipper) flipper.classList.add('flipped');
+      try{ sessionStorage.setItem('nsg_return_report','1'); }catch(e){}
+      afterFlip(scrollTop);
+    });
+  }
+  const back = $('#backCard');
+  if(back){
+    back.addEventListener('click', ()=>{
+      if(flipper) flipper.classList.remove('flipped');
+      try{ sessionStorage.removeItem('nsg_return_report'); }catch(e){}
+      afterFlip(scrollTop);
+    });
+  }
+  const change = $('#changeAnswers');
+  if(change){
+    change.addEventListener('click', ()=>{
+      view='quiz'; step=0; showQuiz(); renderScreen();
+    });
+  }
+  const del = $('#deleteAll');
+  if(del){
+    del.addEventListener('click', ()=>{
+      clearAllNsg();
+      location.reload();
+    });
+  }
+}
+
+const MENTOR_SCHOOL_ORDER = ['form1','form2','form3','form4','form5','postcsec','lowersixth','uppersixth','out'];
+
+function mentorAtSchoolLine(mentor){
+  const moments = mentor.moments || {};
+  for(let i=0;i<MENTOR_SCHOOL_ORDER.length;i++){
+    const k = MENTOR_SCHOOL_ORDER[i];
+    if(moments[k]) return moments[k];
+  }
+  return null;
+}
+
+function matchMentors(profile){
+  const bucket = profile.bucket;
+  const pool = (MENTORS||[]).slice();
+  pool.sort((a,b)=>{
+    const aArch = a.archetype===profile.archetype ? 1 : 0;
+    const bArch = b.archetype===profile.archetype ? 1 : 0;
+    if(bArch!==aArch) return bArch-aArch;
+    const aBucket = (a.buckets||[]).indexOf(bucket)>=0 ? 1 : 0;
+    const bBucket = (b.buckets||[]).indexOf(bucket)>=0 ? 1 : 0;
+    if(bBucket!==aBucket) return bBucket-aBucket;
+    return String(a.id).localeCompare(String(b.id));
+  });
+  return pool.slice(0,2);
+}
+
+function mentorCardsHtml(profile){
+  const mentors = matchMentors(profile);
+  if(!mentors.length) return '<div class="quiet">Nothing honest to show here yet.</div>';
+  return mentors.map(m=>{
+    const a = ARCH[m.archetype] || ARCH['The Steward'];
+    const moment = mentorAtSchoolLine(m);
+    return '<article class="mentor-card">'
+      +'<div class="mentor-top"><div class="mentor-av" style="background:'+a.grad+'">'+esc((m.name||'?').charAt(0))+'</div>'
+      +'<div class="who"><div class="name-row"><strong>'+esc(m.name)+'</strong>'
+      +'<span class="arch-tint" style="background:'+a.tintBg+';color:'+a.tintInk+'">'+esc(m.archetype)+'</span></div>'
+      +'<div class="reg">Region '+esc(m.region)+'</div></div></div>'
+      +'<div class="mentor-summary">'
+      +'<p class="line"><span class="k">Now</span>'+esc(m.outcome||'')+'</p>'
+      +(moment ? '<p class="line then-line"><span class="k">AT SCHOOL</span>'+esc(moment)+'</p>' : '')
+      +'</div>'
+      +'<div class="mentor-actions"><a class="explore-btn" href="mentor-story.html?id='+encodeURIComponent(m.id)+'">Explore</a></div>'
+      +'</article>';
+  }).join('');
+}
+
+function careersHtml(profile){
+  const bucket = profile.bucket || 'Science & Medicine';
+  const jobs = (GENERAL_JOBS[bucket] || GENERAL_JOBS['Science & Medicine']).slice(0,6);
+  return '<div class="tags">'+jobs.map(j=>'<span>'+esc(j)+'</span>').join('')+'</div>';
+}
+
+function concernsHtml(profile){
+  const list = profile.concerns||[];
+  if(!list.length) return '';
+  const rows = list.map(k=>{
+    const meta = CONCERN_META[k];
+    if(!meta) return '';
+    return '<a class="concern-row" href="'+esc(meta.href)+'"><strong>'+esc(meta.t)+'</strong><span>Open →</span></a>';
+  }).join('');
+  return '<section class="report-sec"><h3>What you said worries you</h3>'+rows+'</section>';
+}
+
+function showFinal(opts){
+  opts = opts || {};
+  view = 'final';
+  const profile = persist();
+  profile.completed = !profile.flat && !!profile.advice;
+  if(profile.completed && !profile.answeredAt) profile.answeredAt = new Date().toISOString();
+  lsSet(STORAGE_KEY, JSON.stringify(profile));
+  $('#quizShell').classList.add('hidden');
+  const shell = $('#resultShell');
+  shell.classList.remove('hidden');
+  if(profile.flat){
+    shell.innerHTML = renderFlatPanel();
+    window.scrollTo(0,0);
+    const retry = $('#tryAgainHarsher');
+    if(retry){
+      retry.addEventListener('click', ()=>{
+        view='quiz'; step=0; showQuiz(); renderScreen();
+      });
+    }
+    return;
+  }
+  shell.innerHTML = '<div class="flip-scene"><div class="flipper" id="flipper">'
+    +renderCardFront(profile, {flip:true})
+    +renderReportBack(profile)
+    +'</div></div>';
+  window.scrollTo(0,0);
+  bindFlipHandlers();
+  let openBack = !!opts.openBack;
+  try{ if(sessionStorage.getItem('nsg_return_report')==='1') openBack = true; }catch(e){}
+  if(openBack){
+    const flipper = $('#flipper');
+    if(flipper) flipper.classList.add('flipped');
+  }
+}
+
+function showQuiz(){
+  $('#quizShell').classList.remove('hidden');
+  $('#resultShell').classList.add('hidden');
+  $('#resultShell').innerHTML = '';
+}
+
+function goNext(){
+  if(!canContinue()) return;
+  persist();
+  const stepId = currentStepId();
+  if(stepId === 'advice'){
+    showFinal();
+    return;
+  }
+  rebuildFlow();
+  const i = flow.indexOf(stepId);
+  step = Math.min(i + 1, flow.length - 1);
+  renderScreen();
+  window.scrollTo(0,0);
+}
+
+function goBack(){
+  if(step===0){ location.href='index.html'; return; }
+  const stepId = currentStepId();
+  rebuildFlow();
+  const i = flow.indexOf(stepId);
+  step = Math.max(0, i - 1);
+  renderScreen();
+  window.scrollTo(0,0);
+}
+
+$('#quizNext').addEventListener('click', goNext);
+$('#quizBack').addEventListener('click', goBack);
+$('#restartDemoBtn').addEventListener('click', ()=>{
+  clearAllNsg();
+  try{ sessionStorage.removeItem('nsg_return_report'); }catch(e){}
+  location.reload();
+});
+
+async function init(){
+  try{
+    const res = await fetch('mentors-final.json', {cache:'no-store'});
+    if(res.ok){
+      const data = await res.json();
+      MENTORS = (data.mentors||[]).map(m=>{
+        m.fictional = true;
+        m.verified = false;
+        return m;
+      });
+    }
+  }catch(e){ MENTORS = []; }
+
+  const saved = loadPersisted();
+  if(saved && saved.advice){
+    applyLoaded(saved);
+    if(saved.flat){
+      showFinal();
+      return;
+    }
+    if(saved.completed){
+      showFinal();
+      return;
+    }
+    rebuildFlow();
+    step = 0;
+    for(let i=0;i<flow.length;i++){
+      if(!isStepComplete(flow[i])){ step = i; break; }
+      step = i;
+    }
+  } else if(saved && Array.isArray(saved.ratings)){
+    applyLoaded(saved);
+    rebuildFlow();
+    step = 0;
+    for(let i=0;i<flow.length;i++){
+      if(!isStepComplete(flow[i])){ step = i; break; }
+      step = i;
+    }
+  } else {
+    rebuildFlow();
+  }
+  showQuiz();
+  renderScreen();
+}
+
+init();
+
+/* Acceptance helpers for manual console checks (non-UI) */
+window.__nsgCheck = {
+  baseItems: BASE_ITEMS,
+  tiebreakPool: TIEBREAK_POOL,
+  score: scoreRiasec,
+  rebuildFlow,
+  getFlow: ()=>flow.slice(),
+  getAnswers: ()=>answers,
+  setRatings: (arr)=>{ answers.ratings = arr; rebuildFlow(); return scoreRiasec(true); },
+  build: buildProfile
+};
+})();
 </script>
 </body>
 </html>

@@ -1,0 +1,1145 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0a1930">
+<title>Your Report · Next Step Guyana</title>
+<!--
+  Gridded card report for every student stage. Reads localStorage.nsg_selfcheck (check.html).
+  Gate: no data → check.html. Funnel continues to account.html then my-plan.html.
+  Demo: ?demo=1 seeds DEMO when empty. No demo switcher UI on the shipped page.
+
+  Missing attachments (documented):
+  1. report-form1-2-v5.html was not found in the workspace: layout/copy taken from the product prompt.
+  2. styles.css is missing: tokens from design-system/MASTER.md and ask.html :root; new tokens only where no equivalent exists.
+  3. Opportunities sourced from Opportunities.md (narrative records, not a structured folder).
+     No numeric match-weight fields in source (scoring uses tag overlap).
+     "When" fields use "usually / varies" language from research; confirm dates annually.
+     availabilityNow derived from age bands in the guide (11 to 13 for Form 1 to 2 cards).
+
+  Known product gap: Q1 "on behalf of a student" still produces a second-person student report.
+-->
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500..800&family=Inter:wght@400;500;600;700&family=Sora:wght@500;600;700;800&display=swap');
+:root{
+  --navy:#0a1930;--navy2:#123a52;--teal:#0e7a4f;--teal2:#149b62;--gold:#eeb52f;
+  --blue:#2d6bd9;--ink:#101a28;--muted:#5c6c7e;--paper:#f5f7fa;--line:#dfe6ec;--soft:#eaf3ee;
+  --violet:#6a55b0;--violet-soft:#f3f0fb;--amber-soft:#fff6e8;--amber-border:#f2ddc0;--amber-ink:#7a5320;
+  --fact:#f1f5f9;--card-radius:20px;--fact-radius:12px;
+  --font-display:'Fraunces',ui-serif,Georgia,serif;
+  --font-body:'Inter',system-ui,sans-serif;
+  --font-ui:'Sora',sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+/* --paper from MASTER (#f5f7fa) stands in for prompt page #f3f6fa */
+body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.62 var(--font-body)}
+button{font:inherit;cursor:pointer;border:0;background:transparent}
+a{color:inherit;text-decoration:none}
+:focus-visible{outline:2.5px solid var(--teal2);outline-offset:2px;border-radius:6px}
+h1,h2,h3{font-family:var(--font-display);font-weight:650;margin:0;letter-spacing:-.02em}
+.hidden{display:none!important}
+
+.content-col{width:min(760px,calc(100% - 40px));margin:0 auto}
+.prose{max-width:64ch}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  border-radius:13px;padding:13px 20px;min-height:44px;
+  font-family:var(--font-ui);font-weight:700;font-size:14px;
+}
+.btn.gold{background:linear-gradient(135deg,var(--gold),#d99615);color:#1a1305;box-shadow:0 8px 22px rgba(238,181,47,.28)}
+.btn.outline{background:#fff;border:1.5px solid var(--line);color:var(--ink);box-shadow:none;font-size:13px;padding:10px 16px}
+.link-quiet{color:var(--muted);font-size:14px;text-decoration:underline;min-height:44px;display:inline-flex;align-items:center;padding:8px 0}
+.link-quiet:hover{color:var(--ink)}
+
+.topbar{position:sticky;top:0;z-index:50;background:rgba(6,26,45,.98);border-bottom:5px solid var(--teal)}
+.topbar .row{display:flex;align-items:center;gap:12px;height:74px;width:min(760px,calc(100% - 40px));margin:0 auto}
+.brand{display:flex;align-items:center;gap:11px;color:#fff;font-family:var(--font-ui);font-weight:800;font-size:19px;letter-spacing:.045em}
+.brand .mark{width:55px;height:55px;border-radius:9px;background:#f8f5ed;overflow:hidden;flex-shrink:0}
+.brand .mark img{width:100%;height:100%;object-fit:cover;object-position:center top;display:block}
+.brand small{display:block;font-size:9px;letter-spacing:.25em;color:#c9d8df;margin-top:5px;font-weight:700}
+.plan-back{
+  margin-left:auto;display:inline-flex;align-items:center;justify-content:center;
+  min-height:40px;padding:0 14px;border-radius:999px;background:var(--gold);color:#1a1305;
+  font-family:var(--font-ui);font-size:13px;font-weight:800;text-decoration:none;white-space:nowrap;
+}
+.plan-back:hover{filter:brightness(1.05)}
+@media(max-width:620px){.topbar .row{height:62px}.brand{font-size:15px;gap:8px}.brand .mark{width:45px;height:45px}.brand small{font-size:8px;letter-spacing:.18em;margin-top:3px}.plan-back{padding:0 12px;font-size:12px}}
+
+.report-main{padding:36px 0 56px}
+.report-section{padding:32px 0}
+.report-section+.report-section{border-top:1px solid var(--line)}
+
+.section-head{margin-bottom:18px}
+.section-head h2{font-size:clamp(22px,4.4vw,28px);line-height:1.2;margin:0}
+.report-card{
+  background:#fff;border-radius:var(--card-radius);padding:27px 28px;
+  box-shadow:0 7px 28px rgba(10,25,48,.06);margin-bottom:14px;
+}
+.report-card:last-child{margin-bottom:0}
+.card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:12px}
+.card-top h3{font-size:18px;line-height:1.25;flex:1}
+.card-desc{color:var(--muted);font-size:15px;line-height:1.55;margin:0 0 16px}
+.card-desc:last-child{margin-bottom:0}
+
+.pill{
+  display:inline-flex;align-items:center;flex-shrink:0;
+  font-family:var(--font-ui);font-size:10px;font-weight:700;letter-spacing:.06em;
+  text-transform:uppercase;border-radius:99px;padding:5px 10px;white-space:nowrap;
+}
+.pill-neutral{background:var(--soft);color:var(--teal)}
+.pill-type{background:var(--violet-soft);color:var(--violet)}
+.pill-match{background:var(--soft);color:var(--teal)}
+.pill-age{background:#fff3d9;color:#8a6207}
+.pill-later{background:var(--violet-soft);color:var(--violet)}
+
+.fact-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:4px}
+.fact-grid.cols-3{grid-template-columns:repeat(3,1fr)}
+.fact-grid.cols-4{grid-template-columns:repeat(4,1fr)}
+.fact-box{background:var(--fact);border-radius:var(--fact-radius);padding:12px 14px}
+.fact-box b{
+  display:block;font-family:var(--font-ui);font-size:9.5px;font-weight:700;
+  letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;
+}
+.fact-box span{display:block;font-size:14px;font-weight:600;line-height:1.35;color:var(--ink)}
+
+.callout-amber{
+  background:var(--amber-soft);border:1px solid var(--amber-border);border-radius:var(--fact-radius);
+  padding:14px 16px;font-size:14px;color:var(--amber-ink);line-height:1.5;margin-top:14px;
+}
+
+.card-type{border-top:4px solid var(--violet)}
+.card-type .type-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:10px 14px;flex:1;min-width:0}
+.card-type .type-name{font-size:22px;margin:0}
+.card-type .type-line{font-family:var(--font-display);font-style:italic;color:var(--muted);font-size:15px;line-height:1.5;margin:0 0 16px}
+.card-type .about-block{margin:0;color:var(--ink);font-size:15px;line-height:1.62}
+.card-type .reopen-link{
+  font-family:var(--font-ui);font-size:13px;font-weight:600;color:var(--violet);
+  text-decoration:underline;min-height:44px;display:inline-flex;align-items:center;padding:0;white-space:nowrap;
+}
+
+.pyarg-line{
+  font-size:13px;color:var(--muted);line-height:1.5;margin:4px 0 14px;padding:0 2px;
+}
+
+.qa-card .qa-q{font-size:16px;font-weight:650;margin:0 0 10px;line-height:1.35}
+.qa-card .qa-a{font-size:15px;line-height:1.62;margin:0;color:var(--ink)}
+.qa-card .qa-a .fact-grid{margin-top:12px}
+
+.story-card .story-head{display:grid;grid-template-columns:44px 1fr;gap:12px;align-items:center;margin-bottom:12px}
+.story-av{
+  width:44px;height:44px;border-radius:50%;background:linear-gradient(145deg,var(--teal2),var(--teal));
+  color:#fff;display:grid;place-items:center;font-family:var(--font-ui);font-weight:800;font-size:13px;
+}
+.story-card .story-head strong{font-size:17px}
+.story-card .story-body{font-size:15px;line-height:1.62;margin:0 0 14px}
+.story-card .fine-print{
+  font-size:12px;color:var(--muted);line-height:1.45;margin:0 0 12px;padding-top:12px;border-top:1px solid var(--line);
+}
+
+.session-card .card-desc{margin-bottom:14px}
+
+.account-card .card-desc{margin-bottom:16px}
+.account-card .btn.gold{width:100%;max-width:320px}
+
+/* Archetype reveal */
+.archetype-overlay{
+  position:fixed;inset:0;background:linear-gradient(135deg,var(--navy),var(--navy2));
+  z-index:150;display:none;align-items:center;justify-content:center;padding:24px;
+}
+.archetype-overlay.open{display:flex}
+.archetype-overlay.modal-mode{background:rgba(4,15,28,.72);backdrop-filter:blur(6px)}
+.archetype-overlay.modal-mode .archetype-card{
+  background:linear-gradient(135deg,var(--navy),var(--navy2));border-radius:26px;padding:34px 28px;
+  box-shadow:0 30px 80px rgba(0,0,0,.4);
+}
+.archetype-card{max-width:380px;width:100%;text-align:center;position:relative}
+.archetype-close{
+  position:absolute;top:-44px;right:0;background:rgba(255,255,255,.14);color:#fff;
+  width:44px;height:44px;border-radius:50%;font-size:18px;display:none;
+}
+.archetype-overlay.modal-mode .archetype-close{display:grid;place-items:center}
+.archetype-image{
+  width:180px;height:180px;border-radius:32px;margin:0 auto 26px;overflow:hidden;
+  box-shadow:0 20px 50px rgba(0,0,0,.35);background:var(--navy2);
+}
+.archetype-image img{width:100%;height:100%;object-fit:cover;display:block}
+.archetype-desc{color:#dbe7ee;font-size:17px;font-family:var(--font-display);font-style:italic;margin:0 0 14px;line-height:1.5}
+.archetype-name{color:#fff;font-size:27px;margin:0 0 14px}
+.archetype-divider{width:44px;height:1px;background:rgba(255,255,255,.28);margin:0 auto 14px}
+.archetype-work{color:#9fb6c2;font-size:13.5px;line-height:1.5;margin:0 0 26px}
+.archetype-work:empty,.archetype-divider:empty{display:none}
+.archetype-actions{display:flex;flex-direction:column;align-items:center;gap:6px}
+.archetype-actions .link-quiet{color:#9fb6c2;font-size:12.5px}
+.archetype-overlay.modal-mode .archetype-cta{display:none}
+
+#nsgToast{
+  position:fixed;left:50%;bottom:26px;transform:translateX(-50%);
+  background:#101a28;color:#fff;padding:10px 18px;border-radius:99px;
+  font-size:12.5px;font-weight:700;font-family:var(--font-ui);z-index:300;
+  box-shadow:0 10px 30px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .35s;
+}
+#nsgToast.show{opacity:1}
+
+@media(max-width:620px){
+  .fact-grid.cols-3,.fact-grid.cols-4{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:360px){
+  .content-col{width:calc(100% - 24px)}
+  .report-card{padding:22px 20px}
+  .card-top{flex-direction:column-reverse;align-items:flex-start}
+  .fact-grid,.fact-grid.cols-3,.fact-grid.cols-4{grid-template-columns:1fr}
+}
+
+@media print{
+  .topbar{position:static}
+  .archetype-overlay,.archetype-cta,.reopen-link,.btn,.link-quiet{display:none!important}
+  .report-card{box-shadow:none;border:1px solid var(--line);break-inside:avoid}
+  body{background:#fff}
+}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="row">
+    <a class="brand" href="index.html"><span class="mark"><img src="logo.png" alt="Next Step Guyana"></span><span><strong style="display:block;line-height:1">NEXT STEP</strong><small>GUYANA</small></span></a>
+    <a class="plan-back" id="planBack" href="my-plan.html">Back to My Plan</a>
+  </div>
+</header>
+
+<main id="reportRoot" class="report-main hidden" aria-busy="true">
+
+  <!-- Section 1: Where you are right now -->
+  <section class="report-section" aria-label="Section 1: Where you are right now">
+    <div class="content-col">
+      <header class="section-head">
+        <h2>Section 1 of 6: Where you are right now</h2>
+      </header>
+      <article class="report-card" id="section1Card">
+        <div class="card-top">
+          <h3>Your starting point</h3>
+          <span class="pill pill-neutral">Nothing is decided here</span>
+        </div>
+        <div class="fact-grid cols-4" id="section1Facts"></div>
+        <div class="callout-amber" id="section1Concern" hidden></div>
+      </article>
+    </div>
+  </section>
+
+  <!-- Section 2: What you sound like -->
+  <section class="report-section" aria-label="Section 2: What you sound like">
+    <div class="content-col">
+      <header class="section-head">
+        <h2>Section 2 of 6: What you sound like</h2>
+      </header>
+      <article class="report-card card-type" id="archetypeCard">
+        <div class="card-top">
+          <div class="type-head">
+            <h3 class="type-name" id="typeName">…</h3>
+            <button type="button" class="reopen-link" id="reopenArchetypeBtn">See your reveal again</button>
+          </div>
+          <span class="pill pill-type">Your type</span>
+        </div>
+        <p class="type-line" id="typeLine">…</p>
+        <p class="about-block prose" id="aboutYou"></p>
+      </article>
+    </div>
+  </section>
+
+  <!-- Section 3: What you asked about -->
+  <section class="report-section" aria-label="Section 3: What you asked about">
+    <div class="content-col">
+      <header class="section-head">
+        <h2>Section 3 of 6: What you asked about</h2>
+      </header>
+      <div id="qaList"></div>
+    </div>
+  </section>
+
+  <!-- Section 4: Opportunities -->
+  <section class="report-section" aria-label="Section 4: Opportunities for someone like you">
+    <div class="content-col">
+      <header class="section-head">
+        <h2>Section 4 of 6: Opportunities for someone like you</h2>
+      </header>
+      <div id="oppList"></div>
+      <p class="pyarg-line" id="pyargLine"></p>
+    </div>
+  </section>
+
+  <!-- Section 5: Mentors -->
+  <section class="report-section" aria-label="Section 5: Mentors who were where you are">
+    <div class="content-col">
+      <header class="section-head">
+        <h2>Section 5 of 6: Mentors who were where you are</h2>
+      </header>
+      <div id="mentorList"></div>
+    </div>
+  </section>
+
+  <!-- Section 6: What we can offer you -->
+  <section class="report-section" aria-label="Section 6: What we can offer you">
+    <div class="content-col">
+      <header class="section-head">
+        <h2>Section 6 of 6: What we can offer you</h2>
+      </header>
+      <article class="report-card session-card" id="sessionCard"></article>
+      <article class="report-card account-card" id="accountCard">
+        <div class="card-top">
+          <h3>Keep this report</h3>
+          <span class="pill pill-neutral">Free account</span>
+        </div>
+        <p class="card-desc" id="accountCopy">Turn this into a plan that carries your archetype with it. Nothing above is locked behind signup, and creating an account does not reveal anything hidden. No payment field anywhere.</p>
+        <a class="btn gold" href="account.html">Create my free account</a>
+        <button type="button" class="btn ghost" id="reportExportBtn" style="margin-top:10px">Download a copy of my record</button>
+        <p class="card-desc" style="margin-top:10px">Your plan is saved on this device. Come back on the same device and browser to find it.</p>
+      </article>
+    </div>
+  </section>
+
+</main>
+
+<div class="archetype-overlay" id="archetypeOverlay" role="dialog" aria-modal="true" aria-labelledby="archetypeName">
+  <div class="archetype-card">
+    <button type="button" class="archetype-close" id="archetypeCloseBtn" aria-label="Close">×</button>
+    <div class="archetype-image"><img id="archetypeImg" alt=""></div>
+    <p class="archetype-desc" id="archetypeDesc">…</p>
+    <h1 class="archetype-name" id="archetypeName">…</h1>
+    <div class="archetype-divider" id="archetypeDivider" hidden></div>
+    <p class="archetype-work" id="archetypeWork" hidden></p>
+    <div class="archetype-actions">
+      <button type="button" class="btn gold archetype-cta" id="archetypePrimaryBtn">See my full report →</button>
+      <button type="button" class="link-quiet" id="archetypeShareBtn">Share my result</button>
+    </div>
+  </div>
+</div>
+<div id="nsgToast" role="status" aria-live="polite"></div>
+
+<script src="nsg-stages.js"></script>
+<script src="nsg-north-star.js"></script>
+<script src="nsg-schools.js"></script>
+<script src="nsg-provenance.js"></script>
+<script src="nsg-corrections.js"></script>
+<script src="nsg-plan-engine.js"></script>
+<script>
+(function(){
+'use strict';
+
+/* ============================================================
+   ARCHETYPES: Archetype.md
+   Investigator: science + problems cluster only.
+   ============================================================ */
+const ARCHETYPES = {
+  agriculture:{name:'The Cultivator', line:'You back things that take time, and you don\'t lose patience when results are slow.', image:null, color:'#2f6a35'},
+  science:{name:'The Healer', line:'You want to leave people better than you found them.', image:null, color:'#123a52'},
+  engineering:{name:'The Builder', line:'You\'d rather make the thing than talk about the thing.', image:null, color:'#0e7a4f'},
+  sports:{name:'The Competitor', line:'You show up, you put in the work, and you want to see where you stand.', image:null, color:'#0e7a4f'},
+  business:{name:'The Founder', line:'You spot the gap other people walk past, and you want to do something about it.', image:null, color:'#8a6207'},
+  trade:{name:'The Artisan', line:'You take pride in work done properly, and people can tell the difference.', image:null, color:'#5c6c7e'},
+  law:{name:'The Advocate', line:'You\'ll speak up when something isn\'t right, even when it\'s easier not to.', image:null, color:'#6a55b0'},
+  creative:{name:'The Storyteller', line:'You notice what other people miss, and you know how to make them see it too.', image:null, color:'#6a2fa0'},
+  education:{name:'The Explainer', line:'You make hard things make sense, and people come to you when they\'re stuck.', image:null, color:'#149b62'},
+  publicsvc:{name:'The Guardian', line:'You look after what matters, and you\'re the one people count on.', image:null, color:'#123a52'},
+  technology:{name:'The Inventor', line:'You\'d rather find a new way than follow the old one.', image:null, color:'#123a52'},
+  _fallback:{name:'The Explorer', line:'You\'re still looking, and that\'s the honest place to start.', image:null, color:'#2d6bd9'},
+  investigator:{name:'The Investigator', line:'You stay with the question until it answers: curiosity first, not the bedside.', image:null, color:'#123a52'},
+};
+
+const WORK_STYLE = {
+  people: 'And you do it with people around you: explaining, steadying, being the one they count on.',
+  problems: 'And you do it by staying with the hard part until it gives, even if that means working alone.',
+  ideas: 'And you do it by going first: new angles, and people follow.',
+};
+const TRAIT_CLUSTER = {
+  group:'people', explain:'people', help:'people', rely:'people',
+  solo:'problems', persist:'problems', complex:'problems',
+  lead:'ideas', ideas:'ideas'
+};
+
+const FIELD_LABELS = {
+  agriculture:'Agriculture', science:'Science & Medicine', engineering:'Engineering',
+  sports:'Sports', business:'Business & Entrepreneurship', trade:'Trade & Technical Vocation',
+  law:'Law & Humanities', creative:'Creative Industry', education:'Education',
+  publicsvc:'Public Service & Government', technology:'Technology'
+};
+const SUBJECT_LABELS = {
+  english:'English', maths:'Maths', science:'Science', social:'Social Studies',
+  art:'Art', technical:'Technical', agriculture:'Agriculture', music:'Music'
+};
+const PULL_LABELS = {
+  engineering:'building or fixing things', technology:'numbers, patterns or computers',
+  law:'people, arguing your point or persuading', creative:'reading, writing or making things',
+  caring:'helping, teaching or caring for people'
+};
+const TRAIT_LABELS = {
+  group:'working with others in a group', explain:'explaining things so people understand',
+  lead:'leading or organising people', solo:'figuring out problems on my own',
+  ideas:'coming up with new ideas', persist:'sticking with something until it\'s done',
+  complex:'creating solutions to complex problems', help:'helping people who need it',
+  rely:'being the one people rely on'
+};
+const ACTIVITY_LABELS = {
+  club:'a school club', sports:'a sports team', music:'music, choir or band',
+  debate:'debating or public speaking', essay:'essay or writing competitions',
+  church:'a church or community group', 'family-biz':'helping with a family business',
+  other:'something outside class'
+};
+const REGION_LABELS = {
+  1:'Region 1', 2:'Region 2', 3:'Region 3', 4:'Region 4',
+  5:'Region 5', 6:'Region 6', 7:'Region 7', 8:'Region 8', 9:'Region 9', 10:'Region 10'
+};
+const CONCERN_ORDER = ['afford','exists','quals','lockin','earn','unsure','family'];
+
+const FIELD_SIGNALS = {
+  law:        {subjects:['english','social'], pulls:['law'], traits:['explain','lead','help'], activities:['debate','essay']},
+  science:    {subjects:['science'], pulls:['caring'], traits:['complex','persist','help','rely'], activities:[]},
+  engineering:{subjects:['technical','maths','science'], pulls:['engineering'], traits:['solo','complex','persist'], activities:[]},
+  technology: {subjects:['maths','technical'], pulls:['technology'], traits:['ideas','complex','solo'], activities:[]},
+  creative:   {subjects:['art','english','music'], pulls:['creative'], traits:['ideas'], activities:['music','essay']},
+  agriculture:{subjects:['agriculture','science'], pulls:[], traits:['persist'], activities:['family-biz']},
+  sports:     {subjects:[], pulls:[], traits:['persist','group','lead'], activities:['sports']},
+  business:   {subjects:['maths'], pulls:[], traits:['lead','ideas'], activities:['family-biz','club']},
+  trade:      {subjects:['technical'], pulls:['engineering'], traits:['persist','solo'], activities:[]},
+  education:  {subjects:['english'], pulls:['caring'], traits:['explain','help','group'], activities:['club']},
+  publicsvc:  {subjects:['social'], pulls:['law','caring'], traits:['lead','rely','help'], activities:['church','debate','club']},
+};
+
+const HINTERLAND = [1,7,8,9];
+
+/* Opportunities: single library from nsg-north-star.js (NSG_NORTH.OPPORTUNITIES). */
+const OPP_ID_ALIASES = { jof:'jof-haynes', 'mash-poetry':'mashramani', steam:'steam-fair' };
+const OPPORTUNITIES = (window.NSG_NORTH && NSG_NORTH.OPPORTUNITIES || []).map(function(o){
+  return Object.assign({}, o, {
+    title: o.title || o.t,
+    ageMin: o.ageMin != null ? o.ageMin : (o.ageFrom != null ? o.ageFrom : 0),
+    ageMax: o.ageMax != null ? o.ageMax : 25,
+    availableNow: o.availableNow !== false,
+    fields: o.fields || [],
+    subjects: o.subjects || [],
+    pulls: o.pulls || [],
+    traits: o.traits || [],
+    activities: o.activities || [],
+    glyph: o.glyph || (o.t || '?').slice(0,1),
+    entry: o.entry || '',
+    when: o.when || o.season || 'Check yearly',
+    age: o.ageBand || (o.ageFrom != null ? ('From age '+o.ageFrom) : 'Any age')
+  });
+});
+if(!OPPORTUNITIES.length){ console.error('NSG_NORTH.OPPORTUNITIES missing'); }
+
+/* PLACEHOLDER: stageStory invented: needs interviews before publication as fact. */
+const MENTORS = [
+  {id:'aniyah', initials:'AC', name:'Aniyah', destination:'Now at Stanford, Presidential Scholar',
+    fields:['law','science','business'], concerns:['unsure','quals','lockin'],
+    stageStory:{'form1-2':'In Form 2 she had no idea what she wanted. She joined three clubs in one term and quit two of them. The one she kept is the reason for everything after.', form1:'In Form 2 she had no idea what she wanted. She joined three clubs in one term and quit two of them. The one she kept is the reason for everything after.', form2:'In Form 2 she had no idea what she wanted. She joined three clubs in one term and quit two of them. The one she kept is the reason for everything after.'}},
+  {id:'joshua', initials:'JG', name:'Joshua', destination:'Now at Stanford',
+    fields:['law','technology','business'], concerns:['afford','earn','quals'],
+    stageStory:{'form1-2':'At Queen\'s College in Form 2 he joined the debate team because a friend signed up. He wasn\'t top of the class then. He says debating is part of why that changed.', form1:'At Queen\'s College in Form 2 he joined the debate team because a friend signed up. He wasn\'t top of the class then. He says debating is part of why that changed.', form2:'At Queen\'s College in Form 2 he joined the debate team because a friend signed up. He wasn\'t top of the class then. He says debating is part of why that changed.'}},
+  {id:'dave', initials:'DC', name:'Dave', destination:'STEM founder · Presidential Scholar',
+    fields:['science','technology','engineering'], concerns:['exists','unsure','quals'],
+    stageStory:{'form1-2':'In Form 2 he spent evenings taking things apart at home. Nobody called it engineering then. It was just what he did when class ended.', form1:'In Form 2 he spent evenings taking things apart at home. Nobody called it engineering then. It was just what he did when class ended.', form2:'In Form 2 he spent evenings taking things apart at home. Nobody called it engineering then. It was just what he did when class ended.'}},
+  {id:'alisande', initials:'AJ', name:'Alisande', destination:'Now at Northwestern',
+    fields:['creative','sports','business'], concerns:['family','lockin','unsure'],
+    stageStory:{'form1-2':'Form 2 was the year she refused to drop sport just because marks got louder. Keeping both open is still the thing she tells younger students.', form1:'Form 2 was the year she refused to drop sport just because marks got louder. Keeping both open is still the thing she tells younger students.', form2:'Form 2 was the year she refused to drop sport just because marks got louder. Keeping both open is still the thing she tells younger students.'}},
+  {id:'reginald', initials:'RB', name:'Reginald', destination:'Youth Parliament · St. Stanislaus',
+    fields:['law','publicsvc','education'], concerns:['family','exists','earn'],
+    stageStory:{'form1-2':'In Form 2 he started speaking up in class about things that felt unfair. A teacher pointed him at debating. The rest followed from that one push.', form1:'In Form 2 he started speaking up in class about things that felt unfair. A teacher pointed him at debating. The rest followed from that one push.', form2:'In Form 2 he started speaking up in class about things that felt unfair. A teacher pointed him at debating. The rest followed from that one push.'}},
+  {id:'riley', initials:'RN', name:'Riley', destination:'U. Toronto · International Scholar',
+    fields:['business','trade','agriculture'], concerns:['afford','earn','family'],
+    stageStory:{'form1-2':'Form 2 was when she started helping with the family numbers after school. It did not feel like "business". It felt like being useful.', form1:'Form 2 was when she started helping with the family numbers after school. It did not feel like "business". It felt like being useful.', form2:'Form 2 was when she started helping with the family numbers after school. It did not feel like "business". It felt like being useful.'}},
+];
+
+const SESSIONS = {
+  law:        {title:'What debating actually teaches you', body:'Mentors who started where you are. Come with questions, or just listen.', when:'Wed · 6:30 PM', format:'Live group video'},
+  science:    {title:'Science & Medicine: Form 2 questions', body:'Ask people who stayed curious before the grades got loud.', when:'Fri · 5:00 PM', format:'Live group video'},
+  engineering:{title:'Building things before you have the title', body:'How Form 2 tinkering turns into a real pathway later.', when:'Thu · 6:00 PM', format:'Live group video'},
+  technology: {title:'Coding without waiting for a computer lab', body:'Pods, Scratch, and routes that do not need Georgetown first.', when:'Sat · 10:00 AM', format:'Live group video'},
+  creative:   {title:'Creative pathways before CSEC', body:'Mashramani, instruments, and portfolio routes with no grade gate.', when:'Sat · 11:30 AM', format:'Live group video'},
+  sports:     {title:'Sport pathways that are not only "go pro"', body:'Clubs, regionals, and what else sport opens.', when:'Tue · 5:30 PM', format:'Live group video'},
+  business:   {title:'Spotting gaps early', body:'Family shops, school clubs, and how founders actually start.', when:'Wed · 5:00 PM', format:'Live group video'},
+  agriculture:{title:'Growing something that takes time', body:'What Form 2 curiosity looks like before an agri route is formal.', when:'Thu · 5:30 PM', format:'Live group video'},
+  education:  {title:'When explaining is the skill', body:'Mentors who taught before they had a teaching title.', when:'Mon · 6:00 PM', format:'Live group video'},
+  publicsvc:  {title:'Looking after what matters', body:'Youth Parliament, service, and public routes from Form 2.', when:'Fri · 6:30 PM', format:'Live group video'},
+  trade:      {title:'Work done properly', body:'Technical paths that start with pride in the craft, not a job title.', when:'Tue · 6:00 PM', format:'Live group video'},
+  _fallback:  {title:'Choosing what to explore next', body:'Group Q&A for Forms 1 to 2. Bring a question, or just listen.', when:'Wed · 6:30 PM', format:'Live group video'},
+};
+
+function stageLabel(stage){
+  if(window.NSG_STAGES && NSG_STAGES.stageLabel) return NSG_STAGES.stageLabel(stage);
+  return stage || 'Your stage';
+}
+function firstChoiceLabel(stage){
+  if(stage==='form1' || stage==='form2' || stage==='form1-2' || stage==='form12' || stage==='lower'){
+    return 'Stream, end of Form 3';
+  }
+  if(stage==='form3') return 'Stream and CSEC subject list';
+  if(stage==='form4' || stage==='form5') return 'CSEC subjects and Plan A';
+  if(stage==='postcsec') return 'What you do next after results';
+  if(stage==='lowersixth' || stage==='uppersixth') return 'CAPE units and applications';
+  if(stage==='postcape') return 'Where you enrol or work next';
+  return 'Your next school decision';
+}
+function mentorStory(m, stage){
+  const stories = m.stageStory || {};
+  return stories[stage] || stories.form2 || stories.form1 || stories['form1-2'] || stories.form12 || '';
+}
+
+const DEMO_SELFCHECK = {
+  name:'Aaliyah', stage:'form2', region:4,
+  subjects:['english','social','art'],
+  pulls:['law','creative'],
+  traits:['explain','lead','help'],
+  activities:['sports','church'],
+  curious:['law','creative','publicsvc'],
+  concerns:['unsure'],
+  talksTo:'friends',
+  answeredAt: new Date().toISOString()
+};
+
+const $ = (s, r) => (r||document).querySelector(s);
+function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function listHuman(arr){
+  const a = (arr||[]).filter(Boolean);
+  if(!a.length) return '';
+  if(a.length===1) return a[0];
+  if(a.length===2) return a[0]+' and '+a[1];
+  return a.slice(0,-1).join(', ')+' and '+a[a.length-1];
+}
+function isHinterland(region){ return HINTERLAND.indexOf(Number(region))>=0; }
+
+function toast(msg){
+  const el = $('#nsgToast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toast._t);
+  toast._t = setTimeout(function(){ el.classList.remove('show'); }, 2200);
+}
+
+function loadSelfcheck(){
+  try{ return JSON.parse(localStorage.getItem('nsg_selfcheck')||'null'); }
+  catch(e){ return null; }
+}
+function getPlan(){
+  try{ return JSON.parse(localStorage.getItem('nsg_myplan')||'{}')||{}; }
+  catch(e){ return {}; }
+}
+function savePlan(plan){ localStorage.setItem('nsg_myplan', JSON.stringify(plan)); }
+
+function resolveWorkStyle(traits){
+  const t = traits||[];
+  if(!t.length) return null;
+  const counts = {people:0, problems:0, ideas:0};
+  t.forEach(function(k){ const c = TRAIT_CLUSTER[k]; if(c) counts[c]++; });
+  const max = Math.max(counts.people, counts.problems, counts.ideas);
+  if(max===0) return null;
+  const tied = Object.keys(counts).filter(function(k){ return counts[k]===max; });
+  if(tied.length===1) return tied[0];
+  return TRAIT_CLUSTER[t[0]] || tied[0];
+}
+
+function resolveArchetype(data){
+  const field = (data.curious&&data.curious[0]) || null;
+  const cluster = resolveWorkStyle(data.traits);
+  if(!field){
+    return {key:'_fallback', field:null, arch:ARCHETYPES._fallback, cluster:null, workLine:null};
+  }
+  let key = field;
+  let arch = ARCHETYPES[field] || ARCHETYPES._fallback;
+  if(field==='science' && cluster==='problems'){
+    key = 'investigator';
+    arch = ARCHETYPES.investigator;
+  }
+  const workLine = cluster ? WORK_STYLE[cluster]: null;
+  return {key:key, field:field, arch:arch, cluster:cluster, workLine:workLine};
+}
+
+function archetypeImageSrc(arch){
+  if(arch.image) return arch.image;
+  const initials = arch.name.replace(/^The\s+/i,'').trim().split(/\s+/).map(function(w){return w[0];}).slice(0,2).join('').toUpperCase();
+  const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="320" height="320"><rect width="320" height="320" rx="40" fill="'+(arch.color||'#123a52')+'"/><text x="50%" y="54%" font-family="Sora, Arial, sans-serif" font-size="120" font-weight="800" fill="#ffffff" text-anchor="middle" dominant-baseline="middle">'+initials+'</text></svg>';
+  return 'data:image/svg+xml,'+encodeURIComponent(svg);
+}
+
+function regionLabel(region){
+  const n = Number(region);
+  const base = REGION_LABELS[n] || ('Region '+region);
+  return isHinterland(n) ? base+' hinterland': base;
+}
+
+function topConcern(data){
+  const set = data.concerns||[];
+  for(let i=0;i<CONCERN_ORDER.length;i++){
+    if(set.indexOf(CONCERN_ORDER[i])>=0) return CONCERN_ORDER[i];
+  }
+  return null;
+}
+
+function concernCallout(data){
+  const hit = topConcern(data);
+  if(!hit) return null;
+  switch(hit){
+    case 'afford':
+      return isHinterland(data.region)
+        ? 'You flagged cost. Everything below is free or funded to enter. The Unit of Allied Arts also covers meals and accommodation for hinterland students at Mashramani national finals.'
+       : 'You flagged cost. Everything below is free or funded to enter.';
+    case 'exists':
+      return 'You asked whether these paths really exist in Guyana. They do: students from Port Kaituma, Tabatinga and Santa Rosa have won nationally.';
+    case 'quals':
+      return 'You worried about not having the right qualifications yet. None of the opportunities below need a grade or certificate on purpose.';
+    case 'lockin':
+      return 'You worried about being locked in. At Form 1 to 2 the honest answer is no: your first real choice is the stream at the end of Form 3.';
+    case 'earn':
+      return 'You flagged needing to earn soon. That is worth planning properly, and it does not rule any of this out yet.';
+    case 'unsure':
+      return 'You said you are not sure what you want to do. That is the normal answer at Form 2. You are not behind.';
+    case 'family':
+      return 'You flagged family pressure. Worth talking through with someone outside the family who has been there.';
+    default:
+      return null;
+  }
+}
+
+function convergenceBits(data, field){
+  const sig = FIELD_SIGNALS[field];
+  if(!sig) return [];
+  const bits = [];
+  (data.subjects||[]).forEach(function(s){
+    if(sig.subjects.indexOf(s)>=0 && SUBJECT_LABELS[s]) bits.push(SUBJECT_LABELS[s]);
+  });
+  (data.pulls||[]).forEach(function(p){
+    if(sig.pulls.indexOf(p)>=0 && PULL_LABELS[p]) bits.push(PULL_LABELS[p]);
+  });
+  (data.traits||[]).forEach(function(t){
+    if(sig.traits.indexOf(t)>=0 && TRAIT_LABELS[t]) bits.push(TRAIT_LABELS[t]);
+  });
+  (data.activities||[]).forEach(function(a){
+    if(a==='none') return;
+    if(sig.activities.indexOf(a)>=0 && ACTIVITY_LABELS[a]) bits.push(ACTIVITY_LABELS[a]);
+  });
+  const seen = {};
+  return bits.filter(function(b){ if(seen[b]) return false; seen[b]=1; return true; });
+}
+
+function buildAbout(data, resolved){
+  const name = data.name ? String(data.name).trim(): '';
+  const open = name ? (name+', here\'s what you told us.'): 'Here\'s what you told us.';
+
+  const subj = (data.subjects||[]).map(function(s){return SUBJECT_LABELS[s]||s;}).filter(Boolean);
+  const pulls = (data.pulls||[]).map(function(p){return PULL_LABELS[p]||p;}).filter(Boolean);
+  const traits = (data.traits||[]).map(function(t){return TRAIT_LABELS[t]||t;}).filter(Boolean);
+
+  let reflect = open+' ';
+  if(pulls.length) reflect += 'What pulls you is '+listHuman(pulls)+'. ';
+  else reflect += 'You did not name a strong pull yet. ';
+  if(subj.length) reflect += 'The subjects you actually like are '+listHuman(subj)+'. ';
+  else reflect += 'You did not flag a favourite subject. ';
+  if(traits.length) reflect += 'How you said you work: '+listHuman(traits)+'.';
+  else reflect += 'You skipped the "how you work" picks.';
+
+  const field = resolved.field;
+  const fieldLabel = field ? (FIELD_LABELS[field]||field): null;
+  let converge = '';
+  if(field && fieldLabel){
+    const bits = convergenceBits(data, field);
+    if(bits.length>=2){
+      converge = listHuman(bits)+' all point the same way. You did not just pick '+fieldLabel+' on its own.';
+    } else if(bits.length===1){
+      converge = 'So far only '+bits[0]+' clearly lines up with '+fieldLabel+'. Worth watching whether the rest follows.';
+    } else {
+      converge = 'Nothing else you told us obviously points at '+fieldLabel+' yet. That is not a problem at Form 2. It just means this one is a hunch rather than a pattern.';
+    }
+  } else {
+    converge = 'You did not rank a field yet, so there is no pattern to name beyond what you already said above.';
+  }
+
+  const acts = (data.activities||[]).filter(function(a){return a && a!=='none';});
+  let anchor = '';
+  if(!acts.length){
+    anchor = 'You are not in anything outside class right now. Nothing on this page requires that you be.';
+  } else {
+    const labels = acts.map(function(a){return ACTIVITY_LABELS[a]||a;});
+    anchor = 'Outside class you already started '+listHuman(labels)+', without being told to.';
+  }
+
+  const limit = 'This came from your self-check answers, not a test. It describes how you are working now, and it can change. A plan would add order: which thing to try first, which subjects keep the most doors open, and what the stream choice at the end of Form 3 will quietly do to the list.';
+
+  return [reflect, converge, anchor, limit].join(' ');
+}
+
+/* Q&A pool: topic tags ensure no duplicate topics in the pair shown.
+   Order: Q9 concerns first, then inferred, then fallbacks. */
+const CONCERN_QA = {
+  unsure:{
+    topic:'starting',
+    q:'Is it a problem that I do not know what I want yet?',
+    a:'No. By 15, roughly two in five students across OECD countries still say they are unclear about what they want, and that share has about doubled in under a decade (OECD, The State of Global Teenage Career Preparation, 2025, using PISA 2022). At Form 1 to 2 your first real choice is the stream at the end of Form 3, not a career now.'
+  },
+  quals:{
+    topic:'qualifications',
+    q:'What qualifications would I need?',
+    a:'Nothing on this page needs a grade. The first qualifications that count for most routes are CSEC subjects, chosen at the end of Form 3. Mashramani, Scratch, sport pathways and STEM clubs do not gatekeep on certificates.'
+  },
+  afford:{
+    topic:'money',
+    q:'Is this going to cost me money?',
+    a:'The opportunities we surface for Form 1 to 2 are free or funded to enter. Mashramani district rounds go through your school. For hinterland students who reach the Mashramani national finals, the Unit of Allied Arts provides meals and accommodation in Georgetown.'
+  },
+  exists:{
+    topic:'availability',
+    q:'Is any of this actually available in Guyana?',
+    a:'Yes. Teams from Port Kaituma, Aurora, Bell West, Bartica and Tabatinga have placed in the national Scratch competition. The Unit of Allied Arts funds meals and accommodation for hinterland students at the Mashramani national finals. These are not Georgetown-only paths.'
+  },
+  lockin:{
+    topic:'commitment',
+    q:'Am I choosing my career now?',
+    a:'No. At Form 1 to 2 nothing you try commits you to a career. The first real fork is choosing a stream at the end of Form 3. CSEC comes after that. You can drop a club or competition without closing a door.'
+  },
+  earn:{
+    topic:'money',
+    q:'What if I need to start earning soon?',
+    a:'Needing to earn is real, and it does not cancel curiosity. Many of the routes below are free and local. Our research treats BIT and GTI as among the most accessible legitimate routes in the country when income matters sooner.'
+  },
+  family:{
+    topic:'support',
+    q:'What if my family expects something different?',
+    a:'Family pressure is common. This report reflects what you said, not what anyone else wants. A mentor session or a teacher you trust can help you talk it through without committing to anything yet.'
+  }
+};
+
+const INFERRED_QA = [
+  {
+    topic:'support',
+    test:function(d){ return d.talksTo==='noone'; },
+    q:'Who am I supposed to ask about this?',
+    a:'You are not the only Form 2 student without someone to ask. Group sessions on this site are free, and you can stay on mute the whole time. The mentor stories below are from people who also started without a clear guide.'
+  },
+  {
+    topic:'starting',
+    test:function(d){ return !(d.activities||[]).filter(function(a){return a && a!=='none';}).length; },
+    q:'Do I need to already be doing something?',
+    a:'No. Most national opportunities here start through a school club, a district round, or a local pod. You do not need a track record to enter a Mashramani district round or a STEMGuyana pod.'
+  },
+  {
+    topic:'availability',
+    test:function(d){ return isHinterland(d.region); },
+    q:'Does this only happen in Georgetown?',
+    a:'No. The Scratch competition has placed teams from Port Kaituma, Aurora, Bell West, Bartica and Tabatinga nationally. Mashramani funds meals and accommodation for hinterland students at nationals. STEMGuyana claims reach across all ten regions.'
+  },
+  {
+    topic:'qualifications',
+    test:function(d){
+      const s = d.subjects||[];
+      return s.indexOf('technical')>=0 || s.indexOf('agriculture')>=0;
+    },
+    q:'Do technical subjects actually lead anywhere?',
+    a:'Yes. Our research treats BIT and GTI as among the most accessible legitimate routes in the country. Technical and agriculture subjects at Form 1 to 2 are early signal, not a lock-in, and they keep those doors open when CSEC choices arrive at the end of Form 3.'
+  }
+];
+
+const FALLBACK_QA = [
+  {
+    topic:'qualifications',
+    q:'Do I need to be good at school for any of this?',
+    a:'Not for the opportunities we surface here. Mashramani, Scratch, sport pathways and STEM clubs do not gatekeep on marks. The first grades that count for most formal routes are CSEC subjects, chosen at the end of Form 3.'
+  },
+  {
+    topic:'starting',
+    q:'How much of this should I be doing right now?',
+    a:'One thing this term is enough. Most of these go through a school or a club, so an adult will need to know. Your first real choice is still the stream at the end of Form 3, not a full programme of extracurriculars tonight.'
+  }
+];
+
+function pickQA(data){
+  const picked = [];
+  const usedTopics = {};
+  const set = data.concerns||[];
+
+  // Q9 first, in fixed priority order (not selection order)
+  CONCERN_ORDER.forEach(function(key){
+    if(picked.length>=2) return;
+    if(set.indexOf(key)<0) return;
+    const item = CONCERN_QA[key];
+    if(!item || usedTopics[item.topic]) return;
+    picked.push(item);
+    usedTopics[item.topic] = true;
+  });
+
+  INFERRED_QA.forEach(function(item){
+    if(picked.length>=2) return;
+    if(usedTopics[item.topic]) return;
+    if(item.test(data)){
+      picked.push({topic:item.topic, q:item.q, a:item.a});
+      usedTopics[item.topic] = true;
+    }
+  });
+
+  for(let i=0;i<FALLBACK_QA.length && picked.length<2;i++){
+    const item = FALLBACK_QA[i];
+    if(usedTopics[item.topic]) continue;
+    picked.push(item);
+    usedTopics[item.topic] = true;
+  }
+
+  return picked.slice(0,2);
+}
+
+function scoreOpp(opp, data){
+  let s = 0;
+  (data.curious||[]).forEach(function(f,i){
+    const w = [5,3,2][i] || 1;
+    if((opp.fields||[]).indexOf(f)>=0) s += w;
+  });
+  (data.subjects||[]).forEach(function(sub){
+    if((opp.subjects||[]).indexOf(sub)>=0) s += 2;
+  });
+  (data.pulls||[]).forEach(function(p){
+    if((opp.pulls||[]).indexOf(p)>=0) s += 2;
+  });
+  (data.traits||[]).forEach(function(t){
+    if((opp.traits||[]).indexOf(t)>=0) s += 1;
+  });
+  (data.activities||[]).forEach(function(a){
+    if(a==='none') return;
+    if((opp.activities||[]).indexOf(a)>=0) s += 1.5;
+  });
+  if(opp.id==='jof-haynes' || opp.id==='jof'){
+    const lawish = (data.curious||[])[0]==='law' || (data.pulls||[]).indexOf('law')>=0 || (data.activities||[]).indexOf('debate')>=0;
+    if(!lawish) s -= 3;
+  }
+  if(opp.id==='football'){
+    const sportish = (data.curious||[])[0]==='sports' || (data.activities||[]).indexOf('sports')>=0;
+    if(!sportish) s -= 4;
+  }
+  return s;
+}
+
+function pickOpportunities(data){
+  const nowPool = OPPORTUNITIES.filter(function(o){ return o.availableNow && o.ageMin<=13 && o.id!=='pyarg'; });
+  const scored = nowPool.map(function(o){ return {o:o, score:scoreOpp(o, data)}; })
+    .sort(function(a,b){ return b.score - a.score || a.o.title.localeCompare(b.o.title); });
+  const top = [];
+  scored.forEach(function(x){
+    if(top.length>=3) return;
+    if(x.score>0 || top.length<3) top.push(x.o);
+  });
+  while(top.length<3 && scored.length){
+    const next = scored.find(function(x){ return top.indexOf(x.o)<0; });
+    if(!next) break;
+    top.push(next.o);
+  }
+  const shownIds = top.map(function(o){ return o.id; });
+  const remaining = scored.filter(function(x){ return shownIds.indexOf(x.o.id)<0 && x.score>0; });
+  const pyarg = OPPORTUNITIES.find(function(o){ return o.id==='pyarg'; });
+  return {top:top.slice(0,3), remaining:remaining, pyarg:pyarg, allScored:scored};
+}
+
+function factBox(label, value){
+  return '<div class="fact-box"><b>'+esc(label)+'</b><span>'+esc(value)+'</span></div>';
+}
+
+function oppCardHtml(o, opts){
+  opts = opts||{};
+  const pill = opts.match
+    ? '<span class="pill pill-match">Top match</span>'
+   : '<span class="pill pill-age">'+esc(o.age)+'</span>';
+  return '<article class="report-card">'+
+    '<div class="card-top"><h3>'+esc(o.title)+'</h3>'+pill+'</div>'+
+    '<p class="card-desc">'+esc(o.desc)+'</p>'+
+    '<div class="fact-grid cols-3">'+
+      factBox('Age', o.age)+
+      factBox('How you enter', o.entry)+
+      factBox('When', o.when)+
+    '</div></article>';
+}
+
+function pickMentors(data){
+  const field = (data.curious&&data.curious[0]) || null;
+  const concern = topConcern(data);
+
+  let byConcern = concern ? MENTORS.find(function(m){ return (m.concerns||[]).indexOf(concern)>=0; }): null;
+  let byField = null;
+  if(field){
+    byField = MENTORS.find(function(m){ return m!==byConcern && (m.fields||[]).indexOf(field)>=0; })
+      || MENTORS.find(function(m){ return (m.fields||[]).indexOf(field)>=0; });
+  }
+  const picked = [];
+  if(byConcern) picked.push(byConcern);
+  if(byField && picked.indexOf(byField)<0) picked.push(byField);
+  for(let i=0;i<MENTORS.length && picked.length<2;i++){
+    if(picked.indexOf(MENTORS[i])<0) picked.push(MENTORS[i]);
+  }
+  if(picked.length===2 && mentorStory(picked[0],'form2')===mentorStory(picked[1],'form2')){
+    const alt = MENTORS.find(function(m){ return picked.indexOf(m)<0; });
+    if(alt) picked[1] = alt;
+  }
+  const remaining = MENTORS.filter(function(m){ return picked.indexOf(m)<0; });
+  return {picked:picked.slice(0,2), remaining:remaining};
+}
+
+function namedCareerTension(data){
+  const first = (data.curious && data.curious[0]) || null;
+  const nc = data.namedCareer;
+  if(!first || !nc || nc.notYet || !nc.id) return null;
+  const fieldLabel = FIELD_LABELS[first] || first;
+  const buckets = (nc.buckets || []).slice();
+  let career = null;
+  try{
+    const pool = (window.NSG_NORTH && NSG_NORTH.CAREERS) || [];
+    career = pool.find(function(c){ return c.id === nc.id; }) || null;
+  }catch(e){}
+  const namedBuckets = buckets.length ? buckets : ((career && (career.keys || career.buckets)) || []);
+  const interestToBucket = {
+    science:'sci', engineering:'eng', technology:'tech', trade:'trade',
+    agriculture:'agri', business:'biz', law:'law', civic:'gov', publicsvc:'gov',
+    creative:'creative', sports:'sport', education:'edu'
+  };
+  const ib = interestToBucket[first] || first;
+  const overlap = namedBuckets.some(function(b){
+    return b === first || b === ib || (interestToBucket[b] === ib);
+  });
+  if(overlap) return null;
+  const job = nc.title || 'that job';
+  return 'You put '+fieldLabel+' first, but you mentioned '+job+'. Both are worth looking at, and they need quite different subjects.';
+}
+
+function fillArchetypeUI(resolved){
+  const arch = resolved.arch;
+  const src = archetypeImageSrc(arch);
+  const work = resolved.workLine;
+
+  $('#archetypeImg').src = src;
+  $('#archetypeImg').alt = arch.name;
+  $('#archetypeDesc').textContent = arch.line;
+  $('#archetypeName').textContent = arch.name;
+
+  const div = $('#archetypeDivider');
+  const workEl = $('#archetypeWork');
+  if(work){
+    div.hidden = false;
+    workEl.hidden = false;
+    workEl.textContent = work;
+  } else {
+    div.hidden = true;
+    workEl.hidden = true;
+    workEl.textContent = '';
+  }
+
+  $('#typeName').textContent = arch.name;
+  $('#typeLine').textContent = arch.line;
+}
+
+function openOverlay(mode){
+  const overlay = $('#archetypeOverlay');
+  overlay.classList.toggle('modal-mode', mode==='modal');
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeOverlay(plan){
+  if(!plan.archetypeSeen){
+    plan.archetypeSeen = true;
+    savePlan(plan);
+  }
+  $('#archetypeOverlay').classList.remove('open','modal-mode');
+  document.body.style.overflow = '';
+}
+
+function shareResult(resolved){
+  const text = resolved.arch.name+': '+resolved.arch.line+'\n\nFind out yours: nextstepguyana.org';
+  if(navigator.share){
+    navigator.share({text:text}).catch(function(){ toast('Sharing is not available here yet'); });
+  } else if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(function(){ toast('Copied. Share it anywhere'); })
+      .catch(function(){ toast('Share coming soon'); });
+  } else {
+    toast('Share coming soon');
+  }
+}
+
+function auditEmDashes(root){
+  const nodes = root.querySelectorAll('p, h1, h2, h3, span, button, a, li, div.callout-amber');
+  const bad = [];
+  nodes.forEach(function(el){
+    const t = el.textContent || '';
+    const html = el.innerHTML || '';
+    if(t.indexOf('\u2014')>=0 || html.indexOf('&mdash;')>=0 || html.indexOf('&#8212;')>=0){
+      bad.push({el:el, text:t.slice(0,100)});
+    }
+  });
+  if(bad.length){
+    console.error('[report-form1-2] Student-facing copy contains em dashes:', bad);
+    throw new Error('Em dash found in rendered student copy');
+  }
+}
+
+function renderSection1(data){
+  const subjects = (data.subjects||[]).map(function(s){ return SUBJECT_LABELS[s]||s; }).filter(Boolean);
+  $('#section1Facts').innerHTML =
+    factBox('Stage', stageLabel(data.stage))+
+    factBox('Region', data.region ? regionLabel(data.region): 'Not specified')+
+    factBox('First real choice', firstChoiceLabel(data.stage))+
+    factBox('Subjects you like', subjects.length ? listHuman(subjects): 'None flagged yet');
+
+  const callout = concernCallout(data);
+  const el = $('#section1Concern');
+  if(callout){
+    el.textContent = callout;
+    el.hidden = false;
+  } else {
+    el.hidden = true;
+  }
+}
+
+function renderQA(data){
+  const items = pickQA(data);
+  $('#qaList').innerHTML = items.map(function(item){
+    return '<article class="report-card qa-card">'+
+      '<p class="qa-q">'+esc(item.q)+'</p>'+
+      '<p class="qa-a">'+esc(item.a)+'</p></article>';
+  }).join('');
+}
+
+function renderOpportunities(data, resolved){
+  const pick = pickOpportunities(data);
+  $('#oppList').innerHTML = pick.top.map(function(o,i){
+    return oppCardHtml(o, {match:i===0});
+  }).join('');
+
+  if(pick.pyarg){
+    $('#pyargLine').textContent =
+      'From age 14: President\'s Youth Award. Not a competition, and worth knowing about now so you can start the term you are eligible.';
+  }
+}
+
+function renderMentors(data){
+  const mentors = pickMentors(data);
+  $('#mentorList').innerHTML = mentors.picked.map(function(m){
+    const story = mentorStory(m, data.stage);
+    return '<article class="report-card story-card">'+
+      '<div class="story-head"><span class="story-av">'+esc(m.initials)+'</span><strong>'+esc(m.name)+'</strong></div>'+
+      '<p class="story-body">'+esc(story)+'</p>'+
+      '<div class="fact-grid"><div class="fact-box"><b>Where they are now</b><span>'+esc(m.destination)+'</span></div></div>'+
+      '</article>';
+  }).join('');
+}
+
+function renderSession(data, resolved){
+  const field = resolved.field;
+  const sess = SESSIONS[field] || SESSIONS._fallback;
+  let note = 'Group sessions only for now. One-to-one comes later.';
+  if(data.talksTo==='noone'){
+    note = 'It is free, and you can stay on mute the whole time. Group sessions only for now. One-to-one comes later.';
+  }
+  $('#sessionCard').innerHTML =
+    '<div class="card-top"><h3>'+esc(sess.title)+'</h3><span class="pill pill-neutral">Group session</span></div>'+
+    '<p class="card-desc">'+esc(sess.body)+'</p>'+
+    '<div class="fact-grid cols-3">'+
+      factBox('When', sess.when)+
+      factBox('Cost', 'Free')+
+      factBox('Format', sess.format)+
+    '</div>'+
+    '<p class="fine-print">'+esc(note)+'</p>'+
+    '<a class="btn outline" href="sessions.html">See session details</a>';
+}
+
+function render(data){
+  const resolved = resolveArchetype(data);
+  const plan = getPlan();
+  fillArchetypeUI(resolved);
+
+  renderSection1(data);
+  const about = buildAbout(data, resolved);
+  const tension = namedCareerTension(data);
+  $('#aboutYou').textContent = tension ? (about + ' ' + tension) : about;
+  renderQA(data);
+  renderOpportunities(data, resolved);
+  renderMentors(data);
+  renderSession(data, resolved);
+
+  if(resolved.arch){
+    $('#accountCopy').textContent =
+      'Turn this into a plan that carries '+resolved.arch.name+' with it. Nothing above is locked behind signup, and creating an account does not reveal anything hidden. No payment field anywhere.';
+  }
+
+  $('#reopenArchetypeBtn').onclick = function(){
+    fillArchetypeUI(resolved);
+    openOverlay('modal');
+  };
+  $('#archetypeCloseBtn').onclick = function(){ closeOverlay(plan); };
+  $('#archetypePrimaryBtn').onclick = function(){ closeOverlay(plan); };
+  $('#archetypeShareBtn').onclick = function(){ shareResult(resolved); };
+  $('#archetypeOverlay').addEventListener('click', function(e){
+    if(e.target===this && this.classList.contains('modal-mode')) closeOverlay(plan);
+  });
+
+  $('#reportRoot').classList.remove('hidden');
+  $('#reportRoot').setAttribute('aria-busy','false');
+
+  auditEmDashes($('#reportRoot'));
+
+  if(!plan.archetypeSeen){
+    fillArchetypeUI(resolved);
+    openOverlay('fullscreen');
+  }
+}
+
+/* Static string em-dash audit at load: build fails if an em dash appears in copy pools. */
+(function auditStaticStrings(){
+  const pool = [WORK_STYLE.people, WORK_STYLE.problems, WORK_STYLE.ideas];
+  Object.keys(ARCHETYPES).forEach(function(k){ pool.push(ARCHETYPES[k].line); });
+  OPPORTUNITIES.forEach(function(o){ pool.push(o.title, o.desc, o.entry, o.when, o.age); });
+  Object.keys(CONCERN_QA).forEach(function(k){ pool.push(CONCERN_QA[k].q, CONCERN_QA[k].a); });
+  INFERRED_QA.forEach(function(item){ pool.push(item.q, item.a); });
+  FALLBACK_QA.forEach(function(item){ pool.push(item.q, item.a); });
+  pool.forEach(function(s){
+    if(s && (s.indexOf('\u2014')>=0 || s.indexOf('&mdash;')>=0)){
+      console.error('[report-form1-2] Static copy contains em dash:', s);
+      throw new Error('Em dash in static copy');
+    }
+  });
+})();
+
+(function boot(){
+  const params = new URLSearchParams(location.search);
+  let data = loadSelfcheck();
+
+  if(!data && params.get('demo')==='1'){
+    data = DEMO_SELFCHECK;
+    localStorage.setItem('nsg_selfcheck', JSON.stringify(data));
+    if(!localStorage.getItem('nsg_myplan')){
+      localStorage.setItem('nsg_myplan', JSON.stringify((window.NSG_ENGINE?NSG_ENGINE.migrateMyPlan({stage:'form2',archetypeSeen:false}):{stage:'form2',archetypeSeen:false,answeredAt:data.answeredAt})));
+    }
+  }
+
+  if(!data){ location.replace('check.html'); return; }
+
+  /* Legacy selfchecks stored form1-2 / form12 - keep report working. */
+  if(data.stage==='form1-2' || data.stage==='form12' || data.stage==='lower'){
+    data.stage = 'form1';
+  }
+
+  data.subjects = data.subjects||[];
+  data.pulls = data.pulls||[];
+  data.traits = data.traits||[];
+  data.activities = data.activities||[];
+  data.curious = data.curious||[];
+  data.concerns = data.concerns||[];
+
+  document.title = 'Your Report: '+stageLabel(data.stage)+' · Next Step Guyana';
+  render(data);
+  var ex = document.getElementById('reportExportBtn');
+  if(ex){ ex.addEventListener('click', function(){
+    if(!window.NSG_ENGINE){ toast('Export not available'); return; }
+    var blob = new Blob([JSON.stringify(NSG_ENGINE.exportRecord(),null,2)], {type:'application/json'});
+    var a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+    a.download = 'next-step-guyana-record.json'; a.click();
+    toast('Record downloaded');
+  }); }
+})();
+
+})();
+</script>
+</body>
+</html>

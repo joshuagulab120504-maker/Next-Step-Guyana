@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0a1930">
+<title>Save your progress - Next Step Guyana</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500..800&family=Inter:wght@400;500;600;700;800;900&family=Sora:wght@500;600;700;800&display=swap');
+:root{
+  --navy:#0a1930;--navy2:#123a52;--teal:#0e7a4f;--teal2:#149b62;--gold:#eeb52f;
+  --ink:#101a28;--muted:#5c6c7e;--paper:#f5f7fa;--white:#fff;--line:#dfe6ec;
+  --glass-bg:rgba(255,255,255,.7);--glass-line:rgba(255,255,255,.5);--radius-lg:20px;
+  --font-display:'Fraunces',ui-serif,Georgia,serif;--font-accent:'Sora',ui-sans-serif,sans-serif;--font-body:'Inter',ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.55 var(--font-body)}
+button,input{font:inherit}button{cursor:pointer}
+.wrap{width:min(680px,calc(100% - 28px));margin:auto}
+.header{height:74px;background:rgba(6,26,45,.98);color:#fff;display:flex;align-items:center;padding:0 18px;border-bottom:5px solid var(--teal)}
+.brand{display:flex;align-items:center;gap:11px;color:#fff;text-decoration:none;font-family:var(--font-accent);font-weight:800;font-size:19px}
+.brand .mark{width:55px;height:55px;border-radius:9px;background:#f8f5ed;overflow:hidden}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:14px;padding:12px 18px;min-height:46px;background:linear-gradient(135deg,var(--teal2),var(--teal));color:#fff;font-family:var(--font-accent);font-weight:700;font-size:14px}
+.btn.gold{background:linear-gradient(135deg,var(--gold),#d99615);color:#1a1305}
+.btn.ghost{background:#fff;color:var(--ink);border:1px solid var(--line)}
+.btn.full{width:100%}
+.btn.small{padding:9px 14px;font-size:12px;min-height:38px}
+.funnel{display:flex;align-items:center;justify-content:center;gap:0;padding:18px 0 0;flex-wrap:wrap}
+.f-step{display:flex;align-items:center;gap:8px;font-size:11px;font-weight:700;color:var(--muted)}
+.f-step.current{color:var(--teal2)}
+.f-step .dot{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;background:#e6ede9;font-size:10px}
+.f-step.current .dot{background:var(--teal2);color:#fff}
+.f-line{width:28px;height:2px;background:var(--line);margin:0 6px}
+.signup-shell{padding:28px 0 80px}
+.signup-card{background:var(--glass-bg);backdrop-filter:blur(16px);border:1px solid var(--glass-line);border-radius:var(--radius-lg);padding:28px;box-shadow:0 7px 25px rgba(10,25,48,.05)}
+.eyebrow{font-size:10px;font-weight:800;letter-spacing:.08em;color:var(--teal2)}
+h1{font-family:var(--font-display);font-weight:650;font-size:32px;margin:10px 0}
+.lead{color:var(--muted);margin:0 0 18px}
+.field{margin:14px 0}.field label{display:block;font-size:12px;font-weight:700;margin-bottom:6px}
+.field input{width:100%;border:1px solid var(--line);border-radius:12px;padding:12px}
+.error-text{display:none;color:#b43b4c;font-size:12px;margin:-6px 0 10px}
+.error-text.show{display:block}
+.reassure-box{display:flex;gap:10px;align-items:start;background:#eafff6;border:1px solid #b7ecd8;border-radius:12px;padding:12px;margin-top:14px;font-size:13px}
+.locked-hero{padding:48px 0;text-align:center}
+.hidden{display:none!important}
+.export-row{margin-top:14px;display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+</style>
+</head>
+<body>
+<header class="header">
+  <a class="brand" href="index.html"><span class="mark"><img src="logo.png" alt="" style="width:100%;height:100%;object-fit:cover"></span><span>NEXT STEP</span></a>
+  <button class="btn ghost small" id="restartDemoBtn" style="margin-left:auto;color:#fff;border-color:rgba(255,255,255,.25);background:transparent">Reset demo</button>
+</header>
+
+<div class="funnel wrap">
+  <div class="f-step"><span class="dot">1</span><span class="lbl">Self-check</span></div><div class="f-line"></div>
+  <div class="f-step"><span class="dot">2</span><span class="lbl">Report</span></div><div class="f-line"></div>
+  <div class="f-step current"><span class="dot">3</span><span class="lbl">Account</span></div><div class="f-line"></div>
+  <div class="f-step"><span class="dot">4</span><span class="lbl">My Plan</span></div>
+</div>
+
+<main class="wrap">
+  <div class="signup-shell hidden" id="signupArea">
+    <div class="signup-card">
+      <span class="eyebrow">20 SECONDS, NO PAYMENT</span>
+      <h1>Save your progress.</h1>
+      <p class="lead">Your plan is saved on this device. Come back on the same device and browser to find it. You can download a copy any time. No card, no payment field, ever.</p>
+      <div class="field">
+        <label class="f" for="nameInput">Your name</label>
+        <input type="text" id="nameInput" placeholder="e.g. Aaliyah Persaud">
+      </div>
+      <p class="error-text" id="nameError">Enter your name first.</p>
+      <div class="field">
+        <label class="f" for="contactInput">Email or WhatsApp number</label>
+        <input type="text" id="contactInput" placeholder="you@email.com or +592 600 0000">
+      </div>
+      <p class="error-text" id="contactError">Enter an email or WhatsApp number.</p>
+      <button class="btn gold full" id="createBtn">Create my free account →</button>
+      <div class="export-row">
+        <button type="button" class="btn ghost small" id="exportBtn">Download a copy of my record</button>
+      </div>
+      <div class="reassure-box"><span>✓</span><span>Free forever. No payment fields exist anywhere in this product.</span></div>
+    </div>
+  </div>
+
+  <section class="locked-hero hidden" id="lockedArea">
+    <span class="eyebrow" style="display:inline-flex;background:rgba(255,255,255,.1);border-radius:99px;padding:6px 12px;font-size:10px;font-weight:800;background:#eaf3ee;color:#0e6b45">NOTHING TO SAVE YET</span>
+    <h1>Take the self-check first.</h1>
+    <p>There is no plan to attach an account to until you have done the check-in.</p>
+    <button class="btn gold" onclick="location.href='check.html'">Start my self-check →</button>
+  </section>
+</main>
+
+<script src="nsg-stages.js"></script>
+<script src="nsg-north-star.js"></script>
+<script src="nsg-plan-engine.js"></script>
+<script>
+function getSelfcheck(){ try{ return JSON.parse(localStorage.getItem('nsg_selfcheck')); }catch(e){ return null; } }
+function getPlan(){ return (window.NSG_ENGINE && NSG_ENGINE.loadMyPlanFlags) ? NSG_ENGINE.loadMyPlanFlags() : null; }
+function savePlan(p){ localStorage.setItem('nsg_myplan', JSON.stringify(p)); }
+function isAccountCreated(){ return localStorage.getItem('nsg_account_created')==='true'; }
+function setAccountCreated(){ localStorage.setItem('nsg_account_created','true'); }
+function resetDemo(){
+  ['nsg_myplan','nsg_selfcheck','nsg_account_created','nsg_north_star','nsg_profile_extras','nsg_pref','nsg_opps','nsg_profile','nsg_dashboard_prefs','nsg_saved','nsg_bookings','nsg_swipe_kept','nsg_swipe_passed','nsg_nudge_shown','nsg_nudge_3','nsg_nudge_elig'].forEach(k=>localStorage.removeItem(k));
+  location.href = 'check.html';
+}
+document.getElementById('restartDemoBtn').addEventListener('click', resetDemo);
+
+const $ = s => document.querySelector(s);
+const selfcheck = getSelfcheck();
+const plan = getPlan();
+
+/* Gate: completed self-check only. No starKey. */
+if(!selfcheck || !(selfcheck.answeredAt || selfcheck.completed)){
+  $('#lockedArea').classList.remove('hidden');
+} else if(isAccountCreated()){
+  location.href = 'my-plan.html#careers';
+} else {
+  $('#signupArea').classList.remove('hidden');
+}
+
+function doExport(){
+  if(!window.NSG_ENGINE){ alert('Export is not available yet.'); return; }
+  const data = JSON.stringify(NSG_ENGINE.exportRecord(), null, 2);
+  const blob = new Blob([data], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'next-step-guyana-record.json';
+  a.click();
+}
+$('#exportBtn') && $('#exportBtn').addEventListener('click', doExport);
+
+$('#createBtn').addEventListener('click', ()=>{
+  const name = $('#nameInput').value.trim();
+  const contact = $('#contactInput').value.trim();
+  let ok = true;
+  $('#nameError').classList.toggle('show', !name); if(!name) ok=false;
+  $('#contactError').classList.toggle('show', !contact); if(!contact) ok=false;
+  if(!ok) return;
+
+  const p = getPlan() || (window.NSG_ENGINE ? NSG_ENGINE.migrateMyPlan(null) : {});
+  p.studentName = name;
+  p.contact = contact;
+  p.answeredAt = (selfcheck && selfcheck.answeredAt) || p.answeredAt || new Date().toISOString();
+  const rawStage = (selfcheck && selfcheck.stage) || p.stage || null;
+  p.stage = (window.NSG_STAGES && rawStage) ? NSG_STAGES.normalizeStage(rawStage) : rawStage;
+  if(selfcheck && selfcheck.archetype) p.archetype = selfcheck.archetype;
+  if(selfcheck && selfcheck.code) p.riasecCode = selfcheck.code;
+  if(selfcheck && selfcheck.bucket) p.interestBucket = selfcheck.bucket;
+  savePlan(p);
+  setAccountCreated();
+  /* Offer export immediately after create, then continue. */
+  if(window.confirm('Account saved on this device. Download a copy of your record now?')){
+    doExport();
+  }
+  location.href = 'my-plan.html#careers';
+});
+</script>
+</body>
+</html>

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0a1930">
-<title>For Parents & Teachers — Next Step Guyana</title>
+<title>For Parents & Teachers .  Next Step Guyana</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500..800&family=Inter:wght@400;500;600;700;800;900&family=Sora:wght@500;600;700;800&display=swap');
 :root{
@@ -27,10 +27,10 @@ h1,h2{font-family:var(--font-display);font-weight:650;margin:0}
 .tag{display:inline-flex;padding:4px 9px;border-radius:99px;background:var(--soft);color:#0e6b45;font-size:9.5px;font-weight:800}
 .tag.mentor{background:var(--purple-soft);color:var(--purple)}
 
-.topbar{background:var(--glass-navy);backdrop-filter:blur(16px);color:#fff;padding:12px 0}
-.topbar-row{display:flex;align-items:center;gap:14px}
+.topbar{background:rgba(6,26,45,.98);color:#fff;padding:0;min-height:74px;display:flex;align-items:center;border-bottom:5px solid var(--teal,#0e7a4f)}
+.topbar-row{display:flex;align-items:center;gap:14px;height:74px;width:100%}
 .brand{display:flex;align-items:center;gap:9px;color:#fff;text-decoration:none;font-family:var(--font-accent);font-weight:800;font-size:14px}
-.brand .mark{width:28px;height:28px;border-radius:9px;background:linear-gradient(145deg,var(--teal2),var(--teal));display:grid;place-items:center;font-size:14px}
+.brand .mark{width:55px;height:55px;border-radius:9px;background:linear-gradient(145deg,var(--teal2),var(--teal));display:grid;place-items:center;font-size:14px}
 .navlinks{display:flex;gap:16px;margin-left:auto}
 .navlinks a{color:#cfdaea;text-decoration:none;font-size:12.5px;font-weight:700}
 .navlinks a:hover{color:#fff}
@@ -71,11 +71,17 @@ h1,h2{font-family:var(--font-display);font-weight:650;margin:0}
 .explore-band p{color:#c9d8e2;margin:0;font-size:12.5px;max-width:420px}
 .note{font-size:10.5px;color:var(--muted);text-align:center;padding:20px 0 60px}
 .empty{text-align:center;padding:60px 20px}
+
+.brand-logo{width:55px;height:55px;border-radius:9px;overflow:hidden;background:#f8f5ed;display:block;flex:0 0 auto}
+.brand-logo img{width:100%;height:100%;object-fit:cover;object-position:center top}
+.brand .wordmark{display:flex;flex-direction:column;line-height:1.05}
+.brand .wordmark small{font-size:8px;letter-spacing:.22em;opacity:.85;font-weight:700;margin-top:3px}
+@media(max-width:620px){.topbar{min-height:62px}.topbar-row{height:62px}.brand-logo,.brand .mark{width:45px;height:45px}}
 </style>
 </head>
 <body>
 <header class="topbar"><div class="wrap topbar-row">
-  <a class="brand" href="index.html"><span class="mark">↗</span> NEXT STEP</a>
+  <a class="brand" href="index.html"><span class="brand-logo"><img src="logo.jpg" alt="Next Step"></span><span class="wordmark">NEXT STEP<small>GUYANA</small></span></a>
   <span class="role-badge" id="roleBadge">PARENT VIEW</span>
   <nav class="navlinks"><a href="feed.html">Feed</a><a href="mentors.html">Mentors</a><a href="sessions.html">Sessions</a><a href="about.html">About Us</a></nav>
 </div></header>
@@ -84,10 +90,11 @@ h1,h2{font-family:var(--font-display);font-weight:650;margin:0}
   <div id="content"></div>
   <div class="empty" id="emptyState" style="display:none">
     <p style="color:var(--muted)">We don't have your details yet.</p>
-    <button class="btn" onclick="location.href='check.html'">Start the 60-second check-in →</button>
+    <button class="btn" onclick="location.href='check.html'">Start the self-check →</button>
   </div>
 </main>
 
+<script src="nsg-stages.js"></script>
 <script>
 const MENTORS = [
   {id:'aniyah', name:'Aniyah Couchman', tag:'Stanford · Presidential Scholar', interests:['science','law','business']},
@@ -98,7 +105,7 @@ const MENTORS = [
   {id:'riley', name:'Riley Nurse', tag:"U. Toronto · Int'l Scholar", interests:['business']},
 ];
 const INTEREST_LABELS = {science:'Science & Medicine', engineering:'Engineering', business:'Business & Entrepreneurship', law:'Law & Humanities', creative:'Creative Industry', agriculture:'Agriculture', technology:'Technology', other:'Other'};
-const STAGE_LABELS = {lower:'Forms 1–3', form4:'Form 4', form5:'Form 5 / CSEC', postcsec:'Just finished CSEC', sixthform:'Sixth Form / CAPE', postcape:'Just finished CAPE'};
+const STAGE_LABELS = (window.NSG_STAGES && NSG_STAGES.LABELS) || {};
 
 const FEED_BY_INTEREST = {
   science:[{ic:'\u25c9',title:'Choosing between Biology and Chemistry-heavy routes',desc:'A mentor breaks down what each actually leads to.'}],
@@ -132,7 +139,7 @@ function render(){
       <span class="eyebrow">${isTeacher ? 'BUILT FOR EDUCATORS' : 'BUILT FOR FAMILIES'}</span>
       <h1>${isTeacher ? 'What your students might be exploring.' : 'What could help your child right now.'}</h1>
       <p>Based on ${isTeacher ? 'the stage and interests you told us about your students' : 'your child\u2019s stage and interests'} \u2014 not connected to their personal plan, so nothing here is pulled from any account they may have.</p>
-      <div class="interest-chips"><span>${STAGE_LABELS[data.childStage]||data.childStage}</span>${interestLabels.map(l=>`<span>${l}</span>`).join('')}</div>
+      <div class="interest-chips"><span>${(window.NSG_STAGES?NSG_STAGES.stageLabel(data.childStage):STAGE_LABELS[data.childStage])||data.childStage}</span>${interestLabels.map(l=>`<span>${l}</span>`).join('')}</div>
     </section>
 
     <div class="section-label">From the Feed</div>
