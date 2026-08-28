@@ -1,0 +1,785 @@
+/* Next Step Guyana app core. ES5 only. No storage. No em/en dashes. */
+var NAV = [];
+var S = {
+  view: 'feed',
+  filter: 'all',
+  query: '',
+  ctype: 'question',
+  anon: true,
+  onboarded: false,
+  stage: null,
+  form: '',
+  region: '',
+  goal: '',
+  priority: '',
+  blocker: '',
+  archetype: '',
+  taken: [],
+  following: [],
+  saved: [],
+  inspired: [],
+  booked: [],
+  slots: {},
+  oneToOne: false,
+  unread: 0,
+  recent: [],
+  setupStep: 0,
+  setupDraft: {},
+  replyTimer: null
+};
+
+var DUP_MAP = [
+  { keys: ['biology', 'chemistry', 'medicine', 'nursing'], id: 'q-bio' },
+  { keys: ['cape', 'tvet', 'gtti', 'electrical', 'trade'], id: 'q-cape' },
+  { keys: ['sport', 'coach', 'academy', 'lethem'], id: 'q-lethem' },
+  { keys: ['media', 'film', 'camera'], id: 'q-media' }
+];
+
+function esc(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+function byId(id) {
+  return document.getElementById(id);
+}
+
+function toast(msg) {
+  var el = byId('toast');
+  el.textContent = msg;
+  el.hidden = false;
+  clearTimeout(toast._t);
+  toast._t = setTimeout(function () {
+    el.hidden = true;
+  }, 3200);
+}
+
+function stageIndex(key) {
+  var i;
+  for (i = 0; i < STAGES.length; i++) {
+    if (STAGES[i].key === key) return i;
+  }
+  return 0;
+}
+
+function stageByKey(key) {
+  return STAGES[stageIndex(key)] || STAGES[0];
+}
+
+function daysUntil(iso) {
+  if (!iso) return null;
+  var due = new Date(iso + 'T12:00:00');
+  var now = new Date();
+  var ms = due.getTime() - now.getTime();
+  return Math.max(0, Math.ceil(ms / 86400000));
+}
+
+function author(id) {
+  return AUTHORS[id] || { name: id, init: '?', role: '', pos: '', system: true };
+}
+
+function isFollowing(id) {
+  return S.following.indexOf(id) !== -1;
+}
+
+function toggleFollow(id) {
+  var i = S.following.indexOf(id);
+  if (i === -1) {
+    S.following.push(id);
+    toast('Following ' + author(id).name + '. New posts and nodes reach your feed.');
+  } else {
+    S.following.splice(i, 1);
+    toast('Unfollowed ' + author(id).name + '.');
+  }
+  paint();
+  render();
+}
+
+function isSaved(id) {
+  return S.saved.indexOf(id) !== -1;
+}
+
+function toggleSave(id) {
+  var i = S.saved.indexOf(id);
+  if (i === -1) {
+    S.saved.push(id);
+    toast('Saved for later.');
+  } else {
+    S.saved.splice(i, 1);
+    toast('Removed from saved.');
+  }
+  paint();
+  render();
+}
+
+function isInspired(id) {
+  return S.inspired.indexOf(id) !== -1;
+}
+
+function toggleInspired(id) {
+  var item = feedById(id);
+  var i = S.inspired.indexOf(id);
+  if (i === -1) {
+    S.inspired.push(id);
+    if (item) item.insp = (item.insp || 0) + 1;
+    toast('Marked as inspired.');
+  } else {
+    S.inspired.splice(i, 1);
+    if (item && item.insp > 0) item.insp -= 1;
+    toast('Removed from inspired.');
+  }
+  paint();
+  render();
+}
+
+function takenHas(key) {
+  var i;
+  for (i = 0; i < S.taken.length; i++) {
+    if (S.taken[i].key === key) return true;
+  }
+  return false;
+}
+
+function addTaken(entry) {
+  if (takenHas(entry.key)) return;
+  S.taken.push(entry);
+  toast('Added to ' + (stageByKey(entry.stage).name || entry.stage) + '.');
+}
+
+function removeTaken(key) {
+  S.taken = S.taken.filter(function (t) {
+    return t.key !== key;
+  });
+  toast('Removed.');
+}
+
+function toggleTaken(entry) {
+  if (takenHas(entry.key)) {
+    removeTaken(entry.key);
+  } else {
+    addTaken(entry);
+  }
+  paint();
+  render();
+}
+
+function pushRecent(kind, id, label) {
+  var i;
+  S.recent = S.recent.filter(function (r) {
+    return !(r.kind === kind && r.id === id);
+  });
+  S.recent.unshift({ kind: kind, id: id, label: label });
+  if (S.recent.length > 6) S.recent.length = 6;
+}
+
+function feedById(id) {
+  var i;
+  for (i = 0; i < FEED.length; i++) {
+    if (FEED[i].id === id) return FEED[i];
+  }
+  return null;
+}
+
+function sessionById(id) {
+  var i;
+  for (i = 0; i < SESSIONS.length; i++) {
+    if (SESSIONS[i].id === id) return SESSIONS[i];
+  }
+  return null;
+}
+
+function oppOpenAtStage(opp, stageKey) {
+  if (!opp || !stageKey) return false;
+  var idx = stageIndex(stageKey);
+  return opp.stages.indexOf(idx) !== -1;
+}
+
+function lockBody(on) {
+  if (on) document.body.className = (document.body.className + ' sheet-open').replace(/\s+/g, ' ').trim();
+  else document.body.className = document.body.className.replace(/\bsheet-open\b/g, '').replace(/\s+/g, ' ').trim();
+}
+
+function go(v) {
+  NAV.push(v);
+  openSheet();
+  paint();
+}
+
+function back() {
+  NAV.pop();
+  if (!NAV.length) {
+    closeSheet();
+    return;
+  }
+  paint();
+}
+
+function closeSheet() {
+  NAV = [];
+  var sh = byId('sheet');
+  sh.hidden = true;
+  sh.className = sh.className.replace(/\bopen\b/g, '').replace(/\s+/g, ' ').trim();
+  byId('scrim').hidden = true;
+  lockBody(false);
+  render();
+}
+
+function openSheet() {
+  var sh = byId('sheet');
+  sh.hidden = false;
+  if ((' ' + sh.className + ' ').indexOf(' open ') === -1) sh.className = (sh.className + ' open').replace(/\s+/g, ' ').trim();
+  byId('scrim').hidden = false;
+  lockBody(true);
+  byId('sheet-body').scrollTop = 0;
+}
+
+function paint() {
+  if (!NAV.length) return;
+  var top = NAV[NAV.length - 1];
+  var fn = VIEWS[top.t];
+  if (!fn) return;
+  var out = fn(top);
+  byId('sheet-crumb').textContent = out.crumb || '';
+  byId('sheet-title').textContent = out.title || '';
+  byId('sheet-back').hidden = NAV.length < 2;
+  byId('sheet-body').innerHTML = out.html || '';
+  byId('sheet-body').scrollTop = 0;
+  if (out.after) out.after();
+  renderChrome();
+}
+
+function setView(v) {
+  S.view = v;
+  if (v === 'pathway') S.unread = 0;
+  render();
+}
+
+function avatarHtml(a, anon) {
+  if (anon) {
+    return '<span class="av av-anon" aria-hidden="true">?</span>';
+  }
+  var cls = a && a.system ? 'av av-desk' : 'av';
+  return '<span class="' + cls + '" aria-hidden="true">' + esc((a && a.init) || '?') + '</span>';
+}
+
+function pill(label, cls, attrs) {
+  return '<button type="button" class="p ' + (cls || '') + '" ' + (attrs || '') + '>' + esc(label) + '</button>';
+}
+
+function iconHeart() {
+  return '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>';
+}
+
+function iconCheck() {
+  return '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>';
+}
+
+function iconBack() {
+  return '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>';
+}
+
+function iconClose() {
+  return '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg>';
+}
+
+function iconFeed() {
+  return '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"/></svg>';
+}
+
+function iconPath() {
+  return '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/><path d="M12 7v3M12 14v3"/></svg>';
+}
+
+function caveatCalendar() {
+  return '<p class="caveat">Based on the usual school calendar. Confirm the real date with your school, because it moves.</p>';
+}
+
+function askAboutBlock(seed, cat) {
+  return (
+    '<div class="card soft-ask">' +
+    '<p class="eyebrow">Ask about this</p>' +
+    '<p class="muted">Put a question into the feed. Mentors in this area see it.</p>' +
+    '<button type="button" class="btn" data-ask-seed="' +
+    esc(seed) +
+    '" data-ask-cat="' +
+    esc(cat || '') +
+    '">Ask in the feed</button>' +
+    '</div>'
+  );
+}
+
+function searchHay(item) {
+  var parts = [item.title || '', item.cat || '', item.text || '', item.who || '', item.kind || ''];
+  var i, a, o, j, r, sess, jour;
+  if (item.body) {
+    for (i = 0; i < item.body.length; i++) parts.push(item.body[i]);
+  }
+  if (item.replies) {
+    for (i = 0; i < item.replies.length; i++) {
+      r = item.replies[i];
+      parts.push(r.text || '');
+      parts.push(r.who || '');
+      if (r.a) {
+        a = author(r.a);
+        parts.push(a.name, a.pos || '');
+      }
+    }
+  }
+  if (item.author) {
+    a = author(item.author);
+    parts.push(a.name, a.pos || '');
+  }
+  if (item.opp && OPPS[item.opp]) {
+    o = OPPS[item.opp];
+    parts.push(o.name, o.one || '', o.cat || '');
+  }
+  if (item.session) {
+    sess = sessionById(item.session);
+    if (sess) parts.push(sess.title, sess.pod || '', sess.cat || '');
+  }
+  if (item.journey && JOURNEYS[item.journey]) {
+    jour = JOURNEYS[item.journey];
+    a = author(item.journey);
+    parts.push(a.name, jour.hook || '', jour.now || '', jour.place || '', jour.field || '', jour.quote || '');
+  }
+  return parts.join(' ').toLowerCase();
+}
+
+function filteredFeed() {
+  var q = (S.query || '').trim().toLowerCase();
+  var out = [];
+  var i, item, ok;
+  for (i = 0; i < FEED.length; i++) {
+    item = FEED[i];
+    ok = true;
+    if (S.filter === 'questions' && item.kind !== 'question') ok = false;
+    if (S.filter === 'stories' && item.kind !== 'story') ok = false;
+    if (S.filter === 'opportunities' && item.kind !== 'opportunity') ok = false;
+    if (S.filter === 'sessions' && item.kind !== 'session') ok = false;
+    if (S.filter === 'journeys' && item.kind !== 'journey') ok = false;
+    if (ok && q && searchHay(item).indexOf(q) === -1) ok = false;
+    if (ok) out.push(item);
+  }
+  return out;
+}
+
+function resultCountLine(list) {
+  var q = (S.query || '').trim();
+  if (q) return list.length + ' results for "' + q + '"';
+  if (S.filter === 'all') return list.length + ' posts, tap any of them to go deeper';
+  var labels = {
+    questions: 'questions',
+    stories: 'stories',
+    opportunities: 'opportunities',
+    sessions: 'sessions',
+    journeys: 'journeys'
+  };
+  return list.length + ' under ' + (labels[S.filter] || S.filter);
+}
+
+function cardClickAttrs(kind, id) {
+  return 'data-open="' + esc(kind) + '" data-id="' + esc(id) + '"';
+}
+
+function renderQuestionCard(item) {
+  var anon = !!item.anon;
+  var a = item.author ? author(item.author) : null;
+  var name = anon ? item.who : a.name;
+  var pos = anon ? '' : a.pos || '';
+  var first = item.replies && item.replies[0] ? item.replies[0] : null;
+  var firstText = '';
+  var firstWho = '';
+  if (first) {
+    firstText = first.text;
+    firstWho = first.a ? author(first.a).name : first.who || 'Student';
+  }
+  var html =
+    '<article class="card feed-card clickable" ' +
+    cardClickAttrs('thread', item.id) +
+    '>' +
+    '<div class="card-head">' +
+    avatarHtml(a, anon) +
+    '<div class="meta">' +
+    '<div class="name">' +
+    esc(name) +
+    '</div>' +
+    '<div class="sub">' +
+    esc(pos || item.time || '') +
+    (item.time && pos ? ' · ' : '') +
+    esc(item.time || '') +
+    '</div>' +
+    '</div>';
+  if (!anon && a && !a.system) {
+    html +=
+      '<button type="button" class="btn sm g" data-follow="' +
+      esc(item.author) +
+      '">' +
+      (isFollowing(item.author) ? 'Following' : 'Follow') +
+      '</button>';
+  }
+  html += '</div>';
+  if (item.mine) {
+    html += '<div class="flag-row">';
+    html += '<span class="p green">Your post</span>';
+    if (item.newReply) html += '<span class="p red">New reply</span>';
+    if (item.edited) html += '<span class="p">Edited</span>';
+    html +=
+      '<button type="button" class="btn q" data-edit="' +
+      esc(item.id) +
+      '">Edit</button>';
+    html +=
+      '<button type="button" class="btn q" data-del="' +
+      esc(item.id) +
+      '">Delete</button>';
+    html += '</div>';
+  }
+  html += '<h3>' + esc(item.title) + '</h3>';
+  html += '<div class="pill-row">';
+  html += pill(item.cat, 'dot', 'data-topic="' + esc(item.cat) + '"');
+  html += '<span class="p blue">Asked at ' + esc(item.askedAt || 'Form 3') + '</span>';
+  html += '</div>';
+  if (first) {
+    html +=
+      '<div class="reply-preview"><strong>' +
+      esc(firstWho) +
+      '</strong> ' +
+      esc(firstText) +
+      '</div>';
+  }
+  html +=
+    '<div class="card-foot">Open thread, ' +
+    (item.replies ? item.replies.length : 0) +
+    ' replies</div>';
+  html += '</article>';
+  return html;
+}
+
+function renderStoryCard(item) {
+  var a = author(item.author);
+  var para = (item.body && item.body[0]) || '';
+  return (
+    '<article class="card feed-card clickable" ' +
+    cardClickAttrs('story', item.id) +
+    '>' +
+    '<div class="card-head">' +
+    avatarHtml(a, false) +
+    '<div class="meta"><div class="name">' +
+    esc(a.name) +
+    '</div><div class="sub">' +
+    esc(a.pos || '') +
+    (item.time ? ' · ' + esc(item.time) : '') +
+    '</div></div>' +
+    '<button type="button" class="btn sm g" data-follow="' +
+    esc(item.author) +
+    '">' +
+    (isFollowing(item.author) ? 'Following' : 'Follow') +
+    '</button></div>' +
+    '<h3>' +
+    esc(item.title) +
+    '</h3>' +
+    '<p class="clamp3">' +
+    esc(para) +
+    '</p>' +
+    '<div class="pill-row">' +
+    pill(item.cat, 'dot', 'data-topic="' + esc(item.cat) + '"') +
+    '</div>' +
+    '<div class="card-actions">' +
+    '<button type="button" class="btn sm g" data-open="story" data-id="' +
+    esc(item.id) +
+    '">Read it</button>' +
+    '<button type="button" class="btn sm g" data-inspire="' +
+    esc(item.id) +
+    '">' +
+    iconHeart() +
+    ' Inspired me · ' +
+    (item.insp || 0) +
+    '</button>' +
+    '</div></article>'
+  );
+}
+
+function renderOppCard(item) {
+  var o = OPPS[item.opp];
+  if (!o) return '';
+  return (
+    '<article class="card feed-card opp-card clickable" ' +
+    cardClickAttrs('opp', o.id) +
+    '>' +
+    '<div class="pill-row">' +
+    '<span class="p blue">Opportunity</span>' +
+    (o.independent ? '<span class="p green">You can enter yourself</span>' : '') +
+    pill(o.cat, '', 'data-topic="' + esc(o.cat) + '"') +
+    '</div>' +
+    '<h3>' +
+    esc(o.name) +
+    '</h3>' +
+    '<p>' +
+    esc(item.text) +
+    '</p>' +
+    '<p class="prompt-line">How you get in, what it costs, who has done it</p>' +
+    '<div class="card-actions">' +
+    '<button type="button" class="btn sm" data-open="opp" data-id="' +
+    esc(o.id) +
+    '">Open</button>' +
+    '<button type="button" class="btn sm g" data-save="' +
+    esc(o.id) +
+    '">' +
+    (isSaved(o.id) ? 'Saved' : 'Save') +
+    '</button>' +
+    '<span class="push-right muted">' +
+    esc(author('desk').name) +
+    (item.time ? ' · ' + esc(item.time) : '') +
+    '</span>' +
+    '</div></article>'
+  );
+}
+
+function renderSessionCard(item) {
+  var s = sessionById(item.session);
+  if (!s) return '';
+  var left = Math.max(0, s.seats - s.taken);
+  var pct = Math.min(100, Math.round((s.taken / s.seats) * 100));
+  var lead = author(s.lead);
+  return (
+    '<article class="card feed-card sess-card clickable" ' +
+    cardClickAttrs('session', s.id) +
+    '>' +
+    '<div class="sess-row">' +
+    '<div class="date-box"><div class="d">' +
+    esc(s.date) +
+    '</div><div class="w">' +
+    esc(s.day) +
+    '</div></div>' +
+    '<div class="sess-main">' +
+    '<span class="p blue">Session</span>' +
+    '<h3>' +
+    esc(s.title) +
+    '</h3>' +
+    '<p class="muted">' +
+    esc(s.when) +
+    ' · ' +
+    esc(s.pod) +
+    ' · ' +
+    esc(lead.name) +
+    '</p>' +
+    '<p class="muted">' +
+    left +
+    ' places remaining</p>' +
+    '<div class="cap"><span style="width:' +
+    pct +
+    '%"></span></div>' +
+    '<button type="button" class="btn sm" data-open="book" data-id="' +
+    esc(s.id) +
+    '">' +
+    (left === 0 ? 'Join waitlist' : 'Book') +
+    '</button>' +
+    '</div></div></article>'
+  );
+}
+
+function renderJourneyCard(item) {
+  var j = JOURNEYS[item.journey];
+  var a = author(item.journey);
+  if (!j) return '';
+  return (
+    '<article class="card feed-card journey-card clickable" ' +
+    cardClickAttrs('journey', item.journey) +
+    '>' +
+    '<div class="j-head">' +
+    '<span class="av gold">' +
+    esc(a.init) +
+    '</span>' +
+    '<div class="meta"><div class="name">' +
+    esc(a.name) +
+    '</div><div class="sub">' +
+    esc(a.pos) +
+    '</div></div>' +
+    '<div class="age-box"><div class="n">' +
+    esc(String(j.age)) +
+    '</div><div class="l">AT THE TIME</div></div>' +
+    '</div>' +
+    '<div class="pill-row">' +
+    '<span class="p">' +
+    esc(a.role) +
+    '</span>' +
+    '<span class="p">' +
+    esc(j.field) +
+    '</span>' +
+    (j.ongoing ? '<span class="p green">Still adding nodes</span>' : '<span class="p">Documented</span>') +
+    '</div>' +
+    '<p class="hook serif">' +
+    esc(j.hook) +
+    '</p>' +
+    '<p class="now-line"><span class="eyebrow">NOW</span> ' +
+    esc(j.now) +
+    '</p>' +
+    '<div class="card-actions">' +
+    '<button type="button" class="btn sm" data-open="journey" data-id="' +
+    esc(item.journey) +
+    '">Read their journey</button>' +
+    '<button type="button" class="btn sm g" data-follow="' +
+    esc(item.journey) +
+    '">' +
+    (isFollowing(item.journey) ? 'Following' : 'Follow') +
+    '</button>' +
+    '<button type="button" class="btn sm g" data-open="mentor" data-id="' +
+    esc(item.journey) +
+    '">Profile</button>' +
+    '</div></article>'
+  );
+}
+
+function renderFeedCard(item) {
+  if (item.kind === 'question') return renderQuestionCard(item);
+  if (item.kind === 'story') return renderStoryCard(item);
+  if (item.kind === 'opportunity') return renderOppCard(item);
+  if (item.kind === 'session') return renderSessionCard(item);
+  if (item.kind === 'journey') return renderJourneyCard(item);
+  return '';
+}
+
+function renderRecentRow() {
+  if (!S.recent.length) return '';
+  var html = '<div class="recent-row" aria-label="Jump back in">';
+  var i, r;
+  for (i = 0; i < S.recent.length; i++) {
+    r = S.recent[i];
+    html +=
+      '<button type="button" class="chip" data-open="' +
+      esc(r.kind) +
+      '" data-id="' +
+      esc(r.id) +
+      '">' +
+      esc(r.label) +
+      '</button>';
+  }
+  html += '</div>';
+  return html;
+}
+
+function dupHintHtml(draft) {
+  if (!draft || draft.length < 12) return '';
+  var low = draft.toLowerCase();
+  var i, j, hit, item, replyNames, raeka;
+  for (i = 0; i < DUP_MAP.length; i++) {
+    for (j = 0; j < DUP_MAP[i].keys.length; j++) {
+      if (low.indexOf(DUP_MAP[i].keys[j]) !== -1) {
+        hit = DUP_MAP[i].id;
+        break;
+      }
+    }
+    if (hit) break;
+  }
+  if (!hit) return '';
+  item = feedById(hit);
+  if (!item) return '';
+  replyNames = [];
+  raeka = false;
+  if (item.replies) {
+    for (i = 0; i < item.replies.length; i++) {
+      if (item.replies[i].a) {
+        replyNames.push(author(item.replies[i].a).name);
+        if (item.replies[i].a === 'raeka') raeka = true;
+      }
+    }
+  }
+  return (
+    '<div class="dup-box" id="dup-box">' +
+    '<p class="eyebrow">Someone already asked this</p>' +
+    '<p class="serif"><strong>' +
+    esc(item.title) +
+    '</strong></p>' +
+    '<p class="muted">' +
+    (item.replies ? item.replies.length : 0) +
+    ' replies, including one from ' +
+    esc(raeka ? 'Raeka Persaud' : replyNames[0] || 'a mentor') +
+    '.</p>' +
+    '<div class="card-actions">' +
+    '<button type="button" class="btn sm" data-open="thread" data-id="' +
+    esc(item.id) +
+    '">Read that thread</button>' +
+    '<button type="button" class="btn sm g" id="dup-dismiss">Ask mine anyway</button>' +
+    '</div></div>'
+  );
+}
+
+function renderFeed() {
+  var list = filteredFeed();
+  var filters = [
+    ['all', 'All'],
+    ['questions', 'Questions'],
+    ['stories', 'Stories'],
+    ['opportunities', 'Opportunities'],
+    ['sessions', 'Sessions'],
+    ['journeys', 'Journeys']
+  ];
+  var html = '<div class="page-feed">';
+  html += '<h1>Feed</h1>';
+  html +=
+    '<label class="sr" for="feed-q">Search the feed</label>' +
+    '<input type="search" id="feed-q" class="search" placeholder="Search titles, people, places, categories" value="' +
+    esc(S.query) +
+    '"/>';
+  html += '<div class="filters" role="tablist">';
+  var i;
+  for (i = 0; i < filters.length; i++) {
+    html +=
+      '<button type="button" class="filter' +
+      (S.filter === filters[i][0] ? ' on' : '') +
+      '" data-filter="' +
+      filters[i][0] +
+      '">' +
+      filters[i][1] +
+      '</button>';
+  }
+  html += '</div>';
+  html += renderRecentRow();
+  html += '<div class="composer card" id="composer">';
+  html += '<div class="seg">';
+  html +=
+    '<button type="button" class="seg-btn' +
+    (S.ctype === 'question' ? ' on' : '') +
+    '" data-ctype="question">Ask a question</button>';
+  html +=
+    '<button type="button" class="seg-btn' +
+    (S.ctype === 'story' ? ' on' : '') +
+    '" data-ctype="story">Share a story</button>';
+  html += '</div>';
+  html +=
+    '<label class="sr" for="comp-text">' +
+    (S.ctype === 'question' ? 'Your question' : 'Your story') +
+    '</label>';
+  html +=
+    '<textarea id="comp-text" rows="3" placeholder="' +
+    (S.ctype === 'question'
+      ? 'What are you trying to decide?'
+      : 'What happened, and what did it change?') +
+    '"></textarea>';
+  html += '<div id="dup-slot"></div>';
+  html += '<label class="field-label" for="comp-cat">Category</label>';
+  html += '<select id="comp-cat">';
+  for (i = 0; i < CATS.length; i++) {
+    html += '<option value="' + esc(CATS[i]) + '">' + esc(CATS[i]) + '</option>';
+  }
+  html += '</select>';
+  html +=
+    '<label class="check"><input type="checkbox" id="comp-anon"' +
+    (S.anon ? ' checked' : '') +
+    '/> Post without my name</label>';
+  html +=
+    '<button type="button" class="btn" id="comp-submit">' +
+    (S.ctype === 'question' ? 'Post question' : 'Share story') +
+    '</button>';
+  html += '</div>';
+  html += '<p class="count-line">' + esc(resultCountLine(list)) + '</p>';
+  html += '<div class="stream">';
+  for (i = 0; i < list.length; i++) html += renderFeedCard(list[i]);
+  if (!list.length) html += '<p class="muted">Nothing matches. Clear search or switch filter.</p>';
+  html += '</div></div>';
+  return html;
+}
+
+/* Pathway helpers and render continue in app-views.js / assembled file */

@@ -3,9 +3,19 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#061c33">
-<title>Journey · Next Step Guyana</title>
+<meta name="theme-color" content="#05162a">
+<title>Mentor story · Next Step Guyana</title>
 <link rel="stylesheet" href="assets/nsg-theme.css">
+<style>
+.route-grid{display:grid;gap:10px;margin:0 0 16px}
+.route-row{border:1px solid var(--line);border-radius:12px;padding:12px;background:#fff}
+.route-row .k{font-family:var(--font-accent);font-size:10px;font-weight:800;letter-spacing:.08em;color:var(--gold-deep)}
+.add-block{margin:16px 0}
+.add-block h3{font-size:13px;margin:14px 0 8px;font-family:var(--font-accent);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.tag-btn{display:inline-flex;align-items:center;min-height:44px;padding:8px 12px;margin:0 6px 6px 0;border:1px solid var(--line);border-radius:999px;background:#fff;font-weight:650;font-size:13px}
+.tag-btn.on{border-color:var(--gold-deep);background:var(--gold-soft)}
+.tag-btn.on::after{content:"✓";margin-left:6px;font-weight:900}
+</style>
 </head>
 <body>
 <main class="app-main" id="app"></main>
@@ -13,9 +23,132 @@
 <script src="nsg-app.js"></script>
 <script>
 (function(){
-  var id = new URLSearchParams(location.search).get('id') || 'raeka';
-  NSG_APP.mountShell('feed');
-  NSG_APP.renderJourney(document.getElementById('app'), id);
+  'use strict';
+  NSG_APP.mountShell('stories');
+  var root = document.getElementById('app');
+  var id = new URLSearchParams(location.search).get('id') || '';
+  var m = NSG_APP.mentorById(id);
+  if (m) NSG_APP.markViewed(id);
+
+  function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+  function first(n){ return String(n||'').split(/\s+/)[0] || 'Them'; }
+
+  function renderLegacy(lm){
+    var a = lm.archetype || 'The Steward';
+    var h = '<div class="wrap"><a class="btn ghost small" href="stories.html" style="margin-bottom:14px">← Stories</a>';
+    h += '<div class="record-head"><h1>' + esc(lm.name) + '</h1>';
+    h += '<p>Region ' + esc(lm.region) + ' · ' + esc(a) + '</p></div>';
+    if (lm.mono) h += '<p style="font-family:var(--font-display);font-style:italic;font-size:18px">“' + esc(lm.mono) + '”</p>';
+    h += '<p class="now-row"><span class="k">NOW</span>' + esc(lm.outcome || '') + '</p>';
+    if (lm.moments && typeof lm.moments === 'object') {
+      h += '<section><h2 class="eyebrow">Moments</h2>';
+      Object.keys(lm.moments).forEach(function(k){
+        h += '<div class="card" style="margin:0 0 8px"><p style="margin:0 0 4px;font-size:11px;font-weight:800;color:var(--gold-deep)">'
+          + esc(k) + '</p><p style="margin:0;font-family:var(--font-display);font-size:16px">' + esc(lm.moments[k]) + '</p></div>';
+      });
+      h += '</section>';
+    }
+    h += '<p class="page-foot">Prototype placeholder until consented interviews replace it.</p></div>';
+    root.innerHTML = h;
+  }
+
+  function render(){
+    if(!m){
+      /* ASSUMPTION: fall back to mentors-final.json for self-check links */
+      fetch('mentors-final.json', { cache: 'no-store' }).then(function(r){ return r.ok ? r.json() : null; }).then(function(data){
+        var list = (data && data.mentors) || [];
+        var lm = null;
+        for (var i = 0; i < list.length; i++) if (list[i].id === id) { lm = list[i]; break; }
+        if (lm) renderLegacy(lm);
+        else root.innerHTML = '<div class="wrap"><p style="padding:48px 0;text-align:center;color:var(--muted)">That mentor could not be found.</p>'
+          + '<a class="btn ghost" href="stories.html">← Stories</a></div>';
+      }).catch(function(){
+        root.innerHTML = '<div class="wrap"><p style="padding:48px 0;text-align:center;color:var(--muted)">That mentor could not be found.</p>'
+          + '<a class="btn ghost" href="stories.html">← Stories</a></div>';
+      });
+      return;
+    }
+    var sig = NSG_APP.getSignals();
+    var roleNote = m.role === 'contributor'
+      ? 'Read everything, but they are not taking questions.'
+      : 'You can bring questions to their pod session.';
+    var types = ['subject','opp','step','career'];
+    var typeLabel = { subject:'Subject', opp:'Opportunity', step:'Route step', career:'Career' };
+    var h = '<div class="wrap">';
+    h += '<a class="btn ghost small" href="stories.html" style="margin-bottom:14px">← Stories</a>';
+    h += '<div class="record-head">';
+    h += '<span class="role-tag ' + (m.role==='mentor'?'mentor':'contributor') + '"><span class="dot"></span>'
+      + (m.role==='mentor'?'Mentor':'Contributor') + '</span>';
+    h += '<h1 style="margin-top:10px">' + esc(m.name) + '</h1>';
+    h += '<p>' + esc(m.grewUp) + ' · ' + esc(m.archetype) + ' · ' + esc(m.lane) + '</p>';
+    h += '<p style="margin-top:10px;color:rgba(255,255,255,.8)">' + esc(m.roleNote) + ' ' + esc(roleNote) + '</p>';
+    h += '</div>';
+    h += '<p style="font-family:var(--font-display);font-style:italic;font-size:18px;margin:0 0 14px">“' + esc(m.pull) + '”</p>';
+    h += '<p class="now-row"><span class="k">NOW</span>' + esc(m.now) + '</p>';
+
+    h += '<section class="sec"><h2 class="eyebrow">Moments</h2>';
+    (m.moments||[]).forEach(function(mo){
+      h += '<div class="card" style="margin:0 0 8px"><div class="age-chip" style="display:inline-flex;flex-direction:column;margin-bottom:8px;background:var(--gold-soft);border:1px solid #f0e2a8">'
+        + '<b style="color:var(--ink)">' + esc(mo.age) + '</b><span style="color:var(--gold-deep)">AT THE TIME</span></div>'
+        + '<p style="margin:0;font-family:var(--font-display);font-size:16px">' + esc(mo.text) + '</p>'
+        + (mo.setback ? '<p style="margin:8px 0 0;font-size:12px;color:var(--bad);font-weight:700">Setback</p>' : '')
+        + '</div>';
+    });
+    h += '</section>';
+
+    h += '<section><h2 class="eyebrow" style="margin-bottom:10px">Route</h2><div class="route-grid">';
+    (NSG_DATA.STAGES||[]).forEach(function(st){
+      var r = m.route[st.id];
+      if(!r) return;
+      h += '<div class="route-row"><div class="k">' + esc(st.label) + ' · ' + esc(r.kind) + '</div>'
+        + '<p style="margin:6px 0;font-weight:650">' + esc(r.did) + '</p>'
+        + '<p style="margin:0;font-size:13px;color:var(--muted)">' + esc(r.tip) + '</p></div>';
+    });
+    h += '</div></section>';
+
+    if(m.deepDive){
+      h += '<section class="card" style="margin:0 0 16px"><h2 style="font-size:18px;margin:0 0 8px">Deep dive</h2>'
+        + '<p style="margin:0 0 6px"><strong>' + esc(m.deepDive.institution) + '</strong></p>'
+        + '<p style="margin:0 0 6px;font-size:13.5px">Requirement: ' + esc(m.deepDive.requirement) + '</p>'
+        + '<p style="margin:0 0 6px;font-size:13.5px">Cost: ' + esc(m.deepDive.cost) + '</p>'
+        + '<p style="margin:0;font-size:12.5px;color:var(--muted)">' + esc(m.deepDive.verify) + '</p></section>';
+    }
+
+    h += '<section class="add-block card"><h2 style="font-size:20px;margin:0 0 4px">What ' + esc(first(m.name)) + ' did</h2>'
+      + '<p style="margin:0 0 8px;color:var(--muted);font-size:13px">Tap to add to your pathway at that stage. Tap again to remove.</p>';
+    types.forEach(function(ty){
+      var tags = (m.addable||[]).filter(function(t){ return t.type===ty; });
+      if(!tags.length) return;
+      h += '<h3>' + esc(typeLabel[ty]) + '</h3>';
+      tags.forEach(function(t){
+        var on = (sig.added||[]).indexOf(t.id)>=0;
+        h += '<button type="button" class="tag-btn' + (on?' on':'') + '" data-tag="' + esc(t.id) + '">' + esc(t.label) + '</button>';
+      });
+    });
+    h += '<button type="button" class="btn full" style="margin-top:12px" data-add-all>Add everything ' + esc(first(m.name)) + ' did</button>';
+    h += '</section>';
+
+    if(m.didYouKnow){
+      h += '<div class="notice warn"><strong>Did you know</strong>' + esc(m.didYouKnow.text)
+        + '<div style="margin-top:6px;font-size:12px">Source: ' + esc(m.didYouKnow.source) + '</div></div>';
+    }
+    h += '<p class="page-foot">Illustrative placeholder profile — not a real person — until a consented interview replaces it.</p>';
+    h += '</div>';
+    root.innerHTML = h;
+
+    root.querySelectorAll('[data-tag]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        NSG_APP.toggleTag(btn.getAttribute('data-tag'));
+        render();
+      });
+    });
+    var all = root.querySelector('[data-add-all]');
+    if(all) all.addEventListener('click', function(){
+      NSG_APP.addEverything(m.id);
+      render();
+    });
+  }
+  render();
 })();
 </script>
 </body>

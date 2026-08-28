@@ -2,12 +2,21 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="refresh" content="0;url=feed.html?filter=journey">
-<link rel="canonical" href="feed.html?filter=journey">
-<title>Redirecting…</title>
-<script>location.replace('feed.html?filter=journey'+location.hash);</script>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#05162a">
+<title>Stories · Next Step Guyana</title>
+<link rel="stylesheet" href="assets/nsg-theme.css">
 </head>
 <body>
-<p><a href="feed.html?filter=journey">Continue to Journeys in the Feed</a></p>
+<main class="app-main" id="app"></main>
+<script src="nsg-data.js"></script>
+<script src="nsg-app.js"></script>
+<script>
+(function(){
+  NSG_APP.mountShell('stories');
+  NSG_APP.renderStories(document.getElementById('app'));
+  NSG_APP.runAcceptance();
+})();
+</script>
 </body>
 </html>

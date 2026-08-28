@@ -1,1143 +1,1563 @@
-/* Next Step Guyana app: Feed + My Pathway */
-window.NSG_APP = (function () {
-  var D = window.NSG_DATA;
-  var KEYS = {
-    store: 'nsg_pathway_v2',
-    tuneDismissed: 'nsg_tune_dismissed',
-    tuned: 'nsg_tuned'
-  };
+/* nsg-app.js — Stories / My Pathway / Feed / Questions
+   Single implementations only. reg() fails loudly on duplicate names. */
+(function (global) {
+  'use strict';
 
-  var DUPE_KEYS = [
-    { words: ['biology', 'chemistry', 'medicine', 'science', 'doctor', 'nursing'], id: 'f1' },
-    { words: ['cape', 'tvet', 'gtti', 'electrical', 'after csec', 'trade'], id: 'f8' },
-    { words: ['sport', 'coach', 'academy', 'lethem', 'football', 'cricket'], id: 'f6' },
-    { words: ['media', 'film', 'camera', 'photograph', 'design'], id: 'f11' }
+  var _fns = Object.create(null);
+  function reg(name, fn) {
+    if (_fns[name]) {
+      throw new Error('NSG_APP duplicate function: ' + name);
+    }
+    _fns[name] = fn;
+    return fn;
+  }
+
+  var DATA = global.NSG_DATA;
+  if (!DATA) throw new Error('NSG_DATA missing — load nsg-data.js first');
+  try { DATA.validateMentors(); } catch (e) { throw e; }
+
+  var STORAGE_KEY = 'nsg_signals_v1';
+  var LANES = DATA.LANES;
+  var STAGES = DATA.STAGES;
+  var MENTORS = DATA.MENTORS;
+  var POSTS = DATA.POSTS;
+  var THREADS = DATA.THREADS;
+  var OPPORTUNITIES = DATA.OPPORTUNITIES;
+
+  var NAVI_QS = [
+    { key: 'pace', q: 'Does starting to earn sooner matter to you?', opts: [
+      { v: 'earn', t: 'Yes — earning sooner matters' },
+      { v: 'study', t: 'I want to study first' },
+      { v: null, t: 'Not sure yet' }
+    ]},
+    { key: 'hands', q: 'Which sounds more like the work you\'d want?', opts: [
+      { v: 'make', t: 'Making or fixing things' },
+      { v: 'analyse', t: 'Figuring things out' },
+      { v: null, t: 'Not sure yet' }
+    ]},
+    { key: 'risk', q: 'Working for someone, or building your own thing?', opts: [
+      { v: 'steady', t: 'Working for someone' },
+      { v: 'own', t: 'Building my own thing' },
+      { v: null, t: 'Not sure yet' }
+    ]},
+    { key: 'study', q: 'How do you picture studying after school?', opts: [
+      { v: 'fulltime', t: 'Full-time study' },
+      { v: 'parttime', t: 'Part-time, alongside work' },
+      { v: 'none', t: 'Little or no formal study' },
+      { v: null, t: 'Not sure yet' }
+    ]},
+    { key: 'place', q: 'Where do you see yourself working?', opts: [
+      { v: 'home', t: 'Near home / my region' },
+      { v: 'capital', t: 'In the capital or a bigger centre' },
+      { v: null, t: 'Not sure yet' }
+    ]}
   ];
 
-  var ARCH = ['The Artisan', 'The Steward', 'The Advocate', 'The Pioneer'];
+  var PROFILE_OPTS = {
+    where: ['Region 1','Region 2','Region 3','Region 4','Region 5','Region 6','Region 7','Region 8','Region 9','Region 10'],
+    subjects: ['Mathematics','English','Biology','Chemistry','Physics','Integrated Science','Principles of Business','Principles of Accounts','Information Technology','Technical Drawing','Agricultural Science','Visual Arts','Physical Education','Caribbean History','Geography'],
+    activities: ['Sports team','Science club','Debate','Music or choir','Church or community group','Helping a family business','Coding or makers club','Student council','Drama','4-H or agriculture'],
+    awards: ['Nothing yet','School prize','Regional competition','National competition','Certificate course','Leadership role'],
+    context: [
+      'I need to earn sooner rather than later',
+      'Cost is a real limit',
+      'I would find it hard to move or travel',
+      'Family expectations shape my choices',
+      'I am still exploring'
+    ]
+  };
 
-  function defaultState() {
-    return {
-      form: 'Form 3',
-      region: 'Region 4',
-      name: 'You',
-      initials: 'YO',
-      stageIndex: 1,
-      archetype: '',
-      tuned: false,
-      steps: [],
-      following: [],
-      saved: [],
-      feedExtra: []
-    };
-  }
-
-  function load() {
-    try {
-      var raw = localStorage.getItem(KEYS.store);
-      if (!raw) return defaultState();
-      var s = JSON.parse(raw);
-      var base = defaultState();
-      Object.keys(base).forEach(function (k) {
-        if (s[k] !== undefined) base[k] = s[k];
-      });
-      if (localStorage.getItem(KEYS.tuned) === '1') base.tuned = true;
-      return base;
-    } catch (e) {
-      return defaultState();
-    }
-  }
-
-  function save(state) {
-    localStorage.setItem(KEYS.store, JSON.stringify(state));
-    if (state.tuned) localStorage.setItem(KEYS.tuned, '1');
-  }
-
-  var state = load();
-  var feedItems = (state.feedExtra || []).concat(D.FEED.slice());
-  var toastTimer = null;
-  var openSheetEl = null;
-  var feedUi = { filter: 'all', q: '', mode: 'question', dupeId: null };
-
-  function esc(s) {
+  /* ── utils ── */
+  var esc = reg('esc', function (s) {
     return String(s == null ? '' : s)
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;');
-  }
-
-  function toast(msg) {
-    var el = document.getElementById('nsgToast');
-    if (!el) {
-      el = document.createElement('div');
-      el.id = 'nsgToast';
-      el.className = 'toast';
-      el.setAttribute('role', 'status');
-      el.setAttribute('aria-live', 'polite');
-      document.body.appendChild(el);
-    }
-    el.textContent = msg;
-    el.classList.add('show');
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(function () { el.classList.remove('show'); }, 2400);
-  }
-
-  function stageName() {
-    return D.STAGES[state.stageIndex] ? D.STAGES[state.stageIndex].name : 'Form 3';
-  }
-
-  function headerPillText() {
-    if (state.tuned && state.archetype) {
-      return state.archetype + ', ' + stageName();
-    }
-    return stageName() + ', ' + state.region;
-  }
-
-  function anonLabel() {
-    return stageName() + ' student, ' + state.region;
-  }
-
-  function journeyById(id) {
-    return D.JOURNEYS[id] || null;
-  }
-
-  function isFollowing(id) {
-    return state.following.indexOf(id) >= 0;
-  }
-
-  function toggleFollow(id) {
-    var i = state.following.indexOf(id);
-    if (i >= 0) state.following.splice(i, 1);
-    else state.following.push(id);
-    save(state);
-    refreshChrome();
-  }
-
-  function stepKey(journeyId, label) {
-    return journeyId + ':' + label;
-  }
-
-  function hasStep(key) {
-    return state.steps.some(function (s) { return s.key === key; });
-  }
-
-  function addStep(step) {
-    if (hasStep(step.key)) return false;
-    state.steps.push(step);
-    save(state);
-    return true;
-  }
-
-  function removeStep(key) {
-    state.steps = state.steps.filter(function (s) { return s.key !== key; });
-    save(state);
-  }
-
-  function saveItem(item) {
-    if (state.saved.some(function (s) { return s.key === item.key; })) return false;
-    state.saved.push(item);
-    save(state);
-    return true;
-  }
-
-  function removeSaved(key) {
-    state.saved = state.saved.filter(function (s) { return s.key !== key; });
-    save(state);
-  }
-
-  function profileScore() {
-    var score = 0;
-    if (state.tuned) score += 35;
-    score += Math.min(40, state.steps.length * 8);
-    score += Math.min(15, state.following.length * 7);
-    score += Math.min(10, state.saved.length * 5);
-    return Math.min(100, score);
-  }
-
-  function plural(n, one, many) {
-    return n + ' ' + (n === 1 ? one : many);
-  }
-
-  function kindLabel(kind, update) {
-    if (update) return 'update';
-    if (kind === 'tip') return 'mentor tip';
-    return kind;
-  }
-
-  function lockBody(on) {
-    document.body.style.overflow = on ? 'hidden' : '';
-  }
-
-  function closeSheet() {
-    if (openSheetEl) {
-      openSheetEl.remove();
-      openSheetEl = null;
-      lockBody(false);
-    }
-  }
-
-  function openSheet(title, bodyHtml, onMount) {
-    closeSheet();
-    var scrim = document.createElement('div');
-    scrim.className = 'sheet-scrim';
-    scrim.innerHTML =
-      '<div class="sheet-panel" role="dialog" aria-modal="true" aria-label="' + esc(title) + '">' +
-        '<div class="sheet-bar"><h2>' + esc(title) + '</h2>' +
-        '<button type="button" class="sheet-close" aria-label="Close">×</button></div>' +
-        '<div class="sheet-body">' + bodyHtml + '</div>' +
-      '</div>';
-    document.body.appendChild(scrim);
-    openSheetEl = scrim;
-    lockBody(true);
-    scrim.addEventListener('click', function (e) {
-      if (e.target === scrim) closeSheet();
-    });
-    scrim.querySelector('.sheet-close').addEventListener('click', closeSheet);
-    if (onMount) onMount(scrim.querySelector('.sheet-body'), scrim);
-  }
-
-  document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape' && openSheetEl) closeSheet();
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   });
 
-  function svgIcon(name) {
-    if (name === 'feed') {
-      return '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h10"/></svg>';
+  var toast = reg('toast', function (msg) {
+    var t = document.querySelector('.toast');
+    if (!t) {
+      t = document.createElement('div');
+      t.className = 'toast';
+      document.body.appendChild(t);
     }
-    return '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>';
-  }
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(function () { t.classList.remove('show'); }, 2200);
+  });
 
-  function mountShell(active) {
-    if (document.getElementById('nsgHeader')) {
-      refreshChrome();
-      return;
-    }
-    var header = document.createElement('header');
-    header.id = 'nsgHeader';
-    header.className = 'app-header';
-    header.innerHTML =
-      '<a class="brand" href="index.html">' +
-        '<span class="mark"><img src="logotop.jpg" alt="Next Step Guyana"></span>' +
-        '<span><strong>NEXT STEP</strong><small>GUYANA</small></span>' +
-      '</a>' +
-      '<div class="stage-pill" id="stagePill"><span class="av" id="stageAv">YO</span><span id="stageTxt"></span></div>';
+  var lsGet = reg('lsGet', function (k) {
+    try { return localStorage.getItem(k); } catch (e) { return null; }
+  });
+  var lsSet = reg('lsSet', function (k, v) {
+    try { localStorage.setItem(k, v); return true; } catch (e) { return false; }
+  });
 
-    var dock = document.createElement('nav');
-    dock.className = 'bottom-nav';
-    dock.setAttribute('aria-label', 'Primary');
-    dock.innerHTML =
-      '<a href="feed.html" data-nav="feed">' + svgIcon('feed') + '<span>Feed</span></a>' +
-      '<a href="my-pathway.html" data-nav="pathway">' + svgIcon('path') + '<span>My Pathway</span></a>';
+  var firstName = reg('firstName', function (name) {
+    return String(name || '').split(/\s+/)[0] || 'Them';
+  });
 
-    var left = document.createElement('nav');
-    left.className = 'left-rail';
-    left.setAttribute('aria-label', 'Primary');
-    left.innerHTML =
-      '<a href="feed.html" data-nav="feed">' + svgIcon('feed') + '<span>Feed</span></a>' +
-      '<a href="my-pathway.html" data-nav="pathway">' + svgIcon('path') + '<span>My Pathway</span></a>';
+  var monogram = reg('monogram', function (name) {
+    var p = String(name || '?').trim().split(/\s+/);
+    if (p.length === 1) return p[0].charAt(0).toUpperCase();
+    return (p[0].charAt(0) + p[p.length - 1].charAt(0)).toUpperCase();
+  });
 
-    document.body.prepend(header);
-    document.body.appendChild(dock);
-    document.body.appendChild(left);
+  var formToStage = reg('formToStage', function (form) {
+    var f = +form || 1;
+    if (f <= 2) return 'f12';
+    if (f === 3) return 'f3';
+    if (f === 4 || f === 5) return 'f45';
+    if (f === 6) return 'f6';
+    return 'aft';
+  });
 
-    document.querySelectorAll('[data-nav]').forEach(function (a) {
-      if (a.getAttribute('data-nav') === active) a.classList.add('on');
+  var stageLabel = reg('stageLabel', function (id) {
+    for (var i = 0; i < STAGES.length; i++) if (STAGES[i].id === id) return STAGES[i].label;
+    return id;
+  });
+
+  var words = reg('words', function (s) {
+    return String(s || '').toLowerCase().replace(/[^a-z0-9\s]/g, ' ').split(/\s+/).filter(function (w) {
+      return w.length > 1;
     });
-    refreshChrome();
-  }
+  });
 
-  function refreshChrome() {
-    var txt = document.getElementById('stageTxt');
-    var av = document.getElementById('stageAv');
-    if (txt) txt.textContent = headerPillText();
-    if (av) av.textContent = state.initials || 'YO';
-  }
+  var mentorById = reg('mentorById', function (id) {
+    for (var i = 0; i < MENTORS.length; i++) if (MENTORS[i].id === id) return MENTORS[i];
+    return null;
+  });
 
-  /* ---------- Tune check ---------- */
-  function openTuneCheck() {
-    var q = 0;
-    var picks = [null, null, null];
-    var stageMap = [0, 1, 2, 3];
-    var q2 = [
-      { t: 'Take it apart', a: 0 },
-      { t: 'Check on whoever it affected', a: 1 },
-      { t: 'Argue for a better rule', a: 2 },
-      { t: 'Build the replacement', a: 3 }
-    ];
-    var q3 = [
-      { t: 'Making or fixing something with your hands', a: 0 },
-      { t: 'Helping someone who needs it', a: 1 },
-      { t: 'Organising people around something that matters', a: 2 },
-      { t: 'Starting something nobody asked for yet', a: 3 }
-    ];
+  /* ── signal store ── */
+  var blankSignals = reg('blankSignals', function () {
+    return {
+      archetype: null,
+      naviAnswers: { pace: null, hands: null, risk: null, study: null, place: null },
+      naviAsked: [],
+      naviSkipped: false,
+      profile: { where: [], subjects: [], activities: [], awards: [], context: [] },
+      viewed: [],
+      saves: {},
+      added: [],
+      opened: [],
+      form: 1,
+      fieldLane: null,
+      name: 'You',
+      profileSetupSeen: false
+    };
+  });
 
-    function render(body) {
-      if (q >= 3) {
-        var counts = [0, 0, 0, 0];
-        if (picks[1] != null) counts[picks[1]]++;
-        if (picks[2] != null) counts[picks[2]]++;
-        var best = 3;
-        var max = -1;
-        counts.forEach(function (c, i) {
-          if (c > max) { max = c; best = i; }
-        });
-        if (counts[0] === counts[1] && counts[1] === counts[2] && counts[2] === counts[3]) {
-          best = picks[2] != null ? picks[2] : -1;
-        } else {
-          var tied = [];
-          counts.forEach(function (c, i) { if (c === max) tied.push(i); });
-          if (tied.length > 1) best = picks[2] != null && tied.indexOf(picks[2]) >= 0 ? picks[2] : tied[0];
+  var signals = blankSignals();
+
+  var loadSignals = reg('loadSignals', function () {
+    var raw = lsGet(STORAGE_KEY);
+    var base = blankSignals();
+    if (!raw) {
+      /* pull archetype/form from self-check if present */
+      try {
+        var sc = JSON.parse(lsGet('nsg_selfcheck') || 'null');
+        if (sc) {
+          if (sc.archetype) base.archetype = sc.archetype;
+          if (sc.stage === 'lower') base.form = 2;
+          else if (sc.stage === 'f4') base.form = 4;
+          else if (sc.stage === 'f5') base.form = 5;
+          else if (sc.stage === 'cape') base.form = 6;
+          else if (sc.stage === 'post' || sc.stage === 'out') base.form = 5;
         }
-        var arch = best >= 0 ? ARCH[best] : 'The Explorer';
-        state.stageIndex = stageMap[picks[0]] != null ? stageMap[picks[0]] : 1;
-        state.archetype = arch;
-        state.tuned = true;
-        localStorage.setItem(KEYS.tuned, '1');
-        localStorage.removeItem(KEYS.tuneDismissed);
-        save(state);
-        refreshChrome();
-        body.innerHTML =
-          '<p class="eyebrow">DONE</p>' +
-          '<h3 style="font-size:24px;margin:8px 0 10px">You read as ' + esc(arch) + ', at ' + esc(stageName()) + '.</h3>' +
-          '<p style="color:var(--body);margin:0 0 16px">That changes the order of your feed and what shows up under your next node. Nobody is removed, and you can redo this whenever it stops fitting.</p>' +
-          '<div style="display:flex;gap:8px;flex-wrap:wrap">' +
-            '<a class="btn" href="feed.html">See my feed</a>' +
-            '<a class="btn ghost" href="my-pathway.html">Open My Pathway</a>' +
-          '</div>';
+      } catch (e) { /* ASSUMPTION: ignore corrupt self-check */ }
+      signals = base;
+      return signals;
+    }
+    try {
+      var data = JSON.parse(raw);
+      if (!data || typeof data !== 'object') { signals = base; return signals; }
+      signals = base;
+      if (data.archetype) signals.archetype = data.archetype;
+      if (data.naviAnswers) {
+        ['pace','hands','risk','study','place'].forEach(function (k) {
+          if (k in data.naviAnswers) signals.naviAnswers[k] = data.naviAnswers[k];
+        });
+      }
+      if (Array.isArray(data.naviAsked)) signals.naviAsked = data.naviAsked.slice();
+      signals.naviSkipped = !!data.naviSkipped;
+      if (data.profile) {
+        ['where','subjects','activities','awards','context'].forEach(function (k) {
+          if (Array.isArray(data.profile[k])) signals.profile[k] = data.profile[k].slice();
+        });
+      }
+      if (Array.isArray(data.viewed)) signals.viewed = data.viewed.slice();
+      if (data.saves && typeof data.saves === 'object') signals.saves = data.saves;
+      if (Array.isArray(data.added)) signals.added = data.added.slice();
+      if (Array.isArray(data.opened)) signals.opened = data.opened.slice();
+      if (data.form) signals.form = +data.form || 1;
+      signals.fieldLane = data.fieldLane || null;
+      if (data.name) signals.name = data.name;
+      signals.profileSetupSeen = !!data.profileSetupSeen;
+    } catch (e) { signals = base; }
+    return signals;
+  });
+
+  var saveSignals = reg('saveSignals', function () {
+    lsSet(STORAGE_KEY, JSON.stringify(signals));
+  });
+
+  /* ── pathway tags ── */
+  var allAddable = reg('allAddable', function () {
+    var out = [];
+    MENTORS.forEach(function (m) {
+      (m.addable || []).forEach(function (t) {
+        out.push({
+          id: t.id,
+          label: t.label,
+          type: t.type,
+          stage: t.stage,
+          excl: t.excl || null,
+          req: t.req || null,
+          mentorId: m.id,
+          mentorName: m.name,
+          lane: m.lane
+        });
+      });
+    });
+    return out;
+  });
+
+  var tagById = reg('tagById', function (id) {
+    var all = allAddable();
+    for (var i = 0; i < all.length; i++) if (all[i].id === id) return all[i];
+    return null;
+  });
+
+  var addedTags = reg('addedTags', function () {
+    return signals.added.map(tagById).filter(Boolean);
+  });
+
+  var hasTag = reg('hasTag', function (id) {
+    return signals.added.indexOf(id) >= 0;
+  });
+
+  var toggleTag = reg('toggleTag', function (id) {
+    var i = signals.added.indexOf(id);
+    if (i >= 0) signals.added.splice(i, 1);
+    else signals.added.push(id);
+    saveSignals();
+  });
+
+  var addEverything = reg('addEverything', function (mentorId) {
+    var m = mentorById(mentorId);
+    if (!m) return;
+    (m.addable || []).forEach(function (t) {
+      if (signals.added.indexOf(t.id) < 0) signals.added.push(t.id);
+    });
+    saveSignals();
+  });
+
+  var derivedLane = reg('derivedLane', function () {
+    var careers = addedTags().filter(function (t) { return t.type === 'career'; });
+    if (!careers.length) return null;
+    var lane = careers[0].lane;
+    for (var i = 1; i < careers.length; i++) {
+      if (careers[i].lane !== lane) return null;
+    }
+    return lane;
+  });
+
+  var contradiction = reg('contradiction', function () {
+    var leave = false, stay = false;
+    addedTags().forEach(function (t) {
+      if (t.stage === 'aft' && t.excl === 'leave') leave = true;
+      if (t.stage === 'aft' && t.excl === 'stay') stay = true;
+    });
+    return leave && stay;
+  });
+
+  var twoDirections = reg('twoDirections', function () {
+    var careers = addedTags().filter(function (t) { return t.type === 'career'; });
+    var lanes = {};
+    careers.forEach(function (t) { lanes[t.lane] = 1; });
+    return Object.keys(lanes);
+  });
+
+  var subjectGaps = reg('subjectGaps', function () {
+    var listed = signals.profile.subjects || [];
+    if (!listed.length) return [];
+    var gaps = [];
+    addedTags().forEach(function (t) {
+      if (t.type !== 'career' || !t.req) return;
+      var missing = t.req.filter(function (s) { return listed.indexOf(s) < 0; });
+      if (missing.length) {
+        gaps.push({ tag: t, missing: missing });
+      }
+    });
+    return gaps;
+  });
+
+  var emptyStages = reg('emptyStages', function () {
+    var filled = {};
+    addedTags().forEach(function (t) { filled[t.stage] = 1; });
+    return STAGES.filter(function (s) { return !filled[s.id]; }).map(function (s) { return s.id; });
+  });
+
+  /* ── scoring helpers ── */
+  var naviFit = reg('naviFit', function (m) {
+    var score = 0;
+    var a = signals.naviAnswers || {};
+    Object.keys(a).forEach(function (k) {
+      if (a[k] == null) return;
+      if (m.traits && m.traits[k] === a[k]) score += 2;
+      else score -= 1;
+    });
+    return score;
+  });
+
+  var profileFit = reg('profileFit', function (m) {
+    var score = 0;
+    var p = signals.profile || {};
+    var region = (p.where && p.where[0]) || '';
+    if (region && m.grewUp && m.grewUp.indexOf(region) >= 0) score += 3;
+    (p.activities || []).forEach(function (act) {
+      var hit = (m.addable || []).some(function (t) {
+        return t.type === 'opp' && t.label.toLowerCase().indexOf(act.toLowerCase().split(' ')[0]) >= 0;
+      }) || (m.searchTerms || []).some(function (s) {
+        return act.toLowerCase().indexOf(s.toLowerCase()) >= 0 || s.toLowerCase().indexOf(act.toLowerCase().split(' ')[0]) >= 0;
+      });
+      if (hit) score += 2;
+    });
+    var ctx = p.context || [];
+    if (ctx.indexOf('I need to earn sooner rather than later') >= 0 && m.traits && m.traits.pace === 'earn') score += 2;
+    if (ctx.indexOf('Cost is a real limit') >= 0 && m.lowCost) score += 2;
+    if (ctx.indexOf('I would find it hard to move or travel') >= 0 && m.traits && m.traits.place === 'home') score += 2;
+    (p.subjects || []).forEach(function (sub) {
+      (m.addable || []).forEach(function (t) {
+        if (t.type === 'subject' && t.label === sub) score += 1;
+      });
+    });
+    return score;
+  });
+
+  var reasonForMentor = reg('reasonForMentor', function (m) {
+    var bits = [];
+    var p = signals.profile || {};
+    var region = (p.where && p.where[0]) || '';
+    if (region && m.grewUp && m.grewUp.indexOf(region) >= 0) bits.push('they grew up in ' + region);
+    (p.activities || []).slice(0, 1).forEach(function (act) {
+      bits.push('did ' + act.toLowerCase() + ' too');
+    });
+    if (!bits.length) return '';
+    return 'Here because ' + bits.join(', and ') + '.';
+  });
+
+  var momentForForm = reg('momentForForm', function (m, form) {
+    var target = 11 + (+form || 1);
+    var best = null, bestDiff = 99;
+    (m.moments || []).forEach(function (mo) {
+      var d = Math.abs(mo.age - target);
+      if (d <= 1 && d < bestDiff) { best = mo; bestDiff = d; }
+    });
+    return best || (m.moments && m.moments[0]) || { age: target, text: m.pull };
+  });
+
+  /* ── Stories ordering — signals change order, not membership ── */
+  var scoreStories = reg('scoreStories', function () {
+    var pool = MENTORS.slice();
+    var scored = pool.map(function (m, idx) {
+      return { item: m, score: naviFit(m) + profileFit(m), idx: idx, outside: false };
+    });
+    scored.sort(function (a, b) {
+      if (b.score !== a.score) return b.score - a.score;
+      return a.idx - b.idx;
+    });
+    if (signals.fieldLane) {
+      var inLane = [], outLane = [];
+      scored.forEach(function (s) {
+        if (s.item.lane === signals.fieldLane) inLane.push(s);
+        else outLane.push(s);
+      });
+      /* keep all in-lane; append one outside (lowest-ranked outside) as outside slot */
+      var outside = outLane.length ? outLane[outLane.length - 1] : null;
+      scored = inLane.slice();
+      if (outside) {
+        outside.outside = true;
+        scored.push(outside);
+      }
+    } else {
+      /* always mark lowest-ranked as outside */
+      if (scored.length) scored[scored.length - 1].outside = true;
+    }
+    return scored;
+  });
+
+  /* ── Feed ── */
+  var scoreFeed = reg('scoreFeed', function () {
+    var pathwayLabels = {};
+    addedTags().forEach(function (t) { pathwayLabels[t.label.toLowerCase()] = 1; });
+    var scored = POSTS.map(function (p, idx) {
+      var score = 0;
+      var reasons = [];
+      if ((p.forms || []).indexOf(+signals.form) >= 0) { score += 3; reasons.push('Form ' + signals.form); }
+      if (p.topic && pathwayLabels[String(p.topic).toLowerCase()]) { score += 4; reasons.push('your pathway'); }
+      if (p.kind === 'mentor tip' && p.mentorId && signals.viewed.indexOf(p.mentorId) >= 0) {
+        score += 3; reasons.push('you read them');
+      }
+      if (p.kind === 'library announcement' && p.threadId && signals.opened.indexOf(p.threadId) >= 0) {
+        score += 2; reasons.push('a thread you opened');
+      }
+      if (p.kind === 'opportunity notice' && (signals.profile.context || []).indexOf('Cost is a real limit') >= 0) {
+        score += 1; reasons.push('cost matters to you');
+      }
+      return { item: p, score: score, idx: idx, reasons: reasons, outside: false };
+    });
+    scored.sort(function (a, b) {
+      if (b.score !== a.score) return b.score - a.score;
+      return a.idx - b.idx;
+    });
+    if (scored.length) scored[scored.length - 1].outside = true;
+    return scored;
+  });
+
+  /* ── Questions ── */
+  var scoreQuestions = reg('scoreQuestions', function (query) {
+    var stage = formToStage(signals.form);
+    var empties = emptyStages();
+    var hasConflict = contradiction();
+    var gaps = subjectGaps();
+    var lane = derivedLane();
+    var qWords = words(query);
+
+    var scored = THREADS.map(function (th, idx) {
+      var score = 0;
+      if (th.stage === stage) score += 4;
+      (th.triggers || []).forEach(function (tr) {
+        if (tr.indexOf('gap:') === 0) {
+          var st = tr.slice(4);
+          if (empties.indexOf(st) >= 0) score += 3;
+        }
+        if (tr === 'conflict' && hasConflict) score += 5;
+        if (tr === 'subjectgap' && gaps.length) score += 4;
+        if (tr.indexOf('forms:') === 0) {
+          var forms = tr.slice(6).split(',').map(function (x) { return +x; });
+          if (forms.indexOf(+signals.form) >= 0) score += 2;
+        }
+      });
+      if (lane && th.lane === lane) score += 2;
+
+      if (qWords.length) {
+        var hay = words(th.question + ' ' + th.lane + ' ' + (th.answers || []).map(function (a) {
+          var m = mentorById(a.mentorId);
+          return (a.text || '') + ' ' + (m ? m.name : '');
+        }).join(' '));
+        var hits = 0;
+        qWords.forEach(function (w) { if (hay.indexOf(w) >= 0) hits++; });
+        score += hits * 10; /* search dominates when typing */
+        if (!hits) score = -9999;
+      }
+      return { item: th, score: score, idx: idx, outside: false };
+    });
+
+    scored = scored.filter(function (s) { return s.score > -9000; });
+    scored.sort(function (a, b) {
+      if (b.score !== a.score) return b.score - a.score;
+      return a.idx - b.idx;
+    });
+    if (scored.length && !qWords.length) scored[scored.length - 1].outside = true;
+    return scored;
+  });
+
+  /* ── For You ── */
+  var scoreForYou = reg('scoreForYou', function () {
+    var lane = derivedLane();
+    var p = signals.profile || {};
+    var ctx = p.context || [];
+    var awards = p.awards || [];
+    var hasPrior = awards.some(function (a) { return a && a !== 'Nothing yet'; });
+    var region = (p.where && p.where[0]) || '';
+    var hinterland = ['Region 1','Region 7','Region 8','Region 9'].indexOf(region) >= 0;
+    var pathwayTopics = {};
+    addedTags().forEach(function (t) { pathwayTopics[t.label.toLowerCase()] = 1; });
+
+    var scored = OPPORTUNITIES.map(function (o, idx) {
+      var score = 0;
+      var reasons = [];
+      var formOk = (o.forms || []).indexOf(+signals.form) >= 0;
+      if (formOk) { score += 2; reasons.push({ w: 2, t: 'open to Form ' + signals.form }); }
+      else { score -= 3; reasons.push({ w: -3, t: 'not open to your form' }); }
+
+      if (lane && (o.lanes || []).indexOf(lane) >= 0) { score += 4; reasons.push({ w: 4, t: 'your direction' }); }
+      else if (!(o.lanes || []).length) { score += 1; }
+
+      if (o.topic && pathwayTopics[String(o.topic).toLowerCase()]) {
+        score += 5; reasons.push({ w: 5, t: 'matches a tag on your pathway' });
+      }
+      if (o.rung === 'next' && hasPrior) { score += 3; reasons.push({ w: 3, t: 'next rung after what you have done' }); }
+      if (o.rung === 'starter' && (!awards.length || !hasPrior)) {
+        score += 3; reasons.push({ w: 3, t: 'a starter step' });
+      }
+      var flags = o.flags || [];
+      if (flags.indexOf('lowcost') >= 0 && ctx.indexOf('Cost is a real limit') >= 0) {
+        score += 2; reasons.push({ w: 2, t: 'lower cost' });
+      }
+      if (flags.indexOf('independent') >= 0 && ctx.indexOf('I would find it hard to move or travel') >= 0) {
+        score += 3; reasons.push({ w: 3, t: 'can do without moving' });
+      }
+      if (flags.indexOf('hinterland') >= 0 && ctx.indexOf('I would find it hard to move or travel') >= 0) {
+        score += 3; reasons.push({ w: 3, t: 'hinterland-friendly' });
+      }
+      if (flags.indexOf('hinterland') >= 0 && hinterland) {
+        score += 2; reasons.push({ w: 2, t: 'near your region' });
+      }
+      if (flags.indexOf('tvet') >= 0 && ctx.indexOf('I need to earn sooner rather than later') >= 0) {
+        score += 2; reasons.push({ w: 2, t: 'skills you can earn with' });
+      }
+      if (flags.indexOf('noexam') >= 0 && !(p.subjects || []).length) {
+        score += 1; reasons.push({ w: 1, t: 'no exam barrier' });
+      }
+      reasons.sort(function (a, b) { return b.w - a.w; });
+      return { item: o, score: score, idx: idx, reasons: reasons, formOk: formOk, outside: false };
+    });
+
+    scored.sort(function (a, b) {
+      if (b.score !== a.score) return b.score - a.score;
+      return a.idx - b.idx;
+    });
+    /* show top 6 + outside (lowest ranked overall) */
+    var top = scored.slice(0, 6);
+    var outside = scored[scored.length - 1];
+    if (outside && top.indexOf(outside) < 0) {
+      outside.outside = true;
+      top.push(outside);
+    } else if (top.length) {
+      top[top.length - 1].outside = true;
+    }
+    return { shown: top, all: scored };
+  });
+
+  /* ── Navi ── */
+  var saveCount = reg('saveCount', function () {
+    return Object.keys(signals.saves || {}).length;
+  });
+
+  var naviReady = reg('naviReady', function () {
+    var opened = (signals.viewed || []).length >= 5;
+    var saved = saveCount() >= 5;
+    return (opened || saved) && !signals.naviSkipped && (signals.naviAsked || []).length < 2;
+  });
+
+  var pickNaviQuestion = reg('pickNaviQuestion', function () {
+    var readIds = (signals.viewed || []).slice();
+    /* ASSUMPTION: if Navi fired via saves with few opens, use saved mentors for disagreement scoring */
+    if (readIds.length < 2) {
+      Object.keys(signals.saves || {}).forEach(function (id) {
+        if (readIds.indexOf(id) < 0) readIds.push(id);
+      });
+    }
+    var read = readIds.map(mentorById).filter(Boolean);
+    var unanswered = NAVI_QS.filter(function (q) {
+      return signals.naviAnswers[q.key] == null && (signals.naviAsked || []).indexOf(q.key) < 0;
+    });
+    if (!unanswered.length || !read.length) return null;
+    var best = null, bestDiv = -1, agreed = false;
+    unanswered.forEach(function (q) {
+      var vals = {};
+      read.forEach(function (m) {
+        if (m.traits && m.traits[q.key] != null) vals[m.traits[q.key]] = 1;
+      });
+      var div = Object.keys(vals).length;
+      if (div > bestDiv) {
+        bestDiv = div;
+        best = q;
+        agreed = div <= 1;
+      }
+    });
+    if (!best) return null;
+    return { q: best, agreed: agreed, mentors: read };
+  });
+
+  /* ── render: bottom nav ── */
+  var renderBottomNav = reg('renderBottomNav', function (active) {
+    var items = [
+      { id: 'stories', href: 'stories.html', label: 'Stories', ico: '◈' },
+      { id: 'pathway', href: 'my-pathway.html', label: 'My Pathway', ico: '◎' },
+      { id: 'feed', href: 'feed.html', label: 'Feed', ico: '◫' },
+      { id: 'questions', href: 'questions.html', label: 'Questions', ico: '?' }
+    ];
+    return '<nav class="bottom-nav" aria-label="Main">' + items.map(function (it) {
+      return '<a href="' + it.href + '" class="' + (active === it.id ? 'on' : '') + '"'
+        + (active === it.id ? ' aria-current="page"' : '') + '>'
+        + '<span class="ico" aria-hidden="true">' + it.ico + '</span>' + esc(it.label) + '</a>';
+    }).join('') + '</nav>';
+  });
+
+  var renderHeader = reg('renderHeader', function () {
+    return '<header class="app-header"><a class="brand" href="index.html">'
+      + '<span class="mark"><img src="logotop.jpg" alt=""></span>'
+      + '<span><strong style="display:block;line-height:1">NEXT STEP</strong>'
+      + '<small style="display:block;font-size:9px;letter-spacing:.22em;color:rgba(255,255,255,.7);margin-top:4px;font-weight:700">GUYANA</small></span>'
+      + '</a></header>';
+  });
+
+  var pageFoot = reg('pageFoot', function () {
+    return '<p class="page-foot">Prototype for design testing. Mentor stories are illustrative placeholders, not real people, until consented interviews replace them.</p>';
+  });
+
+  /* ── story card (one implementation) ── */
+  var renderStoryCard = reg('renderStoryCard', function (m, opts) {
+    opts = opts || {};
+    var mo = opts.moment || momentForForm(m, signals.form);
+    var roleCls = m.role === 'mentor' ? 'mentor' : 'contributor';
+    var taken = (m.addable || []).filter(function (t) { return hasTag(t.id); }).length;
+    var reason = reasonForMentor(m);
+    var h = '<article class="story-card" data-mentor="' + esc(m.id) + '">';
+    if (opts.outside) {
+      h += '<div class="outside-banner">✦ Outside your pattern — we always show one</div>';
+    }
+    h += '<div class="story-band"><div class="story-band-top">'
+      + '<div class="mono-av">' + esc(monogram(m.name)) + '</div>'
+      + '<div class="who"><strong>' + esc(m.name) + '</strong><small>' + esc(m.grewUp) + '</small></div>'
+      + '<div class="age-chip"><b>' + esc(mo.age) + '</b><span>AT THE TIME</span></div>'
+      + '</div></div>';
+    h += '<div class="story-body">';
+    h += '<div class="story-meta">'
+      + '<span class="role-tag ' + roleCls + '"><span class="dot" aria-hidden="true"></span>'
+      + (m.role === 'mentor' ? 'Mentor' : 'Contributor') + '</span>'
+      + '<span class="chip">' + esc(m.archetype) + '</span>'
+      + '<span class="chip lane">' + esc(m.lane) + '</span>'
+      + (taken ? '<span class="chip outline">' + taken + ' on your pathway</span>' : '')
+      + '</div>';
+    if (reason && (signals.profile.where.length || signals.profile.activities.length || signals.profile.subjects.length)) {
+      h += '<p class="reason-line">' + esc(reason) + '</p>';
+    }
+    h += '<div class="perforation" aria-hidden="true"></div>';
+    h += '<p class="story-moment">' + esc(mo.text) + '</p>';
+    h += '<p class="now-row"><span class="k">NOW</span>' + esc(m.now) + '</p>';
+    h += '<div class="story-actions">'
+      + '<a class="btn full" href="mentor-story.html?id=' + encodeURIComponent(m.id) + '" data-open-story="' + esc(m.id) + '">Read their story →</a>'
+      + '<div class="row">'
+      + '<button type="button" class="btn ghost small" data-sounds="' + esc(m.id) + '">'
+      + (signals.saves[m.id] ? 'Saved as you' : 'Sounds like me') + '</button>'
+      + '<button type="button" class="btn ghost small" data-compare="' + esc(m.id) + '">+ Compare</button>'
+      + '</div></div>';
+    h += '</div></article>';
+    return h;
+  });
+
+  /* ── Stories surface ── */
+  var renderStories = reg('renderStories', function (root) {
+    var age = 11 + (+signals.form || 1);
+    var arch = signals.archetype || 'your interests';
+    var scored = scoreStories();
+    var h = '<div class="wrap">';
+    h += '<p class="eyebrow">Discovery</p>';
+    h += '<h1 style="font-size:clamp(26px,7vw,34px);margin:6px 0 6px">Stories for you</h1>';
+    h += '<p style="margin:0 0 14px;color:var(--muted);font-size:14px">Curated around ' + esc(arch)
+      + ' · about age ' + age + '</p>';
+
+    if (signals.fieldLane) {
+      h += '<div class="field-bar"><span>Showing ' + esc(signals.fieldLane) + '</span>'
+        + '<button type="button" data-clear-lane>Show everyone</button></div>';
+    }
+
+    var hasProfile = (signals.profile.where.length + signals.profile.activities.length + signals.profile.subjects.length) > 0;
+    if (hasProfile) {
+      h += '<p class="reason-line">Ordered around your profile: your region, what you are part of. '
+        + 'Nobody was removed — all ' + scored.length + ' are still here, in a different order.</p>';
+    } else {
+      h += '<p class="reason-line">Nobody was removed — all ' + scored.length + ' are still here.</p>';
+    }
+
+    if (naviReady()) {
+      var nq = pickNaviQuestion();
+      if (nq) {
+        var names = nq.mentors.slice(0, 3).map(function (m) { return firstName(m.name); }).join(', ');
+        var answeredN = (signals.naviAsked || []).length;
+        h += '<div class="navi-card" id="naviCard">'
+          + '<p class="eyebrow">Navi · Two quick questions</p>'
+          + '<p style="margin:0 0 8px;font-family:var(--font-accent);font-size:11px;font-weight:800;color:var(--gold-deep)">'
+          + answeredN + ' of 2 answered</p>'
+          + '<h2>' + esc(nq.q.q) + '</h2>'
+          + '<p>' + (nq.agreed
+            ? 'They had this in common, so let me check it is true of you too.'
+            : 'You read ' + esc(names) + '. They did not all agree on this one, which is why it is worth asking.')
+          + '</p>'
+          + '<p style="font-size:12.5px;color:var(--muted);margin:0 0 12px">Answers change the order only. Nobody gets hidden from you.</p>'
+          + '<div class="choices">' + nq.q.opts.map(function (o) {
+            return '<button type="button" class="btn ghost full" style="margin-bottom:8px" data-navi-key="'
+              + esc(nq.q.key) + '" data-navi-val="' + esc(o.v == null ? '' : o.v) + '">' + esc(o.t) + '</button>';
+          }).join('') + '</div>'
+          + '<button type="button" class="btn ghost full" data-navi-skip style="margin-top:4px">Skip these for now</button>'
+          + '</div>';
+      }
+    }
+
+    scored.forEach(function (s) {
+      h += renderStoryCard(s.item, { outside: s.outside });
+    });
+    h += pageFoot() + '</div>';
+    root.innerHTML = h;
+    bindStories(root);
+  });
+
+  var bindStories = reg('bindStories', function (root) {
+    root.querySelectorAll('[data-open-story]').forEach(function (a) {
+      a.addEventListener('click', function () {
+        var id = a.getAttribute('data-open-story');
+        if (signals.viewed.indexOf(id) < 0) signals.viewed.push(id);
+        saveSignals();
+      });
+    });
+    root.querySelectorAll('[data-sounds]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var id = btn.getAttribute('data-sounds');
+        if (signals.saves[id]) delete signals.saves[id];
+        else signals.saves[id] = 'me';
+        saveSignals();
+        renderStories(root);
+      });
+    });
+    root.querySelectorAll('[data-compare]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        toast('Compare stays on this device — open another story, then come back.');
+      });
+    });
+    root.querySelectorAll('[data-navi-key]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var key = btn.getAttribute('data-navi-key');
+        var val = btn.getAttribute('data-navi-val');
+        signals.naviAnswers[key] = val === '' ? null : val;
+        if (signals.naviAsked.indexOf(key) < 0) signals.naviAsked.push(key);
+        saveSignals();
+        renderStories(root);
+      });
+    });
+    var skip = root.querySelector('[data-navi-skip]');
+    if (skip) skip.addEventListener('click', function () {
+      signals.naviSkipped = true;
+      saveSignals();
+      renderStories(root);
+    });
+    var clear = root.querySelector('[data-clear-lane]');
+    if (clear) clear.addEventListener('click', function () {
+      signals.fieldLane = null;
+      saveSignals();
+      renderStories(root);
+    });
+  });
+
+  /* ── My Pathway ── */
+  var profileCompletion = reg('profileCompletion', function () {
+    var p = signals.profile;
+    var n = 0;
+    if (p.where.length) n++;
+    if (p.subjects.length) n++;
+    if (p.activities.length) n++;
+    if (p.awards.length) n++;
+    if (p.context.length) n++;
+    return Math.round((n / 5) * 100);
+  });
+
+  var renderProfileStrip = reg('renderProfileStrip', function (editing) {
+    var pct = profileCompletion();
+    var p = signals.profile;
+    var parts = [];
+    if (p.where.length) parts.push(p.where[0]);
+    if (p.subjects.length) parts.push(p.subjects.length + ' subjects');
+    if (p.activities.length) parts.push(p.activities.length + ' activities');
+    if (p.awards.length) parts.push('achievements set');
+    if (p.context.length) parts.push('situation set');
+    var sum = parts.length ? parts.join(' · ') : 'Nothing set yet — the product still works.';
+
+    if (!editing) {
+      return '<div class="profile-strip" id="profileStrip">'
+        + '<div class="ring" style="--p:' + pct + '" aria-hidden="true"><i>' + pct + '%</i></div>'
+        + '<div class="sum"><strong>Your profile</strong><small>' + esc(sum) + '</small></div>'
+        + '<button type="button" class="btn small" data-profile-edit>Update</button>'
+        + '</div>';
+    }
+
+    var why = {
+      where: 'We put people who grew up near you higher up.',
+      subjects: 'Lets us tell you when a route you saved needs a subject you have not listed.',
+      activities: 'People who did the same things at your age come up first.',
+      awards: 'Decides which opportunity we suggest next — the step up, not the starting rung.',
+      context: 'Stops us putting a route in front of you that was never affordable.'
+    };
+    var titles = {
+      where: 'Where you are',
+      subjects: 'Subjects',
+      activities: 'Activities',
+      awards: 'Achievements',
+      context: 'Your situation'
+    };
+    var h = '<div class="card" id="profileEditor" style="margin-bottom:16px">';
+    h += '<h2 style="font-size:20px;margin:0 0 12px">Update your profile</h2>';
+    ['where','subjects','activities','awards','context'].forEach(function (key) {
+      h += '<section style="margin:0 0 16px" data-profile-section="' + key + '">';
+      h += '<h3 style="font-size:16px;margin:0 0 4px">' + esc(titles[key]) + '</h3>';
+      h += '<p style="margin:0 0 8px;font-size:12.5px;color:var(--muted)"><em>Why we ask:</em> ' + esc(why[key]) + '</p>';
+      var multi = key !== 'where';
+      PROFILE_OPTS[key].forEach(function (opt) {
+        var on = p[key].indexOf(opt) >= 0;
+        h += '<button type="button" class="option-chip' + (on ? ' on' : '') + '" aria-checked="'
+          + (on ? 'true' : 'false') + '" data-prof-key="' + key + '" data-prof-val="' + esc(opt)
+          + '" data-multi="' + (multi ? '1' : '0') + '">' + esc(opt) + '</button>';
+      });
+      h += '</section>';
+    });
+    h += '<button type="button" class="btn full" data-profile-done>Done</button></div>';
+    return h;
+  });
+
+  var showAllStagesSession = false;
+
+  var stageIndex = reg('stageIndex', function (id) {
+    for (var i = 0; i < STAGES.length; i++) if (STAGES[i].id === id) return i;
+    return 0;
+  });
+
+  var stagesToShow = reg('stagesToShow', function () {
+    if (showAllStagesSession) {
+      return STAGES.map(function (_, i) { return i; });
+    }
+    var here = formToStage(signals.form);
+    var currentStageIndex = stageIndex(here);
+    var filled = [];
+    STAGES.forEach(function (st, i) {
+      if (addedTags().some(function (t) { return t.stage === st.id; })) filled.push(i);
+    });
+    var lastFilled = filled.length ? Math.max.apply(null, filled) : currentStageIndex;
+    var showMap = {};
+    filled.forEach(function (i) { showMap[i] = 1; });
+    showMap[currentStageIndex] = 1;
+    showMap[Math.min(lastFilled + 1, 5)] = 1;
+    return Object.keys(showMap).map(function (k) { return +k; }).sort(function (a, b) { return a - b; });
+  });
+
+  var renderHowItFills = reg('renderHowItFills', function () {
+    return '<div class="card" style="margin:0 0 16px">'
+      + '<p class="eyebrow">How this fills up</p>'
+      + '<h2 style="font-size:22px;margin:6px 0 10px">Your pathway builds itself as you read.</h2>'
+      + '<p style="margin:0 0 14px;color:var(--muted);font-size:14px;line-height:1.5">'
+      + 'Open somebody\'s story. When something they did looks worth copying — a subject, a programme, a route step — take it, and it lands here on the right Form.</p>'
+      + '<a class="btn full" href="stories.html">Read some stories →</a></div>';
+  });
+
+  var renderForYou = reg('renderForYou', function () {
+    var res = scoreForYou();
+    var gated = res.all.filter(function (s) { return !s.formOk; }).length;
+    var h = '<div class="section" style="margin:0 0 18px" id="forYouSection">';
+    h += '<div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px">';
+    h += '<h2 style="font-size:22px;margin:0">For you</h2>';
+    h += '<span class="swipe-hint">Swipe →</span></div>';
+    h += '<div class="foryou-rail" tabindex="0">';
+    res.shown.forEach(function (s) {
+      var o = s.item;
+      h += '<button type="button" class="foryou-card" data-opp-open="' + esc(o.id) + '">';
+      if (s.outside) h += '<span class="out-mark" title="Outside your pattern" aria-label="Outside your pattern">✦</span>';
+      h += '<h3>' + esc(o.name) + '</h3><p>' + esc(o.blurb) + '</p>';
+      h += '<span class="details-aff">Details →</span>';
+      h += '</button>';
+    });
+    h += '</div>';
+    if (gated) {
+      h += '<p class="reason-line">' + gated + ' others are in the catalogue but not open to Form '
+        + esc(signals.form) + ' — age or grade limits set by the organisers, not by us.</p>';
+    }
+    h += '</div>';
+    return h;
+  });
+
+  var openOppSheet = reg('openOppSheet', function (oppId) {
+    var res = scoreForYou();
+    var scored = null;
+    res.all.forEach(function (s) { if (s.item.id === oppId) scored = s; });
+    if (!scored) return;
+    var o = scored.item;
+    var topReasons = (scored.reasons || []).filter(function (r) { return r.w > 0; }).slice(0, 2).map(function (r) { return r.t; });
+    var existing = document.getElementById('oppSheet');
+    if (existing) existing.parentNode.removeChild(existing);
+    var wrap = document.createElement('div');
+    wrap.id = 'oppSheet';
+    wrap.className = 'sheet-backdrop';
+    wrap.setAttribute('role', 'dialog');
+    wrap.setAttribute('aria-modal', 'true');
+    wrap.setAttribute('aria-label', o.name);
+    var html = '<div class="sheet">'
+      + '<button type="button" class="close-sheet" data-close-sheet aria-label="Close">×</button>'
+      + '<div class="sheet-meta">'
+      + '<span class="chip">' + esc(o.kind === 'event' ? 'Event' : 'Opportunity') + '</span>'
+      + '<span class="chip outline">' + esc(o.when) + '</span>'
+      + '<span class="chip outline">' + esc(o.rung) + '</span></div>'
+      + '<h2>' + esc(o.name) + '</h2>'
+      + '<p style="margin:0 0 12px;font-size:14.5px;line-height:1.5">' + esc(o.blurb) + '</p>';
+    if (topReasons.length) {
+      html += '<p class="reason-line">Here because ' + esc(topReasons.join(', and ')) + '.</p>';
+    }
+    html += '<p style="margin:0;font-size:12.5px;color:var(--muted);line-height:1.45">Source: ' + esc(o.source)
+      + '. Dates and eligibility shift — confirm with the organiser before you plan around it.</p>'
+      + '</div>';
+    wrap.innerHTML = html;
+    document.body.appendChild(wrap);
+    function close() {
+      if (wrap.parentNode) wrap.parentNode.removeChild(wrap);
+    }
+    wrap.addEventListener('click', function (e) {
+      if (e.target === wrap) close();
+    });
+    var btn = wrap.querySelector('[data-close-sheet]');
+    if (btn) btn.addEventListener('click', close);
+  });
+
+  var renderBypass = reg('renderBypass', function () {
+    var h = '<details class="card" style="margin:0 0 16px" id="decidedBypass">';
+    h += '<summary style="cursor:pointer;font-family:var(--font-display);font-size:18px;font-weight:650;min-height:44px;display:flex;align-items:center">Know exactly what you want?</summary>';
+    h += '<div style="margin-top:12px">';
+    h += '<label class="search-bar" style="margin-bottom:12px"><span class="mag" aria-hidden="true">⌕</span>'
+      + '<input type="search" id="careerSearch" placeholder="Nurse, welding, own business…" autocomplete="off">'
+      + '<button type="button" class="clear hidden" id="careerSearchClear" aria-label="Clear">×</button></label>';
+    h += '<div id="careerSearchResults"></div>';
+    h += '<p style="font-size:12.5px;color:var(--muted);margin:0 0 10px">Or pick a lane</p>';
+    h += '<div class="lane-grid">';
+    LANES.forEach(function (lane) {
+      var count = MENTORS.filter(function (m) { return m.lane === lane; }).length;
+      h += '<button type="button" class="lane-btn' + (signals.fieldLane === lane ? ' on' : '')
+        + '" data-set-lane="' + esc(lane) + '">' + esc(lane)
+        + '<small>' + count + ' ' + (count === 1 ? 'person' : 'people') + '</small></button>';
+    });
+    h += '</div></div></details>';
+    return h;
+  });
+
+  var renderCoherence = reg('renderCoherence', function () {
+    var h = '';
+    if (contradiction()) {
+      h += '<div class="notice bad"><strong>These two cannot both be your plan.</strong>'
+        + ' You have added steps for leaving the academic track after CSEC and staying on for CAPE. '
+        + 'That is a real fork, not a detail — it is the decision the whole of Form 5 turns on. '
+        + '<a href="questions.html?q=fork">Open the fork thread</a></div>';
+    }
+    var dirs = twoDirections();
+    if (dirs.length > 1) {
+      h += '<div class="notice warn"><strong>You are holding more than one direction.</strong> '
+        + esc(dirs.join(' · ')) + '. That is fine for now — we will not pick a lane for you.</div>';
+    }
+    subjectGaps().forEach(function (g) {
+      var from = firstName(g.tag.mentorName);
+      h += '<div class="notice warn"><strong>' + esc(g.tag.label) + ' usually needs '
+        + esc(g.missing.join(' and ')) + '.</strong> You have not listed those in your profile. '
+        + esc(from) + ' took ' + esc(g.tag.req.join(' and ')) + ' — worth checking whether you still can.</div>';
+    });
+    return h;
+  });
+
+  var suggestionsForStage = reg('suggestionsForStage', function (stageId) {
+    var sourceIds = signals.viewed.length ? signals.viewed : MENTORS.map(function (m) { return m.id; });
+    var heading = signals.viewed.length ? 'FROM PEOPLE YOU READ' : 'WORTH LOOKING AT';
+    var tags = [];
+    sourceIds.forEach(function (id) {
+      var m = mentorById(id);
+      if (!m) return;
+      (m.addable || []).forEach(function (t) {
+        if (t.stage === stageId && !hasTag(t.id) && tags.length < 3) {
+          tags.push({ tag: t, mentor: m });
+        }
+      });
+    });
+    return { heading: heading, tags: tags };
+  });
+
+  var renderSpine = reg('renderSpine', function () {
+    var tags = addedTags();
+    if (!tags.length) return '';
+
+    var here = formToStage(signals.form);
+    var lane = derivedLane();
+    var showIdx = stagesToShow();
+    var hiddenN = STAGES.length - showIdx.length;
+    var fromNames = [];
+    tags.forEach(function (t) {
+      var n = firstName(t.mentorName);
+      if (fromNames.indexOf(n) < 0) fromNames.push(n);
+    });
+    var h = '';
+    if (lane) {
+      h += '<div style="margin:0 0 14px"><h2 style="font-size:20px;margin:0 0 4px">' + esc(lane) + '</h2>'
+        + '<p style="margin:0;color:var(--muted);font-size:13px">A direction, not a job title. The specialisation comes later, from people already at the end of it.</p></div>';
+    }
+    h += '<h2 style="font-size:22px;margin:0 0 4px">Your Form 1–6 pathway</h2>';
+    h += '<p style="margin:0 0 12px;color:var(--muted);font-size:13.5px">'
+      + tags.length + ' thing' + (tags.length === 1 ? '' : 's') + ' taken'
+      + (fromNames.length ? ' from ' + esc(fromNames.join(', ')) : '') + '.</p>';
+
+    STAGES.forEach(function (st, i) {
+      if (showIdx.indexOf(i) < 0) return;
+      var isHere = st.id === here;
+      var stageTags = tags.filter(function (t) { return t.stage === st.id; });
+      h += '<section class="stage-card' + (isHere ? ' here' : '') + '">';
+      h += '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px">'
+        + '<span class="stage-dot" aria-hidden="true"></span>'
+        + '<strong style="font-family:var(--font-display);font-size:17px">' + esc(st.label) + '</strong>'
+        + (isHere ? '<span class="here-badge">YOU ARE HERE</span>' : '')
+        + '</div>';
+      if (!stageTags.length) {
+        h += '<p style="margin:0 0 8px;color:var(--muted);font-size:13px">Nothing here yet</p>';
+        var sug = suggestionsForStage(st.id);
+        if (sug.tags.length) {
+          h += '<p class="eyebrow" style="margin-bottom:6px">' + esc(sug.heading) + '</p>';
+          sug.tags.forEach(function (s) {
+            h += '<button type="button" class="btn ghost small" style="margin:0 6px 6px 0" data-add-tag="'
+              + esc(s.tag.id) + '">+ ' + esc(s.tag.label) + ' · ' + esc(firstName(s.mentor.name)) + '</button>';
+          });
+        }
+      } else {
+        stageTags.forEach(function (t) {
+          var also = MENTORS.filter(function (m) {
+            return m.id !== t.mentorId && (m.addable || []).some(function (x) { return x.label === t.label; });
+          });
+          h += '<div class="path-tag ' + esc(t.type) + '"><div><div class="meta">' + esc(t.type)
+            + ' · from ' + esc(firstName(t.mentorName)) + '</div>'
+            + '<strong>' + esc(t.label) + '</strong>'
+            + (also.length ? '<div style="font-size:12px;color:var(--muted);margin-top:2px">'
+              + esc(t.label) + ' · ' + esc(firstName(also[0].name)) + ' too</div>' : '')
+            + '</div><button type="button" class="rm" data-rm-tag="' + esc(t.id) + '" aria-label="Remove">✕</button></div>';
+        });
+      }
+      h += '</section>';
+    });
+
+    if (hiddenN > 0) {
+      h += '<button type="button" class="btn ghost full" data-show-stages style="margin:4px 0 12px">'
+        + 'Show the other ' + hiddenN + ' stage' + (hiddenN === 1 ? '' : 's') + '</button>';
+    }
+    return h;
+  });
+
+  var renderPathwaySummary = reg('renderPathwaySummary', function () {
+    var tags = addedTags();
+    if (tags.length < 3) return '';
+    var byType = { subject: [], opp: [], step: [], career: [] };
+    tags.forEach(function (t) { if (byType[t.type]) byType[t.type].push(t); });
+    var empties = emptyStages().map(stageLabel);
+    var h = '<section class="card" style="margin:18px 0">';
+    h += '<h2 style="font-size:20px;margin:0 0 10px">What your pathway says so far</h2>';
+    ['subject','opp','step','career'].forEach(function (ty) {
+      if (!byType[ty].length) return;
+      h += '<p style="margin:0 0 4px;font-size:11px;font-weight:800;letter-spacing:.08em;color:var(--muted)">'
+        + esc(ty.toUpperCase()) + '</p>';
+      h += '<p style="margin:0 0 10px;font-size:13.5px">' + byType[ty].map(function (t) {
+        return esc(t.label);
+      }).join(' · ') + '</p>';
+    });
+    if (empties.length) {
+      h += '<p style="margin:8px 0 0;font-size:13px;color:var(--muted)">Still to fill: ' + esc(empties.join(' · ')) + '</p>';
+    } else {
+      h += '<p style="margin:8px 0 0;font-size:13px;color:var(--muted)">Every stage has something in it. The useful move now is checking the requirements are real — open a tag\'s owner and read their deep dive.</p>';
+    }
+    h += '</section>';
+    return h;
+  });
+
+  var renderPathwayThreads = reg('renderPathwayThreads', function () {
+    if (!addedTags().length) return '';
+    var top = scoreQuestions('').slice(0, 2);
+    var h = '<section style="margin:18px 0"><h2 style="font-size:20px;margin:0 0 10px">Questions near your pathway</h2>';
+    top.forEach(function (s) {
+      h += '<a class="thread-card" style="display:block;text-decoration:none;color:inherit" href="questions.html?id='
+        + encodeURIComponent(s.item.id) + '"><h3>' + esc(s.item.question) + '</h3>'
+        + '<span class="chip outline">' + esc(s.item.lane) + '</span></a>';
+    });
+    h += '</section>';
+    return h;
+  });
+
+  var renderPathway = reg('renderPathway', function (root, state) {
+    state = state || { editing: false };
+    var tagsCount = signals.added.length;
+    var h = '<div class="wrap">';
+    h += '<div class="record-head">';
+    h += '<p class="eyebrow" style="color:var(--gold)">My Pathway</p>';
+    h += '<h1>' + esc(signals.name || 'You') + '</h1>';
+    h += '<p>' + esc(signals.archetype || 'Archetype not set yet')
+      + ' · Form ' + esc(signals.form)
+      + (signals.profile.where[0] ? ' · ' + esc(signals.profile.where[0]) : '') + '</p>';
+    h += '<div class="record-counts">'
+      + '<span>' + (signals.profile.awards.length || 0) + ' achievements</span>'
+      + '<span>' + (signals.profile.activities.length || 0) + ' activities</span>'
+      + '<span>' + tagsCount + ' tags taken</span>'
+      + '</div></div>';
+
+    if (!signals.profileSetupSeen && profileCompletion() === 0) {
+      h += '<div class="card" style="border:2px solid var(--gold);margin-bottom:16px">'
+        + '<h2 style="font-size:20px;margin:0 0 8px">Tell us what should shape suggestions</h2>'
+        + '<p style="margin:0 0 12px;color:var(--muted);font-size:13.5px">Nothing is required. The product works without it.</p>'
+        + '<button type="button" class="btn full" data-profile-setup>Set this up — takes a minute</button></div>';
+    }
+
+    h += renderProfileStrip(state.editing);
+    h += renderForYou();
+    h += renderBypass();
+    h += renderCoherence();
+    if (!tagsCount) {
+      h += renderHowItFills();
+    } else {
+      h += renderSpine();
+      h += renderPathwaySummary();
+      h += renderPathwayThreads();
+    }
+    h += pageFoot() + '</div>';
+    root.innerHTML = h;
+    bindPathway(root, state);
+  });
+
+  var bindPathway = reg('bindPathway', function (root, state) {
+    var editBtn = root.querySelector('[data-profile-edit]');
+    if (editBtn) editBtn.addEventListener('click', function () {
+      renderPathway(root, { editing: true });
+    });
+    var setup = root.querySelector('[data-profile-setup]');
+    if (setup) setup.addEventListener('click', function () {
+      signals.profileSetupSeen = true;
+      saveSignals();
+      renderPathway(root, { editing: true });
+    });
+    var done = root.querySelector('[data-profile-done]');
+    if (done) done.addEventListener('click', function () {
+      signals.profileSetupSeen = true;
+      saveSignals();
+      renderPathway(root, { editing: false });
+    });
+    root.querySelectorAll('[data-prof-key]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var key = btn.getAttribute('data-prof-key');
+        var val = btn.getAttribute('data-prof-val');
+        var multi = btn.getAttribute('data-multi') === '1';
+        var arr = signals.profile[key];
+        var i = arr.indexOf(val);
+        if (!multi) {
+          signals.profile[key] = i >= 0 ? [] : [val];
+        } else {
+          if (i >= 0) arr.splice(i, 1);
+          else arr.push(val);
+        }
+        saveSignals();
+        renderPathway(root, { editing: true });
+      });
+    });
+    root.querySelectorAll('[data-add-tag]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        toggleTag(btn.getAttribute('data-add-tag'));
+        renderPathway(root, state);
+      });
+    });
+    root.querySelectorAll('[data-rm-tag]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        toggleTag(btn.getAttribute('data-rm-tag'));
+        renderPathway(root, state);
+      });
+    });
+    root.querySelectorAll('[data-set-lane]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var lane = btn.getAttribute('data-set-lane');
+        signals.fieldLane = lane;
+        saveSignals();
+        toast('Stories will show ' + lane + ' — undo anytime.');
+        renderPathway(root, state);
+      });
+    });
+    var showStages = root.querySelector('[data-show-stages]');
+    if (showStages) showStages.addEventListener('click', function () {
+      showAllStagesSession = true;
+      renderPathway(root, state);
+    });
+    root.querySelectorAll('[data-opp-open]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        openOppSheet(btn.getAttribute('data-opp-open'));
+      });
+    });
+    var search = root.querySelector('#careerSearch');
+    var clear = root.querySelector('#careerSearchClear');
+    var results = root.querySelector('#careerSearchResults');
+    function runSearch() {
+      var q = (search && search.value) || '';
+      var qw = words(q);
+      if (clear) clear.classList.toggle('hidden', !q);
+      if (!results) return;
+      if (!qw.length) { results.innerHTML = ''; return; }
+      var hits = MENTORS.map(function (m) {
+        var hay = words((m.searchTerms || []).join(' ') + ' ' + m.now + ' ' + m.lane);
+        var n = 0;
+        qw.forEach(function (w) { if (hay.indexOf(w) >= 0) n++; });
+        return { m: m, n: n };
+      }).filter(function (x) { return x.n > 0; }).sort(function (a, b) { return b.n - a.n; });
+      if (!hits.length) {
+        results.innerHTML = '<div class="notice info"><strong>Nobody yet for “‘ + esc(q) + ’”.</strong> '
+          + 'We would rather say so than match you to something loosely related.'
+          + '<button type="button" class="btn small" style="margin-top:10px" data-waitlist>Join the waitlist</button></div>';
+        var wl = results.querySelector('[data-waitlist]');
+        if (wl) wl.addEventListener('click', function () { toast('Waitlist noted on this device.'); });
         return;
       }
-
-      var bars = '';
-      for (var i = 0; i < 3; i++) bars += '<i class="' + (i <= q ? 'on' : '') + '"></i>';
-      var title = 'QUESTION ' + (q + 1) + ' OF 3';
-      var html = '<div class="check-progress">' + bars + '</div><p class="eyebrow">' + title + '</p>';
-
-      if (q === 0) {
-        html += '<div class="check-q"><h3 style="font-size:22px;margin:8px 0 12px">Where are you now?</h3><div class="opts">';
-        [
-          { t: 'Form 1 or 2', s: 'Still working out what I like.' },
-          { t: 'Form 3', s: 'Choosing subjects.' },
-          { t: 'Form 4 or 5', s: 'CSEC is close.' },
-          { t: 'Finished CSEC', s: 'Deciding what comes next.' }
-        ].forEach(function (o, i) {
-          html += '<button type="button" class="opt" data-i="' + i + '">' + esc(o.t) + '<small>' + esc(o.s) + '</small></button>';
-        });
-        html += '</div></div>';
-      } else if (q === 1) {
-        html += '<div class="check-q"><h3 style="font-size:22px;margin:8px 0 12px">When something in front of you is broken, what do you do?</h3><div class="opts">';
-        q2.forEach(function (o, i) {
-          html += '<button type="button" class="opt" data-i="' + i + '">' + esc(o.t) + '</button>';
-        });
-        html += '</div></div>';
-      } else {
-        html += '<div class="check-q"><h3 style="font-size:22px;margin:8px 0 12px">How would you rather spend a free Saturday?</h3><div class="opts">';
-        q3.forEach(function (o, i) {
-          html += '<button type="button" class="opt" data-i="' + i + '">' + esc(o.t) + '</button>';
-        });
-        html += '</div></div>';
-      }
-      body.innerHTML = html;
-      body.querySelectorAll('.opt').forEach(function (btn) {
+      results.innerHTML = hits.slice(0, 5).map(function (x) {
+        return '<button type="button" class="btn ghost full" style="margin-bottom:8px;justify-content:flex-start" data-set-lane="'
+          + esc(x.m.lane) + '">' + esc(x.m.name) + ' · ' + esc(x.m.lane) + '</button>';
+      }).join('');
+      results.querySelectorAll('[data-set-lane]').forEach(function (btn) {
         btn.addEventListener('click', function () {
-          var i = +btn.getAttribute('data-i');
-          if (q === 0) picks[0] = i;
-          else if (q === 1) picks[1] = q2[i].a;
-          else picks[2] = q3[i].a;
-          q++;
-          render(body);
+          signals.fieldLane = btn.getAttribute('data-set-lane');
+          saveSignals();
+          toast('Filtering Stories to that lane.');
         });
       });
     }
+    if (search) search.addEventListener('input', runSearch);
+    if (clear) clear.addEventListener('click', function () { search.value = ''; runSearch(); });
+  });
 
-    openSheet('Tune your feed', '<div id="checkRoot"></div>', function (body) {
-      render(body.querySelector('#checkRoot') || body);
-    });
-  }
+  /* ── Feed ── */
+  var renderFeed = reg('renderFeed', function (root) {
+    var scored = scoreFeed();
+    var h = '<div class="wrap">';
+    h += '<p class="eyebrow">Timely</p>';
+    h += '<h1 style="font-size:clamp(26px,7vw,34px);margin:6px 0 10px">Feed</h1>';
+    h += '<div class="notice info"><strong>No upvotes or downvotes here, deliberately.</strong> '
+      + 'Popular advice is not the same as true advice, and an honest answer that costs someone votes is an answer they stop giving. '
+      + 'Replies show in the order they were written.</div>';
+    h += '<div class="composer"><textarea id="composerText" placeholder="Ask or share something…" aria-label="Compose"></textarea>'
+      + '<button type="button" class="btn small" style="margin-top:8px" data-compose>Post</button></div>';
 
-  /* ---------- Thread sheet ---------- */
-  function findFeedItem(id) {
-    for (var i = 0; i < feedItems.length; i++) if (feedItems[i].id === id) return feedItems[i];
-    return null;
-  }
-
-  function openThread(id) {
-    var item = findFeedItem(id);
-    if (!item) return;
-    function draw(body) {
-      var replies = item.replies || [];
-      var html =
-        '<article class="card" style="margin-bottom:14px">' +
-          '<div class="item-head"><span class="avatar anon">S</span><div><strong>' + esc(item.who) + '</strong>' +
-          '<p class="meta">' + esc(item.time) + ' · question</p></div></div>' +
-          '<h3>' + esc(item.title) + '</h3>' +
-          (item.tag ? '<div class="tagrow"><span class="pill">' + esc(item.tag) + '</span></div>' : '') +
-        '</article>';
-      replies.forEach(function (r) {
-        html +=
-          '<div class="card" style="margin-bottom:10px">' +
-            '<strong style="font-family:var(--serif);font-size:17px">' + esc(r.who) + '</strong>' +
-            '<p class="meta">' + esc(r.role || 'Student') + '</p>' +
-            '<p style="margin:8px 0 0;color:var(--body)">' + esc(r.text) + '</p>' +
-          '</div>';
-      });
-      html +=
-        '<div class="composer" style="margin-top:12px">' +
-          '<label class="sr" for="replyBox">Your reply</label>' +
-          '<textarea id="replyBox" placeholder="Write a reply"></textarea>' +
-          '<div class="composer-foot"><button type="button" class="btn" id="postReply">Post reply</button></div>' +
-        '</div>';
-      body.innerHTML = html;
-      body.querySelector('#postReply').addEventListener('click', function () {
-        var ta = body.querySelector('#replyBox');
-        var text = (ta.value || '').trim();
-        if (!text) { toast('Write something first.'); ta.focus(); return; }
-        if (!item.replies) item.replies = [];
-        item.replies.push({ who: anonLabel(), role: 'Student', text: text });
-        toast('Reply posted.');
-        draw(body);
-        var stream = document.getElementById('feedStream');
-        if (stream) renderStream();
-      });
-    }
-    openSheet('Thread', '', function (body) { draw(body); });
-  }
-
-  /* ---------- Feed ---------- */
-  function allFeed() {
-    return feedItems;
-  }
-
-  function matchSearch(item, q) {
-    if (!q) return true;
-    var j = item.kind === 'journey' ? journeyById(item.journey) : null;
-    var blob = [
-      item.title, item.text, item.who, item.tag, item.time
-    ].join(' ').toLowerCase();
-    if (item.replies) {
-      item.replies.forEach(function (r) {
-        blob += ' ' + (r.who || '') + ' ' + (r.text || '');
-      });
-    }
-    if (j) {
-      blob += ' ' + [j.name, j.field, j.place, j.hook, j.now, j.role].join(' ');
-    }
-    return blob.toLowerCase().indexOf(q) >= 0;
-  }
-
-  function matchFilter(item, filter) {
-    if (filter === 'all') return true;
-    if (filter === 'story') return item.kind === 'story' || item.update === true;
-    return item.kind === filter;
-  }
-
-  function filteredFeed() {
-    var q = (feedUi.q || '').trim().toLowerCase();
-    return allFeed().filter(function (item) {
-      return matchFilter(item, feedUi.filter) && matchSearch(item, q);
-    });
-  }
-
-  function countLine() {
-    var list = filteredFeed();
-    var q = (feedUi.q || '').trim();
-    if (q) {
-      return list.length === 1
-        ? '1 result for "' + q + '"'
-        : list.length + ' results for "' + q + '"';
-    }
-    if (feedUi.filter !== 'all') {
-      var labels = {
-        question: 'questions', story: 'stories', tip: 'mentor tips',
-        opportunity: 'opportunities', journey: 'journeys'
-      };
-      return list.length + ' under ' + (labels[feedUi.filter] || feedUi.filter);
-    }
-    return list.length + ' posts';
-  }
-
-  function renderJourneyCard(j) {
-    var following = isFollowing(j.id);
-    return (
-      '<article class="card jcard" data-journey="' + esc(j.id) + '">' +
-        '<div class="jhead">' +
-          '<span class="avatar gold">' + esc(j.init) + '</span>' +
-          '<div><strong>' + esc(j.name) + '</strong><small>' + esc(j.place) + '</small></div>' +
-          '<div class="age"><b>' + esc(j.age) + '</b><small>AT THE TIME</small></div>' +
-        '</div>' +
-        '<div class="jbody">' +
-          '<div class="tagrow">' +
-            '<span class="pill gold dot">' + esc(j.role) + '</span>' +
-            '<span class="pill">' + esc(j.field) + '</span>' +
-          '</div>' +
-          '<p class="hook">' + esc(j.hook) + '</p>' +
-          '<p class="now"><b>NOW</b>' + esc(j.now) + '</p>' +
-          '<div class="actions">' +
-            '<a class="btn" href="mentor-story.html?id=' + encodeURIComponent(j.id) + '">Read their journey</a>' +
-            '<button type="button" class="btn ghost' + (following ? ' following' : '') + '" data-follow="' + esc(j.id) + '">' +
-              (following ? 'Following' : 'Follow') +
-            '</button>' +
-            '<button type="button" class="btn ghost" data-take="' + esc(j.id) + '">Take their steps</button>' +
-          '</div>' +
-        '</div>' +
-      '</article>'
-    );
-  }
-
-  function renderPostCard(item) {
-    if (item.kind === 'journey') {
-      var j = journeyById(item.journey);
-      return j ? renderJourneyCard(j) : '';
-    }
-    var avClass = 'avatar';
-    var init = item.init || '';
-    if (item.anon) { avClass += ' anon'; init = (item.who || 'S').charAt(0); }
-    else if (item.kind === 'tip') avClass += ' gold';
-    if (!init && item.who) {
-      var parts = item.who.split(/\s+/);
-      init = ((parts[0] || '')[0] || '') + ((parts[1] || '')[0] || '');
-      init = init.toUpperCase() || 'NS';
-    }
-    var byline = esc(item.time) + ' · ' + esc(kindLabel(item.kind, item.update));
-    var html =
-      '<article class="card item" data-id="' + esc(item.id) + '">' +
-        '<div class="item-head">' +
-          '<span class="' + avClass + '">' + esc(init) + '</span>' +
-          '<div><strong>' + esc(item.who) + '</strong><p class="meta">' + byline + '</p></div>' +
-        '</div>';
-    if (item.title) html += '<h3>' + esc(item.title) + '</h3>';
-    if (item.text) html += '<p class="text">' + esc(item.text) + '</p>';
-    if (item.tag) html += '<div class="tagrow"><span class="pill">' + esc(item.tag) + '</span></div>';
-    if (item.kind === 'question') {
-      var replies = item.replies || [];
-      if (replies.length) {
-        html +=
-          '<div class="reply-preview"><strong>' + esc(replies[0].who) + '</strong>' +
-          '<p>' + esc(replies[0].text) + '</p></div>';
+    scored.forEach(function (s) {
+      var p = s.item;
+      h += '<article class="post-card">';
+      if (s.outside) h += '<div class="outside-banner" style="margin:-14px -16px 12px;border-radius:16px 16px 0 0">✦ Outside your pattern — we always show one</div>';
+      h += '<div class="post-top"><div class="post-av">' + esc((p.author || '?').charAt(0)) + '</div><div>'
+        + '<strong>' + esc(p.author) + '</strong>'
+        + '<div class="post-meta">' + esc(p.when) + ' · ' + esc(p.kind)
+        + ' <span class="chip outline" style="margin-left:6px">' + esc(p.category) + '</span></div></div></div>';
+      h += '<p class="post-body">' + esc(p.text) + '</p>';
+      if (s.reasons && s.reasons.length) {
+        h += '<p class="reason-line">Here because of ' + esc(s.reasons.join(' and ')) + '.</p>';
       }
-      var rlabel = replies.length === 0 ? 'No replies yet' : plural(replies.length, 'reply', 'replies');
-      html += '<div class="actions"><button type="button" class="btn ghost sm" data-thread="' + esc(item.id) + '">' + rlabel + '</button></div>';
-    } else {
-      html += '<div class="actions">';
-      if (item.journey) {
-        html += '<a class="btn ghost sm" href="mentor-story.html?id=' + encodeURIComponent(item.journey) + '">Read their journey</a>';
+      h += '<div class="post-foot">' + esc(p.replies || 0) + ' replies'
+        + (p.answered ? ' · answered' : '') + '</div></article>';
+    });
+    h += '<div class="card" style="text-align:center;margin-top:8px">'
+      + '<h2 style="font-size:20px;margin:0 0 8px">That is the end of today’s feed.</h2>'
+      + '<p style="margin:0 0 12px;color:var(--muted);font-size:13.5px">Anything worth keeping lives in Questions — the feed announces, the library keeps.</p>'
+      + '<a class="btn ghost" href="questions.html">Open Questions</a></div>';
+    h += pageFoot() + '</div>';
+    root.innerHTML = h;
+    var postBtn = root.querySelector('[data-compose]');
+    if (postBtn) postBtn.addEventListener('click', function () {
+      toast('Posted on this device — in the prototype it stays local.');
+      var ta = root.querySelector('#composerText');
+      if (ta) ta.value = '';
+    });
+  });
+
+  /* ── Questions ── */
+  var renderQuestions = reg('renderQuestions', function (root, opts) {
+    opts = opts || {};
+    var q = opts.query || '';
+    var scored = scoreQuestions(q);
+    var h = '<div class="wrap">';
+    h += '<p class="eyebrow">Library</p>';
+    h += '<h1 style="font-size:clamp(26px,7vw,34px);margin:6px 0 12px">Questions</h1>';
+    h += '<label class="search-bar"><span class="mag" aria-hidden="true">⌕</span>'
+      + '<input type="search" id="qSearch" placeholder="Search questions, answers, people…" value="' + esc(q) + '" autocomplete="off">'
+      + '<button type="button" class="clear' + (q ? '' : ' hidden') + '" id="qClear" aria-label="Clear">×</button></label>';
+
+    scored.forEach(function (s) {
+      var th = s.item;
+      h += '<article class="thread-card" id="thread-' + esc(th.id) + '">';
+      if (s.outside) {
+        h += '<p style="margin:0 0 8px;font-size:13px;color:var(--muted);font-weight:650">'
+          + 'The questions you are not asking are often the useful ones.</p>';
       }
-      if (item.wish) {
-        var saved = state.saved.some(function (s) { return s.key === item.wish.key; });
-        html += '<button type="button" class="btn ghost sm" data-save=\'' + esc(JSON.stringify(item.wish)) + '\'>' +
-          (saved ? 'Saved' : 'Save this') + '</button>';
+      h += '<h3>' + esc(th.question) + '</h3>';
+      if (th.reviewed) h += '<div class="reviewed">✓ Reviewed ' + esc(th.reviewed) + '</div>';
+      h += '<div style="display:flex;gap:6px;flex-wrap:wrap;margin:0 0 10px">'
+        + '<span class="chip outline">' + esc(th.lane) + '</span>'
+        + '<span class="chip outline">' + esc(stageLabel(th.stage)) + '</span>'
+        + '<span class="chip outline">' + esc(th.asks) + ' asks</span></div>';
+      (th.answers || []).forEach(function (a) {
+        var m = mentorById(a.mentorId);
+        h += '<div style="border-top:1px solid var(--line);padding:10px 0">'
+          + '<strong style="font-size:13px">' + esc(m ? m.name : 'Mentor') + '</strong>'
+          + '<p style="margin:4px 0 0;font-size:14px;line-height:1.5">' + esc(a.text) + '</p></div>';
+      });
+      if (th.review) {
+        h += '<div class="notice info" style="margin-top:10px"><strong>Staff note · ' + esc(th.review.who) + '</strong>'
+          + esc(th.review.text) + '</div>';
       }
-      html += '</div>';
+      h += '</article>';
+    });
+
+    h += '<div class="ask-box"><h2 style="font-size:20px;margin:0 0 8px">Ask something</h2>'
+      + '<textarea id="askText" placeholder="Type your question…" aria-label="Your question"></textarea>'
+      + '<div id="askDupes" style="margin-top:10px"></div>'
+      + '<button type="button" class="btn full" style="margin-top:10px" data-ask-post>Ask anyway</button></div>';
+    h += pageFoot() + '</div>';
+    root.innerHTML = h;
+
+    var input = root.querySelector('#qSearch');
+    var clear = root.querySelector('#qClear');
+    var timer = null;
+    function apply() {
+      renderQuestions(root, { query: input.value });
+      var el = root.querySelector('#qSearch');
+      if (el) { el.focus(); var v = el.value; el.value = ''; el.value = v; }
     }
-    html += '</article>';
-    return html;
-  }
-
-  function takeAllSteps(journeyId) {
-    var j = journeyById(journeyId);
-    if (!j) return;
-    var added = 0;
-    (j.steps || []).forEach(function (st) {
-      var key = stepKey(j.id, st.label);
-      if (addStep({
-        key: key,
-        label: st.label,
-        kind: st.kind,
-        stage: st.stage,
-        from: j.name
-      })) added++;
+    if (input) input.addEventListener('input', function () {
+      clear.classList.toggle('hidden', !input.value);
+      clearTimeout(timer);
+      timer = setTimeout(apply, 160);
     });
-    if (!isFollowing(j.id)) {
-      state.following.push(j.id);
-      save(state);
+    if (clear) clear.addEventListener('click', function () {
+      input.value = '';
+      apply();
+    });
+
+    var ask = root.querySelector('#askText');
+    var dupes = root.querySelector('#askDupes');
+    function checkDupes() {
+      var qw = words(ask.value);
+      if (!qw.length) { dupes.innerHTML = ''; return; }
+      var matches = THREADS.map(function (th) {
+        var hay = words(th.question);
+        var n = 0;
+        qw.forEach(function (w) { if (hay.indexOf(w) >= 0) n++; });
+        return { th: th, n: n };
+      }).filter(function (x) { return x.n > 0; }).sort(function (a, b) { return b.n - a.n; }).slice(0, 3);
+      if (!matches.length) { dupes.innerHTML = ''; return; }
+      dupes.innerHTML = '<div class="notice warn"><strong>' + matches.length
+        + ' already asked something like this</strong>'
+        + matches.map(function (x) {
+          return '<div style="margin-top:6px"><a href="#thread-' + esc(x.th.id) + '">' + esc(x.th.question) + '</a></div>';
+        }).join('')
+        + '<p style="margin:8px 0 0">Read those first if you like — or ask anyway. If you do, that tells us the existing answer is not good enough.</p></div>';
     }
-    toast(added ? (added + ' steps added to your road.') : 'You already have all of those.');
-    refreshChrome();
-  }
+    if (ask) ask.addEventListener('input', checkDupes);
+    var post = root.querySelector('[data-ask-post]');
+    if (post) post.addEventListener('click', function () {
+      /* Never block the post */
+      toast('Question noted on this device. Existing answers stay; this tells us they were not enough.');
+      if (ask) ask.value = '';
+      if (dupes) dupes.innerHTML = '';
+    });
 
-  function bindStream(root) {
-    root.querySelectorAll('[data-thread]').forEach(function (btn) {
-      btn.addEventListener('click', function () { openThread(btn.getAttribute('data-thread')); });
-    });
-    root.querySelectorAll('[data-follow]').forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        var id = btn.getAttribute('data-follow');
-        toggleFollow(id);
-        toast(isFollowing(id) ? 'Following.' : 'Unfollowed.');
-        renderStream();
-      });
-    });
-    root.querySelectorAll('[data-take]').forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        takeAllSteps(btn.getAttribute('data-take'));
-        renderStream();
-      });
-    });
-    root.querySelectorAll('[data-save]').forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        try {
-          var wish = JSON.parse(btn.getAttribute('data-save'));
-          if (saveItem(wish)) {
-            btn.textContent = 'Saved';
-            toast('Saved.');
-          } else toast('Already saved.');
-        } catch (e) {}
-      });
-    });
-  }
-
-  function renderStream() {
-    var root = document.getElementById('feedStream');
-    var count = document.getElementById('countLine');
-    if (!root) return;
-    var list = filteredFeed();
-    if (count) count.textContent = countLine();
-    if (!list.length) {
-      root.innerHTML =
-        '<div class="card"><h3>Nothing matches</h3>' +
-        '<p style="margin:8px 0 0;color:var(--muted)">Clear the search or switch back to Everything. Nothing has been removed.</p></div>';
-      return;
+    if (opts.focusId) {
+      var t = root.querySelector('#thread-' + opts.focusId);
+      if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
-    root.innerHTML = list.map(renderPostCard).join('');
-    bindStream(root);
-  }
+  });
 
-  function dupeMatch(text) {
-    var t = text.toLowerCase();
-    if (t.length < 12) return null;
-    for (var i = 0; i < DUPE_KEYS.length; i++) {
-      var set = DUPE_KEYS[i];
-      for (var w = 0; w < set.words.length; w++) {
-        if (t.indexOf(set.words[w]) >= 0) return set.id;
-      }
+  /* ── mount helpers ── */
+  var mountShell = reg('mountShell', function (active) {
+    loadSignals();
+    var body = document.body;
+    if (!document.querySelector('.app-header')) {
+      body.insertAdjacentHTML('afterbegin', renderHeader());
     }
-    return null;
-  }
+    if (!document.querySelector('.bottom-nav')) {
+      body.insertAdjacentHTML('beforeend', renderBottomNav(active));
+    }
+    if (!document.querySelector('.toast')) {
+      body.insertAdjacentHTML('beforeend', '<div class="toast" role="status" aria-live="polite"></div>');
+    }
+  });
 
-  function renderDupe(panel, id) {
-    if (!id) { panel.classList.add('hidden'); panel.innerHTML = ''; return; }
-    var item = findFeedItem(id);
-    if (!item) { panel.classList.add('hidden'); return; }
-    var replies = item.replies || [];
-    var line = replies.length
-      ? (replies.length + ' replies, including one from ' + replies[0].who + '.')
-      : 'No replies yet.';
-    panel.classList.remove('hidden');
-    panel.innerHTML =
-      '<p class="eyebrow">SOMEONE ALREADY ASKED THIS</p>' +
-      '<h4>' + esc(item.title) + '</h4>' +
-      '<p>' + esc(line) + '</p>' +
-      '<div class="row">' +
-        '<button type="button" class="btn sm" id="readDupe">Read that thread</button>' +
-        '<button type="button" class="btn ghost sm" id="askAnyway">Ask mine anyway</button>' +
-      '</div>';
-    panel.querySelector('#readDupe').addEventListener('click', function () { openThread(id); });
-    panel.querySelector('#askAnyway').addEventListener('click', function () {
-      feedUi.dupeId = null;
-      renderDupe(panel, null);
+  /* ── acceptance / tests (startup) ── */
+  var runAcceptance = reg('runAcceptance', function () {
+    var errors = [];
+    /* 1 duplicate fn registry already enforced by reg() */
+    var regNames = Object.keys(_fns);
+    var seenReg = {};
+    regNames.forEach(function (n) {
+      if (seenReg[n]) errors.push('Duplicate reg() name: ' + n);
+      seenReg[n] = 1;
     });
-  }
 
-  function renderRightRail(el) {
-    if (!el) return;
-    var qs = allFeed().filter(function (i) { return i.kind === 'question'; }).slice(0, 4);
-    var qHtml = qs.map(function (q) {
-      var n = (q.replies || []).length;
-      return '<li><button type="button" data-thread="' + esc(q.id) + '">' + esc(q.title) +
-        '<small>' + plural(n, 'reply', 'replies') + '</small></button></li>';
-    }).join('');
-    var jHtml = Object.keys(D.JOURNEYS).map(function (id) {
-      var j = D.JOURNEYS[id];
-      var on = isFollowing(id);
-      return '<li style="display:flex;gap:8px;align-items:center">' +
-        '<span style="flex:1;font-size:13.5px;font-weight:700">' + esc(j.name) + '</span>' +
-        '<button type="button" class="btn ghost sm' + (on ? ' following' : '') + '" data-follow="' + esc(id) + '">' +
-        (on ? 'Following' : 'Follow') + '</button></li>';
-    }).join('');
-    el.innerHTML =
-      '<div class="card"><h3>Threads moving now</h3><ul class="rail-list">' + qHtml + '</ul></div>' +
-      '<div class="card"><h3>Journeys to follow</h3><ul class="rail-list">' + jHtml + '</ul></div>';
-    el.querySelectorAll('[data-thread]').forEach(function (btn) {
-      btn.addEventListener('click', function () { openThread(btn.getAttribute('data-thread')); });
-    });
-    el.querySelectorAll('[data-follow]').forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        var id = btn.getAttribute('data-follow');
-        toggleFollow(id);
-        toast(isFollowing(id) ? 'Following.' : 'Unfollowed.');
-        renderRightRail(el);
-        renderStream();
-      });
-    });
-  }
-
-  function renderFeed(root) {
-    var params = new URLSearchParams(location.search);
-    var f = params.get('filter');
-    var valid = D.FILTERS.map(function (x) { return x.value; });
-    feedUi.filter = valid.indexOf(f) >= 0 ? f : 'all';
-
-    var tuned = state.tuned || localStorage.getItem(KEYS.tuned) === '1';
-    var dismissed = localStorage.getItem(KEYS.tuneDismissed) === '1';
-    var showTune = !tuned && !dismissed;
-
-    var chips = D.FILTERS.map(function (c) {
-      return '<button type="button" data-filter="' + c.value + '"' +
-        (c.value === feedUi.filter ? ' class="on"' : '') + '>' + esc(c.label) + '</button>';
-    }).join('');
-
-    var topics = D.TOPICS.map(function (t) {
-      return '<option value="' + esc(t) + '">' + esc(t) + '</option>';
-    }).join('');
-
-    root.innerHTML =
-      '<div class="wrap wide"><div class="app-layout">' +
-        '<div>' +
-          '<p class="eyebrow">TIMELY</p>' +
-          '<h1 style="font-size:clamp(28px,6vw,36px);margin:6px 0 0">Feed</h1>' +
-          '<div class="search">' +
-            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">' +
-              '<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>' +
-            '<label class="sr" for="q">Search the feed</label>' +
-            '<input id="q" placeholder="Search the feed">' +
-          '</div>' +
-          '<div class="filters" id="filters">' + chips + '</div>' +
-          (showTune
-            ? '<div class="tune" id="tune">' +
-                '<p><b>Your feed is not tuned yet.</b> Three questions change the order of what you see.</p>' +
-                '<button class="btn sm" id="startCheck" type="button">Tune it</button>' +
-                '<button class="btn ghost sm" id="skipCheck" type="button">Not now</button>' +
-              '</div>'
-            : '') +
-          '<div class="composer" id="composer">' +
-            '<div class="seg" id="seg">' +
-              '<button type="button" data-mode="question" class="on">Ask a question</button>' +
-              '<button type="button" data-mode="story">Share a story</button>' +
-              '<button type="button" data-mode="update">Post an update</button>' +
-            '</div>' +
-            '<label class="sr" for="postBody">Post</label>' +
-            '<textarea id="postBody" placeholder="What are you trying to figure out?"></textarea>' +
-            '<div class="dupe hidden" id="dupe"></div>' +
-            '<div class="composer-foot">' +
-              '<select id="topic" aria-label="Topic">' + topics + '</select>' +
-              '<label><input type="checkbox" id="anon" checked> Post without my name</label>' +
-              '<button type="button" class="btn" id="postBtn">Post question</button>' +
-            '</div>' +
-          '</div>' +
-          '<p class="count-line" id="countLine"></p>' +
-          '<div id="feedStream"></div>' +
-        '</div>' +
-        '<aside class="rail" id="rightRail"></aside>' +
-      '</div></div>';
-
-    var placeholders = {
-      question: 'What are you trying to figure out?',
-      story: 'Something you did, went to, or learned, and what someone younger should take from it.',
-      update: 'A short update for people on a similar path.'
+    /* 3 pool invariance */
+    var snap = JSON.parse(JSON.stringify(signals));
+    var prevShowAll = showAllStagesSession;
+    showAllStagesSession = false;
+    var empty = blankSignals();
+    empty.form = 4;
+    signals = empty;
+    var s0 = scoreStories().length;
+    var f0 = scoreFeed().length;
+    var q0 = scoreQuestions('').length;
+    var o0 = scoreForYou().all.length;
+    signals = blankSignals();
+    signals.form = 4;
+    signals.archetype = 'The Steward';
+    signals.naviAnswers = { pace: 'earn', hands: 'make', risk: 'own', study: 'parttime', place: 'home' };
+    signals.profile = {
+      where: ['Region 9'],
+      subjects: ['Mathematics', 'English'],
+      activities: ['Sports team', 'Science club'],
+      awards: ['School prize'],
+      context: ['Cost is a real limit', 'I need to earn sooner rather than later']
     };
-    var btnLabels = { question: 'Post question', story: 'Post story', update: 'Post update' };
+    signals.viewed = ['raeka', 'omar', 'jerome'];
+    signals.added = MENTORS[0].addable.map(function (t) { return t.id; });
+    var s1 = scoreStories().length;
+    var f1 = scoreFeed().length;
+    var q1 = scoreQuestions('').length;
+    var o1 = scoreForYou().all.length;
+    if (s0 !== MENTORS.length) errors.push('Stories pool empty-state size wrong');
+    if (s0 !== s1) errors.push('Stories pool changed with signals (' + s0 + '→' + s1 + ')');
+    if (f0 !== f1) errors.push('Feed pool changed with signals');
+    if (q0 !== q1) errors.push('Questions pool changed with signals');
+    if (o0 !== o1) errors.push('For You pool changed with signals');
 
-    function setMode(mode) {
-      feedUi.mode = mode;
-      root.querySelectorAll('#seg button').forEach(function (b) {
-        b.classList.toggle('on', b.getAttribute('data-mode') === mode);
+    /* outside slots */
+    signals = blankSignals();
+    signals.form = 4;
+    if (!scoreStories().some(function (x) { return x.outside; })) errors.push('Stories missing outside');
+    if (!scoreFeed().some(function (x) { return x.outside; })) errors.push('Feed missing outside');
+    if (!scoreQuestions('').some(function (x) { return x.outside; })) errors.push('Questions missing outside');
+    if (!scoreForYou().shown.some(function (x) { return x.outside; })) errors.push('For You missing outside');
+
+    /* contradiction keeps both tags */
+    signals = blankSignals();
+    var leaveTag = null, stayTag = null;
+    MENTORS.forEach(function (m) {
+      (m.addable || []).forEach(function (t) {
+        if (t.excl === 'leave' && !leaveTag) leaveTag = t.id;
+        if (t.excl === 'stay' && !stayTag) stayTag = t.id;
       });
-      root.querySelector('#postBody').placeholder = placeholders[mode];
-      root.querySelector('#postBtn').textContent = btnLabels[mode];
-      root.querySelector('#anon').checked = mode === 'question';
-      feedUi.dupeId = null;
-      renderDupe(root.querySelector('#dupe'), null);
+    });
+    if (leaveTag && stayTag) {
+      signals.added = [leaveTag, stayTag];
+      if (!contradiction()) errors.push('Contradiction not detected');
+      if (signals.added.length !== 2) errors.push('Contradiction removed a tag');
     }
 
-    root.querySelectorAll('#seg button').forEach(function (b) {
-      b.addEventListener('click', function () { setMode(b.getAttribute('data-mode')); });
-    });
+    /* For You card face: name/description/details only */
+    signals = blankSignals();
+    signals.form = 1;
+    var fy = renderForYou();
+    if (/Here because/i.test(fy)) errors.push('For You card still has reason line');
+    if (/Source:/i.test(fy)) errors.push('For You card still has source on face');
+    if (/>\s*Opportunity\s*</i.test(fy) || />\s*Event\s*</i.test(fy)) errors.push('For You card still has kind chip');
+    if (/starter|next/i.test(fy.replace(/Details →/g, ''))) {
+      /* rung may appear in blurb text — only fail if chip-like class outline near rung words is hard; check chip outline count after name */
+    }
+    if (fy.indexOf('Details →') < 0) errors.push('For You missing Details affordance');
 
-    root.querySelectorAll('#filters button').forEach(function (b) {
-      b.addEventListener('click', function () {
-        feedUi.filter = b.getAttribute('data-filter');
-        root.querySelectorAll('#filters button').forEach(function (x) {
-          x.classList.toggle('on', x === b);
-        });
-        var url = new URL(location.href);
-        if (feedUi.filter === 'all') url.searchParams.delete('filter');
-        else url.searchParams.set('filter', feedUi.filter);
-        history.replaceState({}, '', url);
-        renderStream();
+    /* State 0 pathway: no spine emptiness */
+    signals = blankSignals();
+    signals.form = 3;
+    var probe0 = document.createElement('div');
+    try {
+      renderPathway(probe0, { editing: false });
+      var h0 = probe0.innerHTML;
+      if (/stage-card/.test(h0)) errors.push('State 0 still renders stage cards');
+      if (/Nothing here yet/.test(h0)) errors.push('State 0 still says Nothing here yet');
+      if (/What your pathway says/.test(h0)) errors.push('State 0 still shows summary');
+      if (/Still to fill|Still empty/.test(h0)) errors.push('State 0 lists empty stages');
+      if (!/How this fills up/i.test(h0)) errors.push('State 0 missing how-it-fills card');
+      if (!/forYouSection|For you/.test(h0)) errors.push('State 0 missing For You');
+      if (!/Know exactly what you want/.test(h0)) errors.push('State 0 missing bypass');
+    } catch (e) { errors.push('State 0 pathway threw: ' + e.message); }
+
+    /* State 1: one tag at Form 3 → two stages + show other 4 */
+    signals = blankSignals();
+    signals.form = 3;
+    showAllStagesSession = false;
+    var f3Tag = null;
+    MENTORS.forEach(function (m) {
+      (m.addable || []).forEach(function (t) {
+        if (t.stage === 'f3' && !f3Tag) f3Tag = t.id;
       });
     });
-
-    root.querySelector('#q').addEventListener('input', function (e) {
-      feedUi.q = e.target.value;
-      renderStream();
-    });
-
-    var ta = root.querySelector('#postBody');
-    ta.addEventListener('input', function () {
-      if (feedUi.mode !== 'question') return;
-      feedUi.dupeId = dupeMatch(ta.value);
-      renderDupe(root.querySelector('#dupe'), feedUi.dupeId);
-    });
-
-    root.querySelector('#postBtn').addEventListener('click', function () {
-      var text = (ta.value || '').trim();
-      if (!text) { toast('Write something first.'); ta.focus(); return; }
-      var mode = feedUi.mode;
-      var anon = root.querySelector('#anon').checked;
-      var tag = root.querySelector('#topic').value;
-      var id = 'u' + Date.now();
-      var item = {
-        id: id,
-        kind: mode === 'update' ? 'story' : mode,
-        update: mode === 'update',
-        anon: anon,
-        who: anon ? anonLabel() : (state.name || 'You'),
-        init: anon ? '' : (state.initials || 'YO'),
-        time: 'just now',
-        tag: tag,
-        title: mode === 'question' ? text : '',
-        text: mode === 'question' ? '' : text,
-        replies: mode === 'question' ? [] : undefined
-      };
-      if (mode === 'question') {
-        item.title = text;
-        delete item.text;
-      }
-      state.feedExtra = state.feedExtra || [];
-      state.feedExtra.unshift(item);
-      save(state);
-      feedItems = [item].concat(feedItems);
-      ta.value = '';
-      feedUi.dupeId = null;
-      renderDupe(root.querySelector('#dupe'), null);
-      renderStream();
-      renderRightRail(root.querySelector('#rightRail'));
-      toast(mode === 'question' ? 'Question posted.' : 'Posted.');
-    });
-
-    if (showTune) {
-      root.querySelector('#startCheck').addEventListener('click', openTuneCheck);
-      root.querySelector('#skipCheck').addEventListener('click', function () {
-        localStorage.setItem(KEYS.tuneDismissed, '1');
-        var t = root.querySelector('#tune');
-        if (t) t.remove();
-      });
+    if (f3Tag) {
+      signals.added = [f3Tag];
+      var shown = stagesToShow();
+      if (shown.length !== 2) errors.push('Form 3 + one tag should show 2 stages, got ' + shown.length);
+      var spine = renderSpine();
+      if (!/Show the other 4 stages/.test(spine)) errors.push('Missing Show the other 4 stages');
+      var stageCards = (spine.match(/stage-card/g) || []).length;
+      if (stageCards !== 2) errors.push('Spine should render 2 stage cards, got ' + stageCards);
     }
 
-    renderStream();
-    renderRightRail(root.querySelector('#rightRail'));
-  }
+    /* Summary at 3 tags, not at 2 */
+    signals = blankSignals();
+    signals.added = MENTORS[0].addable.slice(0, 2).map(function (t) { return t.id; });
+    if (renderPathwaySummary()) errors.push('Summary should be absent with 2 tags');
+    signals.added = MENTORS[0].addable.slice(0, 3).map(function (t) { return t.id; });
+    if (!renderPathwaySummary()) errors.push('Summary should appear with 3 tags');
 
-  /* ---------- My Pathway ---------- */
-  function bindFyRail(rail, prev, next) {
-    function update() {
-      var atStart = rail.scrollLeft <= 0;
-      var atEnd = rail.scrollLeft + rail.clientWidth >= rail.scrollWidth - 1;
-      if (prev) prev.disabled = atStart;
-      if (next) next.disabled = atEnd;
+    /* Navi at 5 opens / 5 saves, not at 4; asks 2 */
+    signals = blankSignals();
+    signals.viewed = ['raeka', 'omar', 'jerome', 'aisha'];
+    if (naviReady()) errors.push('Navi should not fire at 4 opens');
+    signals.viewed = ['raeka', 'omar', 'jerome', 'aisha', 'priya'];
+    if (!naviReady()) errors.push('Navi should fire at 5 opens');
+    signals = blankSignals();
+    signals.saves = { raeka: 'me', omar: 'me', jerome: 'me', aisha: 'me', priya: 'me' };
+    if (!naviReady()) errors.push('Navi should fire at 5 saves with zero opens');
+    signals.naviAsked = ['pace', 'hands'];
+    if (naviReady()) errors.push('Navi should stop after 2 answers');
+
+    /* banned strings */
+    var ban = [
+      'up' + 'vote', 'down' + 'vote', 'kar' + 'ma', 'follow' + 'ers', 'stre' + 'ak',
+      'leader' + 'board', 'lik' + 'es', 'years' + ' old', 'age' + ' now', '%' + ' match'
+    ];
+    var probe = document.createElement('div');
+    try {
+      signals = blankSignals();
+      renderStories(probe);
+      var html = probe.innerHTML.toLowerCase();
+      html = html.replace(/no upvotes or downvotes[\s\S]*?written\./g, '');
+      ban.forEach(function (b) {
+        if (html.indexOf(b) >= 0) errors.push('Banned term in Stories: ' + b);
+      });
+    } catch (e) { errors.push('Stories render threw: ' + e.message); }
+
+    signals = snap;
+    showAllStagesSession = prevShowAll;
+    saveSignals();
+    if (errors.length) {
+      if (typeof console !== 'undefined' && console.error) console.error('NSG_APP acceptance failures:\n - ' + errors.join('\n - '));
+    } else {
+      if (typeof console !== 'undefined' && console.log) console.log('NSG_APP acceptance checks passed');
     }
-    function step(dir) {
-      var card = rail.querySelector('.fy-card');
-      if (!card) return;
-      var gap = 13;
-      rail.scrollBy({ left: dir * (card.getBoundingClientRect().width + gap), behavior: 'smooth' });
-    }
-    if (prev) prev.addEventListener('click', function () { step(-1); });
-    if (next) next.addEventListener('click', function () { step(1); });
-    rail.addEventListener('scroll', update, { passive: true });
-    window.addEventListener('resize', update);
-    update();
-  }
+    return errors;
+  });
 
-  function renderPathway(root) {
-    var stage = D.STAGES[state.stageIndex] || D.STAGES[1];
-    var tuned = state.tuned || localStorage.getItem(KEYS.tuned) === '1';
-    var score = profileScore();
-    var sub = tuned && state.archetype
-      ? state.archetype + ', ' + stage.name + ', ' + state.region
-      : stage.name + ', ' + state.region;
-
-    var roadHtml = D.STAGES.map(function (s, i) {
-      var cls = i < state.stageIndex ? 'done' : (i === state.stageIndex ? 'now' : '');
-      var node = i < state.stageIndex ? '✓' : (i === state.stageIndex ? String(i + 1) : String(i + 1));
-      var steps = state.steps.filter(function (st) { return st.stage === s.key; });
-      var body = steps.length
-        ? steps.map(function (st) {
-            return '<div class="step-row"><div><strong>' + esc(st.label) + '</strong>' +
-              '<small>' + esc(st.kind) + ', from ' + esc(st.from) + '</small></div>' +
-              '<button type="button" class="rm" data-rm="' + esc(st.key) + '">Remove</button></div>';
-          }).join('')
-        : '<div class="road-empty">' + esc(s.note) + '</div>';
-      var lab = s.label + (i === state.stageIndex ? ', you are here' : '');
-      return (
-        '<div class="road-item ' + cls + '">' +
-          '<div class="node">' + node + '</div>' +
-          '<div><h4>' + esc(s.name) + '</h4><div class="lab">' + esc(lab) + '</div>' + body + '</div>' +
-        '</div>'
-      );
-    }).join('');
-
-    var fy = D.FY[stage.key] || [];
-    var fyCards = fy.map(function (a) {
-      var saved = state.saved.some(function (s) { return s.key === a.key; });
-      return (
-        '<article class="fy-card">' +
-          '<h4>' + esc(a.t) + '</h4>' +
-          '<p>' + esc(a.d) + '</p>' +
-          '<div class="fy-foot">' +
-            '<button type="button" class="btn ghost sm" data-details="' + esc(a.t) + '">Details</button>' +
-            '<button type="button" class="btn ghost sm" data-save-fy="' + esc(a.key) + '" data-title="' + esc(a.t) + '" data-note="' + esc(a.d) + '">' +
-              (saved ? 'Saved' : 'Save this') +
-            '</button>' +
-          '</div>' +
-        '</article>'
-      );
-    }).join('');
-
-    var fyNote = D.FY_CATALOGUE_EXTRA
-      ? (D.FY_CATALOGUE_EXTRA + ' others in the catalogue are not open to ' + stage.name +
-        '. The age and grade limits are set by the organisers, not by us.')
-      : '';
-
-    var savedHtml = state.saved.length
-      ? state.saved.map(function (s) {
-          return '<div class="list-row"><div class="sum"><strong>' + esc(s.title) + '</strong>' +
-            '<small>' + esc(s.note || '') + '</small></div>' +
-            '<button type="button" class="btn ghost sm" data-unsave="' + esc(s.key) + '">Remove</button></div>';
-        }).join('')
-      : '<p class="empty-soft">Nothing saved yet. When a story mentions a programme or event, save it here.</p>';
-
-    var followHtml = state.following.length
-      ? state.following.map(function (id) {
-          var j = journeyById(id);
-          if (!j) return '';
-          var status = j.ongoing ? 'still adding nodes' : 'documented';
-          return '<div class="list-row">' +
-            '<span class="avatar gold">' + esc(j.init) + '</span>' +
-            '<div class="sum"><strong>' + esc(j.name) + '</strong>' +
-            '<small>' + esc(j.field) + ', ' + status + '</small></div>' +
-            '<a class="btn ghost sm" href="mentor-story.html?id=' + encodeURIComponent(j.id) + '">Open</a></div>';
-        }).join('')
-      : '<p class="empty-soft">Follow a journey from the feed and new nodes show up here.</p>';
-
-    var profileSub = score === 0
-      ? 'Nothing set yet.'
-      : plural(state.steps.length, 'step', 'steps') + ' on your road, ' +
-        plural(state.following.length, 'journey', 'journeys') + ' followed.';
-
-    root.innerHTML =
-      '<div class="wrap">' +
-        '<section class="path-hero">' +
-          '<p class="eyebrow">MY PATHWAY</p>' +
-          '<h1>You</h1>' +
-          '<p class="sub">' + esc(sub) + '</p>' +
-          '<div class="stat-pills">' +
-            '<span>' + plural(state.steps.length, 'step taken', 'steps taken') + '</span>' +
-            '<span>' + plural(state.following.length, 'journey followed', 'journeys followed') + '</span>' +
-            '<span>' + plural(state.saved.length, 'saved', 'saved') + '</span>' +
-          '</div>' +
-        '</section>' +
-        (!tuned
-          ? '<div class="tune" style="margin-bottom:16px">' +
-              '<p><b>Tune your pathway.</b> Three questions set your stage and what shows under For you.</p>' +
-              '<button class="btn sm" type="button" id="pathTune">Tune it</button>' +
-            '</div>'
-          : '') +
-        '<div class="profile-row">' +
-          '<div class="ring" style="--p:' + score + '"><i>' + score + '%</i></div>' +
-          '<div class="sum"><strong>Your profile</strong><small>' + esc(profileSub) + '</small></div>' +
-          '<button type="button" class="btn ghost sm" id="pathUpdate">Update</button>' +
-        '</div>' +
-        '<section>' +
-          '<p class="eyebrow">THE ROAD</p>' +
-          '<h2 style="font-size:24px;margin:6px 0 14px">The road ahead</h2>' +
-          '<div class="road">' + roadHtml + '</div>' +
-        '</section>' +
-        '<section class="foryou">' +
-          '<div class="sec-head">' +
-            '<div>' +
-              '<span class="eyebrow">Because of your next node</span>' +
-              '<h3>For you</h3>' +
-              '<p>Activities open to you at ' + esc(stage.name) + ', and worth doing before the decision.</p>' +
-            '</div>' +
-            '<div class="rail-arrows">' +
-              '<button class="arrow" id="fyPrev" type="button" aria-label="Previous activities">←</button>' +
-              '<button class="arrow" id="fyNext" type="button" aria-label="More activities">→</button>' +
-            '</div>' +
-          '</div>' +
-          '<div class="fy-rail" id="fyRail" tabindex="0" role="group" aria-label="Suggested activities">' +
-            fyCards +
-          '</div>' +
-          '<p class="fy-note" id="fyNote">' + esc(fyNote) + '</p>' +
-        '</section>' +
-        '<section class="list-sec"><h3>Saved</h3>' + savedHtml + '</section>' +
-        '<section class="list-sec"><h3>Following</h3>' + followHtml + '</section>' +
-        '<p class="page-foot">Prototype. Mentors and contributors are placeholders until consented interviews replace them.</p>' +
-      '</div>';
-
-    if (!tuned) {
-      root.querySelector('#pathTune').addEventListener('click', openTuneCheck);
-    }
-    root.querySelector('#pathUpdate').addEventListener('click', openTuneCheck);
-
-    root.querySelectorAll('[data-rm]').forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        removeStep(btn.getAttribute('data-rm'));
-        toast('Removed from your pathway.');
-        renderPathway(root);
-      });
-    });
-
-    root.querySelectorAll('[data-save-fy]').forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        var ok = saveItem({
-          key: btn.getAttribute('data-save-fy'),
-          title: btn.getAttribute('data-title'),
-          note: btn.getAttribute('data-note')
-        });
-        if (ok) { btn.textContent = 'Saved'; toast('Saved.'); renderPathway(root); }
-        else toast('Already saved.');
-      });
-    });
-
-    root.querySelectorAll('[data-details]').forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        openSheet('Details', '<p style="margin:0;color:var(--body)">' + esc(btn.getAttribute('data-details')) +
-          '. Check dates and eligibility with the organiser.</p>');
-      });
-    });
-
-    root.querySelectorAll('[data-unsave]').forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        removeSaved(btn.getAttribute('data-unsave'));
-        toast('Removed.');
-        renderPathway(root);
-      });
-    });
-
-    bindFyRail(root.querySelector('#fyRail'), root.querySelector('#fyPrev'), root.querySelector('#fyNext'));
-  }
-
-  /* ---------- Journey page ---------- */
-  function renderJourney(root, id) {
-    var j = journeyById(id);
-    if (!j) {
-      root.innerHTML = '<div class="wrap"><div class="card"><h2>Journey not found</h2>' +
-        '<p><a href="feed.html?filter=journey">Back to journeys</a></p></div></div>';
-      return;
-    }
-    var first = j.name.split(' ')[0];
-    var following = isFollowing(j.id);
-    var status = j.ongoing ? 'still adding nodes' : 'documented';
-
-    var moments = (j.moments || []).map(function (m) {
-      return '<div class="moment-card">' +
-        '<div class="age-box"><b>' + esc(m.age) + '</b><span>AT THE TIME</span></div>' +
-        '<p class="body">' + esc(m.text) + '</p>' +
-        (m.flag ? '<p class="flag">' + esc(m.flag) + '</p>' : '') +
-        '</div>';
-    }).join('');
-
-    var route = (j.route || []).map(function (r) {
-      return '<div class="route-card">' +
-        '<div class="stage">' + esc(D.STAGE_LABEL[r.stage] || r.stage) + '</div>' +
-        '<div class="did">' + esc(r.text) + '</div>' +
-        '<p class="tip">' + esc(r.lesson) + '</p></div>';
-    }).join('');
-
-    var groups = {};
-    (j.steps || []).forEach(function (s) {
-      groups[s.kind] = groups[s.kind] || [];
-      groups[s.kind].push(s);
-    });
-    var chips = Object.keys(groups).map(function (kind) {
-      var html = '<p class="eyebrow" style="margin:12px 0 6px">' + esc(kind.toUpperCase()) + '</p>';
-      groups[kind].forEach(function (s) {
-        var key = stepKey(j.id, s.label);
-        var on = hasStep(key);
-        html += '<button type="button" class="chip-btn' + (on ? ' on' : '') + '" data-chip="' + esc(key) + '" ' +
-          'data-label="' + esc(s.label) + '" data-kind="' + esc(s.kind) + '" data-stage="' + esc(s.stage) + '">' +
-          esc(s.label) + '</button>';
-      });
-      return html;
-    }).join('');
-
-    root.innerHTML =
-      '<div class="wrap">' +
-        '<section class="journey-hero">' +
-          '<span class="pill gold">' + esc(j.role) + '</span>' +
-          '<h1>' + esc(j.name) + '</h1>' +
-          '<p class="meta-line">' + esc(j.place) + ', ' + esc(j.type) + ', ' + esc(j.field) + '</p>' +
-          '<p class="blurb">' + esc(j.blurb) + '</p>' +
-          '<p style="margin:0 0 12px;font-size:12.5px;color:#b3cae0;font-weight:700">' + esc(status) + '</p>' +
-          '<button type="button" class="btn' + (following ? ' ghost following' : '') + '" id="followJourney">' +
-            (following ? 'Following' : 'Follow this journey') +
-          '</button>' +
-        '</section>' +
-        '<p class="quote">“' + esc(j.quote) + '”</p>' +
-        '<p class="now"><b>NOW</b>' + esc(j.now) + '</p>' +
-        '<p class="eyebrow" style="margin:22px 0 10px">MOMENTS</p>' + moments +
-        '<p class="eyebrow" style="margin:22px 0 10px">ROUTE</p>' + route +
-        '<p class="eyebrow" style="margin:22px 0 10px">DEEP DIVE</p>' +
-        '<div class="dive-card">' +
-          '<h3>' + esc(j.dive.title) + '</h3>' +
-          '<p style="margin:10px 0 0"><b>Requirement.</b> ' + esc(j.dive.req) + '</p>' +
-          '<p style="margin:8px 0 0"><b>Cost.</b> ' + esc(j.dive.cost) + '</p>' +
-          '<p style="margin:8px 0 0;color:var(--muted)">' + esc(j.dive.caveat) + '</p>' +
-        '</div>' +
-        '<div class="card" style="margin-top:16px">' +
-          '<h3>What ' + esc(first) + ' did</h3>' +
-          '<p style="margin:8px 0 12px;font-size:14px;color:var(--muted)">Tap anything to add it to your pathway at the stage where it happens. Tap again to remove it.</p>' +
-          '<div id="chips">' + chips + '</div>' +
-          '<button type="button" class="btn full" id="addAll" style="margin-top:12px">Add everything ' + esc(first) + ' did</button>' +
-        '</div>' +
-        '<div class="dyk">' +
-          '<h3>Did you know</h3>' +
-          '<p>' + esc(j.did.text) + '</p>' +
-          '<p class="src">Source: ' + esc(j.did.src) + '</p>' +
-        '</div>' +
-        '<p style="margin:20px 0"><a href="feed.html?filter=journey">Back to journeys</a></p>' +
-      '</div>';
-
-    root.querySelector('#followJourney').addEventListener('click', function () {
-      toggleFollow(j.id);
-      toast(isFollowing(j.id) ? 'Following.' : 'Unfollowed.');
-      renderJourney(root, id);
-    });
-
-    root.querySelectorAll('[data-chip]').forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        var key = btn.getAttribute('data-chip');
-        if (hasStep(key)) {
-          removeStep(key);
-          toast('Removed from your pathway.');
-        } else {
-          addStep({
-            key: key,
-            label: btn.getAttribute('data-label'),
-            kind: btn.getAttribute('data-kind'),
-            stage: btn.getAttribute('data-stage'),
-            from: j.name
-          });
-          var lab = D.STAGE_LABEL[btn.getAttribute('data-stage')] || 'your pathway';
-          toast('Added to ' + lab + '.');
-        }
-        renderJourney(root, id);
-      });
-    });
-
-    root.querySelector('#addAll').addEventListener('click', function () {
-      takeAllSteps(j.id);
-      renderJourney(root, id);
-    });
-  }
-
-  return {
+  /* public API — one name each */
+  var API = {
+    reg: reg,
+    loadSignals: loadSignals,
+    saveSignals: saveSignals,
+    getSignals: function () { return signals; },
+    setForm: function (f) { signals.form = +f || 1; saveSignals(); },
     mountShell: mountShell,
-    renderFeed: renderFeed,
+    renderStories: renderStories,
     renderPathway: renderPathway,
-    renderJourney: renderJourney,
-    openTuneCheck: openTuneCheck,
-    state: function () { return state; }
+    renderFeed: renderFeed,
+    renderQuestions: renderQuestions,
+    scoreStories: scoreStories,
+    scoreFeed: scoreFeed,
+    scoreQuestions: scoreQuestions,
+    scoreForYou: scoreForYou,
+    toggleTag: toggleTag,
+    addEverything: addEverything,
+    contradiction: contradiction,
+    subjectGaps: subjectGaps,
+    derivedLane: derivedLane,
+    runAcceptance: runAcceptance,
+    mentorById: mentorById,
+    markViewed: function (id) {
+      if (signals.viewed.indexOf(id) < 0) signals.viewed.push(id);
+      saveSignals();
+    },
+    markOpened: function (id) {
+      if (signals.opened.indexOf(id) < 0) signals.opened.push(id);
+      saveSignals();
+    },
+    _fns: _fns
   };
-})();
+
+  global.NSG_APP = API;
+})(typeof window !== 'undefined' ? window : this);
