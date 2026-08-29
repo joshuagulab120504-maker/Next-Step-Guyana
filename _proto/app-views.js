@@ -149,13 +149,19 @@ function finishSetup() {
   S.blocker = d.blocker;
   S.archetype = d.archetype;
   S.setupStep = 0;
-  closeSheet();
-  setView('pathway');
+  hideSheetUi();
+  S.view = 'pathway';
+  S.unread = 0;
+  render();
   toast('Pathway built. Your timeline starts at ' + S.form + '.');
 }
 
 function renderSetup(step) {
   var q = SETUP_QS[step];
+  if (!q) {
+    finishSetup();
+    return { crumb: 'Setup', title: 'Done', html: '' };
+  }
   var pct = Math.round(((step + 1) / SETUP_QS.length) * 100);
   var html =
     '<div class="setup">' +
@@ -175,8 +181,11 @@ function renderSetup(step) {
   var i, o;
   for (i = 0; i < q.opts.length; i++) {
     o = q.opts[i];
+    var selected = S.setupDraft[q.key] === o.v;
     html +=
-      '<button type="button" class="opt" data-setup-key="' +
+      '<button type="button" class="opt' +
+      (selected ? ' on' : '') +
+      '" data-setup-key="' +
       esc(q.key) +
       '" data-setup-val="' +
       esc(o.v) +
@@ -188,26 +197,47 @@ function renderSetup(step) {
       (o.sub ? '<span>' + esc(o.sub) + '</span>' : '') +
       '</button>';
   }
-  html += '</div></div>';
+  html += '</div>';
+  if (step > 0) {
+    html +=
+      '<button type="button" class="btn g sm" data-setup-back="1">Back</button>';
+  }
+  html += '</div>';
   return {
     crumb: 'Setup',
     title: 'Build my pathway',
     html: html,
-    after: function () {}
+    after: function () {
+      byId('sheet-back').hidden = step < 1;
+    }
   };
 }
 
 function renderPathwayBlank() {
+  var waiting = S.taken.length;
   return (
     '<div class="page-path">' +
     '<div class="path-hero">' +
     '<p class="eyebrow">You</p>' +
     '<h1>Nothing set up yet</h1>' +
-    '<div class="stat-pills"><span class="p">0 steps</span><span class="p">0 sessions</span><span class="p">0 saved</span></div>' +
+    '<div class="stat-pills"><span class="p">' +
+    waiting +
+    ' steps waiting</span><span class="p">' +
+    S.booked.length +
+    ' sessions</span><span class="p">' +
+    S.saved.length +
+    ' saved</span></div>' +
     '</div>' +
     '<div class="card gold-edge">' +
     '<h2>This page is empty on purpose.</h2>' +
     '<p>Six questions about where you are and what is in your way. It builds your timeline, marks the decisions that are actually near, and points you at sessions worth sitting in.</p>' +
+    (waiting
+      ? '<p class="muted">' +
+        waiting +
+        ' item' +
+        (waiting === 1 ? '' : 's') +
+        ' already waiting to land on your timeline once setup is done.</p>'
+      : '') +
     '<button type="button" class="btn" data-open="setup" data-id="0">Build my pathway</button>' +
     '</div>' +
     '<div class="card">' +
@@ -556,13 +586,21 @@ function similarReason(id) {
 function viewThread(v) {
   var item = feedById(v.id);
   if (!item) return { crumb: 'Thread', title: 'Missing', html: '<p>Not found.</p>' };
+  ensureReplyIds(item);
+  if (item.mine && item.newReply) {
+    item.newReply = false;
+    if (S.unread > 0) S.unread -= 1;
+  }
   pushRecent('thread', item.id, item.title);
+  var anon = !!item.anon || !item.author;
+  var a = item.author ? author(item.author) : null;
+  var name = anon ? item.who || youName() : a && a.name ? a.name : youName();
   var html = '<div class="detail">';
   html +=
     '<div class="card"><div class="card-head">' +
-    avatarHtml(null, true) +
+    avatarHtml(a, anon) +
     '<div class="meta"><div class="name">' +
-    esc(item.who || 'Student') +
+    esc(name) +
     '</div><div class="sub">' +
     esc(item.time || '') +
     '</div></div></div>';
@@ -595,24 +633,35 @@ function viewThread(v) {
     r = item.replies[i];
     ra = r.a ? author(r.a) : { name: r.who || 'Student', init: '?', pos: '', system: true };
     html +=
-      '<div class="card reply-card">' +
+      '<div class="card reply-card" id="reply-' +
+      esc(r.id) +
+      '">' +
       avatarHtml(ra, !r.a) +
-      '<div><strong>' +
+      '<div class="reply-body"><strong>' +
       esc(ra.name) +
       '</strong><p class="muted">' +
       esc(ra.pos || '') +
       '</p><p>' +
       esc(r.text) +
-      '</p>' +
-      (r.a
-        ? '<button type="button" class="btn sm g" data-open="mentor" data-id="' +
-          esc(r.a) +
-          '">Profile</button>'
-        : '') +
-      '</div></div>';
+      '</p><div class="flag-row">';
+    if (r.a) {
+      html +=
+        '<button type="button" class="btn sm g" data-open="mentor" data-id="' +
+        esc(r.a) +
+        '">Profile</button>';
+    }
+    if (r.mine) {
+      html +=
+        '<button type="button" class="btn q" data-del-reply="' +
+        esc(item.id) +
+        '" data-rid="' +
+        esc(r.id) +
+        '">Delete reply</button>';
+    }
+    html += '</div></div></div>';
   }
   html +=
-    '<div class="card"><label class="field-label" for="thread-reply">Add a reply</label>' +
+    '<div class="card reply-composer"><label class="field-label" for="thread-reply">Add a reply</label>' +
     '<textarea id="thread-reply" rows="3" placeholder="One clear point is enough"></textarea>' +
     '<button type="button" class="btn sm" data-thread-reply="' +
     esc(item.id) +
@@ -624,28 +673,35 @@ function viewThread(v) {
     var ss = sessionById(item.sess);
     if (ss) html += renderSessionMini(ss);
   }
+  var answered = false;
   html += '<section><h3>Who answered</h3>';
   var seen = {};
   for (i = 0; i < (item.replies || []).length; i++) {
     if (item.replies[i].a && !seen[item.replies[i].a]) {
       seen[item.replies[i].a] = true;
+      answered = true;
       html += mentorRow(item.replies[i].a, '');
     }
   }
+  if (!answered) html += '<p class="muted">No mentor replies yet.</p>';
   html += '</section>';
   html += '<section><h3>Students asked these next</h3>';
+  var nextN = 0;
   for (i = 0; i < (item.rel || []).length; i++) {
     var rel = feedById(item.rel[i]);
-    if (rel)
+    if (rel) {
+      nextN++;
       html +=
         '<button type="button" class="card clickable row-btn" data-open="thread" data-id="' +
         esc(rel.id) +
         '">' +
         esc(rel.title) +
         '</button>';
+    }
   }
   for (i = 0; i < FEED.length; i++) {
     if (FEED[i].kind === 'question' && FEED[i].cat === item.cat && FEED[i].id !== item.id) {
+      nextN++;
       html +=
         '<button type="button" class="card clickable row-btn" data-open="thread" data-id="' +
         esc(FEED[i].id) +
@@ -655,6 +711,7 @@ function viewThread(v) {
       break;
     }
   }
+  if (!nextN) html += '<p class="muted">No related questions yet.</p>';
   html += '</section>';
   html += askAboutBlock('About ' + item.title + ': ', item.cat);
   html += '</div>';
@@ -677,27 +734,47 @@ function viewStory(v) {
   var item = feedById(v.id);
   if (!item) return { crumb: 'Story', title: 'Missing', html: '<p>Not found.</p>' };
   pushRecent('story', item.id, item.title);
-  var a = author(item.author);
-  var j = JOURNEYS[item.author];
+  var mine = !!item.mine;
+  var anon = !!item.anon;
+  var a = !mine && item.author ? author(item.author) : null;
+  var j = !mine && item.author ? JOURNEYS[item.author] : null;
+  var name = mine ? (anon ? studentLabel() : youName()) : a.name;
+  var pos = mine ? '' : a.pos || '';
   var html = '<div class="detail">';
   html +=
     '<div class="card"><div class="card-head">' +
-    avatarHtml(a, false) +
+    avatarHtml(a, mine || anon) +
     '<div class="meta"><div class="name">' +
-    esc(a.name) +
+    esc(name) +
     '</div><div class="sub">' +
-    esc(a.pos) +
-    '</div></div>' +
-    '<button type="button" class="btn sm g" data-follow="' +
-    esc(item.author) +
-    '">' +
-    (isFollowing(item.author) ? 'Following' : 'Follow') +
-    '</button></div>' +
+    esc(pos) +
+    '</div></div>';
+  if (!mine && a) {
+    html +=
+      '<button type="button" class="btn sm g" data-follow="' +
+      esc(item.author) +
+      '">' +
+      (isFollowing(item.author) ? 'Following' : 'Follow') +
+      '</button>';
+  }
+  html +=
+    '</div>' +
     '<h2 class="t27">' +
     esc(item.title) +
     '</h2>' +
-    pill(item.cat, 'dot', 'data-topic="' + esc(item.cat) + '"') +
-    '</div>';
+    pill(item.cat, 'dot', 'data-topic="' + esc(item.cat) + '"');
+  if (mine) {
+    html +=
+      '<div class="flag-row"><span class="p green">Your post</span>' +
+      (item.edited ? '<span class="p">Edited</span>' : '') +
+      '<button type="button" class="btn q" data-edit="' +
+      esc(item.id) +
+      '">Edit</button>' +
+      '<button type="button" class="btn q" data-del="' +
+      esc(item.id) +
+      '">Delete</button></div>';
+  }
+  html += '</div>';
   html += '<div class="card article">';
   var i;
   for (i = 0; i < item.body.length; i++) {
@@ -711,44 +788,50 @@ function viewStory(v) {
     ' Inspired me · ' +
     (item.insp || 0) +
     '</button></div>';
-  html += '<section class="card"><h3>What to take from it</h3><ul class="tips">';
-  for (i = 0; i < (item.takeaways || []).length; i++) {
-    html += '<li>' + iconCheck() + ' ' + esc(item.takeaways[i]) + '</li>';
+  if (item.takeaways && item.takeaways.length) {
+    html += '<section class="card"><h3>What to take from it</h3><ul class="tips">';
+    for (i = 0; i < item.takeaways.length; i++) {
+      html += '<li>' + iconCheck() + ' ' + esc(item.takeaways[i]) + '</li>';
+    }
+    html +=
+      '</ul><button type="button" class="btn sm" data-take-story="' +
+      esc(item.id) +
+      '">Put these on my pathway</button></section>';
   }
-  html +=
-    '</ul><button type="button" class="btn sm" data-take-story="' +
-    esc(item.id) +
-    '">Put these on my pathway</button></section>';
-  html +=
-    '<button type="button" class="card clickable" data-open="mentor" data-id="' +
-    esc(item.author) +
-    '"><p class="eyebrow">The person behind it</p>' +
-    avatarHtml(a, false) +
-    '<strong>' +
-    esc(a.name) +
-    '</strong><p class="muted">' +
-    esc(a.pos) +
-    (j ? ' · ' + esc(j.place) : '') +
-    '</p>' +
-    (j ? '<p class="muted">' + esc(j.type) + ' · ' + esc(j.blurb) + '</p>' : '') +
-    '<p>See their full journey, stories and answers</p></button>';
+  if (!mine && a) {
+    html +=
+      '<button type="button" class="card clickable" data-open="mentor" data-id="' +
+      esc(item.author) +
+      '"><p class="eyebrow">The person behind it</p>' +
+      avatarHtml(a, false) +
+      '<strong>' +
+      esc(a.name) +
+      '</strong><p class="muted">' +
+      esc(a.pos) +
+      (j ? ' · ' + esc(j.place) : '') +
+      '</p>' +
+      (j ? '<p class="muted">' + esc(j.type) + ' · ' + esc(j.blurb) + '</p>' : '') +
+      '<p>See their full journey, stories and answers</p></button>';
+  }
   if (item.opp && OPPS[item.opp]) html += miniOpp(OPPS[item.opp]);
   if (item.sess) {
     var ss = sessionById(item.sess);
     if (ss) html += renderSessionMini(ss);
   }
-  html += '<section><h3>More from ' + esc(a.name.split(' ')[0]) + '</h3>';
-  for (i = 0; i < FEED.length; i++) {
-    if (FEED[i].kind === 'story' && FEED[i].author === item.author && FEED[i].id !== item.id) {
-      html +=
-        '<button type="button" class="card clickable row-btn" data-open="story" data-id="' +
-        esc(FEED[i].id) +
-        '">' +
-        esc(FEED[i].title) +
-        '</button>';
+  if (!mine && a) {
+    html += '<section><h3>More from ' + esc(a.name.split(' ')[0]) + '</h3>';
+    for (i = 0; i < FEED.length; i++) {
+      if (FEED[i].kind === 'story' && FEED[i].author === item.author && FEED[i].id !== item.id) {
+        html +=
+          '<button type="button" class="card clickable row-btn" data-open="story" data-id="' +
+          esc(FEED[i].id) +
+          '">' +
+          esc(FEED[i].title) +
+          '</button>';
+      }
     }
+    html += '</section>';
   }
-  html += '</section>';
   html +=
     '<section><h3>Stories like this one</h3><p class="muted">Different people, similar turn.</p>';
   for (i = 0; i < FEED.length; i++) {
@@ -937,6 +1020,7 @@ function viewBook(v) {
   var lead = author(s.lead);
   var left = Math.max(0, s.seats - s.taken);
   var booked = S.booked.indexOf(s.id) !== -1;
+  var waiting = S.waitlist.indexOf(s.id) !== -1;
   var html =
     '<div class="detail"><p class="eyebrow">' +
     esc(s.pod) +
@@ -954,18 +1038,26 @@ function viewBook(v) {
       esc(s.id) +
       '">Cancel place</button></div>';
   } else if (left === 0) {
-    html +=
-      '<div class="callout gold"><p>This session is full. Join the waitlist and you move up if someone cancels.</p>' +
-      '<button type="button" class="btn" data-waitlist="' +
-      esc(s.id) +
-      '">Join waitlist</button></div>';
+    if (waiting) {
+      html +=
+        '<div class="callout gold"><p>You are on the waitlist. You move up if someone cancels.</p>' +
+        '<button type="button" class="btn g" data-leave-waitlist="' +
+        esc(s.id) +
+        '">Leave waitlist</button></div>';
+    } else {
+      html +=
+        '<div class="callout gold"><p>This session is full. Join the waitlist and you move up if someone cancels.</p>' +
+        '<button type="button" class="btn" data-waitlist="' +
+        esc(s.id) +
+        '">Join waitlist</button></div>';
+    }
   } else {
     html += '<p>' + left + ' places remaining</p>';
     html +=
       '<label class="field-label" for="book-q">What do you want to leave knowing?</label>' +
       '<input type="text" id="book-q" placeholder="One sentence is enough"/>';
     html +=
-      '<label class="check"><input type="checkbox" id="book-wa" checked/> Send my reminders on WhatsApp. Confirmation, a reminder the day before, and the link an hour before. Your number is never shown to mentors or other students.</label>';
+      '<label class="check"><input type="checkbox" id="book-wa" checked/> Send my reminders on WhatsApp. Confirmation, a reminder the day before, and the link an hour before. Your number is never shown to mentors or other students. <span class="muted">Prototype note: no number is collected here. The tick confirms you want reminders.</span></label>';
     html +=
       '<button type="button" class="btn" data-confirm-book="' +
       esc(s.id) +
@@ -1279,7 +1371,7 @@ function viewTopic(v) {
 function viewEdit(v) {
   var item = feedById(v.id);
   if (!item) return { crumb: 'Edit', title: 'Missing', html: '<p>Not found.</p>' };
-  var text = item.title || (item.body && item.body.join('\n')) || '';
+  var text = item.kind === 'story' ? (item.body || []).join('\n\n') : item.title || '';
   var html =
     '<div class="detail"><label class="field-label" for="edit-text">Edit your post</label>' +
     '<textarea id="edit-text" style="height:140px">' +
@@ -1330,6 +1422,9 @@ function viewDel(v) {
 
 function viewSetup(v) {
   var step = parseInt(v.id, 10) || 0;
+  if (String(v.id) === '0' && NAV.length === 1) {
+    /* fresh open keeps prior draft so redo can resume; clear only when redo requested */
+  }
   S.setupStep = step;
   return renderSetup(step);
 }
@@ -1499,6 +1594,11 @@ function openKind(kind, id) {
     setup: 'setup'
   };
   if (!map[kind]) return;
+  if (kind === 'setup') {
+    S.setupDraft = {};
+    S.setupStep = 0;
+    id = '0';
+  }
   go({ t: map[kind], id: id });
 }
 
@@ -1583,9 +1683,15 @@ function wire() {
       return;
     }
 
+    if (t.id === 'logo' || closestEl(t, '#logo')) {
+      /* Let the brand link go to the marketing homepage. */
+      return;
+    }
+
     btn = closestEl(t, '[data-filter]');
     if (btn) {
       S.filter = btn.getAttribute('data-filter');
+      if (S.filter === 'all') S.query = '';
       render();
       return;
     }
@@ -1673,6 +1779,25 @@ function wire() {
       return;
     }
 
+    btn = closestEl(t, '[data-setup-back]');
+    if (btn) {
+      if (S.setupStep > 0) {
+        S.setupStep -= 1;
+        NAV[NAV.length - 1] = { t: 'setup', id: String(S.setupStep) };
+        paint();
+      }
+      return;
+    }
+
+    if ((t.id === 'sheet-back' || closestEl(t, '#sheet-back')) && NAV.length && NAV[NAV.length - 1].t === 'setup') {
+      if (S.setupStep > 0) {
+        S.setupStep -= 1;
+        NAV[NAV.length - 1] = { t: 'setup', id: String(S.setupStep) };
+        paint();
+        return;
+      }
+    }
+
     btn = closestEl(t, '[data-jstep]');
     if (btn) {
       toggleTaken({
@@ -1690,15 +1815,23 @@ function wire() {
       var jid = btn.getAttribute('data-jstep-all');
       var j = JOURNEYS[jid];
       var si;
+      var added = 0;
       for (si = 0; si < j.steps.length; si++) {
-        addTaken({
-          key: jid + ':' + j.steps[si].label,
-          label: j.steps[si].label,
-          kind: j.steps[si].kind,
-          stage: j.steps[si].stage,
-          from: author(jid).name
-        });
+        if (
+          addTaken(
+            {
+              key: jid + ':' + j.steps[si].label,
+              label: j.steps[si].label,
+              kind: j.steps[si].kind,
+              stage: j.steps[si].stage,
+              from: author(jid).name
+            },
+            true
+          )
+        )
+          added++;
       }
+      toast(added ? 'Added ' + added + ' steps to your pathway.' : 'Those steps are already on your pathway.');
       paint();
       render();
       return;
@@ -1766,9 +1899,17 @@ function wire() {
       var bs = sessionById(bid);
       var bq = byId('book-q');
       var qtext = bq && bq.value ? bq.value.trim() : '';
-      if (qtext) bs.qs.push(qtext);
+      if (!qtext || qtext.length < 4) {
+        toast('Add one sentence about what you want to leave knowing.');
+        if (bq) bq.focus();
+        return;
+      }
+      bs.qs.push(qtext);
       bs.taken += 1;
       if (S.booked.indexOf(bid) === -1) S.booked.push(bid);
+      S.waitlist = S.waitlist.filter(function (x) {
+        return x !== bid;
+      });
       toast('Booked. It is on your pathway under Sessions.');
       paint();
       render();
@@ -1791,7 +1932,23 @@ function wire() {
 
     btn = closestEl(t, '[data-waitlist]');
     if (btn) {
+      var wid = btn.getAttribute('data-waitlist');
+      if (S.waitlist.indexOf(wid) === -1) S.waitlist.push(wid);
       toast('Waitlist noted. You move up if someone cancels.');
+      paint();
+      render();
+      return;
+    }
+
+    btn = closestEl(t, '[data-leave-waitlist]');
+    if (btn) {
+      var lid = btn.getAttribute('data-leave-waitlist');
+      S.waitlist = S.waitlist.filter(function (x) {
+        return x !== lid;
+      });
+      toast('Left the waitlist.');
+      paint();
+      render();
       return;
     }
 
@@ -1801,8 +1958,16 @@ function wire() {
       var eitem = feedById(eid);
       var et = byId('edit-text');
       var ec = byId('edit-cat');
-      if (eitem.kind === 'question') eitem.title = et.value.trim();
-      else if (eitem.kind === 'story') eitem.body = et.value.split(/\n+/);
+      var etxt = et && et.value ? et.value.trim() : '';
+      if (!etxt || etxt.length < 8) {
+        toast('Write a little more before saving.');
+        return;
+      }
+      if (eitem.kind === 'question') eitem.title = etxt;
+      else if (eitem.kind === 'story') {
+        eitem.body = etxt.split(/\n+/);
+        eitem.title = etxt.slice(0, 80);
+      }
       if (ec) eitem.cat = ec.value;
       eitem.edited = true;
       toast('Saved.');
@@ -1834,10 +1999,39 @@ function wire() {
       var tr = byId('thread-reply');
       var tid = btn.getAttribute('data-thread-reply');
       var titem = feedById(tid);
-      if (tr && tr.value.trim()) {
-        titem.replies.push({ a: null, who: S.form ? S.form + ' student, ' + (S.region || 'Guyana') : 'Student', text: tr.value.trim() });
-        toast('Reply posted.');
+      var rtext = tr && tr.value ? tr.value.trim() : '';
+      if (!rtext || rtext.length < 4) {
+        toast('Write a short reply before posting.');
+        if (tr) tr.focus();
+        return;
+      }
+      ensureReplyIds(titem);
+      titem.replies = titem.replies || [];
+      titem.replies.push({
+        id: tid + '-r' + Date.now(),
+        a: null,
+        who: studentLabel(),
+        text: rtext,
+        mine: true
+      });
+      toast('Reply posted.');
+      paint();
+      render();
+      return;
+    }
+
+    btn = closestEl(t, '[data-del-reply]');
+    if (btn) {
+      var pid = btn.getAttribute('data-del-reply');
+      var rid = btn.getAttribute('data-rid');
+      var pitem = feedById(pid);
+      if (pitem && pitem.replies) {
+        pitem.replies = pitem.replies.filter(function (x) {
+          return x.id !== rid;
+        });
+        toast('Reply deleted.');
         paint();
+        render();
       }
       return;
     }
@@ -1852,14 +2046,15 @@ function wire() {
         return;
       }
       var nid = 'mine-' + Date.now();
+      var isAnon = !!(anonEl && anonEl.checked);
       if (S.ctype === 'question') {
         FEED.unshift({
           id: nid,
           kind: 'question',
           time: 'Just now',
           cat: catEl.value,
-          anon: !!(anonEl && anonEl.checked),
-          who: (S.form || 'Form 3') + ' student, ' + (S.region || 'Region 4'),
+          anon: isAnon,
+          who: studentLabel(),
           title: body,
           askedAt: S.form || 'Form 3',
           asks: 1,
@@ -1875,17 +2070,20 @@ function wire() {
           kind: 'story',
           time: 'Just now',
           cat: catEl.value,
-          author: 'aisha',
+          author: null,
           title: body.slice(0, 80),
           body: [body],
           takeaways: ['Write the decision down', 'Name who you will ask', 'Pick one next step'],
           insp: 0,
           rel: [],
           mine: true,
-          anon: !!(anonEl && anonEl.checked)
+          anon: isAnon,
+          who: studentLabel()
         });
         toast('Story shared.');
       }
+      S.draft = '';
+      S.draftCat = catEl.value;
       textEl.value = '';
       render();
       return;
@@ -1935,12 +2133,21 @@ function wire() {
       return;
     }
     if (e.target && e.target.id === 'comp-text') {
+      S.draft = e.target.value;
       var slot = byId('dup-slot');
       if (slot && S.ctype === 'question') slot.innerHTML = dupHintHtml(e.target.value);
+    }
+    if (e.target && e.target.id === 'comp-cat') {
+      S.draftCat = e.target.value;
     }
     if (e.target && e.target.id === 'comp-anon') {
       S.anon = e.target.checked;
     }
+  });
+
+  document.addEventListener('change', function (e) {
+    if (e.target && e.target.id === 'comp-cat') S.draftCat = e.target.value;
+    if (e.target && e.target.id === 'comp-anon') S.anon = e.target.checked;
   });
 
   document.addEventListener('keydown', function (e) {
@@ -1950,9 +2157,39 @@ function wire() {
   });
 }
 
+function applyHash() {
+  var h = (location.hash || '').replace(/^#/, '').toLowerCase();
+  if (h === 'pathway' || h === 'plan') {
+    hideSheetUi();
+    S.view = 'pathway';
+    return 'pathway';
+  }
+  if (h === 'sessions') {
+    S.view = 'feed';
+    return 'sessions';
+  }
+  if (h === 'feed' || h === 'stories') {
+    hideSheetUi();
+    S.view = 'feed';
+    return 'feed';
+  }
+  return '';
+}
+
 function boot() {
+  var hash = applyHash();
   wire();
   render();
+  if (hash === 'sessions') {
+    go({ t: 'sessions', id: S.stage || '' });
+  }
+  window.addEventListener('hashchange', function () {
+    var next = applyHash();
+    render();
+    if (next === 'sessions') {
+      go({ t: 'sessions', id: S.stage || '' });
+    }
+  });
 }
 
 if (document.readyState === 'loading') {

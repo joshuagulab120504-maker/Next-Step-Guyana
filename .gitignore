@@ -5,3 +5,5 @@ node_modules/
 dist/
 .next/
 next-step-guyana-snapshot-*.zip
+*.bak.html
+_shots/

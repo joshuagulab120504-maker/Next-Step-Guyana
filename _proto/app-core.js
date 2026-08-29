@@ -6,6 +6,8 @@ var S = {
   query: '',
   ctype: 'question',
   anon: true,
+  draft: '',
+  draftCat: '',
   onboarded: false,
   stage: null,
   form: '',
@@ -19,6 +21,7 @@ var S = {
   saved: [],
   inspired: [],
   booked: [],
+  waitlist: [],
   slots: {},
   oneToOne: false,
   unread: 0,
@@ -143,10 +146,29 @@ function takenHas(key) {
   return false;
 }
 
-function addTaken(entry) {
-  if (takenHas(entry.key)) return;
+function addTaken(entry, silent) {
+  if (takenHas(entry.key)) return false;
   S.taken.push(entry);
-  toast('Added to ' + (stageByKey(entry.stage).name || entry.stage) + '.');
+  if (!silent) toast('Added to ' + (stageByKey(entry.stage).name || entry.stage) + '.');
+  return true;
+}
+
+function ensureReplyIds(item) {
+  if (!item || !item.replies) return;
+  var i;
+  for (i = 0; i < item.replies.length; i++) {
+    if (!item.replies[i].id) item.replies[i].id = item.id + '-r' + i;
+  }
+}
+
+function studentLabel() {
+  if (S.onboarded && S.form) return S.form + ' student, ' + (S.region || 'Guyana');
+  return 'Student';
+}
+
+function youName() {
+  if (S.onboarded && S.archetype) return 'You (' + S.archetype + ')';
+  return 'You';
 }
 
 function removeTaken(key) {
@@ -217,13 +239,20 @@ function back() {
   paint();
 }
 
-function closeSheet() {
+function hideSheetUi() {
   NAV = [];
   var sh = byId('sheet');
-  sh.hidden = true;
-  sh.className = sh.className.replace(/\bopen\b/g, '').replace(/\s+/g, ' ').trim();
-  byId('scrim').hidden = true;
+  if (sh) {
+    sh.hidden = true;
+    sh.className = sh.className.replace(/\bopen\b/g, '').replace(/\s+/g, ' ').trim();
+  }
+  var scrim = byId('scrim');
+  if (scrim) scrim.hidden = true;
   lockBody(false);
+}
+
+function closeSheet() {
+  hideSheetUi();
   render();
 }
 
@@ -234,6 +263,13 @@ function openSheet() {
   byId('scrim').hidden = false;
   lockBody(true);
   byId('sheet-body').scrollTop = 0;
+}
+
+function setView(v) {
+  hideSheetUi();
+  S.view = v;
+  if (v === 'pathway') S.unread = 0;
+  render();
 }
 
 function paint() {
@@ -249,12 +285,6 @@ function paint() {
   byId('sheet-body').scrollTop = 0;
   if (out.after) out.after();
   renderChrome();
-}
-
-function setView(v) {
-  S.view = v;
-  if (v === 'pathway') S.unread = 0;
-  render();
 }
 
 function avatarHtml(a, anon) {
@@ -385,10 +415,11 @@ function cardClickAttrs(kind, id) {
 }
 
 function renderQuestionCard(item) {
-  var anon = !!item.anon;
+  var anon = !!item.anon || !item.author;
   var a = item.author ? author(item.author) : null;
-  var name = anon ? item.who : a.name;
-  var pos = anon ? '' : a.pos || '';
+  var name = anon ? item.who || youName() : a && a.name ? a.name : youName();
+  var pos = anon || !a ? '' : a.pos || '';
+  var sub = pos && item.time ? pos + ' · ' + item.time : pos || item.time || '';
   var first = item.replies && item.replies[0] ? item.replies[0] : null;
   var firstText = '';
   var firstWho = '';
@@ -397,7 +428,7 @@ function renderQuestionCard(item) {
     firstWho = first.a ? author(first.a).name : first.who || 'Student';
   }
   var html =
-    '<article class="card feed-card clickable" ' +
+    '<article class="card feed-card kind-q clickable" ' +
     cardClickAttrs('thread', item.id) +
     '>' +
     '<div class="card-head">' +
@@ -407,9 +438,7 @@ function renderQuestionCard(item) {
     esc(name) +
     '</div>' +
     '<div class="sub">' +
-    esc(pos || item.time || '') +
-    (item.time && pos ? ' · ' : '') +
-    esc(item.time || '') +
+    esc(sub) +
     '</div>' +
     '</div>';
   if (!anon && a && !a.system) {
@@ -438,6 +467,7 @@ function renderQuestionCard(item) {
   }
   html += '<h3>' + esc(item.title) + '</h3>';
   html += '<div class="pill-row">';
+  html += '<span class="type-tag q">Question</span>';
   html += pill(item.cat, 'dot', 'data-topic="' + esc(item.cat) + '"');
   html += '<span class="p blue">Asked at ' + esc(item.askedAt || 'Form 3') + '</span>';
   html += '</div>';
@@ -450,7 +480,7 @@ function renderQuestionCard(item) {
       '</div>';
   }
   html +=
-    '<div class="card-foot">Open thread, ' +
+    '<div class="card-foot">Open thread · ' +
     (item.replies ? item.replies.length : 0) +
     ' replies</div>';
   html += '</article>';
@@ -458,25 +488,44 @@ function renderQuestionCard(item) {
 }
 
 function renderStoryCard(item) {
-  var a = author(item.author);
+  var mine = !!item.mine;
+  var anon = !!item.anon;
+  var a = !mine && item.author ? author(item.author) : null;
+  var name = mine ? (anon ? studentLabel() : youName()) : a.name;
+  var pos = mine ? item.time || '' : (a.pos || '') + (item.time ? ' · ' + item.time : '');
   var para = (item.body && item.body[0]) || '';
-  return (
-    '<article class="card feed-card clickable" ' +
+  var html =
+    '<article class="card feed-card kind-story clickable" ' +
     cardClickAttrs('story', item.id) +
     '>' +
     '<div class="card-head">' +
-    avatarHtml(a, false) +
+    avatarHtml(a, mine || anon) +
     '<div class="meta"><div class="name">' +
-    esc(a.name) +
+    esc(name) +
     '</div><div class="sub">' +
-    esc(a.pos || '') +
-    (item.time ? ' · ' + esc(item.time) : '') +
-    '</div></div>' +
-    '<button type="button" class="btn sm g" data-follow="' +
-    esc(item.author) +
-    '">' +
-    (isFollowing(item.author) ? 'Following' : 'Follow') +
-    '</button></div>' +
+    esc(pos) +
+    '</div></div>';
+  if (!mine && a && !a.system) {
+    html +=
+      '<button type="button" class="btn sm g" data-follow="' +
+      esc(item.author) +
+      '">' +
+      (isFollowing(item.author) ? 'Following' : 'Follow') +
+      '</button>';
+  }
+  html += '</div>';
+  if (mine) {
+    html +=
+      '<div class="flag-row"><span class="p green">Your post</span>' +
+      (item.edited ? '<span class="p">Edited</span>' : '') +
+      '<button type="button" class="btn q" data-edit="' +
+      esc(item.id) +
+      '">Edit</button>' +
+      '<button type="button" class="btn q" data-del="' +
+      esc(item.id) +
+      '">Delete</button></div>';
+  }
+  html +=
     '<h3>' +
     esc(item.title) +
     '</h3>' +
@@ -484,6 +533,7 @@ function renderStoryCard(item) {
     esc(para) +
     '</p>' +
     '<div class="pill-row">' +
+    '<span class="type-tag story">Story</span>' +
     pill(item.cat, 'dot', 'data-topic="' + esc(item.cat) + '"') +
     '</div>' +
     '<div class="card-actions">' +
@@ -497,19 +547,19 @@ function renderStoryCard(item) {
     ' Inspired me · ' +
     (item.insp || 0) +
     '</button>' +
-    '</div></article>'
-  );
+    '</div></article>';
+  return html;
 }
 
 function renderOppCard(item) {
   var o = OPPS[item.opp];
   if (!o) return '';
   return (
-    '<article class="card feed-card opp-card clickable" ' +
+    '<article class="card feed-card kind-opp opp-card clickable" ' +
     cardClickAttrs('opp', o.id) +
     '>' +
     '<div class="pill-row">' +
-    '<span class="p blue">Opportunity</span>' +
+    '<span class="type-tag opp">Opportunity</span>' +
     (o.independent ? '<span class="p green">You can enter yourself</span>' : '') +
     pill(o.cat, '', 'data-topic="' + esc(o.cat) + '"') +
     '</div>' +
@@ -544,7 +594,7 @@ function renderSessionCard(item) {
   var pct = Math.min(100, Math.round((s.taken / s.seats) * 100));
   var lead = author(s.lead);
   return (
-    '<article class="card feed-card sess-card clickable" ' +
+    '<article class="card feed-card kind-sess sess-card clickable" ' +
     cardClickAttrs('session', s.id) +
     '>' +
     '<div class="sess-row">' +
@@ -554,7 +604,7 @@ function renderSessionCard(item) {
     esc(s.day) +
     '</div></div>' +
     '<div class="sess-main">' +
-    '<span class="p blue">Session</span>' +
+    '<span class="type-tag sess">Session</span>' +
     '<h3>' +
     esc(s.title) +
     '</h3>' +
@@ -585,7 +635,7 @@ function renderJourneyCard(item) {
   var a = author(item.journey);
   if (!j) return '';
   return (
-    '<article class="card feed-card journey-card clickable" ' +
+    '<article class="card feed-card kind-journey journey-card clickable" ' +
     cardClickAttrs('journey', item.journey) +
     '>' +
     '<div class="j-head">' +
@@ -602,6 +652,7 @@ function renderJourneyCard(item) {
     '</div><div class="l">AT THE TIME</div></div>' +
     '</div>' +
     '<div class="pill-row">' +
+    '<span class="type-tag journey">Journey</span>' +
     '<span class="p">' +
     esc(a.role) +
     '</span>' +
@@ -718,6 +769,17 @@ function renderFeed() {
   ];
   var html = '<div class="page-feed">';
   html += '<h1>Feed</h1>';
+  if (!S.onboarded) {
+    html +=
+      '<div class="card onboard-banner">' +
+      '<p class="eyebrow">Start here</p>' +
+      '<h2>Build your pathway in six questions</h2>' +
+      '<p class="muted">It marks the decisions that are near, opens the right sessions, and tells you which opportunities fit your form.</p>' +
+      '<div class="card-actions">' +
+      '<button type="button" class="btn" data-open="setup" data-id="0">Build my pathway</button>' +
+      '<button type="button" class="btn g" data-goto="pathway">See My Pathway</button>' +
+      '</div></div>';
+  }
   html +=
     '<label class="sr" for="feed-q">Search the feed</label>' +
     '<input type="search" id="feed-q" class="search" placeholder="Search titles, people, places, categories" value="' +
@@ -757,12 +819,23 @@ function renderFeed() {
     (S.ctype === 'question'
       ? 'What are you trying to decide?'
       : 'What happened, and what did it change?') +
-    '"></textarea>';
-  html += '<div id="dup-slot"></div>';
+    '">' +
+    esc(S.draft || '') +
+    '</textarea>';
+  html += '<div id="dup-slot">' + (S.ctype === 'question' ? dupHintHtml(S.draft || '') : '') + '</div>';
+  html += '<div class="composer-foot">';
   html += '<label class="field-label" for="comp-cat">Category</label>';
   html += '<select id="comp-cat">';
+  var selCat = S.draftCat || CATS[0];
   for (i = 0; i < CATS.length; i++) {
-    html += '<option value="' + esc(CATS[i]) + '">' + esc(CATS[i]) + '</option>';
+    html +=
+      '<option value="' +
+      esc(CATS[i]) +
+      '"' +
+      (CATS[i] === selCat ? ' selected' : '') +
+      '>' +
+      esc(CATS[i]) +
+      '</option>';
   }
   html += '</select>';
   html +=
@@ -773,11 +846,18 @@ function renderFeed() {
     '<button type="button" class="btn" id="comp-submit">' +
     (S.ctype === 'question' ? 'Post question' : 'Share story') +
     '</button>';
-  html += '</div>';
+  html += '</div></div>';
   html += '<p class="count-line">' + esc(resultCountLine(list)) + '</p>';
   html += '<div class="stream">';
   for (i = 0; i < list.length; i++) html += renderFeedCard(list[i]);
-  if (!list.length) html += '<p class="muted">Nothing matches. Clear search or switch filter.</p>';
+  if (!list.length) {
+    html +=
+      '<div class="empty card">' +
+      '<h3>Nothing matches</h3>' +
+      '<p>Clear search or switch filter to bring the feed back.</p>' +
+      '<button type="button" class="btn sm g" data-filter="all" id="clear-filters">Show all posts</button>' +
+      '</div>';
+  }
   html += '</div></div>';
   return html;
 }
