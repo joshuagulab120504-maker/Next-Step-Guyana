@@ -3,240 +3,762 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#061a2d">
-  <title>Next Step Guyana  -  Homepage Prototype</title>
+  <meta name="theme-color" content="#061c33">
+  <title>Next Step Guyana</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,550;9..144,700&family=Sora:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500..800&family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;700&family=Sora:wght@500;600;700;800&display=swap');
-    :root{--navy:#0a1930;--navy2:#123a52;--ink:#101a28;--muted:#5c6c7e;--paper:#f5f7fa;--white:#fff;--line:#dfe6ec;--green:#0e7a4f;--green2:#eaf5ee;--gold:#eeb52f;--red:#c1443f;--purple:#6a55b0;--orange:#d9812e;--shadow:0 20px 55px rgba(8,22,42,.14);--font-display:'Fraunces',ui-serif,Georgia,serif;--font-body:'Inter',ui-sans-serif,system-ui,-apple-system,'Segoe UI',sans-serif}
-    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}button,input{font:inherit}button,a{touch-action:manipulation}.wrap{width:min(1160px,calc(100% - 34px));margin:auto}.hidden{display:none!important}
-    .header{position:sticky;top:0;z-index:60;background:rgba(6,26,45,.98);color:#fff}.nav{height:74px;display:flex;align-items:center;gap:18px}.brand{display:flex;align-items:center;gap:11px;color:#fff;text-decoration:none;min-width:215px}.brand-logo{width:55px;height:55px;border-radius:9px;overflow:hidden;background:#f8f5ed;display:block}.brand-logo img{width:100%;height:100%;object-fit:cover;object-position:center top}.brand strong{display:block;letter-spacing:.045em;font-size:19px;line-height:1}.brand small{display:block;font-size:9px;letter-spacing:.25em;color:#c9d8df;margin-top:5px}.links{display:flex;align-items:center;gap:2px;margin-left:auto}.links a,.links button{border:0;background:transparent;color:#cad6df;text-decoration:none;padding:9px 10px;border-radius:9px;font-size:13px;font-weight:800;cursor:pointer;white-space:nowrap}.links a:hover,.links button:hover,.links .active{background:rgba(255,255,255,.1);color:#fff}.links .sign-in:hover{background:var(--gold)!important;color:#1a1305!important;filter:brightness(1.05)}.sign-in{border:0!important;background:var(--gold)!important;color:#1a1305!important;margin-left:6px;padding:9px 14px!important}.flag{height:5px;background:var(--green,#0e7a4f)}.menu{display:none;border:0;background:rgba(255,255,255,.1);color:#fff;border-radius:10px;min-width:44px;min-height:44px;padding:0 12px;align-items:center;justify-content:center;gap:7px;font-size:12px;font-weight:800;letter-spacing:.02em}
-    .btn{border:0;border-radius:12px;padding:12px 17px;min-height:44px;background:linear-gradient(135deg,var(--green),#149b62);color:#fff;text-decoration:none;font-weight:900;display:inline-flex;align-items:center;justify-content:center;gap:8px;cursor:pointer}.btn:hover{filter:brightness(.97);transform:translateY(-1px)}.btn.ghost{background:#fff;border:1.5px solid var(--line);color:var(--ink)}.btn.ghost:hover{background:#f7fafd}.btn.gold{background:var(--gold);color:var(--ink)}.btn.secondary{background:#fff;color:var(--ink);border:1px solid var(--line)}.btn.small{padding:9px 12px;font-size:11px}.btn.full{width:100%}
-    /* Painted hero  -  mobile image flows; desktop overlays copy on dark left band */
-.hero{position:relative;background:#04204a;color:#fff;overflow:hidden;isolation:isolate;
-  --hero-h:min(calc(100vw * 1.2), 62vh)}
-.hero-art{display:block;position:relative;z-index:0;width:100%;height:var(--hero-h);
-  object-fit:cover;object-position:center 18%}
-.hero-art img{display:block;width:100%;height:100%;object-fit:cover;object-position:center 18%}
-.hero-scrim{position:absolute;top:0;left:0;right:0;height:var(--hero-h);
-  z-index:1;pointer-events:none;
-  background:linear-gradient(180deg,transparent 0%,transparent 48%,
-    rgba(4,32,74,.34) 74%,#04204a 100%)}
-.hero-copy{position:relative;z-index:2;padding:20px 0 40px}
-.hero-copy-inner{width:100%;max-width:min(620px,100%);box-sizing:border-box}
-.eyebrow{display:inline-flex;align-items:center;gap:7px;border-radius:99px;padding:7px 10px;background:rgba(255,255,255,.11);font-size:10px;font-weight:900;letter-spacing:.07em;max-width:100%;flex-wrap:wrap;line-height:1.3}
-.welcome-lg{font-family:'Sora',var(--font-body);font-size:clamp(36px,5.6vw,58px);font-weight:750;letter-spacing:-.025em;line-height:1.05;margin:16px 0 10px;color:#fff}
-.welcome-lg span{color:#149b62}
-.hero-copy .hero-sub{font-family:'Sora',var(--font-body);font-size:clamp(17px,2.1vw,21px);font-weight:600;letter-spacing:-.005em;line-height:1.4;margin:0 0 22px;color:#d2e0e8}
-.hero-sub .gold-word{color:var(--gold)}
-.hero-copy .btn.gold,.hero-copy .text-link{font-family:'Sora',var(--font-body)}
-.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:23px}
-.text-link{display:inline-flex;align-items:center;min-height:44px;margin-top:6px;border:0;background:transparent;color:#cfdeea;font-size:13px;font-weight:700;cursor:pointer;padding:6px 2px}
-.text-link strong{color:#fff;margin-left:4px;text-decoration:underline;text-decoration-color:var(--gold)}
-.motto{font-family:'Space Grotesk',var(--font-accent,'Sora',sans-serif);font-size:13px;font-weight:700;
-  letter-spacing:.26em;text-transform:uppercase;color:#8fd6ae;margin:20px 0 0}
-.motto span{color:var(--gold);margin:0 .15em;letter-spacing:0}
-@media(max-width:819px){
-  /* Overlay copy on the art, starting just below the backpacks */
-  .hero{position:relative;min-height:calc(100svh - 72px);--hero-h:calc(100svh - 72px)}
-  .hero-art{position:absolute;inset:0;z-index:0;width:100%;height:100%}
-  .hero-art img{object-position:center 14%;height:100%}
-  .hero-scrim{position:absolute;inset:0;height:auto;z-index:1;
-    background:linear-gradient(180deg,
-      rgba(4,32,74,.1) 0%,
-      transparent 22%,
-      rgba(4,32,74,.28) 40%,
-      rgba(4,32,74,.78) 58%,
-      #04204a 72%)}
-  .hero-copy{position:absolute;left:0;right:0;bottom:0;z-index:2;
-    padding:0 0 max(14px, env(safe-area-inset-bottom));margin:0}
-  /* keep upper half clear for star + bags; copy begins mid-lower */
-  .hero-copy-inner{padding-top:0;max-width:none;width:100%}
-  .hero-copy .eyebrow{margin-top:0;font-size:9.5px;letter-spacing:.05em}
-  .welcome-lg{margin:8px 0 4px;font-size:clamp(28px,9vw,40px)}
-  .hero-copy .hero-sub{margin:0 0 10px;font-size:clamp(15px,4.2vw,18px)}
-  .hero-copy-inner .actions{margin-top:10px}
-  .hero-copy-inner .actions .btn{width:100%;min-height:48px}
-  .hero-copy-inner .motto{margin-top:10px;font-size:11px;letter-spacing:.18em}
-  .hero-copy-inner .text-link{margin-top:2px;min-height:44px}
-}
-@media(min-width:820px){
-  .hero{min-height:min(76vh,620px);display:grid}
-  .hero-art{position:absolute;inset:0;z-index:0;width:100%;height:100%}
-  .hero-art img{object-position:76% 12%}
-  .hero-scrim{top:0;left:0;right:0;bottom:0;height:auto;
-    background:
-      linear-gradient(90deg,rgba(3,26,60,.92) 0%,rgba(3,26,60,.74) 38%,
-        rgba(3,26,60,.18) 66%,transparent 100%),
-      linear-gradient(180deg,transparent 62%,rgba(4,32,74,.55) 100%)}
-  .hero-copy{align-self:center;padding:64px 0}
-  .hero-copy-inner{max-width:560px;width:100%}
-}
-@media(min-width:1180px){.hero-copy-inner{max-width:620px}}
-@media(prefers-reduced-motion:no-preference){
-  .hero-art{animation:heroFade 1s ease both}
-  .hero-copy-inner>*{animation:heroRise .62s cubic-bezier(.22,.7,.3,1) both}
-  .hero-copy-inner>*:nth-child(1){animation-delay:.16s}
-  .hero-copy-inner>*:nth-child(2){animation-delay:.26s}
-  .hero-copy-inner>*:nth-child(3){animation-delay:.36s}
-  .hero-copy-inner>*:nth-child(4){animation-delay:.46s}
-  .hero-copy-inner>*:nth-child(5){animation-delay:.56s}
-  .hero-copy-inner>*:nth-child(6){animation-delay:.68s}
-}
-@keyframes heroFade{from{opacity:0}to{opacity:1}}
-@keyframes heroRise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
-.quick-wrap{position:relative;z-index:3;margin-top:-28px}.quick{background:#fff;border:1px solid var(--line);border-radius:20px;padding:13px;box-shadow:var(--shadow);display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.quick button{border:0;background:#fff;border-radius:13px;padding:13px;text-align:left;display:grid;grid-template-columns:42px 1fr;gap:10px;align-items:center;cursor:pointer;min-height:44px}.quick button:hover{background:#eff8f3}.qicon{width:42px;height:42px;border-radius:50%;background:var(--green2);color:var(--green);display:grid;place-items:center;font-size:17px}.quick strong{display:block;font-size:12px;line-height:1.35}.quick small{display:block;color:var(--muted);font-size:10px}
-.stat b.stat-free{font-size:28px;letter-spacing:-.02em}
-    .section{padding:72px 0}.section-head{text-align:center;max-width:680px;margin:0 auto 30px}.section-head .eyebrow{background:var(--green2);color:var(--green)}.section h2{font-size:clamp(32px,4.2vw,50px);letter-spacing:-.05em;line-height:1.04;margin:10px 0}.section-head p{color:var(--muted)}.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}.step{background:rgba(255,255,255,.68);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.5);border-radius:19px;padding:22px;position:relative}.step-number{width:40px;height:40px;border-radius:13px;background:var(--green2);color:var(--green);display:grid;place-items:center;font-weight:950}.step h3{font-size:18px;margin:17px 0 6px}.step p{margin:0;color:var(--muted)}.step:after{content:"→";position:absolute;right:-13px;top:30px;color:#a8b7af;font-size:19px}.step:last-child:after{display:none}
-    .stats-band{background:#fff;border-block:1px solid var(--line)}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:0}.stat{text-align:center;padding:34px 20px;border-left:1px solid var(--line)}.stat:first-child{border-left:0}.stat b{display:block;color:var(--green);font-size:35px;letter-spacing:-.04em}.stat span{color:var(--muted);font-size:10px;font-weight:800}.stat small{display:block;color:#9aa7a0;font-size:8px;margin-top:4px}
-    .stories{padding:72px 0}.story-shell{background:var(--navy);color:#fff;border-radius:27px;overflow:hidden;position:relative}.slide{display:none;grid-template-columns:1fr 1fr;min-height:400px}.slide.active{display:grid}.story-copy{padding:48px;align-self:center}.story-copy h2{font-size:38px;letter-spacing:-.045em;line-height:1.05;margin:16px 0}.story-copy p{color:#c6d7e1}.image-slot{margin:20px;border-radius:21px;display:grid;place-items:center;text-align:center;padding:25px;position:relative;overflow:hidden;background:linear-gradient(145deg,#07864d,#10a76a)}.image-slot.purple{background:linear-gradient(145deg,#7558c9,#432e88)}.image-slot.orange{background:linear-gradient(145deg,#df792c,#9d421d)}.image-slot:before{content:"";position:absolute;inset:0;background:url("logo.png") center/44% no-repeat;opacity:.12}.image-slot strong,.image-slot span{position:relative}.image-slot strong{font-size:20px}.image-slot span{font-size:10px;opacity:.76;max-width:260px}.dots{position:absolute;left:48px;bottom:24px;display:flex;gap:7px}.dot{width:9px;height:9px;border:0;border-radius:99px;background:#607484}.dot.active{width:27px;background:var(--gold)}
-    .trust{padding:72px 0;background-color:#edf5f0}.trust-grid{display:grid;grid-template-columns:.9fr 1.1fr;gap:28px;align-items:center}.trust-copy h2{font-size:43px;letter-spacing:-.05em;line-height:1.04}.trust-copy p{color:var(--muted)}.trust-cards{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.trust-card{background:rgba(255,255,255,.68);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.5);border-radius:16px;padding:17px}.trust-card span{width:37px;height:37px;border-radius:11px;background:var(--green2);color:var(--green);display:grid;place-items:center}.trust-card h3{font-size:14px;margin:12px 0 3px}.trust-card p{font-size:10px;margin:0;color:var(--muted)}
-    .cta{padding:72px 0}.cta-box{background:radial-gradient(circle at 92% 15%,rgba(255,207,39,.25),transparent 27%),linear-gradient(135deg,var(--navy),#0a3c47);border-radius:26px;color:#fff;padding:46px;display:flex;align-items:center;justify-content:space-between;gap:30px}.cta h2{font-size:39px;margin:0 0 8px;letter-spacing:-.045em}.cta p{color:#cadbe3;margin:0}.footer{background:#041624;color:#bdccd5;padding:44px 0}.footer-grid{display:grid;grid-template-columns:1.2fr repeat(3,1fr);gap:30px}.footer-brand{display:flex;align-items:center;gap:10px;color:#fff}.footer-brand img{width:48px;height:48px}.footer h4{color:#fff;margin:0 0 10px}.footer a{display:block;color:#bdccd5;text-decoration:none;font-size:11px;margin:7px 0}.footer small{font-size:9px}
-    .modal{position:fixed;inset:0;background:rgba(3,17,29,.68);display:none;align-items:center;justify-content:center;padding:17px;z-index:100}.modal.open{display:flex}.modal-card{width:min(600px,100%);max-height:91vh;overflow:auto;background:#fff;border-radius:24px;padding:25px;box-shadow:0 35px 90px rgba(0,0,0,.3)}.modal-head{display:flex;justify-content:space-between}.close{border:0;background:#edf2ef;border-radius:50%;width:34px;height:34px}.progress{display:flex;gap:6px;margin:18px 0 26px}.progress i{height:6px;flex:1;border-radius:7px;background:#e4ece8}.progress i.on{background:var(--green)}.question{display:none}.question.active{display:block}.question h2{font-size:26px;letter-spacing:-.03em}.choices{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.choice{border:1px solid var(--line);background:#fff;border-radius:14px;padding:15px;text-align:left;font-weight:800}.choice:hover,.choice.selected{background:var(--green2);border-color:#8ed2ad}.quiz-actions{display:flex;justify-content:space-between;margin-top:23px}.result{text-align:center}.result-icon{width:70px;height:70px;border-radius:50%;background:var(--green2);color:var(--green);display:grid;place-items:center;font-size:29px;margin:auto}.result-box{background:var(--green2);border:1px solid #bfe7d1;border-radius:14px;padding:15px;text-align:left}.sign-form label{display:block;font-size:10px;font-weight:850;margin-top:12px}.sign-form input{width:100%;border:1px solid var(--line);border-radius:10px;padding:11px;margin-top:5px}.toast{position:fixed;right:18px;bottom:18px;background:var(--navy);color:#fff;border-radius:11px;padding:12px 15px;opacity:0;transform:translateY(10px);transition:.2s;z-index:120}.toast.show{opacity:1;transform:none}
+    :root{
+      --navy:#0a2d52; --navy-deep:#061c33; --navy-mid:#0f4272;
+      --ink:#0f2740; --body:#2c4054; --muted:#6b7d94; --faint:#8a9aad;
+      --paper:#f2f5f8; --white:#fff; --line:#dde5ee;
+      --gold:#f4c945; --gold-deep:#e8b924; --ochre:#a8801f;
+      --green:#0d7a4f; --green-soft:#e7f6ee;
+      --blue:#1c5f9e;
+      --font-display:"Fraunces",ui-serif,Georgia,serif;
+      --font-body:"Sora",ui-sans-serif,system-ui,sans-serif;
+      --shadow:0 1px 2px rgba(15,39,64,.04), 0 18px 40px rgba(15,39,64,.06);
+      --r:18px;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0; background:var(--paper); color:var(--body);
+      font:15px/1.55 var(--font-body); letter-spacing:-.01em;
+      -webkit-font-smoothing:antialiased;
+    }
+    img{max-width:100%; display:block}
+    a{color:inherit; text-decoration:none}
+    button{font:inherit; cursor:pointer; border:0; background:none; color:inherit}
+    .wrap{width:min(1120px, calc(100% - 40px)); margin:0 auto}
+    .eyebrow{
+      display:inline-flex; align-items:center; gap:8px;
+      font-size:11px; font-weight:800; letter-spacing:.14em; text-transform:uppercase;
+      color:var(--ochre);
+    }
+    h1,h2,h3{font-family:var(--font-display); color:var(--ink); letter-spacing:-.02em; margin:0; font-weight:700}
+    p{margin:0}
 
-    @media(max-width:1000px){.links a:nth-child(n+5),.links button:not(.sign-in){display:none}.trust-grid{grid-template-columns:1fr}.quick,.steps,.stats{grid-template-columns:repeat(2,1fr)}.step:after{display:none}.slide{grid-template-columns:1fr}.image-slot{min-height:230px}.footer-grid{grid-template-columns:1fr 1fr}}
-    .mobile-dock,.mobile-sheet{display:none}
-    @media(max-width:620px){body{padding-bottom:72px}.wrap{width:min(100% - 24px,1160px)}.nav{height:62px}.brand{gap:8px;flex:1;min-width:0}.brand-logo{width:45px;height:45px;flex-shrink:0}.brand strong{font-size:15px}.brand small{font-size:8px;letter-spacing:.18em;margin-top:3px}.links{display:none}.menu{display:inline-flex;margin-left:auto;min-width:44px;min-height:44px;font-size:12px}.menu .menu-ico{font-size:18px;line-height:1;font-weight:700}.hero-copy{padding-bottom:16px}.welcome-lg{font-size:clamp(30px,10.5vw,42px);margin:8px 0 4px;line-height:1.02}.hero-sub{font-size:17px;margin-bottom:10px;line-height:1.3}.eyebrow{font-size:9.5px;padding:8px 11px}.btn{border-radius:16px}.btn.gold{padding:15px 19px;font-size:15px}.actions{display:grid;grid-template-columns:1fr}.actions .btn{min-height:52px;width:100%}.text-link{width:100%;justify-content:center}.quick-wrap{margin-top:-16px}.quick{grid-template-columns:1fr;padding:8px}.quick button{min-height:76px;grid-template-columns:44px 1fr;padding:12px}.qicon{width:44px;height:44px}.section,.stories,.trust,.cta{padding:44px 0}.steps,.stats,.trust-cards{grid-template-columns:1fr}.stat{border-left:0;border-top:1px solid var(--line)}.stat:first-child{border-top:0}.story-copy{padding:29px 24px 62px}.story-copy h2{font-size:31px}.image-slot{order:-1;min-height:190px;margin:13px}.slide.active{display:flex;flex-direction:column}.dots{left:24px}.cta-box{display:block;padding:29px}.cta h2{font-size:31px}.cta .btn{margin-top:18px;min-height:50px;width:100%}.footer{padding-bottom:35px}.footer-grid{grid-template-columns:1fr 1fr}.footer-grid>div:first-child{grid-column:1/-1}.choices{grid-template-columns:1fr}.choice{min-height:52px}.modal{align-items:flex-end;padding:0}.modal-card{border-radius:24px 24px 0 0;max-height:92dvh;padding:22px 18px calc(22px + env(safe-area-inset-bottom))}.mobile-dock{display:grid;grid-template-columns:repeat(5,1fr);position:fixed;z-index:80;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);box-shadow:0 -8px 30px rgba(5,30,47,.1);padding:7px 3px max(7px,env(safe-area-inset-bottom))}.mobile-dock a,.mobile-dock button{color:var(--muted);text-decoration:none;text-align:center;font-size:9px;font-weight:850;border:0;background:transparent;padding:0;font:inherit;cursor:pointer;display:block;width:100%}.mobile-dock .dock-ico{display:grid;place-items:center;color:var(--ink);line-height:1;margin:0 auto 2px}
-.mobile-dock .dock-ico svg{width:20px;height:20px;display:block}
-.mobile-dock a.active,.mobile-dock a.active .dock-ico{color:var(--green)}
-.mobile-dock button[aria-expanded="true"],.mobile-dock button[aria-expanded="true"] .dock-ico{color:var(--green)}.mobile-sheet{display:block;position:fixed;z-index:90;inset:0;background:rgba(3,17,29,.54);opacity:0;pointer-events:none;transition:.2s}.mobile-sheet.open{opacity:1;pointer-events:auto}.mobile-sheet nav{position:absolute;left:10px;right:10px;top:72px;background:#fff;border-radius:20px;padding:10px;box-shadow:var(--shadow);display:grid}.mobile-sheet a,.mobile-sheet button{min-height:50px;border:0;border-bottom:1px solid var(--line);background:#fff;color:var(--ink);text-decoration:none;text-align:left;padding:12px;border-radius:10px;font-weight:800}.mobile-sheet button{color:var(--green)}}
-  
-/* ---- Unified design-system additions (glass / bento / a11y / display font) ---- */
-.glass{background:rgba(255,255,255,.66);backdrop-filter:blur(16px) saturate(1.2);-webkit-backdrop-filter:blur(16px) saturate(1.2);border:1px solid rgba(255,255,255,.5)}
-.bento{display:grid;grid-template-columns:repeat(6,1fr);gap:14px}
-.bento>.b-wide{grid-column:span 4}.bento>.b-narrow{grid-column:span 2}.bento>.b-half{grid-column:span 3}
-@media(max-width:900px){.bento{grid-template-columns:1fr 1fr}.bento>.b-wide{grid-column:span 2}.bento>.b-narrow,.bento>.b-half{grid-column:span 1}}
-@media(max-width:620px){.bento{grid-template-columns:1fr}.bento>*{grid-column:1/-1!important}}
-:focus-visible{outline:2.5px solid var(--green);outline-offset:2px;border-radius:6px}
-button,a.btn,.filter,.choice,input[type="checkbox"],input[type="radio"]{min-height:44px}
-h1,.page-title,.hero h1,.intro h1,.head h1{font-family:var(--font-display,'Fraunces',ui-serif,Georgia,serif);font-weight:650}
-@media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+    /* Header */
+    .header{
+      position:sticky; top:0; z-index:50;
+      background:rgba(6,28,51,.96); backdrop-filter:blur(12px);
+      color:#fff; border-bottom:3px solid var(--gold);
+    }
+    .nav{
+      min-height:70px; display:flex; align-items:center; gap:18px;
+    }
+    .brand{display:flex; align-items:center; gap:11px; color:#fff; min-width:0}
+    .brand-logo{
+      width:46px; height:46px; border-radius:11px; overflow:hidden;
+      background:#f7f4ec; flex:0 0 46px;
+    }
+    .brand-logo img{width:100%; height:100%; object-fit:contain}
+    .brand strong{display:block; font-size:17px; font-weight:800; letter-spacing:.04em; line-height:1.05}
+    .brand small{display:block; font-size:9px; font-weight:700; letter-spacing:.28em; color:#b3cae0; margin-top:3px}
+    .links{display:flex; align-items:center; gap:4px; margin-left:auto}
+    .links a{
+      color:rgba(255,255,255,.78); font-size:13px; font-weight:650;
+      padding:10px 12px; border-radius:999px;
+    }
+    .links a:hover, .links a.active{color:#fff; background:rgba(255,255,255,.08)}
+    .links .sign-in{
+      margin-left:6px; min-height:42px; padding:0 16px; border-radius:999px;
+      background:var(--gold); color:var(--navy-deep); font-weight:800; font-size:13px;
+    }
+    .menu{
+      display:none; margin-left:auto; min-width:44px; min-height:44px;
+      border-radius:12px; background:rgba(255,255,255,.1); color:#fff;
+      font-weight:800; font-size:18px;
+    }
 
-/* Tablet + laptop polish */
-@media(min-width:621px) and (max-width:900px){
-  .links{display:none}
-  .menu{display:inline-flex;margin-left:auto;min-width:44px;min-height:44px}
-  .wrap{width:min(100% - 32px,1160px)}
-  .nav{height:68px}
-  .welcome-lg{font-size:clamp(34px,5.4vw,48px)}
-  .quick{grid-template-columns:1fr 1fr;gap:10px}
-  .steps,.stats{grid-template-columns:1fr 1fr}
-  .trust-cards{grid-template-columns:1fr 1fr}
-  .footer-grid{grid-template-columns:1.2fr 1fr 1fr}
-  .cta-box{gap:18px}
-  .section,.stories,.trust,.cta{padding:56px 0}
-  .hero-copy{padding:28px 0 48px}
-}
-@media(min-width:901px) and (max-width:1179px){
-  .wrap{width:min(100% - 40px,1100px)}
-  .links a{font-size:13px;padding:0 8px}
-  .welcome-lg{font-size:clamp(40px,4.6vw,52px)}
-  .quick{grid-template-columns:repeat(4,1fr)}
-}
-@media(max-width:620px){
-  .mobile-dock{grid-template-columns:repeat(4,1fr)}
-  .actions{display:grid;grid-template-columns:1fr;gap:10px}
-  .actions .btn{width:100%;min-height:52px;justify-content:center}
-  .btn.ghost{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.28);color:#fff}
-}
-@media(min-width:621px){
-  .actions{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
-  .hero-copy .btn.ghost{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.28);color:#fff}
-  .hero-copy .btn.ghost:hover{background:rgba(255,255,255,.2)}
-}
+    /* Hero */
+    .hero{
+      position:relative; isolation:isolate; overflow:hidden;
+      background:#04204a; color:#fff;
+      min-height:min(78vh, 680px);
+      display:grid; align-items:end;
+    }
+    .hero-art{position:absolute; inset:0; z-index:0}
+    .hero-art img{
+      width:100%; height:100%; object-fit:cover; object-position:76% 12%;
+    }
+    .hero-scrim{
+      position:absolute; inset:0; z-index:1;
+      background:
+        linear-gradient(90deg, rgba(3,26,60,.88) 0%, rgba(3,26,60,.55) 42%, rgba(3,26,60,.12) 72%, transparent 100%),
+        linear-gradient(180deg, rgba(3,20,45,.15) 0%, rgba(3,20,45,.55) 100%);
+    }
+    .hero-copy{position:relative; z-index:2; padding:48px 0 56px}
+    .hero-copy-inner{max-width:560px}
+    .hero .eyebrow{
+      color:#f7dd8a; background:rgba(255,255,255,.1);
+      border-radius:999px; padding:8px 12px; margin-bottom:18px;
+    }
+    .hero-brand{
+      font-family:var(--font-display);
+      font-size:clamp(42px, 7vw, 68px);
+      line-height:1.02; font-weight:700; color:#fff;
+      margin:0 0 14px;
+    }
+    .hero-brand span{color:#3dce8a}
+    .hero-sub{
+      font-family:var(--font-body);
+      font-size:clamp(16px, 2vw, 19px);
+      font-weight:500; line-height:1.45; color:#d5e2ec;
+      margin:0 0 26px; max-width:34rem;
+    }
+    .hero-sub em{font-style:normal; color:var(--gold); font-weight:700}
+    .actions{display:flex; flex-wrap:wrap; gap:12px; align-items:center}
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center; gap:8px;
+      min-height:50px; padding:12px 20px; border-radius:14px;
+      font-size:14.5px; font-weight:750; letter-spacing:-.01em;
+      transition:transform .18s ease, background .18s ease, border-color .18s ease;
+    }
+    .btn:hover{transform:translateY(-1px)}
+    .btn.gold{background:linear-gradient(135deg, var(--gold), var(--gold-deep)); color:var(--navy-deep)}
+    .btn.ghost{
+      background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.28); color:#fff;
+    }
+    .btn.ghost:hover{background:rgba(255,255,255,.18)}
+    .btn.solid{background:var(--navy); color:#fff}
+    .btn.solid:hover{background:var(--navy-mid)}
+    .btn.line{background:#fff; border:1px solid var(--line); color:var(--ink)}
+    .btn.line:hover{border-color:#b8c9dc}
+    .motto{
+      margin-top:22px; font-size:12px; font-weight:700; letter-spacing:.18em;
+      text-transform:uppercase; color:rgba(255,255,255,.55);
+    }
+    .motto span{color:var(--gold); margin:0 6px}
 
-</style>
+    /* Sections */
+    .section{padding:72px 0}
+    .section-head{max-width:640px; margin-bottom:36px}
+    .section-head h2{
+      font-size:clamp(28px, 4vw, 40px); line-height:1.12; margin:10px 0 12px;
+    }
+    .section-head p{font-size:16.5px; color:var(--muted); line-height:1.55}
+
+    /* Offerings */
+    .offer-list{display:grid; gap:14px}
+    .offer{
+      display:grid; grid-template-columns:88px 1fr auto; gap:22px; align-items:center;
+      background:#fff; border:1px solid var(--line); border-radius:var(--r);
+      padding:22px 24px; box-shadow:var(--shadow);
+      transition:border-color .18s ease, transform .18s ease;
+    }
+    .offer:hover{border-color:#b8c9dc; transform:translateY(-2px)}
+    .offer-num{
+      width:88px; height:72px; border-radius:14px;
+      display:grid; place-items:center;
+      font-family:var(--font-display); font-size:28px; font-weight:700; color:#fff;
+    }
+    .offer:nth-child(1) .offer-num{background:linear-gradient(145deg,#0f4272,#061c33)}
+    .offer:nth-child(2) .offer-num{background:linear-gradient(145deg,#0d7a4f,#05603a)}
+    .offer:nth-child(3) .offer-num{background:linear-gradient(145deg,#1c5f9e,#0f4272)}
+    .offer:nth-child(4) .offer-num{background:linear-gradient(145deg,#e8b924,#a8801f); color:var(--navy-deep)}
+    .offer h3{font-size:22px; margin-bottom:4px}
+    .offer p{color:var(--muted); font-size:14.5px; max-width:42rem}
+    .offer-go{
+      font-size:13px; font-weight:750; color:var(--navy-mid); white-space:nowrap;
+    }
+
+    /* Archetypes */
+    .arch-band{
+      background:
+        radial-gradient(1000px 420px at 10% 0%, rgba(244,201,69,.12), transparent 60%),
+        radial-gradient(800px 380px at 90% 20%, rgba(13,122,79,.08), transparent 55%),
+        linear-gradient(180deg, #eef3f8, #f7f9fb);
+      border-block:1px solid var(--line);
+    }
+    .arch-grid{
+      display:grid; grid-template-columns:repeat(3, 1fr); gap:14px;
+    }
+    .arch{
+      display:flex; flex-direction:column; gap:12px; min-height:100%;
+      border-radius:var(--r); padding:22px 20px 20px; border:1px solid transparent;
+      text-align:left; transition:transform .2s ease, box-shadow .2s ease;
+      box-shadow:var(--shadow);
+    }
+    .arch:hover{transform:translateY(-3px); box-shadow:0 12px 32px rgba(15,39,64,.1)}
+    .arch-mark{
+      width:46px; height:46px; border-radius:12px;
+      display:grid; place-items:center;
+      font-family:var(--font-display); font-size:16px; font-weight:700; color:#fff;
+      letter-spacing:.02em;
+    }
+    .arch h3{font-size:22px; color:inherit}
+    .arch p{font-size:13.5px; line-height:1.5; opacity:.9; flex:1}
+    .arch .more{font-size:12px; font-weight:750; letter-spacing:.04em; opacity:.8}
+    .arch.steward{background:#e8f7ef; color:#05603a}
+    .arch.steward .arch-mark{background:linear-gradient(145deg,#07864d,#05603a)}
+    .arch.artisan{background:#e8f2ff; color:#1a55a8}
+    .arch.artisan .arch-mark{background:linear-gradient(145deg,#2479df,#1a55a8)}
+    .arch.pioneer{background:#fff0e2; color:#a3500f}
+    .arch.pioneer .arch-mark{background:linear-gradient(145deg,#e57c2d,#b85c18)}
+    .arch.advocate{background:#f0ebff; color:#513a96}
+    .arch.advocate .arch-mark{background:linear-gradient(145deg,#7256c7,#513a96)}
+    .arch.visionary{background:#e2f5f7; color:#04616e}
+    .arch.visionary .arch-mark{background:linear-gradient(145deg,#078697,#04616e)}
+    .arch.gladiator{background:#ffe9e7; color:#a92e28}
+    .arch.gladiator .arch-mark{background:linear-gradient(145deg,#df453d,#a92e28)}
+    .arch-cta{margin-top:28px; display:flex; flex-wrap:wrap; gap:12px; align-items:center}
+    .arch-cta p{color:var(--muted); font-size:14.5px}
+
+    /* Steps */
+    .steps{
+      display:grid; grid-template-columns:repeat(3, 1fr); gap:28px;
+      counter-reset:step;
+    }
+    .step{position:relative; padding-top:8px}
+    .step::before{
+      counter-increment:step; content:counter(step);
+      display:grid; place-items:center;
+      width:40px; height:40px; border-radius:50%;
+      background:var(--navy); color:#fff;
+      font-family:var(--font-display); font-size:18px; font-weight:700;
+      margin-bottom:16px;
+    }
+    .step h3{font-size:22px; margin-bottom:8px}
+    .step p{color:var(--muted); font-size:14.5px; line-height:1.5}
+
+    /* Journeys teaser */
+    .journey-rail{display:grid; grid-template-columns:repeat(3, 1fr); gap:14px}
+    .journey{
+      background:#fff; border:1px solid var(--line); border-radius:var(--r);
+      overflow:hidden; box-shadow:var(--shadow);
+      transition:transform .18s ease, border-color .18s ease;
+    }
+    .journey:hover{transform:translateY(-2px); border-color:#b8c9dc}
+    .journey-top{
+      padding:18px 18px 14px;
+      background:linear-gradient(100deg, var(--navy-deep), var(--navy-mid));
+      color:#fff; display:flex; gap:12px; align-items:center;
+    }
+    .journey-av{
+      width:42px; height:42px; border-radius:12px; background:var(--gold);
+      color:var(--navy-deep); display:grid; place-items:center;
+      font-size:13px; font-weight:800; flex:0 0 42px;
+    }
+    .journey-top strong{display:block; font-family:var(--font-display); font-size:18px; font-weight:700}
+    .journey-top span{display:block; font-size:12px; color:#b3cae0; margin-top:2px}
+    .journey-body{padding:16px 18px 18px}
+    .journey-body p{
+      font-family:var(--font-display); font-size:17px; line-height:1.35;
+      color:var(--ink); font-weight:600;
+    }
+    .journey-body small{
+      display:block; margin-top:12px; font-size:12px; font-weight:700;
+      color:var(--ochre); letter-spacing:.08em; text-transform:uppercase;
+    }
+
+    /* Closing CTA */
+    .closing{
+      padding:0 0 80px;
+    }
+    .closing-box{
+      border-radius:24px; overflow:hidden;
+      background:
+        linear-gradient(120deg, rgba(6,28,51,.92), rgba(15,66,114,.85)),
+        url("assets/hero-wide-1100.jpg") center 30% / cover;
+      color:#fff; padding:48px 40px;
+      display:flex; flex-wrap:wrap; gap:24px; align-items:center; justify-content:space-between;
+      box-shadow:var(--shadow);
+    }
+    .closing-box h2{font-size:clamp(28px, 3.5vw, 38px); color:#fff; margin-bottom:8px}
+    .closing-box p{color:#cfe0f0; max-width:34rem; font-size:15.5px}
+
+    /* Footer + dock */
+    .footer{
+      background:var(--navy-deep); color:#bdccd5; padding:48px 0 36px;
+    }
+    .footer-grid{display:grid; grid-template-columns:1.4fr 1fr 1fr 1fr; gap:28px}
+    .footer-brand{display:flex; align-items:center; gap:10px; color:#fff; margin-bottom:12px}
+    .footer-brand img{width:42px; height:42px; border-radius:10px; background:#f7f4ec}
+    .footer h4{color:#fff; margin:0 0 12px; font-size:13px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; font-family:var(--font-body)}
+    .footer a{display:block; padding:5px 0; color:#bdccd5; font-size:14px}
+    .footer a:hover{color:#fff}
+    .footer small{display:block; margin-top:14px; font-size:11px; color:#7f93a5}
+    .mobile-dock, .mobile-sheet{display:none}
+
+    /* Motion */
+    @media (prefers-reduced-motion: no-preference){
+      .hero-art{animation:fadeIn 1s ease both}
+      .hero-copy-inner > *{animation:rise .7s cubic-bezier(.22,.7,.3,1) both}
+      .hero-copy-inner > *:nth-child(1){animation-delay:.12s}
+      .hero-copy-inner > *:nth-child(2){animation-delay:.2s}
+      .hero-copy-inner > *:nth-child(3){animation-delay:.28s}
+      .hero-copy-inner > *:nth-child(4){animation-delay:.36s}
+      .hero-copy-inner > *:nth-child(5){animation-delay:.44s}
+      .arch{animation:rise .55s ease both}
+      .arch:nth-child(1){animation-delay:.05s}
+      .arch:nth-child(2){animation-delay:.1s}
+      .arch:nth-child(3){animation-delay:.15s}
+      .arch:nth-child(4){animation-delay:.2s}
+      .arch:nth-child(5){animation-delay:.25s}
+      .arch:nth-child(6){animation-delay:.3s}
+    }
+    @keyframes fadeIn{from{opacity:0} to{opacity:1}}
+    @keyframes rise{from{opacity:0; transform:translateY(14px)} to{opacity:1; transform:none}}
+
+    /* Tablet */
+    @media (max-width:980px){
+      .links{display:none}
+      .menu{display:inline-flex; align-items:center; justify-content:center}
+      .arch-grid, .journey-rail, .steps{grid-template-columns:1fr 1fr}
+      .offer{grid-template-columns:72px 1fr; gap:16px}
+      .offer-go{display:none}
+      .footer-grid{grid-template-columns:1fr 1fr}
+      .footer-grid > div:first-child{grid-column:1 / -1}
+    }
+
+    /* Mobile hero overlay */
+    @media (max-width:819px){
+      .hero{min-height:calc(100svh - 70px); align-items:end}
+      .hero-art img{object-position:center 14%}
+      .hero-scrim{
+        background:
+          linear-gradient(180deg, rgba(3,20,45,.15) 0%, rgba(3,20,45,.35) 38%, rgba(3,20,45,.88) 72%, rgba(3,20,45,.96) 100%);
+      }
+      .hero-copy{padding:24px 0 36px}
+      .hero-brand{font-size:clamp(34px, 10vw, 46px)}
+      .actions{display:grid; grid-template-columns:1fr}
+      .actions .btn{width:100%}
+    }
+
+    @media (max-width:640px){
+      body{padding-bottom:72px}
+      .wrap{width:min(100% - 24px, 1120px)}
+      .nav{min-height:62px}
+      .brand-logo{width:42px; height:42px; flex-basis:42px}
+      .brand strong{font-size:15px}
+      .brand small{font-size:8px}
+      .section{padding:52px 0}
+      .arch-grid, .journey-rail, .steps, .footer-grid{grid-template-columns:1fr}
+      .offer{padding:18px}
+      .offer-num{width:64px; height:64px; font-size:24px}
+      .closing-box{padding:32px 22px}
+      .mobile-dock{
+        display:grid; grid-template-columns:repeat(4, 1fr);
+        position:fixed; z-index:80; left:0; right:0; bottom:0;
+        background:#fff; border-top:1px solid var(--line);
+        box-shadow:0 -8px 30px rgba(5,30,47,.1);
+        padding:7px 3px max(7px, env(safe-area-inset-bottom));
+      }
+      .mobile-dock a, .mobile-dock button{
+        color:var(--muted); text-align:center; font-size:10px; font-weight:750;
+        display:block; width:100%; padding:4px 0;
+      }
+      .mobile-dock .dock-ico{display:grid; place-items:center; color:var(--ink); margin:0 auto 2px}
+      .mobile-dock .dock-ico svg{width:20px; height:20px}
+      .mobile-dock a.active, .mobile-dock a.active .dock-ico{color:var(--green)}
+      .mobile-sheet{
+        display:block; position:fixed; z-index:90; inset:0;
+        background:rgba(3,17,29,.54); opacity:0; pointer-events:none; transition:.2s;
+      }
+      .mobile-sheet.open{opacity:1; pointer-events:auto}
+      .mobile-sheet nav{
+        position:absolute; left:10px; right:10px; top:72px;
+        background:#fff; border-radius:20px; padding:10px; box-shadow:var(--shadow);
+        display:grid;
+      }
+      .mobile-sheet a, .mobile-sheet button{
+        min-height:50px; border:0; border-bottom:1px solid var(--line);
+        background:#fff; color:var(--ink); text-align:left; padding:12px;
+        border-radius:10px; font-weight:750;
+      }
+      .mobile-sheet button{color:var(--green)}
+    }
+
+    @media (min-width:1180px){
+      .hero-copy-inner{max-width:600px}
+    }
+
+    .modal{
+      position:fixed; inset:0; z-index:100; background:rgba(3,17,29,.55);
+      display:none; align-items:center; justify-content:center; padding:18px;
+    }
+    .modal.open{display:flex}
+    .modal-card{
+      width:min(420px, 100%); background:#fff; border-radius:20px;
+      padding:24px; box-shadow:var(--shadow);
+    }
+    .modal-head{display:flex; justify-content:space-between; gap:12px; margin-bottom:16px}
+    .modal-head h2{font-size:24px; margin-top:8px}
+    .modal .close{width:40px; height:40px; border-radius:50%; background:var(--paper); font-size:22px}
+    .modal label{display:block; font-size:12px; font-weight:700; color:var(--muted); margin:12px 0 6px}
+    .modal input{
+      width:100%; min-height:46px; border:1px solid var(--line); border-radius:12px;
+      padding:10px 12px; background:var(--paper);
+    }
+    .toast{
+      position:fixed; left:50%; bottom:88px; transform:translateX(-50%);
+      background:var(--navy-deep); color:#fff; border-radius:12px;
+      padding:12px 18px; font-size:13.5px; font-weight:700;
+      opacity:0; pointer-events:none; transition:.2s; z-index:120;
+      max-width:min(90vw, 360px); text-align:center;
+    }
+    .toast.show{opacity:1}
+  </style>
 </head>
 <body>
-  <header class="header"><div class="wrap nav"><a class="brand" href="index.html"><span class="brand-logo"><img src="logo.png" alt="Next Step Guyana logo"></span><span><strong>NEXT STEP</strong><small>GUYANA</small></span></a><nav class="links"><a class="active" href="index.html">Home</a><a href="app.html">Feed</a><a href="app.html#pathway">My Pathway</a><a href="app.html#sessions">Sessions</a><a href="about.html">About Us</a><button class="sign-in" data-signin>Sign in</button></nav><button class="menu" id="menuButton" aria-label="Open navigation" aria-expanded="false"><span class="menu-label">Menu</span><span class="menu-ico" aria-hidden="true">☰</span></button></div><div class="flag"></div></header>
-  <div class="mobile-sheet" id="mobileSheet"><nav aria-label="Mobile navigation"><a href="index.html">Home</a><a href="app.html">Feed</a><a href="app.html#pathway">My Pathway</a><a href="app.html#sessions">Sessions</a><a href="check.html">Self-check</a><a href="about.html">About Us</a><button data-signin>Sign in</button></nav></div>
+  <header class="header">
+    <div class="wrap nav">
+      <a class="brand" href="index.html">
+        <span class="brand-logo"><img src="logo.png" alt="Next Step Guyana logo"></span>
+        <span><strong>NEXT STEP</strong><small>GUYANA</small></span>
+      </a>
+      <nav class="links" aria-label="Primary">
+        <a class="active" href="index.html">Home</a>
+        <a href="app.html">Feed</a>
+        <a href="app.html#pathway">Pathway</a>
+        <a href="app.html#sessions">Sessions</a>
+        <a href="check.html">Archetype</a>
+        <a href="about.html">About</a>
+        <button class="sign-in" type="button" data-signin>Sign in</button>
+      </nav>
+      <button class="menu" id="menuButton" type="button" aria-label="Open navigation" aria-expanded="false">☰</button>
+    </div>
+  </header>
+
+  <div class="mobile-sheet" id="mobileSheet">
+    <nav aria-label="Mobile navigation">
+      <a href="index.html">Home</a>
+      <a href="app.html">Feed</a>
+      <a href="app.html#pathway">My Pathway</a>
+      <a href="app.html#sessions">Sessions</a>
+      <a href="check.html">Find my archetype</a>
+      <a href="about.html">About</a>
+      <button type="button" data-signin>Sign in</button>
+    </nav>
+  </div>
+
   <main>
     <section class="hero">
-  <picture class="hero-art">
-    <!-- desktop: full wide painting -->
-    <source type="image/webp" media="(min-width:820px)"
-            srcset="assets/hero-wide-1100.webp 1100w, assets/hero-wide-1600.webp 1600w"
-            sizes="100vw">
-    <source type="image/jpeg" media="(min-width:820px)"
-            srcset="assets/hero-wide-1100.jpg 1100w, assets/hero-wide-1600.jpg 1600w"
-            sizes="100vw">
-    <!-- mobile: pre-cropped to the figures + star -->
-    <source type="image/webp"
-            srcset="assets/hero-crop-520.webp 520w, assets/hero-crop-760.webp 760w"
-            sizes="100vw">
-    <img src="assets/hero-crop-520.jpg" width="836" height="941"
-         fetchpriority="high" decoding="async"
-         alt="Three Guyanese students in school uniform, seen from behind with their backpacks, looking out over a lit coastal town at dusk toward a bright golden star.">
-  </picture>
-  <div class="hero-scrim" aria-hidden="true"></div>
-  <div class="wrap hero-copy">
-    <div class="hero-copy-inner">
-      <span class="eyebrow">🇬🇾 BUILT BY GUYANESE STUDENTS, FOR GUYANESE STUDENTS</span>
-      <p class="welcome-lg">Welcome to<br><span>Next Step Guyana</span></p>
-      <h1 class="hero-sub">Helping Guyanese students plan their <span class="gold-word">future</span></h1>
-      <div class="actions">
-        <a class="btn gold" href="app.html">Enter the feed →</a>
-        <a class="btn ghost" href="check.html">Start self-check</a>
+      <picture class="hero-art">
+        <source type="image/webp" media="(min-width:820px)"
+                srcset="assets/hero-wide-1100.webp 1100w, assets/hero-wide-1600.webp 1600w"
+                sizes="100vw">
+        <source type="image/jpeg" media="(min-width:820px)"
+                srcset="assets/hero-wide-1100.jpg 1100w, assets/hero-wide-1600.jpg 1600w"
+                sizes="100vw">
+        <source type="image/webp"
+                srcset="assets/hero-crop-520.webp 520w, assets/hero-crop-760.webp 760w"
+                sizes="100vw">
+        <img src="assets/hero-crop-520.jpg" width="836" height="941"
+             fetchpriority="high" decoding="async"
+             alt="Three Guyanese students in school uniform, looking out over a lit coastal town at dusk toward a bright golden star.">
+      </picture>
+      <div class="hero-scrim" aria-hidden="true"></div>
+      <div class="wrap hero-copy">
+        <div class="hero-copy-inner">
+          <span class="eyebrow">Built by Guyanese students, for Guyanese students</span>
+          <p class="hero-brand">Next Step<br><span>Guyana</span></p>
+          <p class="hero-sub">Honest guidance for subject choices, sessions, and opportunities, so you can plan a future that fits <em>you</em>.</p>
+          <div class="actions">
+            <a class="btn gold" href="app.html">Enter the feed</a>
+            <a class="btn ghost" href="check.html">Find my archetype</a>
+          </div>
+          <p class="motto">Choose <span>·</span> Dream <span>·</span> Act</p>
+        </div>
       </div>
-      <button class="text-link" data-signin>Already have an account? <strong>Sign in</strong></button>
-      <p class="motto">Choose <span>·</span> Dream <span>·</span> Act</p>
+    </section>
+
+    <section class="section" id="offerings">
+      <div class="wrap">
+        <div class="section-head">
+          <span class="eyebrow">What you get</span>
+          <h2>Everything you need between Form 3 and your first next step.</h2>
+          <p>One place for questions, real journeys, openings you can actually enter, and a pathway that updates as you decide.</p>
+        </div>
+        <div class="offer-list">
+          <a class="offer" href="app.html">
+            <span class="offer-num" aria-hidden="true">01</span>
+            <span>
+              <h3>The Feed</h3>
+              <p>Questions, stories, opportunities, sessions and journeys, clearly labelled so you always know what you are looking at.</p>
+            </span>
+            <span class="offer-go">Open feed →</span>
+          </a>
+          <a class="offer" href="app.html#pathway">
+            <span class="offer-num" aria-hidden="true">02</span>
+            <span>
+              <h3>My Pathway</h3>
+              <p>Six questions build a timeline of decisions that are near. Save steps, sessions and openings that belong on your route.</p>
+            </span>
+            <span class="offer-go">Build pathway →</span>
+          </a>
+          <a class="offer" href="app.html#sessions">
+            <span class="offer-num" aria-hidden="true">03</span>
+            <span>
+              <h3>Live sessions</h3>
+              <p>Book mentor pods on medicine, trades, coding, sport and more. See seats left and what to ask before you join.</p>
+            </span>
+            <span class="offer-go">Browse sessions →</span>
+          </a>
+          <a class="offer" href="app.html">
+            <span class="offer-num" aria-hidden="true">04</span>
+            <span>
+              <h3>Opportunities desk</h3>
+              <p>STEM clubs, debating, scholarships, past-paper clinics and competitions, with how you get in and who has done it.</p>
+            </span>
+            <span class="offer-go">See openings →</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section arch-band" id="archetypes">
+      <div class="wrap">
+        <div class="section-head">
+          <span class="eyebrow">Your archetype</span>
+          <h2>Six ways students show up. Which one sounds like you?</h2>
+          <p>A short self-check reveals your explorer card. It is not a job title. It is a clear read on how you like to work, so the feed can point you better.</p>
+        </div>
+        <div class="arch-grid">
+          <a class="arch steward" href="check.html">
+            <span class="arch-mark">St</span>
+            <h3>The Steward</h3>
+            <p>Looks after something bigger than themselves: health, knowledge, land, or a system others depend on.</p>
+            <span class="more">Take the check →</span>
+          </a>
+          <a class="arch artisan" href="check.html">
+            <span class="arch-mark">Ar</span>
+            <h3>The Artisan</h3>
+            <p>Trusts what their hands can prove. Would rather show the finished thing than describe it.</p>
+            <span class="more">Take the check →</span>
+          </a>
+          <a class="arch pioneer" href="check.html">
+            <span class="arch-mark">Pi</span>
+            <h3>The Pioneer</h3>
+            <p>Starts things. Would rather be wrong in public than wait for permission.</p>
+            <span class="more">Take the check →</span>
+          </a>
+          <a class="arch advocate" href="check.html">
+            <span class="arch-mark">Ad</span>
+            <h3>The Advocate</h3>
+            <p>Speaks for people who are not in the room, and usually notices the unfairness first.</p>
+            <span class="more">Take the check →</span>
+          </a>
+          <a class="arch visionary" href="check.html">
+            <span class="arch-mark">Vi</span>
+            <h3>The Visionary</h3>
+            <p>Sees the version that does not exist yet, then works in ideas, images and language to make it real.</p>
+            <span class="more">Take the check →</span>
+          </a>
+          <a class="arch gladiator" href="check.html">
+            <span class="arch-mark">Gl</span>
+            <h3>The Gladiator</h3>
+            <p>Does their best work when it counts and somebody is watching. Knows pressure.</p>
+            <span class="more">Take the check →</span>
+          </a>
+        </div>
+        <div class="arch-cta">
+          <a class="btn solid" href="check.html">Find my archetype</a>
+          <p>About three minutes. Free. No account needed to see your card.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="how">
+      <div class="wrap">
+        <div class="section-head">
+          <span class="eyebrow">How it works</span>
+          <h2>Three moves. Then you are moving.</h2>
+          <p>Start with a read on yourself, learn from people a few years ahead, then put the right steps on your pathway.</p>
+        </div>
+        <div class="steps">
+          <div class="step">
+            <h3>Find your archetype</h3>
+            <p>Rate what you actually enjoy. Your explorer card names how you show up, not one career forever.</p>
+          </div>
+          <div class="step">
+            <h3>Learn in the feed</h3>
+            <p>Read journeys from doctors, electricians, developers and coaches. Ask questions. Save openings that fit.</p>
+          </div>
+          <div class="step">
+            <h3>Build your pathway</h3>
+            <p>Mark the decisions that are near: subjects, sessions, applications. Update it as you go.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="journeys" style="padding-top:0">
+      <div class="wrap">
+        <div class="section-head">
+          <span class="eyebrow">Real journeys</span>
+          <h2>People a few years ahead of you.</h2>
+          <p>Not celebrity stories. Local routes through CSEC, CAPE, TVET and first jobs.</p>
+        </div>
+        <div class="journey-rail">
+          <a class="journey" href="app.html">
+            <div class="journey-top">
+              <span class="journey-av">RP</span>
+              <div>
+                <strong>Raeka Persaud</strong>
+                <span>Junior doctor, Georgetown</span>
+              </div>
+            </div>
+            <div class="journey-body">
+              <p>Kept every science elective she could, then followed the hospital stories that pulled her in.</p>
+              <small>Science and health</small>
+            </div>
+          </a>
+          <a class="journey" href="app.html">
+            <div class="journey-top">
+              <span class="journey-av">OK</span>
+              <div>
+                <strong>Omar Khan</strong>
+                <span>Electrician, Berbice</span>
+              </div>
+            </div>
+            <div class="journey-body">
+              <p>Chose Industrial Technology when the academic stream looked more prestigious, and still kept Maths.</p>
+              <small>Building and fixing</small>
+            </div>
+          </a>
+          <a class="journey" href="app.html">
+            <div class="journey-top">
+              <span class="journey-av">KD</span>
+              <div>
+                <strong>Keisha Daniels</strong>
+                <span>Coach and PE teacher, Lethem</span>
+              </div>
+            </div>
+            <div class="journey-body">
+              <p>Logged every training session until the evidence opened funding, travel and a coaching path.</p>
+              <small>Sport and coaching</small>
+            </div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="closing">
+      <div class="wrap">
+        <div class="closing-box">
+          <div>
+            <h2>Your Northern Star is waiting.</h2>
+            <p>Enter the feed to browse, or take the self-check if you want a clearer read on yourself first.</p>
+          </div>
+          <div class="actions">
+            <a class="btn gold" href="app.html">Enter the feed</a>
+            <a class="btn ghost" href="check.html">Find my archetype</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <nav class="mobile-dock" aria-label="Primary mobile navigation">
+    <a class="active" href="index.html"><span class="dock-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 10.5L12 4l8 6.5V20a1 1 0 0 1-1 1h-5v-6H10v6H5a1 1 0 0 1-1-1v-9.5z"/></svg></span>Home</a>
+    <a href="app.html"><span class="dock-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h10"/></svg></span>Feed</a>
+    <a href="app.html#pathway"><span class="dock-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 4h10l4 4v12H5V4z"/><path d="M14 4v5h5"/><path d="M8 13h8M8 17h6"/></svg></span>Pathway</a>
+    <button type="button" id="dockMenu" aria-label="Open menu" aria-expanded="false"><span class="dock-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h16"/></svg></span>Menu</button>
+  </nav>
+
+  <footer class="footer">
+    <div class="wrap footer-grid">
+      <div>
+        <div class="footer-brand">
+          <img src="logo.png" alt="">
+          <strong>NEXT STEP GUYANA</strong>
+        </div>
+        <p style="max-width:340px;font-size:13px;line-height:1.6">Next Step helps Guyanese students take inspiration from others, then build their own journey.</p>
+        <small>Prototype · Free for students</small>
+      </div>
+      <div>
+        <h4>Explore</h4>
+        <a href="app.html">Feed</a>
+        <a href="app.html#sessions">Sessions</a>
+        <a href="check.html">Archetypes</a>
+      </div>
+      <div>
+        <h4>Your plan</h4>
+        <a href="app.html#pathway">My Pathway</a>
+        <a href="app.html#sessions">My Sessions</a>
+      </div>
+      <div>
+        <h4>Organisation</h4>
+        <a href="about.html">About Us</a>
+        <a href="#" data-toast="Contact details coming soon.">Contact</a>
+      </div>
+    </div>
+  </footer>
+
+  <div class="modal" id="signModal" role="dialog" aria-modal="true" aria-labelledby="signTitle">
+    <div class="modal-card">
+      <div class="modal-head">
+        <div>
+          <span class="eyebrow" style="color:var(--green)">Welcome back</span>
+          <h2 id="signTitle">Continue your journey</h2>
+        </div>
+        <button class="close" type="button" data-close aria-label="Close">×</button>
+      </div>
+      <label for="signEmail">Email or mobile number</label>
+      <input id="signEmail" placeholder="Enter your email or number">
+      <label for="signPass">Password</label>
+      <input id="signPass" type="password" placeholder="Enter your password">
+      <a class="btn solid" href="app.html" style="width:100%;margin-top:18px">Sign in to the feed</a>
+      <p style="text-align:center;font-size:12px;font-weight:700;color:var(--muted);margin:16px 0 10px">New here?</p>
+      <a class="btn gold" href="check.html" style="width:100%">Find my archetype</a>
     </div>
   </div>
-</section>
-    <div class="wrap quick-wrap"><div class="quick"><button data-stamp><span class="qicon"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="#0e7a4f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M15 9l-4 2-2 4 4-2z"/></svg></span><span><strong>Find my Northern Star</strong><small>Start the self-check</small></span></button><button onclick="location.href='app.html'"><span class="qicon"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="#0e7a4f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17c3 0 3-4 6-4s3 4 6 4 3-6 6-6"/></svg></span><span><strong>See how journeys work</strong><small>From today to your Northern Star</small></span></button><button onclick="location.href='app.html'"><span class="qicon"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="#0e7a4f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8.5" cy="8" r="3"/><circle cx="16" cy="9.5" r="2.5"/><path d="M2.5 19c0-3 2.5-5 6-5s6 2 6 5"/><path d="M14.5 14.3c2.7.3 4.5 2 4.5 4.7"/></svg></span><span><strong>Learn from mentors</strong><small>People who faced similar choices</small></span></button><button data-demo="Navi"><span class="qicon"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="#0e7a4f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 L20 20 L12 16 L4 20 Z"/></svg></span><span><strong>Meet Navi</strong><small>Your Next Step guide</small></span></button></div></div>
-    <section class="section" id="how"><div class="wrap"><div class="section-head"><span class="eyebrow">HOW IT WORKS</span><h2>Find direction before you sign up</h2><p>Discover your explorer profile and career options first. Create a free account when you are ready to build your journey, follow mentors and track progress.</p></div><div class="steps"><article class="step"><span class="step-number">1</span><h3>Tell us about you</h3><p>Answer short questions about your stage, your subjects and what pulls you.</p></article><article class="step"><span class="step-number">2</span><h3>Explore fitting careers</h3><p>Compare careers and study routes that fit your interests and stage - keep several, lock none.</p></article><article class="step"><span class="step-number">3</span><h3>Build your plan</h3><p>Your subjects, what you have done, and the gaps between where you are and the careers you kept.</p></article></div></div></section>
-    <section class="stats-band"><div class="wrap stats"><div class="stat"><b id="statCareers" data-count="0">0</b><span>CAREERS MAPPED</span><small>Each with the route from your form to the job</small></div><div class="stat"><b id="statSchools" data-count="0">0</b><span>SCHOOLS LISTED</span><small>Across all ten regions</small></div><div class="stat"><b data-count="11">0</b><span>AREAS TO EXPLORE</span><small>From trades to health to public service</small></div><div class="stat"><b class="stat-free">Free</b><span>FOREVER</span><small>No payment field anywhere in this product</small></div></div></section>
+  <div class="toast" id="toast" role="status"></div>
 
-    <section class="trust" id="trust"><div class="wrap trust-grid"><div class="trust-copy"><span class="eyebrow" style="background:var(--green2);color:var(--green)">WHY NEXT STEP</span><h2>Guidance that feels local, honest and possible.</h2><p>Next Step should help students understand their choices, not pressure them into one definition of success.</p><button class="btn" data-demo="about Next Step">Learn about Next Step</button></div><div class="trust-cards"><article class="trust-card"><span>✓</span><h3>Verified information</h3><p>Important guidance should show its source and last-review date.</p></article><article class="trust-card"><span>◉</span><h3>Real mentors</h3><p>Approved students and professionals sharing relatable experience.</p></article><article class="trust-card"><span>↗</span><h3>Multiple pathways</h3><p>University, training and flexible routes considered respectfully.</p></article><article class="trust-card"><span>♢</span><h3>Free student access</h3><p>Core guidance designed to remain accessible across Guyana.</p></article></div></div></section>
-    <section class="cta"><div class="wrap"><div class="cta-box"><div><h2>Your next step starts in the feed.</h2><p>Browse stories, sessions and pathways built for Guyanese students.</p></div><a class="btn gold" href="app.html">Enter the feed →</a></div></div></section>
-  </main>
-  <script src="careers-v3-data.js"></script>
-  <script src="nsg-schools.js"></script>
-  <nav class="mobile-dock" aria-label="Primary mobile navigation">
-  <a class="active" href="index.html"><span class="dock-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 10.5L12 4l8 6.5V20a1 1 0 0 1-1 1h-5v-6H10v6H5a1 1 0 0 1-1-1v-9.5z"/></svg></span>Home</a>
-  <a href="app.html"><span class="dock-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h10"/></svg></span>Feed</a>
-  <a href="app.html#pathway"><span class="dock-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 4h10l4 4v12H5V4z"/><path d="M14 4v5h5"/><path d="M8 13h8M8 17h6"/></svg></span>Pathway</a>
-  <button type="button" id="dockMenu" aria-label="Open menu" aria-expanded="false"><span class="dock-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h16"/></svg></span>Menu</button>
-</nav>
-  <footer class="footer"><div class="wrap footer-grid"><div><div class="footer-brand"><img src="logo.png" alt=""><strong>NEXT STEP GUYANA</strong></div><p style="max-width:340px;font-size:12px;line-height:1.6">Next Step was created to help Guyanese students take inspiration from others but build their own journey.</p><small>Homepage prototype · Final legal and organisational content required</small></div><div><h4>Explore</h4><a href="app.html">Feed</a><a href="app.html">Sessions</a></div><div><h4>Your account</h4><a href="app.html#pathway">My Pathway</a><a href="app.html#sessions">My Sessions</a></div><div><h4>Organisation</h4><a href="about.html">About Us</a><a href="about.html">Prototype map</a><a href="#">Privacy</a><a href="#">Contact</a></div></div></footer>
-  <div class="modal" id="signModal"><div class="modal-card sign-form"><div class="modal-head"><div><span class="eyebrow" style="background:var(--green2);color:var(--green)">WELCOME BACK</span><h2>Continue your journey</h2></div><button class="close" data-close>×</button></div><label>Email or mobile number</label><input placeholder="Enter your email or number"><label>Password</label><input type="password" placeholder="Enter your password"><button class="btn full" style="margin-top:17px" onclick="location.href='app.html'">Sign in</button><p style="text-align:center;font-size:12px;font-weight:700;color:var(--muted);margin:16px 0 10px">OR new here?</p><button class="btn gold full" data-stamp>Take the self-check →</button></div></div>
   <script>
-    function toast(msg){let t=document.querySelector(".toast");if(!t){t=document.createElement("div");t.className="toast";document.body.appendChild(t)}t.textContent=msg;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2300)}
-  </script>
-  <script>
-    const signModal=document.getElementById("signModal");
-    const menuButton=document.getElementById("menuButton"),dockMenu=document.getElementById("dockMenu"),mobileSheet=document.getElementById("mobileSheet");
-    function setMenuOpen(open){
-      mobileSheet.classList.toggle("open",open);
-      menuButton.setAttribute("aria-expanded",open);
-      if(dockMenu)dockMenu.setAttribute("aria-expanded",open);
-      const ico=menuButton.querySelector(".menu-ico");
-      const label=menuButton.querySelector(".menu-label");
-      if(ico)ico.textContent=open?"×":"☰";
-      if(label)label.textContent=open?"Close":"Menu";
-      const dockSvg=dockMenu&&dockMenu.querySelector(".dock-ico svg");
-      if(dockSvg){
-        dockSvg.innerHTML=open
-          ? '<path d="M6 6l12 12M18 6L6 18"/>'
-          : '<path d="M4 7h16M4 12h16M4 17h16"/>';
+    (function () {
+      var sheet = document.getElementById('mobileSheet');
+      var menuBtn = document.getElementById('menuButton');
+      var dockMenu = document.getElementById('dockMenu');
+      var modal = document.getElementById('signModal');
+      var toastEl = document.getElementById('toast');
+
+      function setSheet(open) {
+        if (!sheet) return;
+        sheet.classList.toggle('open', open);
+        if (menuBtn) menuBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+        if (dockMenu) dockMenu.setAttribute('aria-expanded', open ? 'true' : 'false');
       }
-    }
-    function toggleMenu(){setMenuOpen(!mobileSheet.classList.contains("open"))}
-    menuButton.addEventListener("click",toggleMenu);
-    if(dockMenu)dockMenu.addEventListener("click",toggleMenu);
-    mobileSheet.addEventListener("click",e=>{if(e.target===mobileSheet)setMenuOpen(false)});
-    mobileSheet.querySelectorAll("a,button").forEach(el=>el.addEventListener("click",()=>setMenuOpen(false)));
-    document.querySelectorAll("[data-stamp]").forEach(b=>b.addEventListener("click",()=>location.href="check.html"));
-    document.querySelectorAll("[data-signin]").forEach(b=>b.addEventListener("click",()=>{signModal.classList.add("open")}));document.querySelectorAll("[data-close]").forEach(b=>b.addEventListener("click",()=>b.closest(".modal").classList.remove("open")));document.querySelectorAll(".modal").forEach(m=>m.addEventListener("click",e=>{if(e.target===m)m.classList.remove("open")}));
-    (function(){
-      var careerN=(window.NSG_CAREERS_V3&&NSG_CAREERS_V3.length)||(window.CAREERS&&CAREERS.length)||0;
-      var schoolN=(window.NSG_SCHOOLS&&NSG_SCHOOLS.SCHOOLS&&NSG_SCHOOLS.SCHOOLS.length)||0;
-      var sc=document.getElementById('statCareers');
-      var ss=document.getElementById('statSchools');
-      if(sc){ sc.dataset.count=String(careerN); sc.textContent='0'; }
-      if(ss){ ss.dataset.count=String(schoolN); ss.textContent='0'; }
+
+      function toast(msg) {
+        toastEl.textContent = msg;
+        toastEl.classList.add('show');
+        setTimeout(function () { toastEl.classList.remove('show'); }, 2200);
+      }
+
+      if (menuBtn) menuBtn.addEventListener('click', function () {
+        setSheet(!sheet.classList.contains('open'));
+      });
+      if (dockMenu) dockMenu.addEventListener('click', function () {
+        setSheet(!sheet.classList.contains('open'));
+      });
+      if (sheet) sheet.addEventListener('click', function (e) {
+        if (e.target === sheet) setSheet(false);
+      });
+
+      document.querySelectorAll('[data-signin]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          setSheet(false);
+          modal.classList.add('open');
+        });
+      });
+      document.querySelectorAll('[data-close]').forEach(function (btn) {
+        btn.addEventListener('click', function () { modal.classList.remove('open'); });
+      });
+      modal.addEventListener('click', function (e) {
+        if (e.target === modal) modal.classList.remove('open');
+      });
+      document.querySelectorAll('[data-toast]').forEach(function (el) {
+        el.addEventListener('click', function (e) {
+          e.preventDefault();
+          toast(el.getAttribute('data-toast'));
+        });
+      });
     })();
-    const obs=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){const el=e.target,t=+el.dataset.count;if(!t){obs.unobserve(el);return;}let n=0;const id=setInterval(()=>{n=Math.min(t,n+Math.ceil(t/40));el.textContent=n.toLocaleString();if(n>=t)clearInterval(id)},24);obs.unobserve(el)}}));document.querySelectorAll("[data-count]").forEach(e=>obs.observe(e));
-    document.querySelectorAll("[data-demo]").forEach(b=>b.addEventListener("click",e=>{e.preventDefault();toast(`${b.dataset.demo[0].toUpperCase()+b.dataset.demo.slice(1)} will be refined as its own page prototype`)}));
   </script>
 </body>
 </html>

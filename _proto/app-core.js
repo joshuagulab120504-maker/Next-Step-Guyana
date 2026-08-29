@@ -443,7 +443,9 @@ function renderQuestionCard(item) {
     '</div>';
   if (!anon && a && !a.system) {
     html +=
-      '<button type="button" class="btn sm g" data-follow="' +
+      '<button type="button" class="btn sm g' +
+      (isFollowing(item.author) ? ' following' : '') +
+      '" data-follow="' +
       esc(item.author) +
       '">' +
       (isFollowing(item.author) ? 'Following' : 'Follow') +
@@ -507,7 +509,9 @@ function renderStoryCard(item) {
     '</div></div>';
   if (!mine && a && !a.system) {
     html +=
-      '<button type="button" class="btn sm g" data-follow="' +
+      '<button type="button" class="btn sm g' +
+      (isFollowing(item.author) ? ' following' : '') +
+      '" data-follow="' +
       esc(item.author) +
       '">' +
       (isFollowing(item.author) ? 'Following' : 'Follow') +
@@ -621,11 +625,11 @@ function renderSessionCard(item) {
     '<div class="cap"><span style="width:' +
     pct +
     '%"></span></div>' +
-    '<button type="button" class="btn sm" data-open="book" data-id="' +
+    '<div class="card-actions"><button type="button" class="btn sm" data-open="book" data-id="' +
     esc(s.id) +
     '">' +
     (left === 0 ? 'Join waitlist' : 'Book') +
-    '</button>' +
+    '</button></div>' +
     '</div></div></article>'
   );
 }
@@ -671,7 +675,9 @@ function renderJourneyCard(item) {
     '<button type="button" class="btn sm" data-open="journey" data-id="' +
     esc(item.journey) +
     '">Read their journey</button>' +
-    '<button type="button" class="btn sm g" data-follow="' +
+    '<button type="button" class="btn sm g' +
+    (isFollowing(item.journey) ? ' following' : '') +
+    '" data-follow="' +
     esc(item.journey) +
     '">' +
     (isFollowing(item.journey) ? 'Following' : 'Follow') +
@@ -799,7 +805,7 @@ function renderFeed() {
   }
   html += '</div>';
   html += renderRecentRow();
-  html += '<div class="composer card" id="composer">';
+  html += '<div class="composer" id="composer">';
   html += '<div class="seg">';
   html +=
     '<button type="button" class="seg-btn' +
@@ -825,7 +831,7 @@ function renderFeed() {
   html += '<div id="dup-slot">' + (S.ctype === 'question' ? dupHintHtml(S.draft || '') : '') + '</div>';
   html += '<div class="composer-foot">';
   html += '<label class="field-label" for="comp-cat">Category</label>';
-  html += '<select id="comp-cat">';
+  html += '<select id="comp-cat" aria-label="Category">';
   var selCat = S.draftCat || CATS[0];
   for (i = 0; i < CATS.length; i++) {
     html +=

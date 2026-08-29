@@ -930,7 +930,7 @@ function viewOpp(v) {
   html += '</ol></section>';
 
   html += '<section><h3>Quick tips</h3><ul class="tips gold">';
-  for (i = 0; i < o.tips.length; i++) html += '<li>' + iconCheck() + ' ' + esc(o.tips[i]) + '</li>';
+  for (i = 0; i < o.tips.length; i++) html += '<li>' + esc(o.tips[i]) + '</li>';
   html += '</ul></section>';
 
   html +=
@@ -1059,9 +1059,9 @@ function viewBook(v) {
     html +=
       '<label class="check"><input type="checkbox" id="book-wa" checked/> Send my reminders on WhatsApp. Confirmation, a reminder the day before, and the link an hour before. Your number is never shown to mentors or other students. <span class="muted">Prototype note: no number is collected here. The tick confirms you want reminders.</span></label>';
     html +=
-      '<button type="button" class="btn" data-confirm-book="' +
+      '<div class="card-actions"><button type="button" class="btn" data-confirm-book="' +
       esc(s.id) +
-      '">Confirm place</button>';
+      '">Confirm place</button></div>';
   }
   html += '</div>';
   return { crumb: 'Booking', title: s.title, html: html };
@@ -1248,7 +1248,6 @@ function viewJourney(v) {
       '" data-stage="' +
       esc(sp.stage) +
       '">' +
-      (on ? iconCheck() + ' ' : '') +
       esc(sp.kind) +
       ': ' +
       esc(sp.label) +
@@ -1469,15 +1468,16 @@ function renderChrome() {
 
   var navs = document.querySelectorAll('[data-nav]');
   var i;
+  var sheetTop = NAV.length ? NAV[NAV.length - 1].t : '';
   for (i = 0; i < navs.length; i++) {
-    var on = navs[i].getAttribute('data-nav') === S.view;
-    if (navs[i].classList.contains('dock-item')) {
-      if (on) navs[i].classList.add('on');
-      else navs[i].classList.remove('on');
-    } else {
-      if (on) navs[i].classList.add('on');
-      else navs[i].classList.remove('on');
+    if (navs[i].id === 'arch-pill') {
+      navs[i].classList.remove('on');
+      continue;
     }
+    var navKey = navs[i].getAttribute('data-nav');
+    var on = navKey === S.view || (navKey === 'sessions' && (sheetTop === 'sessions' || sheetTop === 'session' || sheetTop === 'book'));
+    if (on) navs[i].classList.add('on');
+    else navs[i].classList.remove('on');
   }
 
   /* Left next decision */
@@ -1494,7 +1494,7 @@ function renderChrome() {
         '<p class="eyebrow">Your next decision</p><h3>' +
         esc(st.dec.t) +
         '</h3>' +
-        (d != null ? '<p class="muted">' + d + ' days on the usual calendar</p>' : '') +
+        (d != null ? '<p class="due">' + d + ' days on the usual calendar</p>' : '') +
         '<button type="button" class="btn sm g" data-goto="pathway">Open pathway</button>';
     }
   }
@@ -1505,7 +1505,7 @@ function renderChrome() {
     var h = '';
     for (i = 0; i < 6; i++) {
       h +=
-        '<button type="button" class="p" data-topic="' +
+        '<button type="button" data-topic="' +
         esc(CATS[i]) +
         '">' +
         esc(CATS[i]) +
