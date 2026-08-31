@@ -8,6 +8,7 @@ var S = {
   anon: true,
   draft: '',
   draftCat: '',
+  sessionStage: '',
   onboarded: false,
   stage: null,
   form: '',
@@ -285,6 +286,7 @@ function paint() {
   byId('sheet-body').scrollTop = 0;
   if (out.after) out.after();
   renderChrome();
+  if (typeof syncFab === 'function') syncFab();
 }
 
 function avatarHtml(a, anon) {
@@ -297,6 +299,24 @@ function avatarHtml(a, anon) {
 
 function pill(label, cls, attrs) {
   return '<button type="button" class="p ' + (cls || '') + '" ' + (attrs || '') + '>' + esc(label) + '</button>';
+}
+
+function catChip(cat, clickable) {
+  if (!cat) return '';
+  if (clickable === false) {
+    return '<span class="cat-chip">' + esc(cat) + '</span>';
+  }
+  return (
+    '<button type="button" class="cat-chip" data-topic="' +
+    esc(cat) +
+    '">' +
+    esc(cat) +
+    '</button>'
+  );
+}
+
+function exploreCta() {
+  return '<span class="engage-cta">Explore</span>';
 }
 
 function iconHeart() {
@@ -418,8 +438,10 @@ function renderQuestionCard(item) {
   var anon = !!item.anon || !item.author;
   var a = item.author ? author(item.author) : null;
   var name = anon ? item.who || youName() : a && a.name ? a.name : youName();
-  var pos = anon || !a ? '' : a.pos || '';
-  var sub = pos && item.time ? pos + ' · ' + item.time : pos || item.time || '';
+  var bits = ['Question'];
+  if (!anon && a && a.pos) bits.push(a.pos);
+  if (item.time) bits.push(item.time);
+  if (item.askedAt) bits.push('Asked at ' + item.askedAt);
   var first = item.replies && item.replies[0] ? item.replies[0] : null;
   var firstText = '';
   var firstWho = '';
@@ -427,6 +449,7 @@ function renderQuestionCard(item) {
     firstText = first.text;
     firstWho = first.a ? author(first.a).name : first.who || 'Student';
   }
+  var nReplies = item.replies ? item.replies.length : 0;
   var html =
     '<article class="card feed-card kind-q clickable" ' +
     cardClickAttrs('thread', item.id) +
@@ -438,12 +461,12 @@ function renderQuestionCard(item) {
     esc(name) +
     '</div>' +
     '<div class="sub">' +
-    esc(sub) +
+    esc(bits.join(' · ')) +
     '</div>' +
     '</div>';
   if (!anon && a && !a.system) {
     html +=
-      '<button type="button" class="btn sm g' +
+      '<button type="button" class="btn quiet follow-btn' +
       (isFollowing(item.author) ? ' following' : '') +
       '" data-follow="' +
       esc(item.author) +
@@ -454,25 +477,21 @@ function renderQuestionCard(item) {
   html += '</div>';
   if (item.mine) {
     html += '<div class="flag-row">';
-    html += '<span class="p green">Your post</span>';
-    if (item.newReply) html += '<span class="p red">New reply</span>';
-    if (item.edited) html += '<span class="p">Edited</span>';
+    html += '<span class="mine-tag">Yours</span>';
+    if (item.newReply) html += '<span class="mine-tag alert">New reply</span>';
+    if (item.edited) html += '<span class="mine-tag">Edited</span>';
     html +=
-      '<button type="button" class="btn q" data-edit="' +
+      '<button type="button" class="btn quiet" data-edit="' +
       esc(item.id) +
       '">Edit</button>';
     html +=
-      '<button type="button" class="btn q" data-del="' +
+      '<button type="button" class="btn quiet" data-del="' +
       esc(item.id) +
       '">Delete</button>';
     html += '</div>';
   }
+  if (item.cat) html += '<div class="card-cats">' + catChip(item.cat) + '</div>';
   html += '<h3>' + esc(item.title) + '</h3>';
-  html += '<div class="pill-row">';
-  html += '<span class="type-tag q">Question</span>';
-  html += pill(item.cat, 'dot', 'data-topic="' + esc(item.cat) + '"');
-  html += '<span class="p blue">Asked at ' + esc(item.askedAt || 'Form 3') + '</span>';
-  html += '</div>';
   if (first) {
     html +=
       '<div class="reply-preview"><strong>' +
@@ -482,10 +501,13 @@ function renderQuestionCard(item) {
       '</div>';
   }
   html +=
-    '<div class="card-foot">Open thread · ' +
-    (item.replies ? item.replies.length : 0) +
-    ' replies</div>';
-  html += '</article>';
+    '<div class="engage">' +
+    '<span class="engage-stat">' +
+    nReplies +
+    (nReplies === 1 ? ' reply' : ' replies') +
+    '</span>' +
+    exploreCta() +
+    '</div></article>';
   return html;
 }
 
@@ -494,7 +516,9 @@ function renderStoryCard(item) {
   var anon = !!item.anon;
   var a = !mine && item.author ? author(item.author) : null;
   var name = mine ? (anon ? studentLabel() : youName()) : a.name;
-  var pos = mine ? item.time || '' : (a.pos || '') + (item.time ? ' · ' + item.time : '');
+  var bits = ['Story'];
+  if (!mine && a && a.pos) bits.push(a.pos);
+  if (item.time) bits.push(item.time);
   var para = (item.body && item.body[0]) || '';
   var html =
     '<article class="card feed-card kind-story clickable" ' +
@@ -505,11 +529,11 @@ function renderStoryCard(item) {
     '<div class="meta"><div class="name">' +
     esc(name) +
     '</div><div class="sub">' +
-    esc(pos) +
+    esc(bits.join(' · ')) +
     '</div></div>';
   if (!mine && a && !a.system) {
     html +=
-      '<button type="button" class="btn sm g' +
+      '<button type="button" class="btn quiet follow-btn' +
       (isFollowing(item.author) ? ' following' : '') +
       '" data-follow="' +
       esc(item.author) +
@@ -520,15 +544,16 @@ function renderStoryCard(item) {
   html += '</div>';
   if (mine) {
     html +=
-      '<div class="flag-row"><span class="p green">Your post</span>' +
-      (item.edited ? '<span class="p">Edited</span>' : '') +
-      '<button type="button" class="btn q" data-edit="' +
+      '<div class="flag-row"><span class="mine-tag">Yours</span>' +
+      (item.edited ? '<span class="mine-tag">Edited</span>' : '') +
+      '<button type="button" class="btn quiet" data-edit="' +
       esc(item.id) +
       '">Edit</button>' +
-      '<button type="button" class="btn q" data-del="' +
+      '<button type="button" class="btn quiet" data-del="' +
       esc(item.id) +
       '">Delete</button></div>';
   }
+  if (item.cat) html += '<div class="card-cats">' + catChip(item.cat) + '</div>';
   html +=
     '<h3>' +
     esc(item.title) +
@@ -536,21 +561,15 @@ function renderStoryCard(item) {
     '<p class="clamp3">' +
     esc(para) +
     '</p>' +
-    '<div class="pill-row">' +
-    '<span class="type-tag story">Story</span>' +
-    pill(item.cat, 'dot', 'data-topic="' + esc(item.cat) + '"') +
-    '</div>' +
-    '<div class="card-actions">' +
-    '<button type="button" class="btn sm g" data-open="story" data-id="' +
-    esc(item.id) +
-    '">Read it</button>' +
-    '<button type="button" class="btn sm g" data-inspire="' +
+    '<div class="engage">' +
+    '<button type="button" class="engage-btn" data-inspire="' +
     esc(item.id) +
     '">' +
     iconHeart() +
-    ' Inspired me · ' +
+    ' Inspired · ' +
     (item.insp || 0) +
     '</button>' +
+    exploreCta() +
     '</div></article>';
   return html;
 }
@@ -558,35 +577,35 @@ function renderStoryCard(item) {
 function renderOppCard(item) {
   var o = OPPS[item.opp];
   if (!o) return '';
+  var desk = author('desk');
+  var bits = ['Opportunity'];
+  if (o.independent) bits.push('Self-entry');
+  if (item.time) bits.push(item.time);
   return (
     '<article class="card feed-card kind-opp opp-card clickable" ' +
     cardClickAttrs('opp', o.id) +
     '>' +
-    '<div class="pill-row">' +
-    '<span class="type-tag opp">Opportunity</span>' +
-    (o.independent ? '<span class="p green">You can enter yourself</span>' : '') +
-    pill(o.cat, '', 'data-topic="' + esc(o.cat) + '"') +
-    '</div>' +
+    '<div class="card-head">' +
+    avatarHtml(desk, false) +
+    '<div class="meta"><div class="name">' +
+    esc(desk.name) +
+    '</div><div class="sub">' +
+    esc(bits.join(' · ')) +
+    '</div></div></div>' +
+    (o.cat ? '<div class="card-cats">' + catChip(o.cat) + '</div>' : '') +
     '<h3>' +
     esc(o.name) +
     '</h3>' +
-    '<p>' +
+    '<p class="clamp3">' +
     esc(item.text) +
     '</p>' +
-    '<p class="prompt-line">How you get in, what it costs, who has done it</p>' +
-    '<div class="card-actions">' +
-    '<button type="button" class="btn sm" data-open="opp" data-id="' +
-    esc(o.id) +
-    '">Open</button>' +
-    '<button type="button" class="btn sm g" data-save="' +
+    '<div class="engage">' +
+    '<button type="button" class="engage-btn" data-save="' +
     esc(o.id) +
     '">' +
     (isSaved(o.id) ? 'Saved' : 'Save') +
     '</button>' +
-    '<span class="push-right muted">' +
-    esc(author('desk').name) +
-    (item.time ? ' · ' + esc(item.time) : '') +
-    '</span>' +
+    exploreCta() +
     '</div></article>'
   );
 }
@@ -601,36 +620,37 @@ function renderSessionCard(item) {
     '<article class="card feed-card kind-sess sess-card clickable" ' +
     cardClickAttrs('session', s.id) +
     '>' +
-    '<div class="sess-row">' +
-    '<div class="date-box"><div class="d">' +
+    '<div class="card-head">' +
+    '<div class="date-chip" aria-hidden="true"><span class="d">' +
     esc(s.date) +
-    '</div><div class="w">' +
+    '</span><span class="w">' +
     esc(s.day) +
-    '</div></div>' +
-    '<div class="sess-main">' +
-    '<span class="type-tag sess">Session</span>' +
-    '<h3>' +
+    '</span></div>' +
+    '<div class="meta"><div class="name">' +
     esc(s.title) +
-    '</h3>' +
-    '<p class="muted">' +
+    '</div><div class="sub">Session · ' +
     esc(s.when) +
     ' · ' +
-    esc(s.pod) +
-    ' · ' +
     esc(lead.name) +
-    '</p>' +
-    '<p class="muted">' +
+    '</div></div></div>' +
+    (s.pod ? '<div class="card-cats">' + catChip(s.pod, false) + '</div>' : '') +
+    '<div class="sess-meta">' +
+    '<span>' +
     left +
-    ' places remaining</p>' +
+    (left === 1 ? ' place left' : ' places left') +
+    '</span>' +
     '<div class="cap"><span style="width:' +
     pct +
     '%"></span></div>' +
-    '<div class="card-actions"><button type="button" class="btn sm" data-open="book" data-id="' +
+    '</div>' +
+    '<div class="engage">' +
+    '<button type="button" class="engage-btn primary" data-open="book" data-id="' +
     esc(s.id) +
     '">' +
     (left === 0 ? 'Join waitlist' : 'Book') +
-    '</button></div>' +
-    '</div></div></article>'
+    '</button>' +
+    exploreCta() +
+    '</div></article>'
   );
 }
 
@@ -638,53 +658,46 @@ function renderJourneyCard(item) {
   var j = JOURNEYS[item.journey];
   var a = author(item.journey);
   if (!j) return '';
+  var bits = ['Journey'];
+  if (a.role) bits.push(a.role);
+  bits.push('Age ' + j.age);
+  if (j.ongoing) bits.push('Ongoing');
+  var cats = '';
+  if (j.field) cats += catChip(j.field, false);
+  if (a.pos) cats += catChip(a.pos, false);
   return (
     '<article class="card feed-card kind-journey journey-card clickable" ' +
     cardClickAttrs('journey', item.journey) +
     '>' +
-    '<div class="j-head">' +
+    '<div class="card-head">' +
     '<span class="av gold">' +
     esc(a.init) +
     '</span>' +
     '<div class="meta"><div class="name">' +
     esc(a.name) +
     '</div><div class="sub">' +
-    esc(a.pos) +
+    esc(bits.join(' · ')) +
     '</div></div>' +
-    '<div class="age-box"><div class="n">' +
-    esc(String(j.age)) +
-    '</div><div class="l">AT THE TIME</div></div>' +
-    '</div>' +
-    '<div class="pill-row">' +
-    '<span class="type-tag journey">Journey</span>' +
-    '<span class="p">' +
-    esc(a.role) +
-    '</span>' +
-    '<span class="p">' +
-    esc(j.field) +
-    '</span>' +
-    (j.ongoing ? '<span class="p green">Still adding nodes</span>' : '<span class="p">Documented</span>') +
-    '</div>' +
-    '<p class="hook serif">' +
-    esc(j.hook) +
-    '</p>' +
-    '<p class="now-line"><span class="eyebrow">NOW</span> ' +
-    esc(j.now) +
-    '</p>' +
-    '<div class="card-actions">' +
-    '<button type="button" class="btn sm" data-open="journey" data-id="' +
-    esc(item.journey) +
-    '">Read their journey</button>' +
-    '<button type="button" class="btn sm g' +
+    '<button type="button" class="btn quiet follow-btn' +
     (isFollowing(item.journey) ? ' following' : '') +
     '" data-follow="' +
     esc(item.journey) +
     '">' +
     (isFollowing(item.journey) ? 'Following' : 'Follow') +
     '</button>' +
-    '<button type="button" class="btn sm g" data-open="mentor" data-id="' +
+    '</div>' +
+    (cats ? '<div class="card-cats">' + cats + '</div>' : '') +
+    '<h3 class="hook">' +
+    esc(j.hook) +
+    '</h3>' +
+    '<p class="now-line">Now · ' +
+    esc(j.now) +
+    '</p>' +
+    '<div class="engage">' +
+    '<button type="button" class="engage-btn" data-open="mentor" data-id="' +
     esc(item.journey) +
     '">Profile</button>' +
+    exploreCta() +
     '</div></article>'
   );
 }
@@ -763,49 +776,9 @@ function dupHintHtml(draft) {
   );
 }
 
-function renderFeed() {
-  var list = filteredFeed();
-  var filters = [
-    ['all', 'All'],
-    ['questions', 'Questions'],
-    ['stories', 'Stories'],
-    ['opportunities', 'Opportunities'],
-    ['sessions', 'Sessions'],
-    ['journeys', 'Journeys']
-  ];
-  var html = '<div class="page-feed">';
-  html += '<h1>Feed</h1>';
-  if (!S.onboarded) {
-    html +=
-      '<div class="card onboard-banner">' +
-      '<p class="eyebrow">Start here</p>' +
-      '<h2>Build your pathway in six questions</h2>' +
-      '<p class="muted">It marks the decisions that are near, opens the right sessions, and tells you which opportunities fit your form.</p>' +
-      '<div class="card-actions">' +
-      '<button type="button" class="btn" data-open="setup" data-id="0">Build my pathway</button>' +
-      '<button type="button" class="btn g" data-goto="pathway">See My Pathway</button>' +
-      '</div></div>';
-  }
-  html +=
-    '<label class="sr" for="feed-q">Search the feed</label>' +
-    '<input type="search" id="feed-q" class="search" placeholder="Search titles, people, places, categories" value="' +
-    esc(S.query) +
-    '"/>';
-  html += '<div class="filters" role="tablist">';
+function renderComposerForm() {
   var i;
-  for (i = 0; i < filters.length; i++) {
-    html +=
-      '<button type="button" class="filter' +
-      (S.filter === filters[i][0] ? ' on' : '') +
-      '" data-filter="' +
-      filters[i][0] +
-      '">' +
-      filters[i][1] +
-      '</button>';
-  }
-  html += '</div>';
-  html += renderRecentRow();
-  html += '<div class="composer" id="composer">';
+  var html = '<div class="composer compose-panel" id="composer">';
   html += '<div class="seg">';
   html +=
     '<button type="button" class="seg-btn' +
@@ -821,7 +794,7 @@ function renderFeed() {
     (S.ctype === 'question' ? 'Your question' : 'Your story') +
     '</label>';
   html +=
-    '<textarea id="comp-text" rows="3" placeholder="' +
+    '<textarea id="comp-text" rows="5" placeholder="' +
     (S.ctype === 'question'
       ? 'What are you trying to decide?'
       : 'What happened, and what did it change?') +
@@ -853,6 +826,51 @@ function renderFeed() {
     (S.ctype === 'question' ? 'Post question' : 'Share story') +
     '</button>';
   html += '</div></div>';
+  return html;
+}
+
+function renderFeed() {
+  var list = filteredFeed();
+  var filters = [
+    ['all', 'All'],
+    ['questions', 'Questions'],
+    ['stories', 'Stories'],
+    ['opportunities', 'Opportunities'],
+    ['sessions', 'Sessions'],
+    ['journeys', 'Journeys']
+  ];
+  var html = '<div class="page-feed">';
+  html += '<h1>What\'s Steppin\'</h1>';
+  if (!S.onboarded) {
+    html +=
+      '<div class="card onboard-banner">' +
+      '<p class="eyebrow">Start here</p>' +
+      '<h2>Build your pathway in six questions</h2>' +
+      '<p class="muted">It marks the decisions that are near, opens the right sessions, and tells you which opportunities fit your form.</p>' +
+      '<div class="card-actions">' +
+      '<button type="button" class="btn" data-open="setup" data-id="0">Build my pathway</button>' +
+      '<button type="button" class="btn g" data-goto="pathway">See My Pathway</button>' +
+      '</div></div>';
+  }
+  html +=
+    '<label class="sr" for="feed-q">Search the feed</label>' +
+    '<input type="search" id="feed-q" class="search" placeholder="Search titles, people, places, categories" value="' +
+    esc(S.query) +
+    '"/>';
+  html += '<div class="filters" role="tablist">';
+  var i;
+  for (i = 0; i < filters.length; i++) {
+    html +=
+      '<button type="button" class="filter' +
+      (S.filter === filters[i][0] ? ' on' : '') +
+      '" data-filter="' +
+      filters[i][0] +
+      '">' +
+      filters[i][1] +
+      '</button>';
+  }
+  html += '</div>';
+  html += renderRecentRow();
   html += '<p class="count-line">' + esc(resultCountLine(list)) + '</p>';
   html += '<div class="stream">';
   for (i = 0; i < list.length; i++) html += renderFeedCard(list[i]);
@@ -865,6 +883,69 @@ function renderFeed() {
       '</div>';
   }
   html += '</div></div>';
+  return html;
+}
+
+function renderSessionsPage() {
+  var stageFilter = S.sessionStage || '';
+  var html = '<div class="page-sessions">';
+  html += '<h1>Happening</h1>';
+  html +=
+    '<p class="lede">Book a live pod, or explore programmes currently open for youth in Guyana.</p>';
+
+  html +=
+    '<section class="section"><h2>Our sessions</h2>' +
+    '<p class="muted">Live pods you can book with mentors.</p>';
+  var i, s, shown = 0;
+  for (i = 0; i < SESSIONS.length; i++) {
+    s = SESSIONS[i];
+    if (stageFilter && s.stages.indexOf(stageFilter) === -1) continue;
+    html += renderSessionMini(s);
+    shown++;
+  }
+  if (!shown) html += '<p class="muted">No sessions matched yet.</p>';
+  html += '</section>';
+
+  html +=
+    '<section class="section"><h2>Open opportunities</h2>' +
+    '<p class="muted">Programmes currently open for youth in Guyana.</p>';
+  var k, o, open = [], later = [];
+  for (k in OPPS) {
+    if (!OPPS.hasOwnProperty(k)) continue;
+    o = OPPS[k];
+    if (S.onboarded && S.stage && oppOpenAtStage(o, S.stage)) open.push(o);
+    else later.push(o);
+  }
+  var list = open.length ? open.concat(later.filter(function (x) { return open.indexOf(x) === -1; })) : later;
+  if (!list.length) html += '<p class="muted">No opportunities listed yet.</p>';
+  for (i = 0; i < list.length; i++) {
+    o = list[i];
+    html +=
+      '<div class="card sess-opp">' +
+      '<div class="card-cats">' +
+      catChip(o.cat || 'Opportunity', false) +
+      (o.independent ? '<span class="cat-chip soft">Self-entry</span>' : '') +
+      (S.onboarded && oppOpenAtStage(o, S.stage) ? '<span class="cat-chip soft open">Open for you</span>' : '') +
+      '</div>' +
+      '<h3>' +
+      esc(o.name) +
+      '</h3>' +
+      '<p class="muted">' +
+      esc(o.one) +
+      '</p>' +
+      '<div class="card-actions">' +
+      '<button type="button" class="btn sm" data-open="opp" data-id="' +
+      esc(o.id) +
+      '">Explore</button>' +
+      '<button type="button" class="btn sm g" data-save="' +
+      esc(o.id) +
+      '">' +
+      (isSaved(o.id) ? 'Saved' : 'Save') +
+      '</button></div></div>';
+  }
+  html +=
+    '<p class="footer-note">Dates, fees and requirements are illustrative in this prototype and must be confirmed with the organiser.</p></section>';
+  html += '</div>';
   return html;
 }
 

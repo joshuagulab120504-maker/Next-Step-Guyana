@@ -1067,16 +1067,22 @@ function viewBook(v) {
   return { crumb: 'Booking', title: s.title, html: html };
 }
 
-function viewSessions(v) {
-  var html = '<div class="detail"><h2>Sessions</h2>';
-  var i, s;
-  for (i = 0; i < SESSIONS.length; i++) {
-    s = SESSIONS[i];
-    if (v.id && s.stages.indexOf(v.id) === -1) continue;
-    html += renderSessionMini(s);
-  }
-  html += '</div>';
-  return { crumb: 'Sessions', title: 'Find a session', html: html };
+function viewCompose() {
+  return {
+    crumb: 'New post',
+    title: S.ctype === 'story' ? 'Share a story' : 'Ask a question',
+    html: renderComposerForm(),
+    after: function () {
+      var ta = byId('comp-text');
+      if (ta) ta.focus();
+    }
+  };
+}
+
+function openCompose(seed, cat) {
+  if (seed != null && seed !== '') S.draft = seed;
+  if (cat) S.draftCat = cat;
+  go({ t: 'compose', id: 'new' });
 }
 
 function viewMentor(v) {
@@ -1433,14 +1439,14 @@ var VIEWS = {
   story: viewStory,
   opp: viewOpp,
   session: viewSession,
-  sessions: viewSessions,
   mentor: viewMentor,
   journey: viewJourney,
   topic: viewTopic,
   book: viewBook,
   edit: viewEdit,
   del: viewDel,
-  setup: viewSetup
+  setup: viewSetup,
+  compose: viewCompose
 };
 
 function renderChrome() {
@@ -1475,7 +1481,7 @@ function renderChrome() {
       continue;
     }
     var navKey = navs[i].getAttribute('data-nav');
-    var on = navKey === S.view || (navKey === 'sessions' && (sheetTop === 'sessions' || sheetTop === 'session' || sheetTop === 'book'));
+    var on = navKey === S.view || (navKey === 'sessions' && (sheetTop === 'session' || sheetTop === 'book' || sheetTop === 'opp'));
     if (on) navs[i].classList.add('on');
     else navs[i].classList.remove('on');
   }
@@ -1574,24 +1580,39 @@ function renderChrome() {
 function render() {
   var main = byId('main');
   if (S.view === 'pathway') main.innerHTML = renderPathway();
+  else if (S.view === 'sessions') main.innerHTML = renderSessionsPage();
   else main.innerHTML = renderFeed();
   renderChrome();
+  syncFab();
+}
+
+function syncFab() {
+  var fab = byId('fab-post');
+  if (!fab) return;
+  var composing = NAV.length && NAV[NAV.length - 1].t === 'compose';
+  fab.className = composing ? 'fab-post open' : 'fab-post';
+  fab.setAttribute('aria-label', composing ? 'Close composer' : 'Make a post');
 }
 
 function openKind(kind, id) {
+  if (kind === 'sessions') {
+    S.sessionStage = id || '';
+    setView('sessions');
+    return;
+  }
   var map = {
     thread: 'thread',
     story: 'story',
     opp: 'opp',
     session: 'session',
-    sessions: 'sessions',
     mentor: 'mentor',
     journey: 'journey',
     topic: 'topic',
     book: 'book',
     edit: 'edit',
     del: 'del',
-    setup: 'setup'
+    setup: 'setup',
+    compose: 'compose'
   };
   if (!map[kind]) return;
   if (kind === 'setup') {
@@ -1669,11 +1690,18 @@ function wire() {
     btn = closestEl(t, '[data-nav]');
     if (btn) {
       var nav = btn.getAttribute('data-nav');
-      if (nav === 'sessions') {
-        go({ t: 'sessions', id: S.stage || '' });
-        return;
-      }
+      if (nav === 'sessions') S.sessionStage = '';
       setView(nav);
+      return;
+    }
+
+    if (t.id === 'fab-post' || closestEl(t, '#fab-post')) {
+      if (NAV.length && NAV[NAV.length - 1].t === 'compose') {
+        closeSheet();
+        syncFab();
+      } else {
+        openCompose();
+      }
       return;
     }
 
@@ -1700,7 +1728,8 @@ function wire() {
     if (btn) {
       S.ctype = btn.getAttribute('data-ctype');
       S.anon = S.ctype === 'question';
-      render();
+      if (NAV.length && NAV[NAV.length - 1].t === 'compose') paint();
+      else render();
       return;
     }
 
@@ -1750,14 +1779,7 @@ function wire() {
       setView('feed');
       S.ctype = 'question';
       S.anon = true;
-      render();
-      setTimeout(function () {
-        var ta = byId('comp-text');
-        var cat = byId('comp-cat');
-        if (ta) ta.value = btn.getAttribute('data-ask-seed');
-        if (cat && btn.getAttribute('data-ask-cat')) cat.value = btn.getAttribute('data-ask-cat');
-        if (ta) ta.focus();
-      }, 0);
+      openCompose(btn.getAttribute('data-ask-seed') || '', btn.getAttribute('data-ask-cat') || '');
       return;
     }
 
@@ -2084,8 +2106,9 @@ function wire() {
       }
       S.draft = '';
       S.draftCat = catEl.value;
-      textEl.value = '';
-      render();
+      closeSheet();
+      setView('feed');
+      window.scrollTo(0, 0);
       return;
     }
 
@@ -2155,6 +2178,21 @@ function wire() {
       back();
     }
   });
+
+  var backTop = byId('back-top');
+  function syncBackTop() {
+    if (!backTop) return;
+    var y = window.pageYOffset || document.documentElement.scrollTop || 0;
+    if (y > 480) backTop.removeAttribute('hidden');
+    else backTop.setAttribute('hidden', '');
+  }
+  window.addEventListener('scroll', syncBackTop, { passive: true });
+  syncBackTop();
+  if (backTop) {
+    backTop.addEventListener('click', function () {
+      window.scrollTo(0, 0);
+    });
+  }
 }
 
 function applyHash() {
@@ -2165,7 +2203,9 @@ function applyHash() {
     return 'pathway';
   }
   if (h === 'sessions') {
-    S.view = 'feed';
+    hideSheetUi();
+    S.view = 'sessions';
+    S.sessionStage = '';
     return 'sessions';
   }
   if (h === 'feed' || h === 'stories') {
@@ -2180,15 +2220,9 @@ function boot() {
   var hash = applyHash();
   wire();
   render();
-  if (hash === 'sessions') {
-    go({ t: 'sessions', id: S.stage || '' });
-  }
   window.addEventListener('hashchange', function () {
-    var next = applyHash();
+    applyHash();
     render();
-    if (next === 'sessions') {
-      go({ t: 'sessions', id: S.stage || '' });
-    }
   });
 }
 
