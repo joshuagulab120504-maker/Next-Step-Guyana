@@ -152,29 +152,37 @@
       font-size:clamp(28px, 4vw, 40px); line-height:1.12; margin:10px 0 12px;
     }
     .section-head p{font-size:16.5px; color:var(--muted); line-height:1.55}
+    #offerings .feature-label{color:var(--blue)}
+    #offerings .section-head h2{margin-bottom:0}
 
     /* Offerings */
-    .offer-list{display:grid; gap:14px}
+    .offer-list{
+      display:grid; grid-template-columns:repeat(3, 1fr); gap:18px;
+    }
     .offer{
-      display:grid; grid-template-columns:88px 1fr auto; gap:22px; align-items:center;
+      display:flex; flex-direction:column; gap:16px;
       background:#fff; border:1px solid var(--line); border-radius:var(--r);
-      padding:22px 24px; box-shadow:var(--shadow);
+      padding:28px 24px 24px; box-shadow:var(--shadow);
       transition:border-color .18s ease, transform .18s ease;
+      min-height:100%;
     }
     .offer:hover{border-color:#b8c9dc; transform:translateY(-2px)}
-    .offer-num{
-      width:88px; height:72px; border-radius:14px;
+    .offer-ico{
+      width:52px; height:52px; border-radius:14px;
       display:grid; place-items:center;
-      font-family:var(--font-display); font-size:28px; font-weight:700; color:#fff;
+      background:var(--navy); color:#fff;
     }
-    .offer:nth-child(1) .offer-num{background:linear-gradient(145deg,#0f4272,#061c33)}
-    .offer:nth-child(2) .offer-num{background:linear-gradient(145deg,#0d7a4f,#05603a)}
-    .offer:nth-child(3) .offer-num{background:linear-gradient(145deg,#1c5f9e,#0f4272)}
-    .offer:nth-child(4) .offer-num{background:linear-gradient(145deg,#e8b924,#a8801f); color:var(--navy-deep)}
-    .offer h3{font-size:22px; margin-bottom:4px}
-    .offer p{color:var(--muted); font-size:14.5px; max-width:42rem}
+    .offer-ico svg{width:24px; height:24px}
+    .offer:nth-child(2) .offer-ico{background:var(--green)}
+    .offer:nth-child(3) .offer-ico{background:var(--blue)}
+    .offer h3{font-size:22px; margin:0 0 6px}
+    .offer .offer-aka{
+      display:block; font-size:12px; font-weight:700; letter-spacing:.06em;
+      text-transform:uppercase; color:var(--ochre); margin-bottom:8px;
+    }
+    .offer p{color:var(--muted); font-size:14.5px; line-height:1.5; flex:1}
     .offer-go{
-      font-size:13px; font-weight:750; color:var(--navy-mid); white-space:nowrap;
+      font-size:13px; font-weight:750; color:var(--navy-mid); margin-top:8px;
     }
 
     /* Archetypes carousel */
@@ -253,51 +261,58 @@
     .arch-cta{margin-top:22px; display:flex; flex-wrap:wrap; gap:12px; align-items:center}
     .arch-cta p{color:var(--muted); font-size:14.5px}
 
-    /* Steps */
-    .steps{
-      display:grid; grid-template-columns:repeat(3, 1fr); gap:28px;
-      counter-reset:step;
+    /* About */
+    .about-band{
+      background:linear-gradient(180deg, #fff, #f7f9fb);
+      border-block:1px solid var(--line);
     }
-    .step{position:relative; padding-top:8px}
-    .step::before{
-      counter-increment:step; content:counter(step);
-      display:grid; place-items:center;
-      width:40px; height:40px; border-radius:50%;
-      background:var(--navy); color:#fff;
-      font-family:var(--font-display); font-size:18px; font-weight:700;
-      margin-bottom:16px;
+    .about-grid{
+      display:grid; grid-template-columns:1.05fr .95fr; gap:48px; align-items:start;
     }
-    .step h3{font-size:22px; margin-bottom:8px}
-    .step p{color:var(--muted); font-size:14.5px; line-height:1.5}
+    .about-copy h2{font-size:clamp(28px, 3.6vw, 40px); line-height:1.12; margin:10px 0 18px}
+    .about-copy p{
+      font-size:16px; line-height:1.65; color:var(--body); margin:0 0 16px; max-width:54ch;
+    }
+    .about-copy p:last-child{margin-bottom:0}
+    .about-aside{
+      background:var(--navy-deep); color:#fff; border-radius:22px; padding:28px 26px;
+      box-shadow:0 18px 40px rgba(6,28,51,.18);
+    }
+    .about-aside .eyebrow{color:#f7dd8a}
+    .about-aside h3{
+      font-family:var(--font-display); font-size:26px; line-height:1.2;
+      color:#fff; margin:10px 0 14px;
+    }
+    .about-aside p{color:#b3cae0; font-size:14.5px; line-height:1.55; margin:0 0 18px}
+    .founder-row{display:grid; gap:12px}
+    .founder{
+      display:flex; gap:12px; align-items:center;
+      background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12);
+      border-radius:14px; padding:12px 14px;
+    }
+    .founder .av{
+      width:42px; height:42px; border-radius:50%;
+      background:var(--gold); color:var(--navy-deep);
+      display:grid; place-items:center; font-size:12px; font-weight:800; flex:0 0 42px;
+    }
+    .founder strong{display:block; color:#fff; font-size:14px; font-weight:750}
+    .founder span{display:block; color:#9bb8d4; font-size:12px; margin-top:2px}
 
-    /* Journeys teaser */
-    .journey-rail{display:grid; grid-template-columns:repeat(3, 1fr); gap:14px}
-    .journey{
+    /* Stats */
+    .stats{
+      display:grid; grid-template-columns:repeat(4, 1fr); gap:14px;
+    }
+    .stat{
       background:#fff; border:1px solid var(--line); border-radius:var(--r);
-      overflow:hidden; box-shadow:var(--shadow);
-      transition:transform .18s ease, border-color .18s ease;
+      padding:26px 20px; text-align:center; box-shadow:var(--shadow);
     }
-    .journey:hover{transform:translateY(-2px); border-color:#b8c9dc}
-    .journey-top{
-      padding:18px 18px 14px;
-      background:linear-gradient(100deg, var(--navy-deep), var(--navy-mid));
-      color:#fff; display:flex; gap:12px; align-items:center;
+    .stat b{
+      display:block; font-family:var(--font-display);
+      font-size:clamp(32px, 4vw, 44px); line-height:1; color:var(--navy);
+      letter-spacing:-.02em; margin-bottom:8px;
     }
-    .journey-av{
-      width:42px; height:42px; border-radius:12px; background:var(--gold);
-      color:var(--navy-deep); display:grid; place-items:center;
-      font-size:13px; font-weight:800; flex:0 0 42px;
-    }
-    .journey-top strong{display:block; font-family:var(--font-display); font-size:18px; font-weight:700}
-    .journey-top span{display:block; font-size:12px; color:#b3cae0; margin-top:2px}
-    .journey-body{padding:16px 18px 18px}
-    .journey-body p{
-      font-family:var(--font-display); font-size:17px; line-height:1.35;
-      color:var(--ink); font-weight:600;
-    }
-    .journey-body small{
-      display:block; margin-top:12px; font-size:12px; font-weight:700;
-      color:var(--ochre); letter-spacing:.08em; text-transform:uppercase;
+    .stat span{
+      display:block; font-size:13px; font-weight:650; color:var(--muted); line-height:1.35;
     }
 
     /* Closing CTA */
@@ -345,10 +360,10 @@
     @media (max-width:980px){
       .links{display:none}
       .menu{display:inline-flex; align-items:center; justify-content:center}
-      .journey-rail, .steps{grid-template-columns:1fr 1fr}
+      .offer-list{grid-template-columns:1fr}
+      .about-grid{grid-template-columns:1fr; gap:28px}
+      .stats{grid-template-columns:1fr 1fr}
       .arch{flex-basis:min(300px, 70vw)}
-      .offer{grid-template-columns:72px 1fr; gap:16px}
-      .offer-go{display:none}
       .footer-grid{grid-template-columns:1fr 1fr}
       .footer-grid > div:first-child{grid-column:1 / -1}
     }
@@ -379,10 +394,10 @@
       .brand strong{font-size:15px}
       .brand small{font-size:8px}
       .section{padding:52px 0}
-      .journey-rail, .steps, .footer-grid{grid-template-columns:1fr}
+      .footer-grid{grid-template-columns:1fr}
+      .stats{grid-template-columns:1fr 1fr; gap:10px}
+      .stat{padding:20px 14px}
       .arch{flex-basis:min(280px, 82vw); min-height:220px}
-      .offer{padding:18px}
-      .offer-num{width:64px; height:64px; font-size:24px}
       .closing-box{padding:32px 22px}
       .mobile-dock{
         display:grid; grid-template-columns:repeat(4, 1fr);
@@ -467,9 +482,9 @@
         <a class="active" href="index.html">Home</a>
         <a href="app.html">Feed</a>
         <a href="app.html#pathway">Pathway</a>
-        <a href="app.html#sessions">Sessions</a>
+        <a href="app.html#sessions">Happening</a>
         <a href="check.html">Archetype</a>
-        <a href="about.html">About</a>
+        <a href="#about">About</a>
         <button class="sign-in" type="button" data-signin>Sign in</button>
       </nav>
       <button class="menu" id="menuButton" type="button" aria-label="Open navigation" aria-expanded="false">☰</button>
@@ -479,11 +494,11 @@
   <div class="mobile-sheet" id="mobileSheet">
     <nav aria-label="Mobile navigation">
       <a href="index.html">Home</a>
-      <a href="app.html">Feed</a>
+      <a href="app.html">What's Steppin'</a>
       <a href="app.html#pathway">My Pathway</a>
-      <a href="app.html#sessions">Sessions</a>
+      <a href="app.html#sessions">Happening</a>
       <a href="check.html">Find my archetype</a>
-      <a href="about.html">About</a>
+      <a href="#about">About</a>
       <button type="button" data-signin>Sign in</button>
     </nav>
   </div>
@@ -520,42 +535,42 @@
     <section class="section" id="offerings">
       <div class="wrap">
         <div class="section-head">
-          <span class="eyebrow">What you get</span>
-          <h2>Everything you need between Form 3 and your first next step.</h2>
-          <p>One place for questions, real journeys, openings you can actually enter, and a pathway that updates as you decide.</p>
+          <span class="eyebrow feature-label">What we feature</span>
+          <h2>A student's best future building tool</h2>
         </div>
         <div class="offer-list">
           <a class="offer" href="app.html">
-            <span class="offer-num" aria-hidden="true">01</span>
-            <span>
-              <h3>The Feed</h3>
-              <p>Questions, stories, opportunities, sessions and journeys, clearly labelled so you always know what you are looking at.</p>
+            <span class="offer-ico" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
             </span>
-            <span class="offer-go">Open feed →</span>
+            <div>
+              <span class="offer-aka">What's Steppin'</span>
+              <h3>The Feed</h3>
+              <p>Questions, stories, journeys and openings from people a few years ahead, labelled so you always know what you are looking at.</p>
+              <span class="offer-go">Enter What's Steppin' →</span>
+            </div>
           </a>
           <a class="offer" href="app.html#pathway">
-            <span class="offer-num" aria-hidden="true">02</span>
-            <span>
+            <span class="offer-ico" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/><path d="M12 7v3M12 14v3"/></svg>
+            </span>
+            <div>
+              <span class="offer-aka">Your plan</span>
               <h3>My Pathway</h3>
               <p>Six questions build a timeline of decisions that are near. Save steps, sessions and openings that belong on your route.</p>
-            </span>
-            <span class="offer-go">Build pathway →</span>
+              <span class="offer-go">Build my pathway →</span>
+            </div>
           </a>
           <a class="offer" href="app.html#sessions">
-            <span class="offer-num" aria-hidden="true">03</span>
-            <span>
-              <h3>Live sessions</h3>
-              <p>Book mentor pods on medicine, trades, coding, sport and more. See seats left and what to ask before you join.</p>
+            <span class="offer-ico" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 11h18"/></svg>
             </span>
-            <span class="offer-go">Browse sessions →</span>
-          </a>
-          <a class="offer" href="app.html">
-            <span class="offer-num" aria-hidden="true">04</span>
-            <span>
-              <h3>Opportunities desk</h3>
-              <p>STEM clubs, debating, scholarships, past-paper clinics and competitions, with how you get in and who has done it.</p>
-            </span>
-            <span class="offer-go">See openings →</span>
+            <div>
+              <span class="offer-aka">Live now</span>
+              <h3>Happening</h3>
+              <p>Book mentor pods and browse programmes currently open for youth in Guyana, with seats, timing and how you get in.</p>
+              <span class="offer-go">See what's happening →</span>
+            </div>
           </a>
         </div>
       </div>
@@ -565,8 +580,8 @@
       <div class="wrap">
         <div class="section-head">
           <span class="eyebrow">Your archetype</span>
-          <h2>Six ways students show up. Which one sounds like you?</h2>
-          <p>A short self-check reveals your explorer card. It is not a job title. It is a clear read on how you like to work, so the feed can point you better.</p>
+          <h2>Six ways students show up.</h2>
+          <p>A short self-check. Not a job title. A clearer read on how you like to work.</p>
         </div>
         <div class="arch-carousel-wrap">
           <div class="arch-carousel" id="archCarousel" tabindex="0" aria-label="Archetype cards">
@@ -616,83 +631,56 @@
           </div>
         </div>
         <div class="arch-cta">
-          <a class="btn solid" href="check.html">Find my archetype</a>
-          <p>About three minutes. Free. No account needed to see your card.</p>
+          <a class="btn solid" href="check.html">Take self-check</a>
+          <p>About three minutes. Free.</p>
         </div>
       </div>
     </section>
 
-    <section class="section" id="how">
-      <div class="wrap">
-        <div class="section-head">
-          <span class="eyebrow">How it works</span>
-          <h2>Three moves. Then you are moving.</h2>
-          <p>Start with a read on yourself, learn from people a few years ahead, then put the right steps on your pathway.</p>
+    <section class="section about-band" id="about">
+      <div class="wrap about-grid">
+        <div class="about-copy">
+          <span class="eyebrow">About us</span>
+          <h2>No student in Guyana should have to figure out their future alone.</h2>
+          <p>Preparing for CSEC and CAPE is hard enough. Knowing what to do after leaves many students with big questions and very little guidance. What should I study? Where can I apply? How do I even begin?</p>
+          <p>Next Step Guyana was founded by Joshua Gulab and Aniyah Couchman, Guyanese students and CAPE Top Performers who remember that feeling: the uncertainty, the pressure, and the quiet hope that someone would help make things clearer.</p>
+          <p>Today we are growing Guyana's first comprehensive network of mentors who have walked your road before. Free mentorship, live sessions and honest advice, so you can take your next step with confidence. This is not just a platform. It is a community built on care, understanding and the belief that your future matters.</p>
         </div>
-        <div class="steps">
-          <div class="step">
-            <h3>Find your archetype</h3>
-            <p>Rate what you actually enjoy. Your explorer card names how you show up, not one career forever.</p>
+        <aside class="about-aside">
+          <span class="eyebrow">Founded by</span>
+          <h3>Students who have been where you are.</h3>
+          <p>Top performers who chose to turn that experience into guidance for the next class.</p>
+          <div class="founder-row">
+            <div class="founder">
+              <span class="av" aria-hidden="true">JG</span>
+              <div>
+                <strong>Joshua Gulab</strong>
+                <span>Co-founder · CAPE Top Performer</span>
+              </div>
+            </div>
+            <div class="founder">
+              <span class="av" aria-hidden="true">AC</span>
+              <div>
+                <strong>Aniyah Couchman</strong>
+                <span>Co-founder · CAPE Top Performer</span>
+              </div>
+            </div>
           </div>
-          <div class="step">
-            <h3>Learn in the feed</h3>
-            <p>Read journeys from doctors, electricians, developers and coaches. Ask questions. Save openings that fit.</p>
-          </div>
-          <div class="step">
-            <h3>Build your pathway</h3>
-            <p>Mark the decisions that are near: subjects, sessions, applications. Update it as you go.</p>
-          </div>
-        </div>
+        </aside>
       </div>
     </section>
 
-    <section class="section" id="journeys" style="padding-top:0">
+    <section class="section" id="impact">
       <div class="wrap">
         <div class="section-head">
-          <span class="eyebrow">Real journeys</span>
-          <h2>People a few years ahead of you.</h2>
-          <p>Not celebrity stories. Local routes through CSEC, CAPE, TVET and first jobs.</p>
+          <span class="eyebrow">Built for Guyana</span>
+          <h2>Guidance that stays close to home.</h2>
         </div>
-        <div class="journey-rail">
-          <a class="journey" href="app.html">
-            <div class="journey-top">
-              <span class="journey-av">RP</span>
-              <div>
-                <strong>Raeka Persaud</strong>
-                <span>Junior doctor, Georgetown</span>
-              </div>
-            </div>
-            <div class="journey-body">
-              <p>Kept every science elective she could, then followed the hospital stories that pulled her in.</p>
-              <small>Science and health</small>
-            </div>
-          </a>
-          <a class="journey" href="app.html">
-            <div class="journey-top">
-              <span class="journey-av">OK</span>
-              <div>
-                <strong>Omar Khan</strong>
-                <span>Electrician, Berbice</span>
-              </div>
-            </div>
-            <div class="journey-body">
-              <p>Chose Industrial Technology when the academic stream looked more prestigious, and still kept Maths.</p>
-              <small>Building and fixing</small>
-            </div>
-          </a>
-          <a class="journey" href="app.html">
-            <div class="journey-top">
-              <span class="journey-av">KD</span>
-              <div>
-                <strong>Keisha Daniels</strong>
-                <span>Coach and PE teacher, Lethem</span>
-              </div>
-            </div>
-            <div class="journey-body">
-              <p>Logged every training session until the evidence opened funding, travel and a coaching path.</p>
-              <small>Sport and coaching</small>
-            </div>
-          </a>
+        <div class="stats">
+          <div class="stat"><b>6</b><span>Explorer archetypes</span></div>
+          <div class="stat"><b>Free</b><span>Mentorship for students</span></div>
+          <div class="stat"><b>Local</b><span>Mentors and top performers</span></div>
+          <div class="stat"><b>Live</b><span>Sessions and openings</span></div>
         </div>
       </div>
     </section>
@@ -702,11 +690,11 @@
         <div class="closing-box">
           <div>
             <h2>Your Northern Star is waiting.</h2>
-            <p>Enter the feed to browse, or take the self-check if you want a clearer read on yourself first.</p>
+            <p>Enter What's Steppin' to browse, or take the self-check if you want a clearer read on yourself first.</p>
           </div>
           <div class="actions">
             <a class="btn gold" href="app.html">Enter the feed</a>
-            <a class="btn ghost" href="check.html">Find my archetype</a>
+            <a class="btn ghost" href="check.html">Take self-check</a>
           </div>
         </div>
       </div>
@@ -715,8 +703,8 @@
 
   <nav class="mobile-dock" aria-label="Primary mobile navigation">
     <a class="active" href="index.html"><span class="dock-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 10.5L12 4l8 6.5V20a1 1 0 0 1-1 1h-5v-6H10v6H5a1 1 0 0 1-1-1v-9.5z"/></svg></span>Home</a>
-    <a href="app.html"><span class="dock-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h10"/></svg></span>Feed</a>
-    <a href="app.html#pathway"><span class="dock-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 4h10l4 4v12H5V4z"/><path d="M14 4v5h5"/><path d="M8 13h8M8 17h6"/></svg></span>Pathway</a>
+    <a href="app.html"><span class="dock-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h10"/></svg></span>Steppin'</a>
+    <a href="app.html#pathway"><span class="dock-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/><path d="M12 7v3M12 14v3"/></svg></span>Pathway</a>
     <button type="button" id="dockMenu" aria-label="Open menu" aria-expanded="false"><span class="dock-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h16"/></svg></span>Menu</button>
   </nav>
 
@@ -727,23 +715,23 @@
           <img src="logo.png" alt="">
           <strong>NEXT STEP GUYANA</strong>
         </div>
-        <p style="max-width:340px;font-size:13px;line-height:1.6">Next Step helps Guyanese students take inspiration from others, then build their own journey.</p>
+        <p style="max-width:340px;font-size:13px;line-height:1.6">No student in Guyana should have to figure out their future alone. Guidance from mentors who have walked your road.</p>
         <small>Prototype · Free for students</small>
       </div>
       <div>
         <h4>Explore</h4>
         <a href="app.html">Feed</a>
-        <a href="app.html#sessions">Sessions</a>
+        <a href="app.html#sessions">Happening</a>
         <a href="check.html">Archetypes</a>
       </div>
       <div>
         <h4>Your plan</h4>
         <a href="app.html#pathway">My Pathway</a>
-        <a href="app.html#sessions">My Sessions</a>
+        <a href="app.html#sessions">Sessions & openings</a>
       </div>
       <div>
         <h4>Organisation</h4>
-        <a href="about.html">About Us</a>
+        <a href="#about">About Us</a>
         <a href="#" data-toast="Contact details coming soon.">Contact</a>
       </div>
     </div>

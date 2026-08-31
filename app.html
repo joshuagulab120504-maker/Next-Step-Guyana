@@ -1001,8 +1001,14 @@ span.cat-chip{cursor:default}
 .back-top:hover{background:var(--navy-mid);transform:translateY(-2px)}
 .back-top[hidden]{display:none!important}
 @media(min-width:768px){
-  .fab-post{bottom:28px;right:22px}
-  .back-top{bottom:96px;right:22px}
+  .fab-post{
+    bottom:28px;right:22px;
+    min-height:60px;height:60px;padding:0 24px 0 18px;gap:10px;
+    font-size:16px;
+  }
+  .fab-post svg{width:22px;height:22px}
+  .fab-post.open{width:60px;height:60px;padding:0}
+  .back-top{bottom:104px;right:22px;width:48px;height:48px}
 }
 
 .compose-panel{
