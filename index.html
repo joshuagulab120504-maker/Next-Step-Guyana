@@ -91,26 +91,43 @@
         linear-gradient(180deg, rgba(3,20,45,.15) 0%, rgba(3,20,45,.55) 100%);
     }
     .hero-copy{position:relative; z-index:2; padding:48px 0 56px}
-    .hero-copy-inner{max-width:560px}
+    .hero-copy-inner{max-width:min(720px, 100%)}
     .hero .eyebrow{
       color:#f7dd8a; background:rgba(255,255,255,.1);
       border-radius:999px; padding:8px 12px; margin-bottom:18px;
     }
     .hero-brand{
-      font-family:var(--font-display);
-      font-size:clamp(42px, 7vw, 68px);
-      line-height:1.02; font-weight:700; color:#fff;
-      margin:0 0 14px;
-    }
-    .hero-brand span{color:#3dce8a}
-    .hero-sub{
       font-family:var(--font-body);
-      font-size:clamp(16px, 2vw, 19px);
-      font-weight:500; line-height:1.45; color:#d5e2ec;
-      margin:0 0 26px; max-width:34rem;
+      font-size:clamp(28px, 2.8vw + 1.2rem, 84px);
+      line-height:1.02; font-weight:800; color:#fff;
+      letter-spacing:.04em;
+      text-transform:uppercase;
+      margin:0 0 18px;
     }
-    .hero-sub em{font-style:normal; color:var(--gold); font-weight:700}
-    .actions{display:flex; flex-wrap:wrap; gap:12px; align-items:center}
+    .hero-brand span{
+      display:block;
+      color:#3dce8a;
+      font-size:0.4em;
+      font-weight:700;
+      letter-spacing:.28em;
+      margin-top:0.4em;
+      line-height:1.1;
+    }
+    .motto{
+      margin:0 0 30px;
+      font-family:var(--font-body);
+      font-size:clamp(12px, 0.55vw + 0.7rem, 22px);
+      font-weight:600; letter-spacing:.14em;
+      text-transform:uppercase; color:rgba(255,255,255,.78);
+    }
+    .motto span{color:var(--gold); margin:0 10px; font-weight:700}
+    .actions{display:flex; flex-wrap:wrap; gap:14px; align-items:center}
+    .hero .btn{
+      min-height:clamp(44px, 3.2vw, 58px);
+      padding:clamp(10px, 1.2vw, 16px) clamp(16px, 1.8vw, 28px);
+      font-size:clamp(13px, 0.4vw + 0.75rem, 17px);
+      border-radius:clamp(12px, 1vw, 16px);
+    }
     .btn{
       display:inline-flex; align-items:center; justify-content:center; gap:8px;
       min-height:50px; padding:12px 20px; border-radius:14px;
@@ -127,11 +144,6 @@
     .btn.solid:hover{background:var(--navy-mid)}
     .btn.line{background:#fff; border:1px solid var(--line); color:var(--ink)}
     .btn.line:hover{border-color:#b8c9dc}
-    .motto{
-      margin-top:22px; font-size:12px; font-weight:700; letter-spacing:.18em;
-      text-transform:uppercase; color:rgba(255,255,255,.55);
-    }
-    .motto span{color:var(--gold); margin:0 6px}
 
     /* Sections */
     .section{padding:72px 0}
@@ -322,10 +334,8 @@
       .hero-art{animation:fadeIn 1s ease both}
       .hero-copy-inner > *{animation:rise .7s cubic-bezier(.22,.7,.3,1) both}
       .hero-copy-inner > *:nth-child(1){animation-delay:.12s}
-      .hero-copy-inner > *:nth-child(2){animation-delay:.2s}
-      .hero-copy-inner > *:nth-child(3){animation-delay:.28s}
-      .hero-copy-inner > *:nth-child(4){animation-delay:.36s}
-      .hero-copy-inner > *:nth-child(5){animation-delay:.44s}
+      .hero-copy-inner > *:nth-child(2){animation-delay:.22s}
+      .hero-copy-inner > *:nth-child(3){animation-delay:.32s}
       .arch{animation:none}
     }
     @keyframes fadeIn{from{opacity:0} to{opacity:1}}
@@ -351,10 +361,14 @@
         background:
           linear-gradient(180deg, rgba(3,20,45,.15) 0%, rgba(3,20,45,.35) 38%, rgba(3,20,45,.88) 72%, rgba(3,20,45,.96) 100%);
       }
-      .hero-copy{padding:24px 0 36px}
-      .hero-brand{font-size:clamp(34px, 10vw, 46px)}
-      .actions{display:grid; grid-template-columns:1fr}
-      .actions .btn{width:100%}
+      .hero-copy{padding:20px 0 28px}
+      .hero-copy-inner{max-width:100%}
+      .hero-brand{font-size:clamp(26px, 7.5vw, 34px); margin-bottom:10px}
+      .hero-brand span{letter-spacing:.22em; margin-top:0.28em}
+      .motto{font-size:clamp(11px, 3.2vw, 13px); letter-spacing:.1em; margin-bottom:16px}
+      .motto span{margin:0 6px}
+      .hero .actions{display:grid; grid-template-columns:1fr; gap:8px}
+      .hero .actions .btn{width:100%; min-height:44px; font-size:13.5px; padding:10px 14px}
     }
 
     @media (max-width:640px){
@@ -402,8 +416,17 @@
       .mobile-sheet button{color:var(--green)}
     }
 
+    @media (min-width:1024px){
+      .hero{min-height:min(88vh, 820px)}
+      .hero-copy{padding:64px 0 72px}
+      .hero-copy-inner{max-width:760px}
+      .hero-brand{margin-bottom:22px}
+      .motto{margin-bottom:36px}
+      .hero .actions{gap:16px}
+    }
+
     @media (min-width:1180px){
-      .hero-copy-inner{max-width:600px}
+      .hero-copy-inner{max-width:820px}
     }
 
     .modal{
@@ -484,14 +507,12 @@
       <div class="hero-scrim" aria-hidden="true"></div>
       <div class="wrap hero-copy">
         <div class="hero-copy-inner">
-          <span class="eyebrow">Built by Guyanese students, for Guyanese students</span>
-          <p class="hero-brand">Next Step<br><span>Guyana</span></p>
-          <p class="hero-sub">Honest guidance for subject choices, sessions, and opportunities, so you can plan a future that fits <em>you</em>.</p>
+          <p class="hero-brand">Next Step<span>Guyana</span></p>
+          <p class="motto">Choose <span>·</span> Dream <span>·</span> Act</p>
           <div class="actions">
             <a class="btn gold" href="app.html">Enter the feed</a>
-            <a class="btn ghost" href="check.html">Find my archetype</a>
+            <a class="btn ghost" href="check.html">Take self-check</a>
           </div>
-          <p class="motto">Choose <span>·</span> Dream <span>·</span> Act</p>
         </div>
       </div>
     </section>
@@ -853,7 +874,12 @@
         function goTo(i) {
           if (i < 0) i = cards.length - 1;
           if (i >= cards.length) i = 0;
-          cards[i].scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', inline: 'start', block: 'nearest' });
+          var left = cards[i].offsetLeft;
+          if (rail.scrollTo) {
+            rail.scrollTo({ left: left, behavior: reduceMotion ? 'auto' : 'smooth' });
+          } else {
+            rail.scrollLeft = left;
+          }
           window.setTimeout(sync, reduceMotion ? 0 : 320);
         }
 
