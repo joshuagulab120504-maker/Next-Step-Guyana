@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#061c33">
   <title>Next Step Guyana</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="alternate icon" href="logo.png" type="image/png">
+  <link rel="apple-touch-icon" href="logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,550;9..144,700&family=Sora:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -20,6 +23,7 @@
       --font-body:"Sora",ui-sans-serif,system-ui,sans-serif;
       --shadow:0 1px 2px rgba(15,39,64,.04), 0 18px 40px rgba(15,39,64,.06);
       --r:18px;
+      --btn-r:12px;
     }
     *{box-sizing:border-box}
     html{scroll-behavior:smooth}
@@ -60,11 +64,11 @@
     .links{display:flex; align-items:center; gap:4px; margin-left:auto}
     .links a{
       color:rgba(255,255,255,.78); font-size:13px; font-weight:650;
-      padding:10px 12px; border-radius:999px;
+      padding:10px 12px; border-radius:10px;
     }
     .links a:hover, .links a.active{color:#fff; background:rgba(255,255,255,.08)}
     .links .sign-in{
-      margin-left:6px; min-height:42px; padding:0 16px; border-radius:999px;
+      margin-left:6px; min-height:42px; padding:0 16px; border-radius:var(--btn-r);
       background:var(--gold); color:var(--navy-deep); font-weight:800; font-size:13px;
     }
     .menu{
@@ -94,7 +98,7 @@
     .hero-copy-inner{max-width:min(720px, 100%)}
     .hero .eyebrow{
       color:#f7dd8a; background:rgba(255,255,255,.1);
-      border-radius:999px; padding:8px 12px; margin-bottom:18px;
+      border-radius:10px; padding:8px 12px; margin-bottom:18px;
     }
     .hero-brand{
       font-family:var(--font-body);
@@ -130,12 +134,13 @@
     }
     .btn{
       display:inline-flex; align-items:center; justify-content:center; gap:8px;
-      min-height:50px; padding:12px 20px; border-radius:14px;
+      min-height:50px; padding:12px 20px; border-radius:var(--btn-r);
       font-size:14.5px; font-weight:750; letter-spacing:-.01em;
-      transition:transform .18s ease, background .18s ease, border-color .18s ease;
+      transition:background .18s ease, border-color .18s ease;
     }
-    .btn:hover{transform:translateY(-1px)}
-    .btn.gold{background:linear-gradient(135deg, var(--gold), var(--gold-deep)); color:var(--navy-deep)}
+    .btn:hover{background:var(--navy-mid)}
+    .btn.gold{background:var(--gold); color:var(--navy-deep)}
+    .btn.gold:hover{background:var(--gold-deep)}
     .btn.ghost{
       background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.28); color:#fff;
     }
@@ -143,7 +148,7 @@
     .btn.solid{background:var(--navy); color:#fff}
     .btn.solid:hover{background:var(--navy-mid)}
     .btn.line{background:#fff; border:1px solid var(--line); color:var(--ink)}
-    .btn.line:hover{border-color:#b8c9dc}
+    .btn.line:hover{border-color:#b8c9dc; background:#fff}
 
     /* Sections */
     .section{padding:72px 0}
@@ -732,6 +737,8 @@
       <div>
         <h4>Organisation</h4>
         <a href="#about">About Us</a>
+        <a href="privacy.html">Privacy Policy</a>
+        <a href="terms.html">Terms and Conditions</a>
         <a href="#" data-toast="Contact details coming soon.">Contact</a>
       </div>
     </div>
@@ -746,17 +753,24 @@
         </div>
         <button class="close" type="button" data-close aria-label="Close">×</button>
       </div>
-      <label for="signEmail">Email or mobile number</label>
-      <input id="signEmail" placeholder="Enter your email or number">
-      <label for="signPass">Password</label>
-      <input id="signPass" type="password" placeholder="Enter your password">
-      <a class="btn solid" href="app.html" style="width:100%;margin-top:18px">Sign in to the feed</a>
+      <form id="signForm">
+        <label for="signEmail">Email or mobile number</label>
+        <input id="signEmail" placeholder="Enter your email or number" autocomplete="username">
+        <label for="signPass">Password</label>
+        <input id="signPass" type="password" placeholder="Enter your password" autocomplete="current-password">
+        <p id="signErr" style="display:none;color:#b93b30;font-size:13px;font-weight:600;margin:10px 0 0"></p>
+        <button class="btn solid" type="submit" style="width:100%;margin-top:18px">Sign in</button>
+      </form>
+      <p style="text-align:center;font-size:12px;font-weight:700;color:var(--muted);margin:16px 0 10px">Demo staff?</p>
+      <a class="btn ghost" href="admin.html" style="width:100%;display:inline-flex;justify-content:center;text-decoration:none;border:1px solid var(--line);border-radius:12px;min-height:42px;align-items:center;font-weight:700">Open Admin & Mentor Center</a>
       <p style="text-align:center;font-size:12px;font-weight:700;color:var(--muted);margin:16px 0 10px">New here?</p>
       <a class="btn gold" href="check.html" style="width:100%">Find my archetype</a>
+      <p style="margin:14px 0 0;font-size:11px;color:var(--muted);line-height:1.45">Try student@nextstep.gy / student · mentor@nextstep.gy / mentor · admin@nextstep.gy / admin</p>
     </div>
   </div>
   <div class="toast" id="toast" role="status"></div>
 
+  <script src="nsg-cms.js"></script>
   <script>
     (function () {
       var sheet = document.getElementById('mobileSheet');
@@ -800,6 +814,36 @@
       modal.addEventListener('click', function (e) {
         if (e.target === modal) modal.classList.remove('open');
       });
+
+      var signForm = document.getElementById('signForm');
+      var signErr = document.getElementById('signErr');
+      if (signForm) {
+        signForm.addEventListener('submit', function (e) {
+          e.preventDefault();
+          var email = document.getElementById('signEmail').value;
+          var pass = document.getElementById('signPass').value;
+          if (!window.NSG_CMS) {
+            window.location.href = 'app.html';
+            return;
+          }
+          var session = NSG_CMS.login(email, pass);
+          if (!session) {
+            /* Allow blank demo student entry into the feed */
+            if (!String(email || '').trim() && !String(pass || '').trim()) {
+              window.location.href = 'app.html';
+              return;
+            }
+            if (signErr) {
+              signErr.style.display = 'block';
+              signErr.textContent = 'Those credentials were not recognised. Try the demo accounts below.';
+            }
+            return;
+          }
+          if (signErr) signErr.style.display = 'none';
+          window.location.href = NSG_CMS.routeForRole(session.role);
+        });
+      }
+
       document.querySelectorAll('[data-toast]').forEach(function (el) {
         el.addEventListener('click', function (e) {
           e.preventDefault();

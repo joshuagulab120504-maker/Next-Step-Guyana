@@ -1452,25 +1452,32 @@ var VIEWS = {
 function renderChrome() {
   var pill = byId('arch-pill');
   if (pill) {
-    var label = S.onboarded
-      ? '<span class="arch-sub">Profile</span>' + esc(S.archetype) + ' · ' + esc(S.form)
-      : '<span class="arch-sub">Profile</span>Not set up';
     var init = 'You';
     if (S.onboarded && S.archetype) {
       var parts = S.archetype.split(' ');
       init = parts[parts.length - 1].charAt(0);
     }
+    var dot = S.onboarded ? '' : '<span class="setup-dot" id="setup-dot" aria-hidden="true"></span>';
     pill.innerHTML =
       '<span class="av" aria-hidden="true">' +
       esc(init) +
-      '</span><span class="arch-label">' +
-      label +
-      '</span>';
-    pill.setAttribute('aria-label', S.onboarded ? 'Your profile, open My Pathway' : 'Profile not set up, open My Pathway');
+      '</span>' +
+      dot;
+    pill.setAttribute(
+      'aria-label',
+      S.onboarded ? 'Your profile, open My Pathway' : 'Profile not set up, open My Pathway'
+    );
     pill.hidden = false;
   }
   var badge = byId('dock-badge');
-  if (badge) badge.hidden = !(S.unread > 0 && S.view !== 'pathway');
+  if (badge) {
+    if (S.unread > 0) {
+      badge.hidden = false;
+      badge.textContent = String(S.unread);
+    } else {
+      badge.hidden = true;
+    }
+  }
 
   var navs = document.querySelectorAll('[data-nav]');
   var i;
@@ -1478,12 +1485,22 @@ function renderChrome() {
   for (i = 0; i < navs.length; i++) {
     if (navs[i].id === 'arch-pill') {
       navs[i].classList.remove('on');
+      navs[i].removeAttribute('aria-current');
       continue;
     }
     var navKey = navs[i].getAttribute('data-nav');
-    var on = navKey === S.view || (navKey === 'sessions' && (sheetTop === 'session' || sheetTop === 'book' || sheetTop === 'opp'));
-    if (on) navs[i].classList.add('on');
-    else navs[i].classList.remove('on');
+    var on =
+      navKey === S.view ||
+      (navKey === 'sessions' && (sheetTop === 'session' || sheetTop === 'book' || sheetTop === 'opp'));
+    if (on) {
+      navs[i].classList.add('on');
+      if (navs[i].closest && navs[i].closest('#dock')) {
+        navs[i].setAttribute('aria-current', 'page');
+      }
+    } else {
+      navs[i].classList.remove('on');
+      navs[i].removeAttribute('aria-current');
+    }
   }
 
   /* Left next decision */
@@ -1583,15 +1600,6 @@ function render() {
   else if (S.view === 'sessions') main.innerHTML = renderSessionsPage();
   else main.innerHTML = renderFeed();
   renderChrome();
-  syncFab();
-}
-
-function syncFab() {
-  var fab = byId('fab-post');
-  if (!fab) return;
-  var composing = NAV.length && NAV[NAV.length - 1].t === 'compose';
-  fab.className = composing ? 'fab-post open' : 'fab-post';
-  fab.setAttribute('aria-label', composing ? 'Close composer' : 'Make a post');
 }
 
 function openKind(kind, id) {
@@ -1695,10 +1703,9 @@ function wire() {
       return;
     }
 
-    if (t.id === 'fab-post' || closestEl(t, '#fab-post')) {
+    if (t.id === 'dock-post' || closestEl(t, '#dock-post')) {
       if (NAV.length && NAV[NAV.length - 1].t === 'compose') {
         closeSheet();
-        syncFab();
       } else {
         openCompose();
       }
@@ -2178,21 +2185,6 @@ function wire() {
       back();
     }
   });
-
-  var backTop = byId('back-top');
-  function syncBackTop() {
-    if (!backTop) return;
-    var y = window.pageYOffset || document.documentElement.scrollTop || 0;
-    if (y > 480) backTop.removeAttribute('hidden');
-    else backTop.setAttribute('hidden', '');
-  }
-  window.addEventListener('scroll', syncBackTop, { passive: true });
-  syncBackTop();
-  if (backTop) {
-    backTop.addEventListener('click', function () {
-      window.scrollTo(0, 0);
-    });
-  }
 }
 
 function applyHash() {
@@ -2217,6 +2209,9 @@ function applyHash() {
 }
 
 function boot() {
+  if (window.NSG_CMS && typeof NSG_CMS.applyAppGlobals === 'function') {
+    NSG_CMS.applyAppGlobals();
+  }
   var hash = applyHash();
   wire();
   render();

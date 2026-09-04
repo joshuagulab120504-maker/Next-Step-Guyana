@@ -286,7 +286,6 @@ function paint() {
   byId('sheet-body').scrollTop = 0;
   if (out.after) out.after();
   renderChrome();
-  if (typeof syncFab === 'function') syncFab();
 }
 
 function avatarHtml(a, anon) {

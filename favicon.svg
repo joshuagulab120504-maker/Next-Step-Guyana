@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="Next Step Guyana">
+  <rect width="32" height="32" rx="6" fill="#061c33"/>
+  <rect x="3" y="3" width="26" height="26" rx="4" fill="#0a2d52"/>
+  <path d="M8 22 V10 h3.2 l4.2 7.4 V10 H19 v12 h-3.2 L11.6 14.5 V22 H8z" fill="#f4c945"/>
+  <rect x="21" y="10" width="3" height="12" rx="1" fill="#f4c945"/>
+</svg>

@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0a1930">
 <title>Self-check - Next Step Guyana</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="alternate icon" href="logo.png" type="image/png">
+<link rel="apple-touch-icon" href="logo.png">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500..800&family=Inter:wght@400;500;600;700;800;900&family=Sora:wght@500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap');
 :root{
@@ -281,7 +284,7 @@ const TIEBREAK_POOL = {
 const FLOW_TAIL = ['curio','pressure','conditions','recover','extra','concerns','advice'];
 
 const STEP_DEFS = {
-  curio:{type:'curiosity', title:'Which areas make you curious?', hint:'Tap in order of interest — your first pick names your archetype. Curiosity is enough.'},
+  curio:{type:'curiosity', title:'Which areas make you curious?', hint:'Tap in order of interest - your first pick names your archetype. Curiosity is enough.'},
   extra:{type:'multi', key:'extra', title:'What are you into outside of class?', hint:'Any that apply, or none. This shapes what we suggest, not your archetype.', allowEmpty:true, options:[
     {v:'club', t:'School club or society'},
     {v:'sports', t:'Sports team'},
@@ -291,7 +294,7 @@ const STEP_DEFS = {
     {v:'church', t:'Church or community group'},
     {v:'family-biz', t:'Helping with a family business'},
     {v:'else', t:'Something else'},
-    {v:'none', t:'Nothing right now — that\'s completely fine'}
+    {v:'none', t:'Nothing right now - that\'s completely fine'}
   ]},
   pressure:{type:'single', key:'pressure', title:'When something important isn\'t going to plan, what do you actually do?', hint:'What happens, not what should.', options:[
     {v:'fix', t:'Try to fix it myself before asking anyone'},
@@ -342,7 +345,7 @@ const PRIMARY_QUOTE = {
 
 const HOW_YOU_WORK = {
   R:'You work things out by doing them, hands on the thing itself.',
-  I:'You want to know why before you act — and you keep asking.',
+  I:'You want to know why before you act - and you keep asking.',
   A:'You make something of your own out of whatever you\'re given.',
   S:'You do your best work when somebody else gets better because of it.',
   E:'You would rather persuade a room than wait for permission.',
@@ -362,7 +365,7 @@ const ARCH = {
   'The Steward':{grad:'linear-gradient(145deg,#07864d,#05603a)', tintBg:'#e8f7ef', tintInk:'#05603a'},
   'The Artisan':{grad:'linear-gradient(145deg,#2479df,#1a55a8)', tintBg:'#e8f2ff', tintInk:'#1a55a8'},
   'The Pioneer':{grad:'linear-gradient(145deg,#e57c2d,#b85c18)', tintBg:'#fff0e2', tintInk:'#a3500f'},
-  'The Advocate':{grad:'linear-gradient(145deg,#7256c7,#513a96)', tintBg:'#f0ebff', tintInk:'#513a96'},
+  'The Advocate':{grad:'linear-gradient(145deg,#0f4272,#0a2d52)', tintBg:'#e8f1fa', tintInk:'#0a2d52'},
   'The Visionary':{grad:'linear-gradient(145deg,#078697,#04616e)', tintBg:'#e2f5f7', tintInk:'#04616e'},
   'The Gladiator':{grad:'linear-gradient(145deg,#df453d,#a92e28)', tintBg:'#ffe9e7', tintInk:'#a92e28'}
 };
@@ -793,7 +796,7 @@ function renderDonutScreen(){
   if(sc.flat){
     heading = 'You rated almost everything the same.';
     body = 'Your mix came out almost perfectly even, which usually means these items didn\'t fit you rather than that you have no interests.';
-    warn = '<div class="warn-note">Going back and being harsher — using <strong>Hate it</strong> and <strong>Love it</strong> rather than the middle — will give a much truer result.</div>';
+    warn = '<div class="warn-note">Going back and being harsher - using <strong>Hate it</strong> and <strong>Love it</strong> rather than the middle - will give a much truer result.</div>';
     btnLabel = 'Continue anyway →';
   } else if(needsTiebreak(sc)){
     heading = 'Here\'s your interest mix.';
@@ -1005,7 +1008,7 @@ function renderCardFront(profile, opts){
   if(profile.close){
     close = '<div class="close-note"><strong>Your top two are close.</strong> '
       +esc(RIASEC[profile.primary])+' and '+esc(RIASEC[profile.secondary])
-      +' came out within half a point, so the order between them isn\'t meaningful — read both as equally yours.</div>';
+      +' came out within half a point, so the order between them isn\'t meaningful - read both as equally yours.</div>';
   }
   const flipBtn = opts.flip
     ? '<button type="button" class="btn gold full" id="seeResults">See my full results →</button>'
@@ -1033,7 +1036,7 @@ function renderReportBack(profile){
   const bucket = profile.bucket || 'your areas';
   let nobody = '';
   if(profile.advice==='noone'){
-    nobody = '<div class="info-note"><strong>One thing worth saying.</strong> You mentioned you don\'t really talk to anyone about this. That is far more common than it looks from the outside, and it is the single easiest thing to change — not because your thinking is wrong, but because decisions like this get much lighter out loud. A group session is a low-stakes place to start.'
+    nobody = '<div class="info-note"><strong>One thing worth saying.</strong> You mentioned you don\'t really talk to anyone about this. That is far more common than it looks from the outside, and it is the single easiest thing to change - not because your thinking is wrong, but because decisions like this get much lighter out loud. A group session is a low-stakes place to start.'
       +'<a class="btn small" href="sessions.html">See group sessions</a></div>';
   }
   return '<div class="face face-back report-card">'
@@ -1042,7 +1045,7 @@ function renderReportBack(profile){
     +'<button type="button" class="btn ghost small back-card" id="backCard">← Card</button></div>'
     +nobody
     +'<section class="report-sec"><h3>People who were where you are</h3>'
-    +'<p class="cap">Matched on shared interests — named, not scored.</p>'
+    +'<p class="cap">Matched on shared interests - named, not scored.</p>'
     +mentorCardsHtml(profile)+'</section>'
     +'<section class="report-sec"><h3>Careers this opens onto</h3>'
     +'<p class="cap">In '+esc(bucket)+'. A list to look into, not a shortlist you\'re stuck with.</p>'
@@ -1055,7 +1058,7 @@ function renderReportBack(profile){
     +'<button type="button" class="linkish" id="changeAnswers">Change my answers</button>'
     +'<button type="button" class="linkish" id="deleteAll">Delete everything from this device</button>'
     +'</div>'
-    +'<p class="line">Interests change — retake this whenever you want.</p>'
+    +'<p class="line">Interests change - retake this whenever you want.</p>'
     +'<p class="proto">Prototype for design testing. Mentor stories are placeholders until consented interviews replace them.</p>'
     +'</div>'
     +'</div>';
@@ -1064,7 +1067,7 @@ function renderReportBack(profile){
 function renderFlatPanel(){
   return '<div class="flat-panel">'
     +'<h2>There\'s no shape to read yet.</h2>'
-    +'<p>You rated almost every item the same, so all six interests came out level. That normally means the items didn\'t fit you — not that you have no interests. Naming an archetype from this would be guesswork, so we won\'t.</p>'
+    +'<p>You rated almost every item the same, so all six interests came out level. That normally means the items didn\'t fit you - not that you have no interests. Naming an archetype from this would be guesswork, so we won\'t.</p>'
     +'<button type="button" class="btn full" id="tryAgainHarsher">Try again, being harsher</button>'
     +'</div>';
 }

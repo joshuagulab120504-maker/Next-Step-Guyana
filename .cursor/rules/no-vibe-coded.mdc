@@ -1,0 +1,36 @@
+---
+description: Anti-vibe design standards and hard launch blockers for Next Step Guyana
+alwaysApply: true
+---
+
+# Next Step Guyana: no vibe-coded UI
+
+## Never ship
+- Purple gradients (or purple-as-default theme)
+- Pill-shaped buttons (`border-radius: 999px` / fully rounded CTAs)
+- Fake reviews, testimonials, star ratings
+- Fake metrics or vanity counters (invented user counts, growth %, “trusted by”)
+- Vague Euro-startup copy (“unlock your potential”, “reimagine the future”, empty slogans)
+- Emoji as icons
+- Em dashes (—) or en dashes (–); use commas, periods, or "to" for ranges
+- Over-the-top scroll / parallax / cursor-follow animations
+- AI stock photos or AI stock copy
+- Fake customer calendars or fabricated schedules presented as real
+
+## Brand direction
+- Keep navy, gold, green, real Guyana context
+- Prefer real photography or existing brand assets (`logo.png`, `assets/`)
+- Copy must be specific, honest, and local; if data is illustrative, say so plainly
+- Motion: subtle and purposeful only (2 to 3 intentional moves max on marketing pages)
+
+## Launch blockers (do not treat as launched until all are done)
+1. Custom domain connected (DNS + hosting)
+2. Favicon present on every public HTML page
+3. No “Made with AI” (or similar) badge anywhere
+4. Public `privacy.html` linked from the site footer
+5. Public `terms.html` linked from the site footer
+
+## Quality bar
+- Make no mistakes: verify links, copy, and wiring before calling work done
+- Prefer fixing root causes over decorative patches
+- Student-facing app JS stays ES5-style; no em/en dashes in app copy
