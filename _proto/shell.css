@@ -297,6 +297,7 @@ p{margin:0;max-width:none}
   .wordmark small{display:none}
   .wordmark b{font-size:var(--t-meta)}
   .engage-btn{flex-direction:column;gap:4px}
+  .engage-btn.primary{flex-direction:row;gap:4px}
 }
 
 /* Layout shell */
@@ -913,10 +914,25 @@ input.search::-webkit-search-cancel-button{filter:invert(1);opacity:.7;cursor:po
   stroke:var(--gold-ink);
   fill:var(--gold);
 }
-.engage-btn.primary{color:var(--blue)}
-.engage-btn.primary:hover{color:var(--navy);background:var(--fill)}
+.engage-btn.primary{
+  color:var(--navy-deep);
+  background:var(--gold);
+  font-weight:var(--w-bold);
+  margin:4px 2px;
+  padding:0 8px;
+  min-height:36px;
+  border-radius:var(--r-md);
+}
+.engage-btn.primary:hover{
+  color:var(--navy-deep);
+  background:var(--gold-deep);
+}
 .engage-btn.primary:active,
-.engage-btn.primary.on{color:var(--gold-ink);background:var(--gold-soft)}
+.engage-btn.primary.on{
+  color:var(--navy-deep);
+  background:var(--gold-deep);
+}
+.engage-btn.primary svg{stroke:var(--navy-deep);fill:none}
 .engage-btn svg{flex:0 0 auto}
 .engage-cta{
   margin-left:auto;
@@ -1458,6 +1474,7 @@ span.cat-chip{cursor:default}
 }
 .sheet-bar .titles{flex:1;min-width:0}
 .sheet-crumb{font-size:11.5px;font-weight:700;color:var(--faint)}
+.sheet-crumb:empty{display:none}
 .sheet-title{
   font-size:15px;font-weight:800;color:var(--ink);
   white-space:normal;overflow:visible;text-overflow:unset;
@@ -2053,11 +2070,21 @@ body, p, .clamp3, .article, .composer textarea, .detail p, .sess-main .muted,
   font-family:var(--f) !important;
 }
 .engage-cta{color:var(--blue) !important}
-.engage-btn.primary{color:var(--blue) !important}
+.engage-btn.primary{
+  color:var(--navy-deep) !important;
+  background:var(--gold) !important;
+  font-weight:var(--w-bold) !important;
+}
 .engage-btn:active,
 .engage-btn.on{
   color:var(--gold-ink) !important;
   background:var(--gold-soft) !important;
+}
+.engage-btn.primary:hover,
+.engage-btn.primary:active,
+.engage-btn.primary.on{
+  color:var(--navy-deep) !important;
+  background:var(--gold-deep) !important;
 }
 .cat-chip{
   font-size:11.5px !important;
@@ -2268,6 +2295,7 @@ button.d-row:hover{border-color:var(--line-2);background:#f7fafc}
   margin:var(--s4) 0 0;
 }
 .d-simple .engage + .d-action{padding-top:var(--s3)}
+.d-simple .d-replies + .d-action{margin-top:var(--s4);padding-top:var(--s4);border-top:1px solid var(--line)}
 .d-action p{margin:0 0 var(--s3);color:var(--mid);font-size:var(--t-body)}
 .d-action .btn{width:100%}
 .report-sheet p{margin:0 0 var(--s3);color:var(--mid);font-size:var(--t-body)}

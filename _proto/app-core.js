@@ -1189,7 +1189,7 @@ function cardMoreHtml(kind, id, mine) {
       html += moreItem('data-edit="' + esc(id) + '"', '', 'Edit');
       html += moreItem('data-del="' + esc(id) + '"', '', 'Delete');
     }
-    html += moreItem('data-hide="' + esc(key) + '"', iconHide(), 'Hide this post');
+    html += moreItem('data-hide="' + esc(key) + '"', iconHide(), 'Not interested');
     if (!own) {
       html += moreItem(
         'data-open="report" data-id="' + esc(key) + '"',
@@ -1263,25 +1263,47 @@ function replyEngageBtn(kind, id, n, focus) {
 function postEngageBar(item, kind, id, own, focus, replyN) {
   var src;
   var n = replyN;
+  var last;
   if (n == null) {
     src = item || feedByEngageId(id);
     n = src && src.replies ? src.replies.length : 0;
   }
+  if ((kind === 'session' || kind === 'opp') && !own) last = signUpEngageBtn(kind, id);
+  else last = moreEngageBtn(kind, id);
   return engageBar([
     inspireEngageBtn(id),
     replyEngageBtn(kind, id, n, focus),
     saveEngageBtn(id),
-    reportEngageBtn(kind, id)
+    last
   ]);
 }
 
-function reportEngageBtn(kind, id) {
+function moreEngageBtn(kind, id) {
   return engageBtn(
-    'data-open="report" data-id="' + esc(hideKey(kind, id)) + '"',
-    iconFlag(),
-    'Report',
-    false
+    'data-open="' + esc(kind) + '" data-id="' + esc(id) + '"',
+    '',
+    'View more',
+    false,
+    'primary'
   );
+}
+
+function signUpEngageBtn(kind, id) {
+  var on = false;
+  var label = 'Sign up';
+  var attrs;
+  if (kind === 'session') {
+    on = S.booked.indexOf(id) !== -1;
+    if (on) label = 'Signed up';
+    else if (S.waitlist.indexOf(id) !== -1) {
+      label = 'Waitlist';
+      on = true;
+    }
+    attrs = 'data-open="book" data-id="' + esc(id) + '"';
+  } else {
+    attrs = 'data-open="opp" data-id="' + esc(id) + '"';
+  }
+  return engageBtn(attrs, iconCal(), label, on, 'primary');
 }
 
 function mineFlagsHtml(item) {

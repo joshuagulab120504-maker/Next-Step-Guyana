@@ -1884,7 +1884,7 @@ function detailEngage(p) {
 }
 
 function readKindLabel(p) {
-  if (p.kind === 'question') return 'The question';
+  if (p.kind === 'question') return '';
   if (p.kind === 'story') return 'The story';
   if (p.kind === 'journey') return 'The pathway';
   if (p.kind === 'opportunity') return 'The opening';
@@ -2188,11 +2188,12 @@ function action(p) {
 }
 
 function renderSimpleDetail(p) {
-  var html = '<div class="detail d-simple">' + head(p) + content(p) + detailEngage(p) + action(p);
+  var html = '<div class="detail d-simple">';
   if (p.kind === 'question') {
-    html += replies(p) + '</div>';
+    html += content(p) + replies(p) + action(p) + '</div>';
     return html;
   }
+  html += head(p) + content(p) + detailEngage(p) + action(p);
   html += resources(p) + similar(p) + replies(p) + '</div>';
   return html;
 }
@@ -2205,7 +2206,7 @@ function viewThread(v) {
   if (item.mine && item.newReply) item.newReply = false;
   pushRecent('thread', item.id, item.title);
   p = loadDetail('question', v.id);
-  return { crumb: 'Question', title: 'Question', html: renderSimpleDetail(p) };
+  return { crumb: '', title: 'QUESTION', html: renderSimpleDetail(p) };
 }
 
 function viewStory(v) {
