@@ -20,13 +20,9 @@ var S = {
   taken: [],
   following: [],
   follow: [],
-  myArch: '',
   commQ: '',
   commRole: 'all',
   commCareer: '',
-  archStep: 0,
-  archTally: {},
-  archPicks: [],
   saved: [],
   inspired: [],
   booked: [],
@@ -80,8 +76,110 @@ var S = {
     images: [],
     anon: true,
     editId: ''
-  }
+  },
+  pw: null
 };
+
+function emptyPw() {
+  return {
+    done: false,
+    step: 0,
+    level: '',
+    region: '',
+    fields: [],
+    clarity: '',
+    dest: -1,
+    considering: [],
+    fork: '',
+    open: '',
+    tab: 'me',
+    sub: '',
+    field: '',
+    q: '',
+    sheet: -1,
+    sheetAcc: '',
+    name: '',
+    title: '',
+    about: '',
+    mentorField: '',
+    subjects: {},
+    achievements: [],
+    activities: [],
+    leaving: {},
+    steps: [],
+    queue: [],
+    flagOn: -1,
+    flagReason: '',
+    flagNote: '',
+    sugOn: -1,
+    sugField: '',
+    sugText: '',
+    sugWhy: '',
+    subjSheet: false,
+    addStep: false,
+    stepWhen: '',
+    stepDid: '',
+    stepLed: '',
+    focusQ: false,
+    qPos: 0
+  };
+}
+
+function ensurePw() {
+  if (!S.pw) S.pw = emptyPw();
+  return S.pw;
+}
+
+function resetPwSubpages() {
+  var p = ensurePw();
+  p.sub = '';
+  p.field = '';
+  p.sheet = -1;
+  p.sheetAcc = '';
+  p.flagOn = -1;
+  p.sugOn = -1;
+  p.subjSheet = false;
+  p.addStep = false;
+}
+
+function levelByKey(k) {
+  var i;
+  for (i = 0; i < LEVELS.length; i++) if (LEVELS[i].k === k) return LEVELS[i];
+  return LEVELS[0];
+}
+
+function levelName(k) {
+  return levelByKey(k).n;
+}
+
+function regionByKey(k) {
+  var i;
+  for (i = 0; i < REGIONS.length; i++) if (REGIONS[i].k === k) return REGIONS[i];
+  return REGIONS[3];
+}
+
+function regionShort(k) {
+  return regionByKey(k).short;
+}
+
+function seedMentorRoute(id) {
+  var j = typeof JOURNEYS !== 'undefined' ? JOURNEYS[id] : null;
+  var i;
+  if (!j || !j.moments || S.pw.steps.length) return;
+  for (i = 0; i < j.moments.length; i++) {
+    S.pw.steps.push({
+      when: j.moments[i].age ? 'Age ' + j.moments[i].age : 'Then',
+      did: j.moments[i].text,
+      led: (j.route && j.route[i] && j.route[i].lesson) || ''
+    });
+  }
+}
+
+function fieldByKey(k) {
+  var i;
+  for (i = 0; i < FIELDS.length; i++) if (FIELDS[i].k === k) return FIELDS[i];
+  return FIELDS[0];
+}
 
 var DUP_MAP = [
   { keys: ['biology', 'chemistry', 'medicine', 'nursing'], id: 'q-bio' },
@@ -162,11 +260,15 @@ function currentPosterId() {
 function applyPrototypeRole(key) {
   var pending = key.indexOf('pending-') === 0;
   var role = pending ? key.slice(8) : key;
+  var a;
   S.role = role;
   S.me.role = role;
   S.me.pending = pending;
   S.me.form = S.form || '';
   S.me.region = S.region || '';
+  ensurePw();
+  resetPwSubpages();
+  S.pw.tab = 'me';
   if (role === 'visitor') {
     S.onboarded = false;
     S.me.id = '';
@@ -174,39 +276,69 @@ function applyPrototypeRole(key) {
     S.me.contactable = false;
     S.me.form = '';
     S.me.region = '';
+    S.pw.done = false;
+    S.pw.step = 0;
+    S.pw.level = '';
+    S.pw.region = '';
+    S.pw.fields = [];
+    S.pw.clarity = '';
     return;
   }
   S.onboarded = true;
   S.hideJoinCard = true;
+  S.pw.done = true;
+  if (!S.pw.level) S.pw.level = 'f4';
+  if (!S.pw.region) S.pw.region = 'r4';
+  if (!S.pw.open) S.pw.open = S.pw.level;
   if (!S.form) {
-    S.form = 'Form 3';
-    S.stage = 'subject';
+    S.form = levelName(S.pw.level);
+    S.stage = 'csec';
   }
-  if (!S.region) S.region = 'Region 4';
+  if (!S.region) S.region = regionShort(S.pw.region);
   S.me.form = S.form;
   S.me.region = S.region;
   if (role === 'student') {
     S.me.id = '';
     S.me.verified = false;
     S.me.contactable = false;
+    S.pw.name = 'You';
   } else if (role === 'contributor') {
     S.me.id = 'jerome';
     S.me.verified = false;
     S.me.contactable = false;
+    a = author('jerome');
+    S.pw.name = a.name;
+    S.pw.title = a.pos;
+    if (!S.pw.mentorField) S.pw.mentorField = 'tech';
+    seedMentorRoute('jerome');
   } else if (role === 'mentor') {
     S.me.id = 'raeka';
     S.me.verified = !pending;
     S.me.contactable = true;
+    a = author('raeka');
+    S.pw.name = a.name;
+    S.pw.title = a.pos;
+    if (!S.pw.mentorField) S.pw.mentorField = 'science';
+    seedMentorRoute('raeka');
   } else if (role === 'admin') {
     S.me.id = 'desk';
     S.me.verified = false;
     S.me.contactable = false;
+    S.pw.name = 'Desk';
   }
 }
 
 function canContact(id) {
   var a = author(id);
   return !!(a && a.contactable && a.role === 'mentor');
+}
+
+function canFollowPerson(id) {
+  var a;
+  if (!id || id === currentPosterId()) return false;
+  a = author(id);
+  if (!a || a.system) return false;
+  return a.role === 'mentor' || a.role === 'contributor';
 }
 
 function MONTHS_SHORT() {
@@ -288,29 +420,33 @@ function nameWithBadge(name, a) {
   );
 }
 
+function replyIdentityHtml(a, fallbackName) {
+  var name = a && a.name ? a.name : fallbackName || 'Student';
+  var html = '<div class="reply-id">' + nameWithBadge(name, a);
+  if (a && (a.role === 'mentor' || a.role === 'contributor') && a.pos) {
+    html += '<p class="reply-role">' + esc(a.pos) + '</p>';
+  }
+  html += '</div>';
+  return html;
+}
+
+function followPersonBtn(id, extraCls) {
+  if (!canFollowPerson(id)) return '';
+  return (
+    '<button type="button" class="btn quiet follow-btn' +
+    (isFollowing(id) ? ' following' : '') +
+    (extraCls ? ' ' + extraCls : '') +
+    '" data-follow="' +
+    esc(id) +
+    '">' +
+    (isFollowing(id) ? 'Following' : '+ Follow') +
+    '</button>'
+  );
+}
+
 function contactAffordance(id, mine) {
-  var a;
   if (mine || !id) return '';
-  a = author(id);
-  if (a.role === 'contributor' && a.journey) {
-    return (
-      '<button type="button" class="d-readstory" data-open="journey" data-id="' +
-      esc(a.journey) +
-      '">Read their story</button>'
-    );
-  }
-  if (canContact(id)) {
-    return (
-      '<button type="button" class="btn quiet follow-btn' +
-      (isFollowing(id) ? ' following' : '') +
-      '" data-follow="' +
-      esc(id) +
-      '">' +
-      (isFollowing(id) ? 'Following' : 'Follow') +
-      '</button>'
-    );
-  }
-  return '';
+  return followPersonBtn(id, '');
 }
 
 function cardChevron() {
@@ -572,12 +708,12 @@ function toggleInspired(id) {
     requirePathway({
       type: 'inspire',
       id: id,
-      reason: 'We need your form before we mark a story as inspired.'
+      reason: 'We need your form before we mark this as inspired.'
     })
   ) {
     return;
   }
-  item = feedById(id);
+  item = feedByEngageId(id);
   i = S.inspired.indexOf(id);
   if (i === -1) {
     S.inspired.push(id);
@@ -659,6 +795,18 @@ function feedById(id) {
   return null;
 }
 
+function feedByEngageId(id) {
+  var item = feedById(id);
+  var i;
+  if (item) return item;
+  for (i = 0; i < FEED.length; i++) {
+    if (FEED[i].opp === id || FEED[i].session === id || FEED[i].journey === id) {
+      return FEED[i];
+    }
+  }
+  return null;
+}
+
 function sessionById(id) {
   var i;
   for (i = 0; i < SESSIONS.length; i++) {
@@ -715,9 +863,7 @@ function closeSheet() {
 
 function openSheet() {
   var sh = byId('sheet');
-  var top = NAV.length ? NAV[NAV.length - 1].t : '';
   var cls = 'sheet open';
-  if (top === 'archtest') cls += ' sheet-bottom';
   sh.hidden = false;
   sh.style.visibility = 'visible';
   sh.className = cls;
@@ -728,8 +874,9 @@ function openSheet() {
 
 function setView(v) {
   hideSheetUi();
+  if (v === 'sessions' || v === 'happening' || v === 'notifications') v = 'alerts';
   S.view = v;
-  if (v === 'pathway') S.unread = 0;
+  if (v === 'pathway' || v === 'alerts') S.unread = 0;
   render();
 }
 
@@ -1092,6 +1239,44 @@ function saveEngageBtn(id) {
   return engageBtn('data-save="' + esc(id) + '"', iconBookmark(), on ? 'Saved' : 'Save', on);
 }
 
+function inspireEngageBtn(id) {
+  var item = feedByEngageId(id);
+  var n = item && item.insp ? item.insp : 0;
+  return engageBtn(
+    'data-inspire="' + esc(id) + '"',
+    iconHeart(),
+    n ? 'Inspired · ' + n : 'Inspired',
+    isInspired(id)
+  );
+}
+
+function replyEngageBtn(kind, id, n, focus) {
+  n = n || 0;
+  return engageBtn(
+    focus
+      ? 'data-focus-reply="1"'
+      : 'data-open="' + esc(kind) + '" data-id="' + esc(id) + '"',
+    iconReply(),
+    n === 1 ? '1 reply' : n + ' replies',
+    false
+  );
+}
+
+function postEngageBar(item, kind, id, own, focus, replyN) {
+  var src;
+  var n = replyN;
+  if (n == null) {
+    src = item || feedByEngageId(id);
+    n = src && src.replies ? src.replies.length : 0;
+  }
+  return engageBar([
+    inspireEngageBtn(id),
+    replyEngageBtn(kind, id, n, focus),
+    saveEngageBtn(id),
+    reportEngageBtn(kind, id)
+  ]);
+}
+
 function reportEngageBtn(kind, id) {
   return engageBtn(
     'data-open="report" data-id="' + esc(hideKey(kind, id)) + '"',
@@ -1129,38 +1314,24 @@ function renderQuestionCard(item) {
     '</div></div>' +
     contactAffordance(anon ? null : item.author, item.mine) +
     cardMoreHtml('thread', item.id, item.mine) +
-    '</div>';
+    '</div><div class="card-body">';
   html += mineFlagsHtml(item);
   if (item.cat) html += '<div class="card-cats">' + catChip(item.cat) + '</div>';
   html += '<h3>' + esc(item.title) + '</h3>';
   if (first) {
     ra = first.a ? author(first.a) : null;
     html +=
-      '<div class="reply-preview"><div class="reply-who">' +
-      nameWithBadge(ra ? ra.name : first.who || 'Student', ra) +
-      (ra && ra.pos ? '<span class="reply-role">' + esc(ra.pos) + '</span>' : '') +
-      '</div><p class="clamp3">' +
+      '<div class="reply-preview">' +
+      replyIdentityHtml(ra, first.who || 'Student') +
+      '<p class="clamp3">' +
       esc(first.text) +
       '</p></div>';
   } else {
     html += '<p class="reply-empty">No replies yet</p>';
   }
   html +=
-    engageBar([
-      engageBtn(
-        'data-open="thread" data-id="' + esc(item.id) + '"',
-        iconReply(),
-        nReplies === 1 ? '1 reply' : nReplies + ' replies',
-        false
-      ),
-      engageBtn(
-        'data-follow-q="' + esc(item.id) + '"',
-        iconFollow(),
-        S.qFollow.indexOf(item.id) !== -1 ? 'Following' : 'Follow',
-        S.qFollow.indexOf(item.id) !== -1
-      ),
-      item.mine ? '' : reportEngageBtn('thread', item.id)
-    ]) +
+    '</div>' +
+    postEngageBar(item, 'thread', item.id, !!item.mine, false, nReplies) +
     '</article>';
   return html;
 }
@@ -1185,7 +1356,7 @@ function renderStoryCard(item) {
     '</div></div>' +
     contactAffordance(item.author, mine) +
     cardMoreHtml('story', item.id, mine) +
-    '</div>';
+    '</div><div class="card-body">';
   html += mineFlagsHtml(item);
   if (item.cat) html += '<div class="card-cats">' + catChip(item.cat) + '</div>';
   html += '<h3>' + esc(item.title) + '</h3><div class="card-read">';
@@ -1195,18 +1366,7 @@ function renderStoryCard(item) {
   if (body.length > 3) html += '<p class="card-take">' + esc(body[body.length - 1]) + '</p>';
   html += '</div>';
   html += renderImages(item.images, 'card');
-  html +=
-    engageBar([
-      engageBtn(
-        'data-inspire="' + esc(item.id) + '"',
-        iconHeart(),
-        (item.insp || 0) ? 'Inspired · ' + (item.insp || 0) : 'Inspired',
-        isInspired(item.id)
-      ),
-      saveEngageBtn(item.id),
-      mine ? '' : reportEngageBtn('story', item.id)
-    ]) +
-    '</article>';
+  html += '</div>' + postEngageBar(item, 'story', item.id, mine, false) + '</article>';
   return html;
 }
 
@@ -1227,8 +1387,9 @@ function renderOppCard(item) {
     '<div class="sub">' +
     kindTimeHtml('Opportunity', item.at, item.edited) +
     '</div></div>' +
+    contactAffordance(o.author || item.author, false) +
     cardMoreHtml('opp', o.id, false) +
-    '</div>';
+    '</div><div class="card-body">';
   if (o.cat) html += '<div class="card-cats">' + catChip(o.cat) + '</div>';
   html += '<h3>' + esc(o.name) + '</h3>';
   html +=
@@ -1257,10 +1418,8 @@ function renderOppCard(item) {
   html += openingCheckedHtml(o);
   html += renderImages(o.images || item.images, 'card');
   html +=
-    engageBar([
-      saveEngageBtn(o.id),
-      isOwnCard('opp', o.id, false) ? '' : reportEngageBtn('opp', o.id)
-    ]) +
+    '</div>' +
+    postEngageBar(item, 'opp', o.id, isOwnCard('opp', o.id, false), false) +
     '</article>';
   return html;
 }
@@ -1288,8 +1447,9 @@ function renderSessionCard(item) {
     '<div class="sub">' +
     kindTimeHtml('Session', item.at, item.edited) +
     '</div></div>' +
+    contactAffordance(s.hosted_by || s.lead, false) +
     cardMoreHtml('session', s.id, false) +
-    '</div>';
+    '</div><div class="card-body">';
   if (s.pod) html += '<div class="card-cats">' + catChip(s.pod, false) + '</div>';
   html += '<h3>' + esc(s.title) + '</h3>';
   html += '<p class="sess-when">' + esc(sessionWhen(s)) + '</p>';
@@ -1299,17 +1459,8 @@ function renderSessionCard(item) {
     (left === 1 ? ' place left' : ' places left') +
     '</span></div>';
   html +=
-    engageBar([
-      engageBtn(
-        'data-open="book" data-id="' + esc(s.id) + '"',
-        iconCal(),
-        left === 0 ? 'Join waitlist' : 'Book',
-        S.booked.indexOf(s.id) !== -1,
-        'primary'
-      ),
-      saveEngageBtn(s.id),
-      isOwnCard('session', s.id, false) ? '' : reportEngageBtn('session', s.id)
-    ]) +
+    '</div>' +
+    postEngageBar(item, 'session', s.id, isOwnCard('session', s.id, false), false) +
     '</article>';
   return html;
 }
@@ -1332,7 +1483,7 @@ function renderJourneyCard(item) {
     '</div></div>' +
     contactAffordance(item.journey, item.mine) +
     cardMoreHtml('journey', item.journey, item.mine) +
-    '</div>';
+    '</div><div class="card-body">';
   html += mineFlagsHtml(item);
   if (j.field) html += '<div class="card-cats">' + catChip(j.field, false) + '</div>';
   html += '<h3 class="hook">' + esc(j.hook) + '</h3>';
@@ -1340,13 +1491,15 @@ function renderJourneyCard(item) {
   html += journeyPathPreview(j);
   html += '<p class="now-line">Now: ' + esc(j.now) + '</p>';
   html += renderImages(item.images || j.images, 'card');
+  html += '</div>';
   html +=
-    engageBar([
-      saveEngageBtn(item.journey),
-      isOwnCard('journey', item.journey, item.mine)
-        ? ''
-        : reportEngageBtn('journey', item.journey)
-    ]) +
+    postEngageBar(
+      item,
+      'journey',
+      item.journey,
+      isOwnCard('journey', item.journey, item.mine),
+      false
+    ) +
     '</article>';
   return html;
 }
@@ -1546,30 +1699,302 @@ function renderFeed() {
   return html;
 }
 
-function renderSessionsPage() {
-  var stageFilter = S.sessionStage || '';
-  var html = '<div class="page-sessions">';
-  html += '<h1>Happening</h1>';
-  html +=
-    '<p class="lede">Book a live pod, or explore programmes currently open for youth in Guyana.</p>';
+function replyActor(r) {
+  if (!r) return { name: 'A student', a: null, anon: true };
+  if (r.a) {
+    return { name: author(r.a).name, a: author(r.a), anon: false };
+  }
+  if (r.mine) return { name: studentLabel(), a: null, anon: true };
+  return { name: r.who || 'A student', a: null, anon: true };
+}
 
-  html +=
-    '<section class="section"><h2>Our sessions</h2>' +
-    '<p class="muted">Live pods you can book with mentors.</p>';
-  var i, s, shown = 0;
+function lastOtherReply(item) {
+  var list = (item && item.replies) || [];
+  var i;
+  var r;
+  for (i = list.length - 1; i >= 0; i--) {
+    r = list[i];
+    if (r && !r.mine) return r;
+  }
+  return list.length ? list[list.length - 1] : null;
+}
+
+function lastMineReplyIndex(item) {
+  var list = (item && item.replies) || [];
+  var i;
+  for (i = list.length - 1; i >= 0; i--) {
+    if (list[i] && list[i].mine) return i;
+  }
+  return -1;
+}
+
+function postKindWord(item) {
+  if (!item) return 'post';
+  if (item.kind === 'question') return 'question';
+  if (item.kind === 'story') return 'story';
+  return 'post';
+}
+
+function postOpenKind(item) {
+  if (!item) return 'thread';
+  if (item.kind === 'story') return 'story';
+  if (item.kind === 'opportunity') return 'opp';
+  if (item.kind === 'session') return 'session';
+  if (item.kind === 'journey') return 'journey';
+  return 'thread';
+}
+
+function postOpenId(item) {
+  if (!item) return '';
+  if (item.kind === 'opportunity') return item.opp || item.id;
+  if (item.kind === 'session') return item.session || item.id;
+  if (item.kind === 'journey') return item.journey || item.id;
+  return item.id;
+}
+
+function renderAlertRow(opts) {
+  var av = opts.av || avatarHtml(null, true);
+  var cls = 'card alert-row' + (opts.isNew ? ' is-new' : '');
+  return (
+    '<article class="' +
+    cls +
+    '">' +
+    av +
+    '<div class="alert-main">' +
+    (opts.kicker ? '<p class="alert-kicker">' + esc(opts.kicker) + '</p>' : '') +
+    '<h3>' +
+    esc(opts.title || '') +
+    '</h3>' +
+    (opts.body ? '<p class="muted">' + esc(opts.body) + '</p>' : '') +
+    '</div>' +
+    '<button type="button" class="btn sm" ' +
+    (opts.nav
+      ? 'data-nav="' + esc(opts.nav) + '"'
+      : 'data-open="' + esc(opts.kind || 'thread') + '" data-id="' + esc(opts.id || '') + '"') +
+    '>' +
+    esc(opts.action || 'Open') +
+    '</button></article>'
+  );
+}
+
+function alertsReplyItems() {
+  var mine = [];
+  var joined = [];
+  var followed = [];
+  var i;
+  var item;
+  var myIdx;
+  var later;
+  var j;
+  var seen = {};
+  for (i = 0; i < FEED.length; i++) {
+    item = FEED[i];
+    if (!item || isHidden(postOpenKind(item), postOpenId(item))) continue;
+    if (item.mine && item.replies && item.replies.length) {
+      mine.push(item);
+      seen[item.id] = true;
+    }
+  }
+  for (i = 0; i < FEED.length; i++) {
+    item = FEED[i];
+    if (!item || seen[item.id] || isHidden(postOpenKind(item), postOpenId(item))) continue;
+    myIdx = lastMineReplyIndex(item);
+    if (myIdx === -1) continue;
+    later = [];
+    for (j = myIdx + 1; j < (item.replies || []).length; j++) {
+      if (item.replies[j] && !item.replies[j].mine) later.push(item.replies[j]);
+    }
+    if (later.length) {
+      joined.push({ item: item, later: later });
+      seen[item.id] = true;
+    }
+  }
+  for (i = 0; i < S.qFollow.length; i++) {
+    item = feedById(S.qFollow[i]);
+    if (!item || seen[item.id] || isHidden(postOpenKind(item), postOpenId(item))) continue;
+    if (item.replies && item.replies.length) followed.push(item);
+  }
+  mine.sort(function (a, b) {
+    return (b.newReply ? 1 : 0) - (a.newReply ? 1 : 0);
+  });
+  return { mine: mine, joined: joined, followed: followed };
+}
+
+function renderAlertsReplySection() {
+  var groups = alertsReplyItems();
+  var html = '<section class="section"><h2>Replies</h2>';
+  var i;
+  var item;
+  var r;
+  var who;
+  var n;
+  var kind;
+  var any = groups.mine.length + groups.joined.length + groups.followed.length;
+  if (!any) {
+    html +=
+      '<p class="muted">' +
+      (S.onboarded
+        ? 'No replies on your posts yet. When someone answers a question you posted or a thread you joined, it lands here.'
+        : 'Replies to your posts will show here after you post.') +
+      '</p></section>';
+    return html;
+  }
+  for (i = 0; i < groups.mine.length; i++) {
+    item = groups.mine[i];
+    r = lastOtherReply(item);
+    who = replyActor(r);
+    n = item.replies.length;
+    kind = postKindWord(item);
+    html += renderAlertRow({
+      av: avatarHtml(who.a, who.anon),
+      kicker: item.newReply ? 'New reply' : 'Reply',
+      title: who.name + ' replied to your ' + kind,
+      body:
+        (r && r.text ? r.text : item.title || '') +
+        (n > 1 ? ' · ' + n + ' replies' : ''),
+      kind: postOpenKind(item),
+      id: postOpenId(item),
+      isNew: !!item.newReply,
+      action: 'Open'
+    });
+  }
+  for (i = 0; i < groups.joined.length; i++) {
+    item = groups.joined[i].item;
+    r = groups.joined[i].later[groups.joined[i].later.length - 1];
+    who = replyActor(r);
+    html += renderAlertRow({
+      av: avatarHtml(who.a, who.anon),
+      kicker: 'On a thread you joined',
+      title: who.name + ' replied after you',
+      body: item.title || (r && r.text) || '',
+      kind: postOpenKind(item),
+      id: postOpenId(item),
+      isNew: false,
+      action: 'Open'
+    });
+  }
+  for (i = 0; i < groups.followed.length; i++) {
+    item = groups.followed[i];
+    r = lastOtherReply(item);
+    who = replyActor(r);
+    n = item.replies.length;
+    html += renderAlertRow({
+      av: avatarHtml(who.a, who.anon),
+      kicker: 'Question you follow',
+      title: who.name + ' replied to a question you follow',
+      body: item.title + (n ? ' · ' + n + ' replies' : ''),
+      kind: postOpenKind(item),
+      id: postOpenId(item),
+      isNew: false,
+      action: 'Open'
+    });
+  }
+  html += '</section>';
+  return html;
+}
+
+function renderAlertsCheckSection() {
+  var list = canCheckOpenings() ? openingsToCheck() : [];
+  var html;
+  var i;
+  var o;
+  var a;
+  if (!list.length) return '';
+  html = '<section class="section"><h2>Needs a look · ' + list.length + '</h2>';
+  html += '<p class="muted">Openings waiting for a mentor check before they go live.</p>';
+  for (i = 0; i < list.length; i++) {
+    o = list[i];
+    a = author(o.author);
+    html +=
+      '<article class="card alert-row alert-check">' +
+      avatarHtml(a, false) +
+      '<div class="alert-main"><p class="alert-kicker">Opening to check</p><h3>' +
+      esc(o.name) +
+      '</h3><p class="muted">' +
+      esc(a.name || 'Unknown') +
+      '</p></div>' +
+      '<div class="alert-acts">' +
+      '<button type="button" class="btn sm" data-opp-live="' +
+      esc(o.id) +
+      '">Looks right, publish it</button>' +
+      '<button type="button" class="btn sm g" data-opp-return="' +
+      esc(o.id) +
+      '">Send it back</button></div></article>';
+  }
+  html += '</section>';
+  return html;
+}
+
+function renderAlertsYourSessions() {
+  var booked = [];
+  var waiting = [];
+  var i;
+  var s;
+  var html;
   for (i = 0; i < SESSIONS.length; i++) {
     s = SESSIONS[i];
+    if (S.booked.indexOf(s.id) !== -1) booked.push(s);
+    else if (S.waitlist.indexOf(s.id) !== -1) waiting.push(s);
+  }
+  html = '<section class="section"><h2>Your sessions</h2>';
+  if (!booked.length && !waiting.length) {
+    html +=
+      '<p class="muted">' +
+      (S.onboarded
+        ? 'No place held yet. Book a pod below and it will sit here with the time and how to join.'
+        : 'Book a place and it will show here.') +
+      '</p></section>';
+    return html;
+  }
+  if (booked.length) {
+    html += '<p class="muted">Sessions you have a place in.</p>';
+    for (i = 0; i < booked.length; i++) html += renderSessionMini(booked[i]);
+  }
+  if (waiting.length) {
+    html += '<p class="muted">Waitlist. You move up if someone cancels.</p>';
+    for (i = 0; i < waiting.length; i++) html += renderSessionMini(waiting[i]);
+  }
+  html += '</section>';
+  return html;
+}
+
+function renderAlertsComingUp() {
+  var stageFilter = S.sessionStage || '';
+  var st = stageFilter ? stageByKey(stageFilter) : null;
+  var html = '<section class="section"><h2>Coming up</h2>';
+  var i;
+  var s;
+  var shown = 0;
+  if (st) {
+    html +=
+      '<p class="muted">Sessions for ' +
+      esc(st.name) +
+      '. <button type="button" class="btn q" data-clear-stage="1">Show all</button></p>';
+  } else {
+    html += '<p class="muted">Live pods you can still book.</p>';
+  }
+  for (i = 0; i < SESSIONS.length; i++) {
+    s = SESSIONS[i];
+    if (S.booked.indexOf(s.id) !== -1 || S.waitlist.indexOf(s.id) !== -1) continue;
     if (stageFilter && s.stages.indexOf(stageFilter) === -1) continue;
     html += renderSessionMini(s);
     shown++;
   }
-  if (!shown) html += '<p class="muted">No sessions matched yet.</p>';
+  if (!shown) html += '<p class="muted">No other sessions matched yet.</p>';
   html += '</section>';
+  return html;
+}
 
-  html +=
-    '<section class="section"><h2>Open opportunities</h2>' +
+function renderAlertsOpenings() {
+  var html =
+    '<section class="section"><h2>Openings</h2>' +
     '<p class="muted">Programmes currently open for youth in Guyana.</p>';
-  var k, o, open = [], later = [];
+  var k;
+  var o;
+  var i;
+  var open = [];
+  var later = [];
+  var list;
   for (k in OPPS) {
     if (!OPPS.hasOwnProperty(k)) continue;
     o = OPPS[k];
@@ -1577,7 +2002,7 @@ function renderSessionsPage() {
     if (S.onboarded && S.stage && oppOpenAtStage(o, S.stage)) open.push(o);
     else later.push(o);
   }
-  var list = open.length ? open.concat(later.filter(function (x) { return open.indexOf(x) === -1; })) : later;
+  list = open.length ? open.concat(later.filter(function (x) { return open.indexOf(x) === -1; })) : later;
   if (!list.length) html += '<p class="muted">No opportunities listed yet.</p>';
   for (i = 0; i < list.length; i++) {
     o = list[i];
@@ -1587,6 +2012,7 @@ function renderSessionsPage() {
       catChip(o.cat || 'Opportunity', false) +
       (o.independent ? '<span class="cat-chip soft">Self-entry</span>' : '') +
       (S.onboarded && oppOpenAtStage(o, S.stage) ? '<span class="cat-chip soft open">Open for you</span>' : '') +
+      (isSaved(o.id) ? '<span class="cat-chip soft">Saved</span>' : '') +
       '</div>' +
       '<h3>' +
       esc(o.name) +
@@ -1606,8 +2032,79 @@ function renderSessionsPage() {
   }
   html +=
     '<p class="footer-note">Dates, fees and requirements are illustrative in this prototype and must be confirmed with the organiser.</p></section>';
+  return html;
+}
+
+function renderAlertsSaved() {
+  var i;
+  var saved;
+  var html;
+  var any = false;
+  if (!S.saved.length) return '';
+  html = '<section class="section"><h2>Saved</h2><p class="muted">Posts and openings you kept for later.</p>';
+  for (i = 0; i < S.saved.length; i++) {
+    saved = savedTarget(S.saved[i]);
+    if (!saved) continue;
+    any = true;
+    html += renderAlertRow({
+      av: '<span class="av av-desk" aria-hidden="true">S</span>',
+      kicker: saved.sub,
+      title: saved.title,
+      body: 'Saved by you',
+      kind: saved.kind,
+      id: saved.id,
+      isNew: false,
+      action: 'Open'
+    });
+  }
+  if (!any) return '';
+  html += '</section>';
+  return html;
+}
+
+function renderAlertsDecision() {
+  var st;
+  var days;
+  var body;
+  if (!S.onboarded || !S.stage) return '';
+  st = stageByKey(S.stage);
+  if (!st || !st.dec) return '';
+  days = daysUntil(st.dec.due);
+  if (days == null) body = st.dec.why || '';
+  else if (days === 0) body = 'Due today. ' + (st.dec.why || '');
+  else body = days + ' days left. ' + (st.dec.why || '');
+  return (
+    '<section class="section"><h2>Your next decision</h2>' +
+    renderAlertRow({
+      av: '<span class="av" aria-hidden="true">P</span>',
+      kicker: S.form || 'Pathway',
+      title: st.dec.t,
+      body: body,
+      nav: 'pathway',
+      action: 'Open pathway'
+    }) +
+    '</section>'
+  );
+}
+
+function renderAlertsPage() {
+  var html = '<div class="page-alerts">';
+  html += '<h1>Alerts</h1>';
+  html +=
+    '<p class="lede">Sessions you booked, replies on your posts, and programmes still open.</p>';
+  html += renderAlertsCheckSection();
+  html += renderAlertsReplySection();
+  html += renderAlertsYourSessions();
+  html += renderAlertsDecision();
+  html += renderAlertsComingUp();
+  html += renderAlertsSaved();
+  html += renderAlertsOpenings();
   html += '</div>';
   return html;
+}
+
+function renderSessionsPage() {
+  return renderAlertsPage();
 }
 
 function personById(id) {
@@ -1635,7 +2132,6 @@ function personMatches(id) {
   if (p.role !== 'mentor' && p.role !== 'contributor') return false;
   if (S.commRole === 'mentors' && p.role !== 'mentor') return false;
   if (S.commRole === 'contributors' && p.role !== 'contributor') return false;
-  if (S.commRole === 'likeme' && (!S.myArch || p.arch !== S.myArch)) return false;
   if (S.commCareer && p.career !== S.commCareer) return false;
   q = (S.commQ || '').trim().toLowerCase();
   if (q && personSearchHay(p).indexOf(q) === -1) return false;
@@ -1646,9 +2142,6 @@ function sortPersonIds(ids) {
   return ids.slice().sort(function (a, b) {
     var pa = personById(a);
     var pb = personById(b);
-    var aSame = S.myArch && pa && pa.arch === S.myArch ? 0 : 1;
-    var bSame = S.myArch && pb && pb.arch === S.myArch ? 0 : 1;
-    if (aSame !== bSame) return aSame - bSame;
     return (pa.name || '').toLowerCase() < (pb.name || '').toLowerCase() ? -1 : 1;
   });
 }
@@ -1678,32 +2171,8 @@ function followedPeople() {
   return sortPersonIds(ids);
 }
 
-function sameArchPeople(key) {
-  var ids = personIds();
-  var out = [];
-  var i;
-  var p;
-  for (i = 0; i < ids.length; i++) {
-    p = personById(ids[i]);
-    if (p && p.arch === key) out.push(ids[i]);
-  }
-  return sortPersonIds(out);
-}
-
 function personFollowBtn(id, extraCls) {
-  var p = personById(id);
-  if (!p || p.role !== 'mentor' || !p.contactable) return '';
-  if (!canContact(id)) return '';
-  return (
-    '<button type="button" class="pcard-act' +
-    (isFollowing(id) ? ' is-on' : '') +
-    (extraCls ? ' ' + extraCls : '') +
-    '" data-follow="' +
-    esc(id) +
-    '">' +
-    (isFollowing(id) ? 'Following' : 'Follow') +
-    '</button>'
-  );
+  return followPersonBtn(id, extraCls);
 }
 
 function personCardHtml(id) {
@@ -1732,20 +2201,10 @@ function personCardHtml(id) {
     '</span>' +
     '<span class="pcard-title">' +
     esc(p.title) +
-    '</span>';
-  if (S.myArch && p.arch === S.myArch) {
-    html += '<span class="pcard-why">Same archetype as you</span>';
-  }
-  html += '</button>';
-  if (p.role === 'mentor') {
-    html += personFollowBtn(id, '');
-  } else {
-    html +=
-      '<button type="button" class="pcard-act is-read" data-open="person" data-id="' +
-      esc(id) +
-      '">Read their posts</button>';
-  }
-  html += '</article>';
+    '</span>' +
+    '</button>' +
+    followPersonBtn(id, 'pcard-follow') +
+    '</article>';
   return html;
 }
 
@@ -1790,65 +2249,6 @@ function personPosts(id) {
     }
   }
   return out;
-}
-
-function archPickWinner(tally) {
-  var order = ['investigator', 'builder', 'organiser', 'storyteller', 'advocate'];
-  var best = order[0];
-  var bestN = tally[best] || 0;
-  var i;
-  var k;
-  var n;
-  for (i = 1; i < order.length; i++) {
-    k = order[i];
-    n = tally[k] || 0;
-    if (n > bestN) {
-      best = k;
-      bestN = n;
-    }
-  }
-  return best;
-}
-
-function startArchTest() {
-  S.archStep = 0;
-  S.archTally = {};
-  S.archPicks = [];
-  go({ t: 'archtest', id: '0' });
-}
-
-function archAdvance(key) {
-  if (!S.archPicks) S.archPicks = [];
-  S.archPicks.push(key);
-  S.archTally[key] = (S.archTally[key] || 0) + 1;
-  S.archStep += 1;
-  if (NAV.length && NAV[NAV.length - 1].t === 'archtest') {
-    NAV[NAV.length - 1].id = String(S.archStep);
-    paint();
-    return;
-  }
-  go({ t: 'archtest', id: String(S.archStep) });
-}
-
-function archBack() {
-  var key;
-  if (!S.archStep) return;
-  key = S.archPicks && S.archPicks.length ? S.archPicks.pop() : '';
-  if (key) S.archTally[key] = Math.max(0, (S.archTally[key] || 1) - 1);
-  S.archStep -= 1;
-  if (NAV.length && NAV[NAV.length - 1].t === 'archtest') {
-    NAV[NAV.length - 1].id = String(S.archStep);
-    paint();
-  }
-}
-
-function keepArchetype(key) {
-  S.myArch = key;
-  S.commRole = 'likeme';
-  closeSheet();
-  S.view = 'community';
-  render();
-  if (window.scrollTo) window.scrollTo(0, 0);
 }
 
 /* Pathway helpers and render continue in app-views.js / assembled file */

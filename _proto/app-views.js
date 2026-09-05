@@ -269,20 +269,1269 @@ function renderSetup(step) {
   };
 }
 
-function renderPathwayBlank() {
-  var step = S.setupStep || 0;
-  if (step > SETUP_QS.length - 1) step = 0;
+function pwReady() {
+  return !!(ensurePw().done);
+}
+
+function pwIsGuide() {
+  return S.role === 'mentor' || S.role === 'contributor' || S.role === 'admin';
+}
+
+function pwCanQueue() {
+  return S.role === 'mentor' || S.role === 'admin';
+}
+
+function careerAt(i) {
+  return CAREERS[i] || null;
+}
+
+function destCareer() {
+  return S.pw.dest >= 0 ? careerAt(S.pw.dest) : null;
+}
+
+function fieldName(k) {
+  return fieldByKey(k).n;
+}
+
+function initialOf(name) {
+  var s = String(name || 'You').replace(/^\s+/, '');
+  return s ? s.charAt(0).toUpperCase() : 'Y';
+}
+
+function matchSubjects(text) {
+  var found = [];
+  var i;
+  var name;
+  var idx;
+  var low = String(text || '');
+  for (i = 0; i < CSEC_SUBJECTS.length; i++) {
+    name = CSEC_SUBJECTS[i];
+    idx = low.toLowerCase().indexOf(name.toLowerCase());
+    if (idx !== -1) {
+      found.push(name);
+      low = low.slice(0, idx) + low.slice(idx + name.length);
+    }
+  }
+  return found;
+}
+
+function subjectState(name) {
+  return S.pw.subjects[name] || null;
+}
+
+function subjectLogged(name) {
+  var rec = subjectState(name);
+  return !!(rec && rec.st);
+}
+
+function loggedSubjectCount() {
+  var n = 0;
+  var k;
+  for (k in S.pw.subjects) {
+    if (S.pw.subjects.hasOwnProperty(k) && subjectLogged(k)) n += 1;
+  }
+  return n;
+}
+
+function subjectMatch(c) {
+  var rec = matchSubjects((c.csec || '') + ' ' + (c.f13 || ''));
+  var have = 0;
+  var i;
+  for (i = 0; i < rec.length; i++) {
+    if (subjectLogged(rec[i])) have += 1;
+  }
+  return { have: have, total: rec.length, rec: rec };
+}
+
+function careerFacts(c) {
+  var tr = c.tr || [];
+  var has = function (k) { return tr.indexOf(k) !== -1; };
+  var entry;
+  var time;
+  if (has('cape')) entry = 'CSEC then CAPE';
+  else if (has('tvet')) entry = 'CSEC or CVQ';
+  else if (has('port')) entry = 'Portfolio or trial';
+  else entry = 'CSEC, sometimes CAPE';
+  if (has('port')) time = 'Ongoing practice';
+  else if (has('cape') && has('degree')) time = 'About 5 to 6 years';
+  else if (has('degree')) time = 'About 3 to 4 years';
+  else if (has('health')) time = 'About 2 to 4 years';
+  else if (has('tvet')) time = '6 months to 3 years';
+  else time = 'Varies by intake';
+  return { entry: entry, time: time };
+}
+
+function statusLabel(s) {
+  if (s === 'confirmed') return 'Route confirmed';
+  if (s === 'varies') return 'Route varies';
+  return 'Talent decides';
+}
+
+function statusClass(s) {
+  if (s === 'confirmed') return 'green';
+  if (s === 'varies') return 'gold';
+  return 'red';
+}
+
+function forkFits(c) {
+  var out = [];
+  var i;
+  var tr = (c && c.tr) || [];
+  for (i = 0; i < FORK.length; i++) {
+    if (tr.indexOf(FORK[i].tr) !== -1) out.push(FORK[i]);
+  }
+  return out;
+}
+
+function forkByKey(k) {
+  var i;
+  for (i = 0; i < FORK.length; i++) if (FORK[i].k === k) return FORK[i];
+  return null;
+}
+
+function autoForkIfOne(c) {
+  var fits = forkFits(c);
+  if (fits.length === 1) S.pw.fork = fits[0].k;
+}
+
+function forkClosedLine(c) {
+  var fits = forkFits(c);
+  var names = [];
+  var i;
+  if (!fits.length) return 'After Form 5';
+  for (i = 0; i < fits.length; i++) names.push(fits[i].n);
+  return 'After Form 5 · Yours: ' + names.join(' and ');
+}
+
+function isConsidering(i) {
+  return S.pw.considering.indexOf(i) !== -1;
+}
+
+function toggleConsidering(i) {
+  var ix = S.pw.considering.indexOf(i);
+  if (ix === -1) S.pw.considering.push(i);
+  else {
+    S.pw.considering.splice(ix, 1);
+    if (S.pw.dest === i) S.pw.dest = -1;
+  }
+}
+
+function setDestination(i) {
+  S.pw.dest = i;
+  if (S.pw.considering.indexOf(i) === -1) S.pw.considering.push(i);
+  S.pw.fork = '';
+  autoForkIfOne(careerAt(i));
+}
+
+function leavingCount() {
+  var n = 0;
+  var i;
+  for (i = 0; i < LEAVING.length; i++) {
+    if (S.pw.leaving[LEAVING[i].k]) n += 1;
+  }
+  return n;
+}
+
+function searchCareers(q) {
+  var query = String(q || '').toLowerCase().replace(/^\s+|\s+$/g, '');
+  var nameHits = [];
+  var other = [];
+  var i;
+  var c;
+  var blob;
+  if (!query) return [];
+  for (i = 0; i < CAREERS.length; i++) {
+    c = CAREERS[i];
+    blob = (c.n + ' ' + c.route + ' ' + c.jobs + ' ' + c.gate + ' ' + c.dev + ' ' + c.csec).toLowerCase();
+    if (blob.indexOf(query) === -1) continue;
+    if (c.n.toLowerCase().indexOf(query) !== -1) nameHits.push(i);
+    else other.push(i);
+  }
+  nameHits.sort(function (a, b) { return CAREERS[a].n < CAREERS[b].n ? -1 : 1; });
+  other.sort(function (a, b) { return CAREERS[a].n < CAREERS[b].n ? -1 : 1; });
+  return nameHits.concat(other);
+}
+
+function fieldCareerIndexes(k) {
+  var out = [];
+  var i;
+  for (i = 0; i < CAREERS.length; i++) {
+    if (CAREERS[i].b.indexOf(k) !== -1) out.push(i);
+  }
+  return out;
+}
+
+function sortedFields() {
+  var mine = [];
+  var rest = [];
+  var i;
+  var f;
+  for (i = 0; i < FIELDS.length; i++) {
+    f = FIELDS[i];
+    if (S.pw.fields.indexOf(f.k) !== -1) mine.push(f);
+    else rest.push(f);
+  }
+  return mine.concat(rest);
+}
+
+function capList(arr, n) {
+  if (arr.length <= n) return { list: arr, more: 0 };
+  return { list: arr.slice(0, n), more: arr.length };
+}
+
+function myAuthoredPosts() {
+  var out = [];
+  var id = currentPosterId();
+  var i;
+  var it;
+  for (i = 0; i < FEED.length; i++) {
+    it = FEED[i];
+    if (it.mine || (id && (it.a === id || it.author === id))) out.push(it);
+  }
+  return out;
+}
+
+function postState(it) {
+  if (it.kind === 'opening' || it.kind === 'opp') {
+    if (it.returned) return { n: 'Sent back', c: 'gold' };
+    if (it.live === false || it.pending) return { n: 'Waiting for a check', c: 'gold' };
+    if (it.draft) return { n: 'Draft', c: 'grey' };
+  }
+  if (it.draft) return { n: 'Draft', c: 'grey' };
+  return { n: 'Live', c: 'green' };
+}
+
+function finishPwWizard() {
+  var p = ensurePw();
+  p.done = true;
+  S.onboarded = true;
+  S.hideJoinCard = true;
+  S.role = S.role === 'visitor' ? 'student' : S.role;
+  S.me.role = S.role;
+  S.form = levelName(p.level);
+  S.region = regionShort(p.region);
+  S.me.form = S.form;
+  S.me.region = S.region;
+  if (!p.name) p.name = 'You';
+  p.open = p.level;
+  if (p.clarity === 'exact') {
+    p.tab = 'explore';
+    p.sub = '';
+    p.focusQ = true;
+  } else if (p.clarity === 'field' && p.fields.length) {
+    p.tab = 'explore';
+    p.sub = 'field';
+    p.field = p.fields[0];
+  } else {
+    p.tab = 'me';
+    p.sub = '';
+    p.open = p.level;
+  }
+}
+
+function renderPwWizard() {
+  var p = ensurePw();
+  var step = p.step || 0;
+  var i;
+  var html;
+  var answered = false;
+  var q = [
+    { t: 'What level are you at right now?', h: 'This opens the line on the level you are in.' },
+    { t: 'Which region are you in?', h: 'Programmes, travel and intakes change by region.' },
+    { t: 'Which fields interest you most?', h: 'Pick as many as you like. You can skip this.' },
+    { t: 'How clear are you right now?', h: 'This only decides where we land you first.' }
+  ][step];
+  html =
+    '<div class="page-pw"><div class="pw-wiz">' +
+    '<p class="eyebrow">QUESTION ' +
+    (step + 1) +
+    ' OF 4</p>' +
+    '<div class="pw-seg">';
+  for (i = 0; i < 4; i++) {
+    html += '<i' + (i <= step ? ' class="on"' : '') + '></i>';
+  }
+  html +=
+    '</div><h2>' +
+    esc(q.t) +
+    '</h2><p class="hint">' +
+    esc(q.h) +
+    '</p>';
+  if (step === 0) {
+    html += '<div class="pw-opts two">';
+    for (i = 0; i < LEVELS.length; i++) {
+      html +=
+        '<button type="button" class="pw-opt' +
+        (p.level === LEVELS[i].k ? ' on' : '') +
+        '" data-pw-level="' +
+        esc(LEVELS[i].k) +
+        '">' +
+        esc(LEVELS[i].n) +
+        '</button>';
+    }
+    html += '</div>';
+    answered = !!p.level;
+  } else if (step === 1) {
+    html += '<div class="pw-opts">';
+    for (i = 0; i < REGIONS.length; i++) {
+      html +=
+        '<button type="button" class="pw-opt' +
+        (p.region === REGIONS[i].k ? ' on' : '') +
+        '" data-pw-region="' +
+        esc(REGIONS[i].k) +
+        '">' +
+        esc(REGIONS[i].n) +
+        '</button>';
+    }
+    html += '</div>';
+    answered = !!p.region;
+  } else if (step === 2) {
+    html += '<div class="pw-opts">';
+    for (i = 0; i < FIELDS.length; i++) {
+      html +=
+        '<button type="button" class="pw-opt' +
+        (p.fields.indexOf(FIELDS[i].k) !== -1 ? ' on' : '') +
+        '" data-pw-field="' +
+        esc(FIELDS[i].k) +
+        '">' +
+        esc(FIELDS[i].n) +
+        '</button>';
+    }
+    html += '</div>';
+    answered = true;
+  } else {
+    html += '<div class="pw-opts">';
+    html +=
+      '<button type="button" class="pw-opt' +
+      (p.clarity === 'exact' ? ' on' : '') +
+      '" data-pw-clarity="exact">I know exactly what I want</button>' +
+      '<button type="button" class="pw-opt' +
+      (p.clarity === 'field' ? ' on' : '') +
+      '" data-pw-clarity="field">I know the field, not the job</button>' +
+      '<button type="button" class="pw-opt' +
+      (p.clarity === 'none' ? ' on' : '') +
+      '" data-pw-clarity="none">No idea yet</button></div>';
+    answered = !!p.clarity;
+  }
+  html += '<div class="pw-foot">';
+  if (step > 0) {
+    html += '<button type="button" class="btn g" data-pw-back="1">Back</button>';
+  } else {
+    html += '<span></span>';
+  }
+  html +=
+    '<button type="button" class="btn" data-pw-next="1"' +
+    (answered ? '' : ' disabled') +
+    '>' +
+    (step === 3 ? 'Create my pathway' : 'Continue') +
+    '</button></div>';
+  if (step === 2 && !p.fields.length) {
+    html += '<p class="pw-skip">You can continue without picking a field.</p>';
+  }
+  html += '</div></div>';
+  return html;
+}
+
+function renderPwQueue() {
+  var html;
+  var i;
+  var row;
+  var mine;
+  if (!pwCanQueue() || !S.pw.queue.length) return '';
+  html =
+    '<div class="pw-banner"><strong>Career cards to check</strong>' +
+    '<p class="hint">' +
+    S.pw.queue.length +
+    ' waiting. An opening stays out of the feed until another mentor checks it, and you cannot check your own.</p>';
+  for (i = 0; i < S.pw.queue.length; i++) {
+    row = S.pw.queue[i];
+    mine = row.who === (S.me.name || S.pw.name || 'You') || row.mine;
+    html +=
+      '<div class="pw-qrow"><div class="minw"><strong>' +
+      esc(row.career) +
+      '</strong><p class="who">' +
+      esc(row.kind) +
+      ' · ' +
+      esc(row.who) +
+      '</p><p>' +
+      esc(row.text) +
+      '</p></div><div class="pw-qacts">';
+    if (mine) {
+      html += '<span class="p gold">Yours</span>';
+    } else {
+      html +=
+        '<button type="button" class="btn sm" data-pw-pub="' +
+        i +
+        '">Publish</button>';
+    }
+    html +=
+      '<button type="button" class="btn sm g" data-pw-ret="' +
+      i +
+      '">Return</button></div></div>';
+  }
+  html += '</div>';
+  return html;
+}
+
+function renderCareerCard(ix) {
+  var c = careerAt(ix);
+  var facts;
+  var sm;
+  var fields = [];
+  var i;
+  if (!c) return '';
+  facts = careerFacts(c);
+  sm = subjectMatch(c);
+  for (i = 0; i < c.b.length; i++) fields.push(fieldName(c.b[i]));
   return (
-    '<div class="page-path">' +
-    '<div class="path-hero">' +
-    '<p class="eyebrow">Your pathway</p>' +
-    '<h1>Answer six questions</h1>' +
-    '<p class="lead">Six questions about where you are and what is in your way. It builds your timeline, marks the decisions that are actually near, and points you at sessions worth sitting in. The feed stays open meanwhile.</p>' +
-    '</div>' +
-    '<div class="path-setup">' +
-    renderSetupHtml(step) +
-    '</div></div>'
+    '<article class="pw-card" data-pw-open="' +
+    ix +
+    '"><div class="minw"><h3>' +
+    esc(c.n) +
+    '</h3><div class="pw-facts"><span class="pw-fact">' +
+    esc(facts.entry) +
+    '</span><span class="pw-fact">' +
+    esc(facts.time) +
+    '</span><span class="pw-fact' +
+    (sm.total && sm.have === sm.total ? ' ok' : '') +
+    '">' +
+    sm.have +
+    ' of ' +
+    sm.total +
+    ' subjects</span></div><p class="pw-jobs">' +
+    esc(c.jobs || 'First jobs vary by intake.') +
+    '</p><p class="pw-fields">' +
+    esc(fields.join(', ')) +
+    '</p></div><div class="pw-card-side"><span class="p ' +
+    statusClass(c.s) +
+    '">' +
+    esc(statusLabel(c.s)) +
+    '</span><button type="button" class="pw-book' +
+    (isConsidering(ix) ? ' on' : '') +
+    '" data-pw-book="' +
+    ix +
+    '" aria-label="Bookmark">' +
+    (isConsidering(ix) ? 'Saved' : 'Save') +
+    '</button></div></article>'
   );
+}
+
+function renderCareerCards(indexes, one) {
+  var cap = capList(indexes, 40);
+  var html = '<div class="pw-cards' + (one ? ' one' : '') + '">';
+  var i;
+  for (i = 0; i < cap.list.length; i++) html += renderCareerCard(cap.list[i]);
+  html += '</div>';
+  if (cap.more) {
+    html +=
+      '<p class="pw-note">Showing 40 of ' +
+      cap.more +
+      '. Narrow it with a search.</p>';
+  }
+  return html;
+}
+
+function renderPwLineStudent() {
+  var dest = destCareer();
+  var html = '<section class="pw-sec pw-line"><h2>My line</h2>';
+  var i;
+  var sp;
+  var cur = S.pw.level;
+  var past = true;
+  var open;
+  var fits;
+  var fr;
+  var j;
+  var fork;
+  for (i = 0; i < SPINE.length; i++) {
+    sp = SPINE[i];
+    open = S.pw.open === sp.k;
+    html +=
+      '<div class="pw-node"><div class="pw-spinewrap"><div class="pw-mark' +
+      (sp.k === cur ? ' now' : past && sp.k !== cur ? ' past' : '') +
+      '">' +
+      (past && sp.k !== cur ? '✓' : '') +
+      '</div></div><button type="button" class="pw-nbody" data-pw-openlvl="' +
+      esc(sp.k) +
+      '"><h3>' +
+      esc(sp.n) +
+      (sp.decide ? ' · decision point' : '') +
+      '</h3><p class="sum">' +
+      esc(sp.sum) +
+      '</p>';
+    if (open) {
+      html +=
+        '<div class="pw-panel do"><span class="lab">Do this</span><p>' +
+        esc(sp.do) +
+        '</p></div><div class="pw-panel keep"><span class="lab">Keeps open</span><p>' +
+        esc(sp.keep) +
+        '</p></div><div class="pw-panel risk"><span class="lab">At risk</span><p>' +
+        esc(sp.risk) +
+        '</p></div>';
+      if (sp.k === 'f3' && dest) {
+        html +=
+          '<div class="pw-panel destp"><span class="lab">Recommended CSEC for ' +
+          esc(dest.n) +
+          '</span><p>' +
+          esc(dest.csec || 'Check the career card for recommended subjects.') +
+          '</p></div>';
+      }
+      if (sp.k === 'f5' && dest) {
+        html +=
+          '<div class="pw-panel destp"><span class="lab">Route toward ' +
+          esc(dest.n) +
+          '</span><p>' +
+          esc(dest.route) +
+          '</p></div>';
+      }
+    }
+    html +=
+      '</button><button type="button" class="pw-plus" data-pw-openlvl="' +
+      esc(sp.k) +
+      '" aria-label="Toggle">' +
+      (open ? '−' : '+') +
+      '</button></div>';
+    if (sp.k === cur) past = false;
+  }
+  html +=
+    '<div class="pw-node"><div class="pw-spinewrap"><div class="pw-mark"></div></div><button type="button" class="pw-nbody" data-pw-openlvl="fork"><h3>' +
+    esc(dest ? forkClosedLine(dest) : 'After Form 5') +
+    '</h3><p class="sum">Compare a first route, a second and a bridging route.</p>';
+  if (S.pw.open === 'fork') {
+    fits = dest ? forkFits(dest) : [];
+    html += '<div class="pw-forks">';
+    for (i = 0; i < FORK.length; i++) {
+      fr = FORK[i];
+      html +=
+        '<button type="button" class="pw-fork' +
+        (S.pw.fork === fr.k ? ' on' : '') +
+        '" data-pw-fork="' +
+        esc(fr.k) +
+        '"><strong>' +
+        esc(fr.n) +
+        '</strong><span>' +
+        esc(fr.dur) +
+        '</span>';
+      if (fits.indexOf(fr) !== -1) html += '<span class="pw-fits">Fits your destination</span>';
+      html += '</button>';
+    }
+    html += '</div>';
+  }
+  html +=
+    '</button><button type="button" class="pw-plus" data-pw-openlvl="fork" aria-label="Toggle">' +
+    (S.pw.open === 'fork' ? '−' : '+') +
+    '</button></div>';
+  fork = forkByKey(S.pw.fork);
+  if (fork) {
+    for (i = 0; i < fork.steps.length; i++) {
+      html +=
+        '<div class="pw-node"><div class="pw-spinewrap"><div class="pw-mark"></div></div><button type="button" class="pw-nbody" data-pw-openlvl="rs' +
+        i +
+        '"><h3>' +
+        esc(fork.steps[i].n) +
+        '</h3><p class="sum">' +
+        esc(fork.dur) +
+        '</p>';
+      if (S.pw.open === 'rs' + i) {
+        html += '<div class="pw-panel do"><p>' + esc(fork.steps[i].t) + '</p></div>';
+      }
+      html +=
+        '</button><button type="button" class="pw-plus" data-pw-openlvl="rs' +
+        i +
+        '" aria-label="Toggle">' +
+        (S.pw.open === 'rs' + i ? '−' : '+') +
+        '</button></div>';
+    }
+  }
+  if (dest && dest.gate) {
+    html +=
+      '<div class="pw-node"><div class="pw-spinewrap"><div class="pw-mark gate"></div></div><button type="button" class="pw-nbody" data-pw-openlvl="gate"><h3>Professional gate</h3><p class="sum">Registration or a licence sits after training.</p>';
+    if (S.pw.open === 'gate') {
+      html += '<div class="pw-panel risk"><p>' + esc(dest.gate) + '</p></div>';
+    }
+    html +=
+      '</button><button type="button" class="pw-plus" data-pw-openlvl="gate" aria-label="Toggle">' +
+      (S.pw.open === 'gate' ? '−' : '+') +
+      '</button></div>';
+  }
+  if (dest) {
+    html +=
+      '<div class="pw-node"><div class="pw-spinewrap"><div class="pw-mark dest">★</div></div><div class="pw-nbody"><h3>' +
+      esc(dest.n) +
+      '</h3><p class="sum">Your destination</p></div></div>';
+  }
+  html += '</section>';
+  return html;
+}
+
+function renderPwConsidering() {
+  var html =
+    '<section class="pw-sec"><h2>Careers I am considering · ' +
+    S.pw.considering.length +
+    '</h2>';
+  if (!S.pw.considering.length) {
+    html +=
+      '<p class="pw-empty">Bookmark a career in Explore and it lands here. Hold a first choice, a second and a bridging route.</p></section>';
+    return html;
+  }
+  html += renderCareerCards(S.pw.considering, true) + '</section>';
+  return html;
+}
+
+function renderPwStudent() {
+  var dest = destCareer();
+  var facts = dest ? careerFacts(dest) : null;
+  var sm = dest ? subjectMatch(dest) : { have: 0, total: 0 };
+  var chips = '';
+  var i;
+  var html;
+  for (i = 0; i < S.pw.fields.length; i++) {
+    chips += '<span class="pw-chip">' + esc(fieldName(S.pw.fields[i])) + '</span>';
+  }
+  html =
+    '<div class="pw-head"><div class="pw-head-top"><div class="pw-av">' +
+    esc(initialOf(S.pw.name || 'You')) +
+    '</div><div class="minw"><h2>' +
+    esc(S.pw.name || 'You') +
+    '</h2><p class="meta">' +
+    esc(levelName(S.pw.level)) +
+    ' · ' +
+    esc(regionShort(S.pw.region)) +
+    '</p><div class="pw-chips">' +
+    chips +
+    '</div></div></div><div class="pw-rule"></div>';
+  if (dest) {
+    html +=
+      '<p class="toward">Working toward</p><p class="destn">' +
+      esc(dest.n) +
+      '</p><p class="destd">' +
+      esc(facts.entry) +
+      ' · ' +
+      esc(facts.time) +
+      '</p><div class="pw-bar"><i style="width:' +
+      (sm.total ? Math.round((sm.have / sm.total) * 100) : 0) +
+      '%"></i></div><p class="pw-barlab">' +
+      sm.have +
+      ' of ' +
+      sm.total +
+      ' recommended subjects logged</p>';
+  } else {
+    html +=
+      '<p class="toward">Working toward</p><p class="destn">No destination yet</p><p class="destd">Explore careers and set one when you are ready.</p>';
+  }
+  html +=
+    '<p class="pw-stats">' +
+    loggedSubjectCount() +
+    ' subjects · ' +
+    S.pw.achievements.length +
+    ' achievement' +
+    (S.pw.achievements.length === 1 ? '' : 's') +
+    ' · ' +
+    S.pw.activities.length +
+    ' activit' +
+    (S.pw.activities.length === 1 ? 'y' : 'ies') +
+    ' · ' +
+    leavingCount() +
+    ' of 6 leaving record</p><div class="pw-head-acts">' +
+    '<button type="button" class="btn sm" data-pw-sub="edit">Edit my profile</button>';
+  if (dest) {
+    html +=
+      '<button type="button" class="btn sm" data-pw-open="' +
+      S.pw.dest +
+      '">Open the card</button>';
+  } else {
+    html +=
+      '<button type="button" class="btn sm" data-pw-tab="explore">Explore careers</button>';
+  }
+  html += '</div></div>' + renderPwLineStudent() + renderPwConsidering();
+  return html;
+}
+
+function renderPwMentor() {
+  var chips = '';
+  var html;
+  var i;
+  var posts;
+  var it;
+  var st;
+  var live = 0;
+  var wait = 0;
+  if (S.pw.mentorField) chips += '<span class="pw-chip">' + esc(fieldName(S.pw.mentorField)) + '</span>';
+  posts = myAuthoredPosts();
+  for (i = 0; i < posts.length; i++) {
+    st = postState(posts[i]);
+    if (st.n === 'Live') live += 1;
+    else wait += 1;
+  }
+  html =
+    '<div class="pw-head"><div class="pw-head-top"><div class="pw-av">' +
+    esc(initialOf(S.pw.name)) +
+    '</div><div class="minw"><h2>' +
+    esc(S.pw.name || 'Mentor') +
+    '</h2><p class="meta">' +
+    esc(S.pw.title || '') +
+    (S.pw.region ? ' · ' + esc(regionShort(S.pw.region)) : '') +
+    '</p><div class="pw-chips"><span class="pw-chip pw-role">' +
+    esc(S.role === 'contributor' ? 'Contributor' : 'Mentor') +
+    '</span>' +
+    chips +
+    '</div></div></div>';
+  if (S.pw.about) html += '<p class="destd">' + esc(S.pw.about) + '</p>';
+  html +=
+    '<p class="pw-stats">' +
+    S.pw.steps.length +
+    ' steps on my route · ' +
+    live +
+    ' live posts · ' +
+    wait +
+    ' not live</p><div class="pw-head-acts">' +
+    '<button type="button" class="btn sm" data-pw-sub="edit">Edit my profile</button>' +
+    '<button type="button" class="btn sm" data-pw-addstep="1">+ Add a step</button></div></div>';
+  html +=
+    '<section class="pw-sec pw-line"><h2>The route I took</h2>' +
+    '<p class="pw-note">Students see this on your profile. The guide is clear that what students need is the decisions and the trade-offs, not a tidy summary.</p>';
+  if (S.pw.addStep) {
+    html +=
+      '<div class="pw-form"><label>When it was</label><input id="pw-step-when" value="' +
+      esc(S.pw.stepWhen) +
+      '" placeholder="A form, a year, an age, or Now"/>' +
+      '<label>What you did</label><textarea id="pw-step-did">' +
+      esc(S.pw.stepDid) +
+      '</textarea><label>What it led to</label><textarea id="pw-step-led">' +
+      esc(S.pw.stepLed) +
+      '</textarea><p class="hint">Including if it went badly, that is the part students cannot get anywhere else.</p>' +
+      '<button type="button" class="btn" data-pw-savestep="1">Save this step</button></div>';
+  }
+  for (i = 0; i < S.pw.steps.length; i++) {
+    html +=
+      '<div class="pw-node"><div class="pw-spinewrap"><div class="pw-mark past"></div></div><div class="pw-nbody"><h3>' +
+      esc(S.pw.steps[i].when) +
+      '</h3><p class="sum">' +
+      esc(S.pw.steps[i].did) +
+      '</p><div class="pw-panel do"><p>' +
+      esc(S.pw.steps[i].led) +
+      '</p></div></div></div>';
+  }
+  html +=
+    '<div class="pw-node"><div class="pw-spinewrap"><div class="pw-mark dest">★</div></div><div class="pw-nbody"><h3>Where I am now</h3><p class="sum">' +
+    esc(S.pw.title || 'Your current work') +
+    '</p></div></div></section>';
+  html += '<section class="pw-sec"><h2>My posts</h2>';
+  if (!posts.length) html += '<p class="pw-empty">Nothing posted yet.</p>';
+  for (i = 0; i < posts.length; i++) {
+    it = posts[i];
+    st = postState(it);
+    html +=
+      '<div class="pw-postrow"><div class="minw"><span class="p">' +
+      esc(it.kind) +
+      '</span> <span class="p ' +
+      st.c +
+      '">' +
+      esc(st.n) +
+      '</span><p>' +
+      esc(it.title || (it.body && it.body[0]) || '') +
+      '</p><p class="who">' +
+      esc(it.when || '') +
+      (it.replies ? ' · ' + it.replies.length + ' replies' : '') +
+      '</p></div><div class="pw-qacts">' +
+      '<button type="button" class="btn sm g" data-edit="' +
+      esc(it.id) +
+      '">Edit</button>' +
+      '<button type="button" class="btn sm g" data-del="' +
+      esc(it.id) +
+      '">Remove</button></div></div>';
+  }
+  html +=
+    '<p class="pw-note">An opening stays out of the feed until another mentor checks it, and you cannot check your own.</p></section>';
+  return html;
+}
+
+function renderPwExplore() {
+  var html = '<div class="pw-search"><input id="q" type="search" placeholder="Search careers" value="' +
+    esc(S.pw.q) +
+    '" autocomplete="off"/>';
+  var fields;
+  var i;
+  var f;
+  var n;
+  var hits;
+  if (S.pw.q) {
+    html +=
+      '<button type="button" class="btn g" data-pw-clearq="1" style="margin-top:var(--s3)">Clear search</button></div>';
+    hits = searchCareers(S.pw.q);
+    html += '<section class="pw-sec"><h2>Results</h2>' + (hits.length ? renderCareerCards(hits) : '<p class="pw-empty">No careers matched that search.</p>') + '</section>';
+    return html;
+  }
+  html +=
+    '</div><section class="pw-sec"><h2>Browse by field</h2>' +
+    '<p class="pw-note">Eleven fields, 145 careers. A career can sit in more than one.</p><div class="pw-fgrid">';
+  fields = sortedFields();
+  for (i = 0; i < fields.length; i++) {
+    f = fields[i];
+    n = fieldCareerIndexes(f.k).length;
+    html +=
+      '<button type="button" class="pw-fcard" data-pw-openfield="' +
+      esc(f.k) +
+      '"><span class="pw-fg" style="background:var(--i-' +
+      esc(f.c) +
+      ')">' +
+      esc(f.g) +
+      '</span><span class="minw"><strong>' +
+      esc(f.n) +
+      (S.pw.fields.indexOf(f.k) !== -1 ? ' <span class="pw-yours">· yours</span>' : '') +
+      '</strong><span>' +
+      n +
+      ' careers</span></span></button>';
+  }
+  html += '</div></section>';
+  if (S.pw.considering.length) html += renderPwConsidering();
+  return html;
+}
+
+function renderPwField() {
+  var f = fieldByKey(S.pw.field);
+  var b = BUCKETS[f.k] || {};
+  var html =
+    '<div class="pw-backrow"><button type="button" class="pw-back" data-pw-sub="">← Back</button><h1>' +
+    esc(f.n) +
+    '</h1></div>' +
+    '<div class="pw-fhero" style="background:var(--i-' +
+    esc(f.c) +
+    ')"><h2>' +
+    esc(f.n) +
+    '</h2><p>' +
+    fieldCareerIndexes(f.k).length +
+    ' careers</p></div>' +
+    '<div class="pw-bucket"><h3>Exploring it in Forms 1 to 3</h3><p>' +
+    esc(b.explore || '') +
+    '</p></div>' +
+    '<div class="pw-bucket"><h3>Subjects this field keeps asking for</h3><p>' +
+    esc(b.csec || '') +
+    '</p></div>' +
+    '<div class="pw-bucket"><h3>After CSEC or Form 6</h3><p>' +
+    esc(b.after || '') +
+    '</p></div>' +
+    '<section class="pw-sec"><h2>Careers</h2>' +
+    renderCareerCards(fieldCareerIndexes(f.k)) +
+    '</section>';
+  return html;
+}
+
+function renderPwEditStudent() {
+  var html =
+    '<div class="pw-backrow"><button type="button" class="pw-back" data-pw-sub="">← Back</button><h1>Edit my profile</h1></div>' +
+    '<section class="pw-sec pw-form"><label>Name</label><input id="pw-name" value="' +
+    esc(S.pw.name || '') +
+    '"/>' +
+    '<label>Level</label><select id="pw-ed-level">';
+  var i;
+  var k;
+  var rec;
+  for (i = 0; i < LEVELS.length; i++) {
+    html +=
+      '<option value="' +
+      esc(LEVELS[i].k) +
+      '"' +
+      (S.pw.level === LEVELS[i].k ? ' selected' : '') +
+      '>' +
+      esc(LEVELS[i].n) +
+      '</option>';
+  }
+  html += '</select><label>Region</label><select id="pw-ed-region">';
+  for (i = 0; i < REGIONS.length; i++) {
+    html +=
+      '<option value="' +
+      esc(REGIONS[i].k) +
+      '"' +
+      (S.pw.region === REGIONS[i].k ? ' selected' : '') +
+      '>' +
+      esc(REGIONS[i].n) +
+      '</option>';
+  }
+  html += '</select><label>Fields</label><div>';
+  for (i = 0; i < FIELDS.length; i++) {
+    html +=
+      '<button type="button" class="pw-tog' +
+      (S.pw.fields.indexOf(FIELDS[i].k) !== -1 ? ' on' : '') +
+      '" data-pw-field="' +
+      esc(FIELDS[i].k) +
+      '">' +
+      esc(FIELDS[i].n) +
+      '</button>';
+  }
+  html +=
+    '</div><h2>My subjects</h2><p class="hint">Tap once for have it, twice for taking it, again to clear.</p><button type="button" class="btn g" data-pw-subjects="1">Open subjects</button>';
+  rec = [];
+  for (k in S.pw.subjects) {
+    if (S.pw.subjects.hasOwnProperty(k) && subjectLogged(k)) rec.push(k);
+  }
+  if (rec.length) html += '<p class="pw-note">' + esc(rec.join(', ')) + '</p>';
+  html +=
+    '<h2>Achievements</h2><label>What it was</label><input id="pw-ach-what"/><label>Where or who gave it</label><input id="pw-ach-where"/><label>When</label><input id="pw-ach-when"/><button type="button" class="btn g" data-pw-addach="1">Add achievement</button>';
+  for (i = 0; i < S.pw.achievements.length; i++) {
+    html +=
+      '<p>' +
+      esc(S.pw.achievements[i].what) +
+      ' · ' +
+      esc(S.pw.achievements[i].where) +
+      '</p>';
+  }
+  html +=
+    '<h2>Activities</h2><p class="hint">The guide says one sustained activity beats five short ones.</p>' +
+    '<label>What it is</label><input id="pw-act-what"/><label>What you actually do</label><input id="pw-act-do"/><label>How long</label><input id="pw-act-how"/><button type="button" class="btn g" data-pw-addact="1">Add activity</button>';
+  for (i = 0; i < S.pw.activities.length; i++) {
+    html += '<p>' + esc(S.pw.activities[i].what) + ' · ' + esc(S.pw.activities[i].how) + '</p>';
+  }
+  html +=
+    '<h2>Leaving record · ' +
+    leavingCount() +
+    ' of 6</h2><div class="pw-leave">';
+  for (i = 0; i < LEAVING.length; i++) {
+    html +=
+      '<button type="button" class="' +
+      (S.pw.leaving[LEAVING[i].k] ? 'on' : '') +
+      '" data-pw-leave="' +
+      esc(LEAVING[i].k) +
+      '">' +
+      esc(LEAVING[i].n) +
+      '</button>';
+  }
+  html +=
+    '</div><div class="pw-foot"><span></span><button type="button" class="btn" data-pw-done="1">Done</button></div></section>';
+  return html;
+}
+
+function renderPwEditMentor() {
+  var html =
+    '<div class="pw-backrow"><button type="button" class="pw-back" data-pw-sub="">← Back</button><h1>Edit my profile</h1></div>' +
+    '<section class="pw-sec pw-form"><label>Name</label><input id="pw-name" value="' +
+    esc(S.pw.name || '') +
+    '"/><label>Title</label><input id="pw-title" value="' +
+    esc(S.pw.title || '') +
+    '"/><label>Region</label><select id="pw-ed-region">';
+  var i;
+  for (i = 0; i < REGIONS.length; i++) {
+    html +=
+      '<option value="' +
+      esc(REGIONS[i].k) +
+      '"' +
+      (S.pw.region === REGIONS[i].k ? ' selected' : '') +
+      '>' +
+      esc(REGIONS[i].n) +
+      '</option>';
+  }
+  html += '</select><label>Field</label><select id="pw-ed-field">';
+  for (i = 0; i < FIELDS.length; i++) {
+    html +=
+      '<option value="' +
+      esc(FIELDS[i].k) +
+      '"' +
+      (S.pw.mentorField === FIELDS[i].k ? ' selected' : '') +
+      '>' +
+      esc(FIELDS[i].n) +
+      '</option>';
+  }
+  html +=
+    '</select><label>About</label><textarea id="pw-about">' +
+    esc(S.pw.about || '') +
+    '</textarea><h2>Route steps</h2>';
+  for (i = 0; i < S.pw.steps.length; i++) {
+    html +=
+      '<p>' +
+      esc(S.pw.steps[i].when) +
+      ' · ' +
+      esc(S.pw.steps[i].did) +
+      ' <button type="button" class="btn q" data-pw-rmstep="' +
+      i +
+      '">Remove</button></p>';
+  }
+  html +=
+    '<div class="pw-foot"><span></span><button type="button" class="btn" data-pw-done="1">Done</button></div></section>';
+  return html;
+}
+
+function renderCareerSheet() {
+  var ix = S.pw.sheet;
+  var c = careerAt(ix);
+  var facts;
+  var sm;
+  var html;
+  var i;
+  var acc;
+  var fields;
+  if (!c) return '';
+  facts = careerFacts(c);
+  sm = subjectMatch(c);
+  fields = [];
+  for (i = 0; i < c.b.length; i++) fields.push(fieldName(c.b[i]));
+  acc = [
+    { k: 'route', n: 'Routes in Guyana', v: c.route },
+    { k: 'csec', n: 'Forms 4 and 5 CSEC', v: c.csec },
+    { k: 'cape', n: 'Form 6 CAPE', v: c.cape },
+    { k: 'f13', n: 'In Forms 1 to 3', v: c.f13 },
+    { k: 'gate', n: 'Professional gate', v: c.gate },
+    { k: 'dev', n: 'Recent change', v: c.dev },
+    { k: 'jobs', n: 'First jobs', v: c.jobs }
+  ];
+  html =
+    '<div class="pw-backrow"><button type="button" class="pw-back" data-pw-sheetx="1">← Back</button><h1>' +
+    esc(c.n) +
+    '</h1></div><span class="p ' +
+    statusClass(c.s) +
+    '">' +
+    esc(statusLabel(c.s)) +
+    '</span><p class="pw-fields">' +
+    esc(fields.join(', ')) +
+    '</p><div class="pw-glance"><div class="pw-tile"><span class="k">Entry from</span>' +
+    esc(facts.entry) +
+    '</div><div class="pw-tile"><span class="k">Time it takes</span>' +
+    esc(facts.time) +
+    '</div><div class="pw-tile"><span class="k">Routes in Guyana</span>' +
+    esc(
+      forkFits(c)
+        .map(function (x) { return x.n; })
+        .join(', ') || 'Varies by intake'
+    ) +
+    '</div><div class="pw-tile' +
+    (c.gate ? ' gate' : '') +
+    '"><span class="k">Licence or registration</span>' +
+    esc(c.gate ? 'Yes, a professional gate' : 'None listed') +
+    '</div></div>';
+  if (c.s === 'varies') {
+    html +=
+      '<div class="pw-warn">The route varies by intake, school or employer. Confirm the current notice before you drop a subject or pay a fee.</div>';
+  } else if (c.s === 'portfolio') {
+    html +=
+      '<div class="pw-warn">Talent, a portfolio, an audition or a selection trial decides this career. A credential alone will not get you there.</div>';
+  }
+  html +=
+    '<h3>Recommended subjects · you have ' +
+    sm.have +
+    ' of ' +
+    sm.total +
+    '</h3><p class="pw-note">Recommended is not the same as a formal entry requirement.</p><div class="pw-chips">';
+  for (i = 0; i < sm.rec.length; i++) {
+    html +=
+      '<span class="pw-fact' +
+      (subjectLogged(sm.rec[i]) ? ' ok' : '') +
+      '">' +
+      esc(sm.rec[i]) +
+      '</span>';
+  }
+  html += '</div>';
+  for (i = 0; i < acc.length; i++) {
+    if (!acc[i].v) continue;
+    html +=
+      '<div class="pw-acc"><button type="button" data-pw-acc="' +
+      esc(acc[i].k) +
+      '">' +
+      esc(acc[i].n) +
+      '</button>';
+    if (S.pw.sheetAcc === acc[i].k) html += '<div class="body">' + esc(acc[i].v) + '</div>';
+    html += '</div>';
+  }
+  html +=
+    '<p class="pw-note">Checked 9 August 2026 against the Guyana Student Career Pathways Guide. ' +
+    (c.src
+      ? '<a href="' +
+        esc(c.src) +
+        '" target="_blank" rel="noopener">Source</a>. '
+      : '') +
+    'Requirements change. Confirm on the institution\'s own programme page before planning around it.</p>' +
+    '<button type="button" class="btn" data-pw-dest="' +
+    ix +
+    '">Make this my destination</button>' +
+    '<button type="button" class="btn g" data-pw-book="' +
+    ix +
+    '">' +
+    (isConsidering(ix) ? 'Saved to considering' : 'Add to considering') +
+    '</button>' +
+    '<button type="button" class="btn g" data-pw-flag="' +
+    ix +
+    '">' +
+    (pwIsGuide() ? 'Suggest an edit' : 'Flag an error') +
+    '</button>';
+  return html;
+}
+
+function renderPwFlag() {
+  var html =
+    '<div class="pw-backrow"><button type="button" class="pw-back" data-pw-flagx="1">← Back</button><h1>Flag an error</h1></div><div class="pw-form">';
+  var i;
+  for (i = 0; i < PW_FLAG_REASONS.length; i++) {
+    html +=
+      '<button type="button" class="pw-opt' +
+      (S.pw.flagReason === PW_FLAG_REASONS[i].k ? ' on' : '') +
+      '" data-pw-flagr="' +
+      esc(PW_FLAG_REASONS[i].k) +
+      '">' +
+      esc(PW_FLAG_REASONS[i].n) +
+      '</button>';
+  }
+  html +=
+    '<label>Optional correction</label><textarea id="pw-flag-note">' +
+    esc(S.pw.flagNote) +
+    '</textarea><p class="hint">A flag with a correction gets fixed faster.</p>' +
+    '<button type="button" class="btn" data-pw-flagsend="1"' +
+    (S.pw.flagReason ? '' : ' disabled') +
+    '>Submit flag</button></div>';
+  return html;
+}
+
+function renderPwSuggest() {
+  var c = careerAt(S.pw.sugOn);
+  var cur = c && S.pw.sugField ? c[S.pw.sugField] || '' : '';
+  var ok = S.pw.sugField && S.pw.sugText.length > 20 && S.pw.sugWhy.length > 10;
+  var html =
+    '<div class="pw-backrow"><button type="button" class="pw-back" data-pw-sugx="1">← Back</button><h1>Suggest an edit</h1></div><div class="pw-form"><label>Which field</label>';
+  var i;
+  for (i = 0; i < PW_SUGGEST_FIELDS.length; i++) {
+    html +=
+      '<button type="button" class="pw-opt' +
+      (S.pw.sugField === PW_SUGGEST_FIELDS[i].k ? ' on' : '') +
+      '" data-pw-sugf="' +
+      esc(PW_SUGGEST_FIELDS[i].k) +
+      '">' +
+      esc(PW_SUGGEST_FIELDS[i].n) +
+      '</button>';
+  }
+  if (S.pw.sugField) {
+    html += '<p class="pw-note">It says now: ' + esc(cur || 'Nothing written.') + '</p>';
+  }
+  html +=
+    '<label>Replacement</label><textarea id="pw-sug-text">' +
+    esc(S.pw.sugText) +
+    '</textarea><label>Why, and where you checked</label><textarea id="pw-sug-why">' +
+    esc(S.pw.sugWhy) +
+    '</textarea><button type="button" class="btn" data-pw-sugsend="1"' +
+    (ok ? '' : ' disabled') +
+    '>Submit suggestion</button></div>';
+  return html;
+}
+
+function renderPwSubjects() {
+  var html =
+    '<div class="pw-backrow"><button type="button" class="pw-back" data-pw-subjx="1">← Back</button><h1>My subjects</h1></div><p class="hint">Tap once for have it, twice for taking it, again to clear. Subjects marked as had get a grade of I to VI.</p><div class="pw-subj-grid">';
+  var i;
+  var st;
+  var rec;
+  for (i = 0; i < CSEC_SUBJECTS.length; i++) {
+    rec = S.pw.subjects[CSEC_SUBJECTS[i]] || null;
+    st = rec ? rec.st : '';
+    html +=
+      '<button type="button" class="pw-subj' +
+      (st === 'have' ? ' have' : st === 'take' ? ' take' : '') +
+      '" data-pw-subj="' +
+      esc(CSEC_SUBJECTS[i]) +
+      '">' +
+      esc(CSEC_SUBJECTS[i]) +
+      (st === 'have' && rec.grade ? ' · ' + rec.grade : st === 'take' ? ' · taking' : '') +
+      '</button>';
+    if (st === 'have') {
+      html +=
+        '<select data-pw-grade="' +
+        esc(CSEC_SUBJECTS[i]) +
+        '"><option' +
+        (rec.grade === 'I' ? ' selected' : '') +
+        '>I</option><option' +
+        (rec.grade === 'II' ? ' selected' : '') +
+        '>II</option><option' +
+        (rec.grade === 'III' ? ' selected' : '') +
+        '>III</option><option' +
+        (rec.grade === 'IV' ? ' selected' : '') +
+        '>IV</option><option' +
+        (rec.grade === 'V' ? ' selected' : '') +
+        '>V</option><option' +
+        (rec.grade === 'VI' ? ' selected' : '') +
+        '>VI</option></select>';
+    }
+  }
+  html += '</div>';
+  return html;
+}
+
+function readPwFormFields() {
+  var el;
+  el = byId('pw-name');
+  if (el) S.pw.name = el.value;
+  el = byId('pw-title');
+  if (el) S.pw.title = el.value;
+  el = byId('pw-about');
+  if (el) S.pw.about = el.value;
+  el = byId('pw-ed-level');
+  if (el) {
+    S.pw.level = el.value;
+    S.form = levelName(S.pw.level);
+  }
+  el = byId('pw-ed-region');
+  if (el) {
+    S.pw.region = el.value;
+    S.region = regionShort(S.pw.region);
+  }
+  el = byId('pw-ed-field');
+  if (el) S.pw.mentorField = el.value;
+  el = byId('pw-step-when');
+  if (el) S.pw.stepWhen = el.value;
+  el = byId('pw-step-did');
+  if (el) S.pw.stepDid = el.value;
+  el = byId('pw-step-led');
+  if (el) S.pw.stepLed = el.value;
+  el = byId('pw-flag-note');
+  if (el) S.pw.flagNote = el.value;
+  el = byId('pw-sug-text');
+  if (el) S.pw.sugText = el.value;
+  el = byId('pw-sug-why');
+  if (el) S.pw.sugWhy = el.value;
+}
+
+function renderPwOverlays() {
+  var body = '';
+  var open = false;
+  if (S.pw.subjSheet) {
+    open = true;
+    body = renderPwSubjects();
+  } else if (S.pw.flagOn >= 0) {
+    open = true;
+    body = renderPwFlag();
+  } else if (S.pw.sugOn >= 0) {
+    open = true;
+    body = renderPwSuggest();
+  } else if (S.pw.sheet >= 0) {
+    open = true;
+    body = renderCareerSheet();
+  }
+  if (!open) {
+    return '<div class="pw-overlay" id="pw-sheet" style="visibility:hidden"></div>';
+  }
+  return '<div class="pw-overlay open" id="pw-sheet" style="visibility:visible">' + body + '</div>';
+}
+
+function renderPathway() {
+  var html;
+  ensurePw();
+  if (!S.pw.done) return renderPwWizard();
+  html = '<div class="page-pw">';
+  if (S.pw.sub === 'edit') {
+    html += renderPwQueue();
+    html += pwIsGuide() && S.role !== 'admin' ? renderPwEditMentor() : renderPwEditStudent();
+    html += renderPwOverlays() + '</div>';
+    return html;
+  }
+  if (S.pw.sub === 'field') {
+    html += renderPwQueue() + renderPwField() + renderPwOverlays() + '</div>';
+    return html;
+  }
+  html += renderPwQueue();
+  html +=
+    '<div class="pw-subtabs"><button type="button" class="' +
+    (S.pw.tab === 'me' ? 'on' : '') +
+    '" data-pw-tab="me">My pathway</button><button type="button" class="' +
+    (S.pw.tab === 'explore' ? 'on' : '') +
+    '" data-pw-tab="explore">Explore</button></div>';
+  if (S.pw.tab === 'explore') html += renderPwExplore();
+  else if (pwIsGuide() && S.role !== 'admin') html += renderPwMentor();
+  else html += renderPwStudent();
+  html += renderPwOverlays() + '</div>';
+  return html;
 }
 
 function advanceSetupStep() {
@@ -311,7 +1560,7 @@ function backSetupStep() {
 }
 
 function postThreadReply(tid, rtext, afterPathway) {
-  var titem = feedById(tid);
+  var titem = feedByEngageId(tid) || feedById(tid);
   if (!titem) return;
   if (!rtext || rtext.length < 4) {
     toast('Write a short reply before posting.');
@@ -377,245 +1626,6 @@ function renderTimeline() {
   return html;
 }
 
-function renderPathway() {
-  if (!S.onboarded) return renderPathwayBlank();
-  var st = stageByKey(S.stage);
-  var days = daysUntil(st.dec.due);
-  var html = '<div class="page-path">';
-  html +=
-    '<div class="path-hero onboarded"><p class="eyebrow">You</p><h1>' +
-    esc(S.archetype) +
-    '</h1><p class="subline">' +
-    esc(pathwaySubtitle()) +
-    '</p>';
-  html +=
-    '<div class="stat-pills"><span class="p">' +
-    S.taken.length +
-    ' steps</span><span class="p">' +
-    S.booked.length +
-    ' sessions</span><span class="p">' +
-    S.saved.length +
-    ' saved</span></div></div>';
-
-  /* 1 Next decision */
-  html += '<section class="section card next-dec">';
-  if (days != null) {
-    html += '<div class="day-box"><div class="n">' + days + '</div><div class="l">days</div></div>';
-  } else {
-    html += '<div class="day-box"><div class="n">..</div><div class="l">open</div></div>';
-  }
-  html +=
-    '<div><p class="eyebrow">Your next decision</p><h2>' +
-    esc(st.dec.t) +
-    '</h2><p>' +
-    esc(st.dec.why) +
-    '</p>' +
-    caveatCalendar() +
-    '<div class="card-actions">' +
-    '<button type="button" class="btn sm" data-ask-seed="About ' +
-    esc(st.dec.t.toLowerCase()) +
-    ': " data-ask-cat="Subject choice">Ask about this</button>' +
-    '<button type="button" class="btn sm g" data-open="sessions" data-id="' +
-    esc(S.stage) +
-    '">Find a session on it</button>' +
-    '</div></div></section>';
-
-  html += renderTimeline();
-
-  /* 3 Open to you now */
-  var open = [];
-  var closed = 0;
-  var k, o, i;
-  for (k in OPPS) {
-    if (!OPPS.hasOwnProperty(k)) continue;
-    o = OPPS[k];
-    if (oppOpenAtStage(o, S.stage)) open.push(o);
-    else closed++;
-  }
-  html +=
-    '<section class="section"><h2>Open to you now</h2><div class="carousel">';
-  for (i = 0; i < open.length; i++) {
-    o = open[i];
-    html +=
-      '<div class="card car-card">' +
-      (o.independent ? '<span class="p green">Enter yourself</span>' : '') +
-      '<h3>' +
-      esc(o.name) +
-      '</h3><p class="muted">' +
-      esc(o.one) +
-      '</p>' +
-      '<div class="card-actions">' +
-      '<button type="button" class="btn sm" data-take-opp="' +
-      esc(o.id) +
-      '">Add to plan</button>' +
-      '<button type="button" class="btn sm g" data-open="opp" data-id="' +
-      esc(o.id) +
-      '">Details</button></div></div>';
-  }
-  html +=
-    '</div><p class="muted">' +
-    closed +
-    ' others are in the catalogue but not open at ' +
-    esc(S.form) +
-    '. The limits are set by the organisers, not by us.</p></section>';
-
-  /* 4 Well rounded five */
-  var filled = 0;
-  html +=
-    '<section class="section"><h2>The well rounded five</h2><div class="slots">';
-  for (i = 0; i < SLOTS.length; i++) {
-    var sl = SLOTS[i];
-    var on = !!S.slots[sl.k];
-    if (on) filled++;
-    html +=
-      '<button type="button" class="slot' +
-      (on ? ' on' : '') +
-      '" data-slot="' +
-      esc(sl.k) +
-      '"><strong>' +
-      esc(sl.t) +
-      '</strong><span>' +
-      esc(sl.hint) +
-      '</span>' +
-      (on ? ' ' + iconCheck() : '') +
-      '</button>';
-  }
-  html +=
-    '</div><p class="muted">' +
-    filled +
-    ' of 5 filled. This is the Ministry of Education\'s own checklist for what a student should leave school with, and it is the part scholarship applications ask about.</p></section>';
-
-  /* 5 Sessions */
-  html += '<section class="section"><h2>Sessions</h2>';
-  var bookedFirst = [];
-  var matched = [];
-  for (i = 0; i < SESSIONS.length; i++) {
-    var sess = SESSIONS[i];
-    if (S.booked.indexOf(sess.id) !== -1) bookedFirst.push(sess);
-    else if (sess.stages.indexOf(S.stage) !== -1) matched.push(sess);
-  }
-  var allS = bookedFirst.concat(matched);
-  if (!allS.length) html += '<p class="muted">No sessions matched yet.</p>';
-  for (i = 0; i < allS.length; i++) {
-    html += renderSessionMini(allS[i]);
-  }
-  html += '</section>';
-
-  /* 6 Mentorship */
-  html += '<section class="section"><h2>Mentorship</h2>';
-  var mentors = ['raeka', 'omar', 'jerome', 'keisha'];
-  for (i = 0; i < mentors.length; i++) {
-    html += mentorRow(mentors[i], mentorMatchReason(mentors[i]));
-  }
-  html += '</section>';
-
-  /* 7 One to one */
-  var c1 = S.taken.length >= 2;
-  var c2 = S.booked.length >= 1;
-  var mineCount = 0;
-  for (i = 0; i < FEED.length; i++) if (FEED[i].mine) mineCount++;
-  var c3 = mineCount >= 1;
-  var unlocked = c1 && c2 && c3;
-  html +=
-    '<section class="section card"><h2>One to one</h2>' +
-    '<ul class="check-list">' +
-    '<li class="' +
-    (c1 ? 'ok' : '') +
-    '">Two steps on the timeline</li>' +
-    '<li class="' +
-    (c2 ? 'ok' : '') +
-    '">One session booked</li>' +
-    '<li class="' +
-    (c3 ? 'ok' : '') +
-    '">One question or story posted</li></ul>' +
-    '<p class="muted">A one to one is the scarcest thing here, so it opens after you have used the group layer. This is not a ranking of you. It is how a handful of mentors reach hundreds of students.</p>' +
-    '<button type="button" class="btn" id="oto-btn"' +
-    (unlocked ? '' : ' disabled') +
-    '>' +
-    (S.oneToOne ? 'Request sent' : 'Request a one to one') +
-    '</button></section>';
-
-  /* 8 Your posts */
-  html += '<section class="section"><h2>Your posts</h2>';
-  var anyMine = false;
-  for (i = 0; i < FEED.length; i++) {
-    if (!FEED[i].mine) continue;
-    anyMine = true;
-    var it = FEED[i];
-    html +=
-      '<div class="card mini-post"><div class="pill-row"><span class="p">' +
-      esc(it.kind) +
-      '</span><span class="p">' +
-      esc(it.cat) +
-      '</span>' +
-      (it.anon ? '<span class="p">Anonymous</span>' : '') +
-      (it.edited ? '<span class="p">Edited</span>' : '') +
-      (it.newReply ? '<span class="p red">New reply</span>' : '') +
-      '</div><p>' +
-      esc(it.title || (it.body && it.body[0]) || '') +
-      '</p>' +
-      '<p class="muted">' +
-      (it.replies ? it.replies.length : 0) +
-      ' replies</p>' +
-      '<button type="button" class="btn q" data-edit="' +
-      esc(it.id) +
-      '">Edit</button>' +
-      '<button type="button" class="btn q" data-del="' +
-      esc(it.id) +
-      '">Delete</button></div>';
-  }
-  if (!anyMine) html += '<p class="muted">Nothing posted yet.</p>';
-  html += '</section>';
-
-  /* 9 Inspired */
-  html +=
-    '<section class="section"><h2>What inspired you</h2><p class="muted">Stories you marked. Raw material for when someone asks you to write about yourself.</p>';
-  if (!S.inspired.length) html += '<p class="muted">None yet.</p>';
-  for (i = 0; i < S.inspired.length; i++) {
-    var story = feedById(S.inspired[i]);
-    if (!story) continue;
-    var au = author(story.author);
-    html +=
-      '<button type="button" class="card clickable row-btn" data-open="story" data-id="' +
-      esc(story.id) +
-      '"><strong>' +
-      esc(story.title) +
-      '</strong><span class="muted">' +
-      esc(au.name) +
-      ', ' +
-      esc(au.pos) +
-      '</span></button>';
-  }
-  html += '</section>';
-
-  /* 10 Saved */
-  html += '<section class="section"><h2>Saved</h2>';
-  if (!S.saved.length) html += '<p class="muted">Nothing saved.</p>';
-  for (i = 0; i < S.saved.length; i++) {
-    var saved = savedTarget(S.saved[i]);
-    if (!saved) continue;
-    html +=
-      '<div class="card row-between"><div><strong>' +
-      esc(saved.title) +
-      '</strong><p class="muted">' +
-      esc(saved.sub) +
-      '</p></div>' +
-      '<button type="button" class="btn sm" data-open="' +
-      esc(saved.kind) +
-      '" data-id="' +
-      esc(saved.id) +
-      '">Open</button></div>';
-  }
-  html += '</section>';
-
-  html +=
-    '<button type="button" class="btn g" data-open="setup" data-id="0">Redo my setup</button>';
-  html +=
-    '<p class="footer-note">Dates, fees and requirements are illustrative in this prototype and must be confirmed with the organiser.</p>';
-  html += '</div>';
-  return html;
-}
-
 function renderSessionMini(s) {
   var left = Math.max(0, s.seats - s.taken);
   return (
@@ -634,9 +1644,14 @@ function renderSessionMini(s) {
     left +
     ' left</p>' +
     (S.booked.indexOf(s.id) !== -1 ? '<span class="p green">Booked</span> ' : '') +
-    '<button type="button" class="btn sm" data-open="session" data-id="' +
+    (S.waitlist.indexOf(s.id) !== -1 ? '<span class="p">Waitlist</span> ' : '') +
+    '<button type="button" class="btn sm" data-open="' +
+    (S.booked.indexOf(s.id) !== -1 || S.waitlist.indexOf(s.id) !== -1 ? 'book' : 'session') +
+    '" data-id="' +
     esc(s.id) +
-    '">Open</button></div></div>'
+    '">' +
+    (S.booked.indexOf(s.id) !== -1 || S.waitlist.indexOf(s.id) !== -1 ? 'Manage' : 'Open') +
+    '</button></div></div>'
   );
 }
 
@@ -764,6 +1779,7 @@ function loadDetail(kind, id) {
       who: item.who || '',
       body: item.body || [],
       images: item.images || [],
+      replies: item.replies || [],
       res: item.res || [],
       similar: item.similar || [],
       mine: !!item.mine
@@ -801,6 +1817,7 @@ function loadDetail(kind, id) {
         { label: 'Grade requirement', value: o.grade || '', accent: /^none$/i.test(o.grade || '') }
       ],
       verified: o.verified || '',
+      replies: (item && item.replies) || [],
       res: (item && item.res) || [],
       similar: (item && item.similar) || o.rel || [],
       mine: !!(o.author && o.author === currentPosterId())
@@ -832,6 +1849,7 @@ function loadDetail(kind, id) {
         { label: 'Led by', value: a.name }
       ],
       verified: '',
+      replies: (item && item.replies) || [],
       res: (item && item.res) || [],
       similar: (item && item.similar) || [],
       mine: !!(s.hosted_by === currentPosterId() || s.lead === currentPosterId())
@@ -856,6 +1874,7 @@ function loadDetail(kind, id) {
       author: id,
       body: j.body || [],
       images: (item && item.images) || j.images || [],
+      replies: (item && item.replies) || [],
       res: (item && item.res) || [],
       similar: (item && item.similar) || [],
       mine: !!(item && item.mine) || !!(currentPosterId() && currentPosterId() === id)
@@ -916,40 +1935,9 @@ function detailOpenKind(p) {
 }
 
 function detailEngage(p) {
-  var n;
-  var btns = [];
-  if (p.kind === 'question') {
-    n = p.replies ? p.replies.length : 0;
-    btns.push(
-      engageBtn(
-        'data-focus-reply="1"',
-        iconReply(),
-        n === 1 ? '1 reply' : n + ' replies',
-        false
-      )
-    );
-    if (!p.mine) btns.push(reportEngageBtn('thread', p.id));
-  } else if (p.kind === 'story') {
-    btns.push(
-      engageBtn(
-        'data-inspire="' + esc(p.id) + '"',
-        iconHeart(),
-        'Inspired',
-        isInspired(p.id)
-      )
-    );
-    btns.push(saveEngageBtn(p.id));
-    if (!p.mine) btns.push(reportEngageBtn('story', p.id));
-  } else if (p.kind === 'journey') {
-    btns.push(saveEngageBtn(p.id));
-    if (!p.mine) btns.push(reportEngageBtn('journey', p.id));
-  } else if (p.kind === 'opportunity') {
-    if (!isOwnCard('opp', p.id, !!p.mine)) btns.push(reportEngageBtn('opp', p.id));
-  } else if (p.kind === 'session') {
-    btns.push(saveEngageBtn(p.id));
-    if (!isOwnCard('session', p.id, !!p.mine)) btns.push(reportEngageBtn('session', p.id));
-  }
-  return engageBar(btns);
+  var kind = detailOpenKind(p);
+  var own = !!p.mine || isOwnCard(kind, p.id, !!p.mine);
+  return postEngageBar(null, kind, p.id, own, true, p.replies ? p.replies.length : 0);
 }
 
 function readKindLabel(p) {
@@ -1038,14 +2026,11 @@ function content(p) {
 }
 
 function replies(p) {
-  if (p.kind !== 'question') return '';
   var list = p.replies || [];
   var html;
   var i;
   var r;
   var a;
-  var name;
-  var headline;
   html =
     '<div class="d-replies"><p class="d-count">' +
     list.length +
@@ -1054,8 +2039,6 @@ function replies(p) {
   for (i = 0; i < list.length; i++) {
     r = list[i];
     a = r.a ? author(r.a) : null;
-    name = a ? a.name : r.who || 'Student';
-    headline = a ? a.pos || '' : '';
     html +=
       '<div class="d-reply">' +
       '<span class="av' +
@@ -1064,8 +2047,7 @@ function replies(p) {
       esc(a ? a.init : '?') +
       '</span>' +
       '<div>' +
-      nameWithBadge(name, a) +
-      (headline ? '<div class="d-sub">' + esc(headline) + '</div>' : '') +
+      replyIdentityHtml(a, r.who || 'Student') +
       '<p>' +
       esc(r.text) +
       '</p></div></div>';
@@ -1268,7 +2250,7 @@ function renderSimpleDetail(p) {
     html += replies(p) + '</div>';
     return html;
   }
-  html += resources(p) + similar(p) + '</div>';
+  html += resources(p) + similar(p) + replies(p) + '</div>';
   return html;
 }
 
@@ -2088,38 +3070,7 @@ function returnOpening(id) {
 }
 
 function viewAlerts() {
-  var list = canCheckOpenings() ? openingsToCheck() : [];
-  var html = '<div class="detail"><h2>Alerts</h2>';
-  var i;
-  var o;
-  var a;
-  if (canCheckOpenings()) {
-    html +=
-      '<h3>Openings to check' +
-      (list.length ? ' · ' + list.length : '') +
-      '</h3>';
-    if (!list.length) html += '<p class="muted">Nothing waiting.</p>';
-    for (i = 0; i < list.length; i++) {
-      o = list[i];
-      a = author(o.author);
-      html +=
-        '<div class="check-row"><div><strong>' +
-        esc(o.name) +
-        '</strong><span class="d-sub">' +
-        esc(a.name || 'Unknown') +
-        '</span></div>' +
-        '<button type="button" class="btn sm" data-opp-live="' +
-        esc(o.id) +
-        '">Looks right, publish it</button>' +
-        '<button type="button" class="btn sm g" data-opp-return="' +
-        esc(o.id) +
-        '">Send it back</button></div>';
-    }
-  } else {
-    html += '<p class="muted">No alerts right now.</p>';
-  }
-  html += '</div>';
-  return { crumb: 'Alerts', title: 'Alerts', html: html };
+  return { crumb: 'Alerts', title: 'Alerts', html: renderAlertsPage() };
 }
 
 function viewBook(v) {
@@ -2187,44 +3138,6 @@ function commChip(label, on, attrs) {
   );
 }
 
-function renderArchCard() {
-  var arch = S.myArch ? ARCHETYPES[S.myArch] : null;
-  var nDir;
-  var nStu;
-  var html = '<section class="comm-arch">';
-  if (!arch) {
-    html +=
-      '<p class="eyebrow">Start here</p>' +
-      '<h2>Which explorer are you?</h2>' +
-      '<p class="comm-arch-line">Five questions. It names the kind of explorer you are and shows you mentors and contributors who came out the same way.</p>' +
-      '<button type="button" class="btn" data-arch-start="1">Take the archetype check</button>';
-  } else {
-    nDir = sameArchPeople(arch.key).length;
-    nStu = ARCH_COUNTS[arch.key] || 0;
-    html +=
-      '<div class="comm-arch-after">' +
-      '<span class="comm-glyph" aria-hidden="true">' +
-      esc(arch.glyph) +
-      '</span>' +
-      '<div><p class="eyebrow">Your archetype</p><h2>' +
-      esc(arch.name) +
-      '</h2></div></div>' +
-      '<p class="comm-arch-line">' +
-      esc(arch.blurb) +
-      '</p>' +
-      '<div class="comm-arch-acts">' +
-      '<button type="button" class="btn" data-comm-role="likeme">See the ' +
-      nDir +
-      ' like you</button>' +
-      '<button type="button" class="btn g" data-arch-start="1">Retake</button></div>' +
-      '<p class="comm-arch-note">' +
-      nStu +
-      ' students share it. We do not list students here, so their names stay private.</p>';
-  }
-  html += '</section>';
-  return html;
-}
-
 function renderCommTools() {
   var html =
     '<section class="comm-tools"><div class="comm-search">' +
@@ -2240,9 +3153,6 @@ function renderCommTools() {
     S.commRole === 'contributors',
     'data-comm-role="contributors"'
   );
-  if (S.myArch) {
-    html += commChip('Like me', S.commRole === 'likeme', 'data-comm-role="likeme"');
-  }
   html += '</div><div class="comm-chips" role="group" aria-label="Career">';
   html += commChip('All careers', !S.commCareer, 'data-comm-career=""');
   var i;
@@ -2258,11 +3168,11 @@ function renderCommTools() {
 }
 
 function renderCommunity() {
+  if (S.commRole === 'likeme') S.commRole = 'all';
   var dir = filteredPeople();
   var followed = followedPeople();
   var html = '<div class="page-comm">';
   html += '<h1>Community</h1>';
-  html += renderArchCard();
   html += renderCommTools();
   if (followed.length) {
     html +=
@@ -2273,11 +3183,7 @@ function renderCommunity() {
       '</section>';
   }
   html += '<section class="comm-sec">';
-  if (S.commRole === 'likeme' && S.myArch) {
-    html += '<h2>Same archetype as you · ' + dir.length + '</h2>';
-  } else {
-    html += '<h2>Mentors and contributors · ' + dir.length + '</h2>';
-  }
+  html += '<h2>Mentors and contributors · ' + dir.length + '</h2>';
   if (!dir.length) {
     html +=
       '<div class="comm-empty"><p class="comm-empty-t">Nobody matches that</p>' +
@@ -2412,79 +3318,6 @@ function viewPerson(v) {
   for (i = 0; i < posts.length; i++) html += personPostRow(posts[i]);
   html += '</section></div>';
   return { crumb: 'Community', title: p.name, html: html };
-}
-
-function viewArchtest(v) {
-  var step = parseInt(v.id, 10);
-  var q;
-  var html;
-  var i;
-  var key;
-  var arch;
-  var same;
-  var n;
-  if (isNaN(step)) step = S.archStep || 0;
-  if (step >= ARCH_QUIZ.length) {
-    key = archPickWinner(S.archTally || {});
-    arch = ARCHETYPES[key];
-    same = sameArchPeople(key);
-    html =
-      '<div class="page-arch page-arch-result">' +
-      '<span class="comm-glyph" aria-hidden="true">' +
-      esc(arch.glyph) +
-      '</span>' +
-      '<h2>' +
-      esc(arch.name) +
-      '</h2>' +
-      '<p>' +
-      esc(arch.blurb) +
-      '</p>' +
-      '<div class="arch-traits">';
-    for (i = 0; i < arch.traits.length; i++) {
-      html += '<span class="arch-trait">' + esc(arch.traits[i]) + '</span>';
-    }
-    html += '</div>';
-    if (same.length) {
-      html +=
-        '<h3>People who came out the same</h3>' + personCardsHtml(same);
-    }
-    html +=
-      '<button type="button" class="btn" data-arch-keep="' +
-      esc(key) +
-      '">Keep this and see the community</button>' +
-      '<p class="comm-arch-note">It is a starting point, not a verdict. You can retake it whenever you want.</p></div>';
-    return { crumb: 'Archetype', title: arch.name, html: html };
-  }
-  q = ARCH_QUIZ[step];
-  n = step + 1;
-  html =
-    '<div class="page-arch">' +
-    (step > 0
-      ? '<button type="button" class="person-back" data-arch-back="1">' +
-        iconBack() +
-        '<span>Back</span></button>'
-      : '') +
-    '<p class="arch-prog-lab">Question ' +
-    n +
-    ' of ' +
-    ARCH_QUIZ.length +
-    '</p>' +
-    '<div class="arch-bar n' +
-    n +
-    '" aria-hidden="true"><i></i></div>' +
-    '<h2>' +
-    esc(q.q) +
-    '</h2><div class="arch-opts">';
-  for (i = 0; i < q.opts.length; i++) {
-    html +=
-      '<button type="button" class="arch-opt" data-arch-pick="' +
-      esc(q.opts[i].a) +
-      '">' +
-      esc(q.opts[i].t) +
-      '</button>';
-  }
-  html += '</div></div>';
-  return { crumb: 'Archetype', title: 'Which explorer are you?', html: html };
 }
 
 function viewMentor(v) {
@@ -2654,8 +3487,7 @@ var VIEWS = {
   postgate: viewPostgate,
   alerts: viewAlerts,
   report: viewReport,
-  person: viewPerson,
-  archtest: viewArchtest
+  person: viewPerson
 };
 
 function renderChrome() {
@@ -2682,7 +3514,7 @@ function renderChrome() {
     if (checkN > 0) {
       badge.hidden = false;
       badge.textContent = String(checkN);
-    } else if (S.unread > 0) {
+    } else if (S.unread > 0 && S.view !== 'alerts') {
       badge.hidden = false;
       badge.textContent = String(S.unread);
     } else {
@@ -2709,8 +3541,8 @@ function renderChrome() {
     var navKey = navs[i].getAttribute('data-nav');
     var on =
       navKey === S.view ||
-      (navKey === 'community' && (sheetTop === 'person' || sheetTop === 'archtest' || sheetTop === 'mentor')) ||
-      (navKey === 'sessions' && (sheetTop === 'session' || sheetTop === 'book' || sheetTop === 'opp'));
+      (navKey === 'community' && (sheetTop === 'person' || sheetTop === 'mentor')) ||
+      (navKey === 'alerts' && (S.view === 'sessions' || sheetTop === 'session' || sheetTop === 'book' || sheetTop === 'opp'));
     if (on) {
       navs[i].classList.add('on');
       if (navs[i].closest && navs[i].closest('#dock')) {
@@ -2794,20 +3626,33 @@ function renderChrome() {
   }
 }
 
+function restorePwSearch() {
+  var f;
+  if (S.view !== 'pathway' || !S.pw || !S.pw.focusQ) return;
+  f = byId('q');
+  if (f) {
+    f.focus();
+    try {
+      f.setSelectionRange(S.pw.qPos, S.pw.qPos);
+    } catch (err) {}
+  }
+  S.pw.focusQ = false;
+}
+
 function render() {
   var main = byId('main');
   if (S.view === 'pathway') main.innerHTML = renderPathway();
-  else if (S.view === 'sessions') main.innerHTML = renderSessionsPage();
-  else if (S.view === 'alerts') main.innerHTML = viewAlerts().html;
+  else if (S.view === 'alerts' || S.view === 'sessions') main.innerHTML = renderAlertsPage();
   else if (S.view === 'community') main.innerHTML = renderCommunity();
   else main.innerHTML = renderFeed();
   renderChrome();
+  restorePwSearch();
 }
 
 function openKind(kind, id) {
   if (kind === 'sessions') {
     S.sessionStage = id || '';
-    setView('sessions');
+    setView('alerts');
     return;
   }
   var map = {
@@ -2825,8 +3670,7 @@ function openKind(kind, id) {
     profile: 'profile',
     report: 'report',
     person: 'person',
-    mentor: 'person',
-    archtest: 'archtest'
+    mentor: 'person'
   };
   if (!map[kind]) return;
   S.menu = '';
@@ -2889,7 +3733,7 @@ function simulateReply(itemId) {
         'I saw your question. Write down the subjects you hold now and the ones you wish you still had. Bring that list to a session and we will map what still opens.'
     });
     item.newReply = true;
-    if (S.view !== 'pathway') S.unread += 1;
+    if (S.view !== 'pathway' && S.view !== 'alerts') S.unread += 1;
     toast(a.name + ' replied to your question.');
     render();
     if (NAV.length) paint();
@@ -2905,6 +3749,333 @@ function closestEl(el, sel) {
     el = el.parentElement || el.parentNode;
   }
   return null;
+}
+
+function reasonName(k) {
+  var i;
+  for (i = 0; i < PW_FLAG_REASONS.length; i++) {
+    if (PW_FLAG_REASONS[i].k === k) return PW_FLAG_REASONS[i].n;
+  }
+  return k;
+}
+
+function suggestFieldName(k) {
+  var i;
+  for (i = 0; i < PW_SUGGEST_FIELDS.length; i++) {
+    if (PW_SUGGEST_FIELDS[i].k === k) return PW_SUGGEST_FIELDS[i].n;
+  }
+  return k;
+}
+
+function handlePwClick(t) {
+  var btn;
+  var key;
+  var rec;
+  var ix;
+  var row;
+  var c;
+  ensurePw();
+  btn = closestEl(t, '[data-pw-level]');
+  if (btn) {
+    S.pw.level = btn.getAttribute('data-pw-level');
+    render();
+    return true;
+  }
+  btn = closestEl(t, '[data-pw-region]');
+  if (btn) {
+    S.pw.region = btn.getAttribute('data-pw-region');
+    render();
+    return true;
+  }
+  btn = closestEl(t, '[data-pw-field]');
+  if (btn) {
+    key = btn.getAttribute('data-pw-field');
+    ix = S.pw.fields.indexOf(key);
+    if (ix === -1) S.pw.fields.push(key);
+    else S.pw.fields.splice(ix, 1);
+    render();
+    return true;
+  }
+  btn = closestEl(t, '[data-pw-clarity]');
+  if (btn) {
+    S.pw.clarity = btn.getAttribute('data-pw-clarity');
+    render();
+    return true;
+  }
+  btn = closestEl(t, '[data-pw-next]');
+  if (btn) {
+    if (S.pw.step >= 3) finishPwWizard();
+    else S.pw.step += 1;
+    render();
+    return true;
+  }
+  btn = closestEl(t, '[data-pw-back]');
+  if (btn) {
+    if (S.pw.step > 0) S.pw.step -= 1;
+    render();
+    return true;
+  }
+  btn = closestEl(t, '[data-pw-tab]');
+  if (btn) {
+    S.pw.tab = btn.getAttribute('data-pw-tab');
+    S.pw.sub = '';
+    render();
+    return true;
+  }
+  btn = closestEl(t, '[data-pw-sub]');
+  if (btn) {
+    readPwFormFields();
+    S.pw.sub = btn.getAttribute('data-pw-sub') || '';
+    render();
+    return true;
+  }
+  btn = closestEl(t, '[data-pw-done]');
+  if (btn) {
+    readPwFormFields();
+    S.pw.sub = '';
+    render();
+    return true;
+  }
+  btn = closestEl(t, '[data-pw-openlvl]');
+  if (btn) {
+    key = btn.getAttribute('data-pw-openlvl');
+    S.pw.open = S.pw.open === key ? '' : key;
+    render();
+    return true;
+  }
+  btn = closestEl(t, '[data-pw-fork]');
+  if (btn) {
+    S.pw.fork = btn.getAttribute('data-pw-fork');
+    S.pw.open = 'fork';
+    render();
+    return true;
+  }
+  btn = closestEl(t, '[data-pw-book]');
+  if (btn) {
+    toggleConsidering(parseInt(btn.getAttribute('data-pw-book'), 10));
+    render();
+    return true;
+  }
+  btn = closestEl(t, '[data-pw-open]');
+  if (btn) {
+    S.pw.sheet = parseInt(btn.getAttribute('data-pw-open'), 10);
+    S.pw.sheetAcc = '';
+    render();
+    return true;
+  }
+  btn = closestEl(t, '[data-pw-sheetx]');
+  if (btn) {
+    S.pw.sheet = -1;
+    S.pw.sheetAcc = '';
+    render();
+    return true;
+  }
+  btn = closestEl(t, '[data-pw-openfield]');
+  if (btn) {
+    S.pw.field = btn.getAttribute('data-pw-openfield');
+    S.pw.sub = 'field';
+    S.pw.tab = 'explore';
+    render();
+    return true;
+  }
+  btn = closestEl(t, '[data-pw-clearq]');
+  if (btn) {
+    S.pw.q = '';
+    render();
+    return true;
+  }
+  btn = closestEl(t, '[data-pw-acc]');
+  if (btn) {
+    key = btn.getAttribute('data-pw-acc');
+    S.pw.sheetAcc = S.pw.sheetAcc === key ? '' : key;
+    render();
+    return true;
+  }
+  btn = closestEl(t, '[data-pw-dest]');
+  if (btn) {
+    setDestination(parseInt(btn.getAttribute('data-pw-dest'), 10));
+    S.pw.sheet = -1;
+    S.pw.tab = 'me';
+    S.pw.sub = '';
+    toast('Destination set.');
+    render();
+    return true;
+  }
+  btn = closestEl(t, '[data-pw-flag]');
+  if (btn) {
+    ix = parseInt(btn.getAttribute('data-pw-flag'), 10);
+    if (pwIsGuide() && S.role !== 'admin') {
+      S.pw.sugOn = ix;
+      S.pw.sugField = '';
+      S.pw.sugText = '';
+      S.pw.sugWhy = '';
+    } else {
+      S.pw.flagOn = ix;
+      S.pw.flagReason = '';
+      S.pw.flagNote = '';
+    }
+    render();
+    return true;
+  }
+  btn = closestEl(t, '[data-pw-flagx]');
+  if (btn) {
+    S.pw.flagOn = -1;
+    render();
+    return true;
+  }
+  btn = closestEl(t, '[data-pw-flagr]');
+  if (btn) {
+    S.pw.flagReason = btn.getAttribute('data-pw-flagr');
+    render();
+    return true;
+  }
+  btn = closestEl(t, '[data-pw-flagsend]');
+  if (btn) {
+    readPwFormFields();
+    if (!S.pw.flagReason) return true;
+    c = careerAt(S.pw.flagOn);
+    S.pw.queue.push({
+      career: c ? c.n : '',
+      kind: 'Flag',
+      who: S.pw.name || 'You',
+      text: reasonName(S.pw.flagReason) + (S.pw.flagNote ? '. ' + S.pw.flagNote : ''),
+      mine: true,
+      ix: S.pw.flagOn,
+      field: ''
+    });
+    S.pw.flagOn = -1;
+    toast('Flag sent for a check.');
+    render();
+    return true;
+  }
+  btn = closestEl(t, '[data-pw-sugx]');
+  if (btn) {
+    S.pw.sugOn = -1;
+    render();
+    return true;
+  }
+  btn = closestEl(t, '[data-pw-sugf]');
+  if (btn) {
+    S.pw.sugField = btn.getAttribute('data-pw-sugf');
+    render();
+    return true;
+  }
+  btn = closestEl(t, '[data-pw-sugsend]');
+  if (btn) {
+    readPwFormFields();
+    if (!S.pw.sugField || S.pw.sugText.length <= 20 || S.pw.sugWhy.length <= 10) return true;
+    c = careerAt(S.pw.sugOn);
+    S.pw.queue.push({
+      career: c ? c.n : '',
+      kind: 'Suggestion',
+      who: S.pw.name || 'You',
+      text: S.pw.sugText + ' (' + S.pw.sugWhy + ')',
+      mine: true,
+      ix: S.pw.sugOn,
+      field: S.pw.sugField,
+      next: S.pw.sugText
+    });
+    S.pw.sugOn = -1;
+    toast('Suggestion sent for a check.');
+    render();
+    return true;
+  }
+  btn = closestEl(t, '[data-pw-pub]');
+  if (btn) {
+    ix = parseInt(btn.getAttribute('data-pw-pub'), 10);
+    row = S.pw.queue[ix];
+    if (!row || row.mine) return true;
+    if (row.field && row.next && CAREERS[row.ix]) CAREERS[row.ix][row.field] = row.next;
+    S.pw.queue.splice(ix, 1);
+    toast('Published.');
+    render();
+    return true;
+  }
+  btn = closestEl(t, '[data-pw-ret]');
+  if (btn) {
+    ix = parseInt(btn.getAttribute('data-pw-ret'), 10);
+    S.pw.queue.splice(ix, 1);
+    toast('Returned.');
+    render();
+    return true;
+  }
+  btn = closestEl(t, '[data-pw-subjects]');
+  if (btn) {
+    S.pw.subjSheet = true;
+    render();
+    return true;
+  }
+  btn = closestEl(t, '[data-pw-subjx]');
+  if (btn) {
+    S.pw.subjSheet = false;
+    render();
+    return true;
+  }
+  btn = closestEl(t, '[data-pw-subj]');
+  if (btn) {
+    key = btn.getAttribute('data-pw-subj');
+    rec = S.pw.subjects[key];
+    if (!rec) S.pw.subjects[key] = { st: 'have', grade: 'I' };
+    else if (rec.st === 'have') S.pw.subjects[key] = { st: 'take', grade: '' };
+    else delete S.pw.subjects[key];
+    render();
+    return true;
+  }
+  btn = closestEl(t, '[data-pw-leave]');
+  if (btn) {
+    key = btn.getAttribute('data-pw-leave');
+    S.pw.leaving[key] = !S.pw.leaving[key];
+    render();
+    return true;
+  }
+  btn = closestEl(t, '[data-pw-addach]');
+  if (btn) {
+    rec = {
+      what: (byId('pw-ach-what') && byId('pw-ach-what').value) || '',
+      where: (byId('pw-ach-where') && byId('pw-ach-where').value) || '',
+      when: (byId('pw-ach-when') && byId('pw-ach-when').value) || ''
+    };
+    if (rec.what) S.pw.achievements.push(rec);
+    render();
+    return true;
+  }
+  btn = closestEl(t, '[data-pw-addact]');
+  if (btn) {
+    rec = {
+      what: (byId('pw-act-what') && byId('pw-act-what').value) || '',
+      do: (byId('pw-act-do') && byId('pw-act-do').value) || '',
+      how: (byId('pw-act-how') && byId('pw-act-how').value) || ''
+    };
+    if (rec.what) S.pw.activities.push(rec);
+    render();
+    return true;
+  }
+  btn = closestEl(t, '[data-pw-addstep]');
+  if (btn) {
+    S.pw.addStep = true;
+    render();
+    return true;
+  }
+  btn = closestEl(t, '[data-pw-savestep]');
+  if (btn) {
+    readPwFormFields();
+    if (S.pw.stepDid) {
+      S.pw.steps.push({ when: S.pw.stepWhen || 'Now', did: S.pw.stepDid, led: S.pw.stepLed });
+      S.pw.stepWhen = '';
+      S.pw.stepDid = '';
+      S.pw.stepLed = '';
+      S.pw.addStep = false;
+    }
+    render();
+    return true;
+  }
+  btn = closestEl(t, '[data-pw-rmstep]');
+  if (btn) {
+    S.pw.steps.splice(parseInt(btn.getAttribute('data-pw-rmstep'), 10), 1);
+    render();
+    return true;
+  }
+  return false;
 }
 
 function wire() {
@@ -3013,6 +4184,8 @@ function wire() {
       return;
     }
 
+    if (handlePwClick(t)) return;
+
     btn = closestEl(t, '[data-img-remove]');
     if (btn) {
       var rmix = parseInt(btn.getAttribute('data-img-remove'), 10);
@@ -3045,30 +4218,6 @@ function wire() {
       return;
     }
 
-    btn = closestEl(t, '[data-arch-start]');
-    if (btn) {
-      startArchTest();
-      return;
-    }
-
-    btn = closestEl(t, '[data-arch-pick]');
-    if (btn) {
-      archAdvance(btn.getAttribute('data-arch-pick'));
-      return;
-    }
-
-    btn = closestEl(t, '[data-arch-back]');
-    if (btn) {
-      archBack();
-      return;
-    }
-
-    btn = closestEl(t, '[data-arch-keep]');
-    if (btn) {
-      keepArchetype(btn.getAttribute('data-arch-keep'));
-      return;
-    }
-
     btn = closestEl(t, '[data-person-back]');
     if (btn) {
       closeSheet();
@@ -3093,7 +4242,7 @@ function wire() {
     if (btn) {
       e.preventDefault();
       var nav = btn.getAttribute('data-nav');
-      if (nav === 'sessions') S.sessionStage = '';
+      if (nav === 'sessions' || nav === 'alerts') S.sessionStage = '';
       setView(nav);
       return;
     }
@@ -3123,6 +4272,12 @@ function wire() {
     if (btn) {
       S.filter = btn.getAttribute('data-filter');
       if (S.filter === 'all') S.query = '';
+      render();
+      return;
+    }
+
+    if (closestEl(t, '[data-clear-stage]')) {
+      S.sessionStage = '';
       render();
       return;
     }
@@ -3525,6 +4680,14 @@ function wire() {
   document.addEventListener('input', function (e) {
     if (e.target && e.target.id === 'q') {
       var pos = e.target.selectionStart;
+      if (S.view === 'pathway') {
+        ensurePw();
+        S.pw.q = e.target.value;
+        S.pw.qPos = pos;
+        S.pw.focusQ = true;
+        render();
+        return;
+      }
       S.commQ = e.target.value;
       render();
       var f = document.getElementById('q');
@@ -3560,6 +4723,13 @@ function wire() {
   document.addEventListener('change', function (e) {
     var f;
     var reader;
+    var gname;
+    if (e.target && e.target.getAttribute && e.target.getAttribute('data-pw-grade')) {
+      gname = e.target.getAttribute('data-pw-grade');
+      if (!S.pw.subjects[gname]) S.pw.subjects[gname] = { st: 'have', grade: e.target.value };
+      else S.pw.subjects[gname].grade = e.target.value;
+      return;
+    }
     if (e.target && e.target.id === 'comp-cat') S.draftCat = e.target.value;
     if (e.target && e.target.id === 'comp-anon') S.anon = e.target.checked;
     if (e.target && e.target.id === 'comp-img') {
@@ -3599,11 +4769,12 @@ function applyHash() {
     S.view = 'pathway';
     return 'pathway';
   }
-  if (h === 'sessions') {
+  if (h === 'sessions' || h === 'alerts' || h === 'happening' || h === 'notifications') {
     hideSheetUi();
-    S.view = 'sessions';
+    S.view = 'alerts';
     S.sessionStage = '';
-    return 'sessions';
+    S.unread = 0;
+    return 'alerts';
   }
   if (h === 'feed' || h === 'stories') {
     hideSheetUi();

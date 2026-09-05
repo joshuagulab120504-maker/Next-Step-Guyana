@@ -1384,7 +1384,7 @@
       '</div>' +
       '<div class="dash-grid">' +
       '<div class="card"><h3>What this center manages</h3><p>Everything students see in the feed, pathway, and happening views, plus the careers and schools libraries.</p><ul>' +
-      '<li>Opportunities &amp; sessions<span>Happening</span></li>' +
+      '<li>Opportunities &amp; sessions<span>Alerts</span></li>' +
       '<li>Mentors, contributors, journeys<span>Profiles</span></li>' +
       '<li>Feed questions &amp; stories<span>What\'s Steppin\'</span></li>' +
       '<li>Stages &amp; topics<span>Pathway</span></li>' +
@@ -1420,7 +1420,7 @@
           ? 'Manage your profile, sessions, and student questions.'
           : 'Search and edit every surface students see on the site.'
       },
-      opps: { title: 'Opportunities', sub: 'Programmes, awards, clinics, and openings shown in Happening and the feed.' },
+      opps: { title: 'Opportunities', sub: 'Programmes, awards, clinics, and openings shown in Alerts and the feed.' },
       sessions: { title: 'Sessions', sub: 'Live pods and clinics. Mentors only see sessions they lead.' },
       authors: { title: 'Mentors & contributors', sub: 'People cards, pods, and related profiles.' },
       journeys: { title: 'Journeys', sub: 'Pathway story arcs linked to mentors and contributors.' },
