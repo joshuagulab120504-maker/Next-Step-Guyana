@@ -16,7 +16,9 @@ VIEWS="$ROOT/_proto/app-views.js"
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
-<title>Next Step Guyana · Feed</title>
+<title>Next Step Guyana</title>
+<meta name="theme-color" content="#061c33"/>
+<meta name="apple-mobile-web-app-title" content="Next Step"/>
 <link rel="icon" href="favicon.svg" type="image/svg+xml"/>
 <link rel="alternate icon" href="logo.png" type="image/png"/>
 <link rel="apple-touch-icon" href="logo.png"/>

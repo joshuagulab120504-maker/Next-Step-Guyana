@@ -1531,7 +1531,7 @@ function renderChrome() {
   var i;
   var sheetTop = NAV.length ? NAV[NAV.length - 1].t : '';
   for (i = 0; i < navs.length; i++) {
-    if (navs[i].id === 'arch-pill') {
+    if (navs[i].id === 'arch-pill' || navs[i].id === 'logo') {
       navs[i].classList.remove('on');
       navs[i].removeAttribute('aria-current');
       continue;
@@ -1738,6 +1738,7 @@ function wire() {
 
     btn = closestEl(t, '[data-nav]');
     if (btn) {
+      e.preventDefault();
       var nav = btn.getAttribute('data-nav');
       if (nav === 'sessions') S.sessionStage = '';
       setView(nav);
@@ -1760,7 +1761,8 @@ function wire() {
     }
 
     if (t.id === 'logo' || closestEl(t, '#logo')) {
-      /* Let the brand link go to the marketing homepage. */
+      e.preventDefault();
+      setView('feed');
       return;
     }
 
@@ -2253,11 +2255,36 @@ function applyHash() {
   return '';
 }
 
+function dismissSplash() {
+  var el = byId('app-splash');
+  if (!el || el.getAttribute('data-done') === '1') return;
+  el.setAttribute('data-done', '1');
+  el.classList.add('out');
+  document.documentElement.classList.remove('splash-on');
+  setTimeout(function () {
+    if (el.parentNode) el.parentNode.removeChild(el);
+  }, 320);
+}
+
+function startSplash() {
+  var el = byId('app-splash');
+  if (!el) return;
+  document.documentElement.classList.add('splash-on');
+  var reduced =
+    window.matchMedia &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  setTimeout(dismissSplash, reduced ? 400 : 1400);
+  var go = byId('splash-continue');
+  if (go) go.addEventListener('click', dismissSplash);
+  el.addEventListener('click', dismissSplash);
+}
+
 function boot() {
   if (window.NSG_CMS && typeof NSG_CMS.applyAppGlobals === 'function') {
     NSG_CMS.applyAppGlobals();
   }
-  var hash = applyHash();
+  startSplash();
+  applyHash();
   wire();
   render();
   window.addEventListener('hashchange', function () {

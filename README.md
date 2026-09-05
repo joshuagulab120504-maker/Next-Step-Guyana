@@ -8,14 +8,23 @@ Career guidance for Guyanese secondary students.
 python3 -m http.server 8080
 ```
 
-Then visit [http://127.0.0.1:8080/](http://127.0.0.1:8080/).
+Then visit the web site at [http://127.0.0.1:8080/](http://127.0.0.1:8080/) or the app at [http://127.0.0.1:8080/app.html](http://127.0.0.1:8080/app.html).
+
+## Two products
+
+| Product | Entry | Opening |
+| --- | --- | --- |
+| Web | `index.html` | Art marketing homepage |
+| App | `app.html` | Logo splash, then What's Steppin'. No login. |
+
+They share the same feed, pathway, and sessions. The app header stays inside the app and does not send people back to the art page.
 
 ## Site map
 
 | File | Role |
 | --- | --- |
-| `index.html` | Marketing homepage |
-| `app.html` | Feed + My Pathway + Happening |
+| `index.html` | Web marketing homepage |
+| `app.html` | App: splash, then Feed + My Pathway + Happening |
 | `check.html` | Self-check flow |
 | `about.html` | About |
 | `privacy.html` | Privacy Policy |

@@ -3,7 +3,9 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
-<title>Next Step Guyana · Feed</title>
+<title>Next Step Guyana</title>
+<meta name="theme-color" content="#061c33"/>
+<meta name="apple-mobile-web-app-title" content="Next Step"/>
 <link rel="icon" href="favicon.svg" type="image/svg+xml"/>
 <link rel="alternate icon" href="logo.png" type="image/png"/>
 <link rel="apple-touch-icon" href="logo.png"/>
@@ -22,7 +24,7 @@
   --navy:#0a2d52; --navy-deep:#061c33; --navy-mid:#0f4272;
   --green:#0d7a4f; --green-fill:#0d7a4f; --green-soft:#e7f6ee;
   --gold:#f4c945; --gold-deep:#e8b924; --gold-soft:#fdf5dd; --gold-ink:#a8801f;
-  --red:#b93b30; --red-soft:#fbeceb; --red-line:#efc4bf;
+  --red:#b93b30;
   --blue:#1c5f9e; --blue-soft:#e8f1fa;
   /* one accent per post kind */
   --k-question:#a8801f; --k-story:#0d7a4f; --k-opening:#1c5f9e;
@@ -35,7 +37,7 @@
   --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s5:20px; --s6:24px;
   --r-sm:6px; --r-md:8px; --r-pill:999px;
   /* z ladder */
-  --z-top:40; --z-tabs:50; --z-scrim:60; --z-sheet:61; --z-toast:70;
+  --z-top:40; --z-tabs:50; --z-scrim:60; --z-sheet:61; --z-toast:70; --z-splash:80;
   --top-h:58px; --tabs-h:56px; --tap:44px;
   /* focus ring: our blue */
   --focus:#1c5f9e;
@@ -83,6 +85,11 @@
 
 *,*::before,*::after{box-sizing:border-box}
 html{scroll-behavior:smooth}
+html.splash-on,
+html.splash-on body{
+  overflow:hidden;
+  background:var(--navy-deep);
+}
 body{
   margin:0;
   background:var(--page);
@@ -984,9 +991,8 @@ span.cat-chip{cursor:default}
 
 /* Mentor rows */
 .mentor-row{
-  display:flex;align-items:center;gap:var(--s3);padding:var(--s3) 0;
+  display:flex;align-items:center;gap:12px;padding:12px 0;
   border-top:1px solid var(--line-soft);cursor:pointer;
-  min-width:0;overflow:visible;
 }
 .mentor-row:first-child{border-top:0}
 .mentor-row .grow{flex:1;min-width:0}
@@ -1316,9 +1322,39 @@ span.cat-chip{cursor:default}
 
 @media(prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
-  .sheet,.btn,.card.clickable,.lnav button,.dock button,.arch,.offer{transition:none}
+  .sheet,.btn,.card.clickable,.lnav button,.dock button,.arch,.offer,.app-splash.out{transition:none}
   .sheet{transform:translate(-50%,-50%);opacity:1}
   .fy-rail,.carousel{scroll-behavior:auto}
+}
+
+/* App cold open. Logo, then the feed. Not the marketing art page. */
+.app-splash{
+  position:fixed;inset:0;z-index:var(--z-splash);
+  display:flex;align-items:center;justify-content:center;
+  background:var(--navy-deep);
+  padding:env(safe-area-inset-top) var(--s6) env(safe-area-inset-bottom);
+}
+.app-splash.out{
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .28s ease;
+}
+.app-splash[hidden]{display:none!important}
+.splash-continue{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:18px;
+  min-width:180px;min-height:180px;
+  padding:24px;
+  background:transparent;border:0;color:var(--card);
+  cursor:pointer;
+}
+.splash-logo{
+  width:128px;height:128px;border-radius:16px;
+  background:#f8f6ef;overflow:hidden;
+}
+.splash-logo img{width:100%;height:100%;object-fit:contain;display:block}
+.splash-rule{
+  width:36px;height:3px;background:var(--gold);
 }
 
 /* =========================================================
@@ -1392,15 +1428,9 @@ span.cat-chip{cursor:default}
   display:flex;flex-direction:column;gap:8px;
 }
 .steps-ol li,.entry-steps li{
-  position:relative;padding:var(--s3) var(--s4) var(--s3) 48px;
-  background:var(--card);border:1px solid var(--line);border-radius:var(--r-md);
-  font-size:var(--t-body);line-height:var(--t-body-lh);
-}
-.steps-ol .step-title,.entry-steps .step-title{
-  display:block;color:var(--ink);font-weight:var(--w-bold);
-}
-.steps-ol .step-detail,.entry-steps .step-detail{
-  display:block;margin-top:var(--s1);color:var(--mid);
+  position:relative;padding:12px 14px 12px 48px;
+  background:#fff;border:1px solid var(--line);border-radius:12px;
+  font-size:14.5px;line-height:1.45;
 }
 .steps-ol li::before,.entry-steps li::before{
   counter-increment:entry;content:counter(entry);
@@ -1857,71 +1887,19 @@ body, p, .clamp3, .article, .composer textarea, .detail p, .sess-main .muted,
 }
 /* Kill illegal weights leftover in older rules */
 .font-weight-600, [style*="font-weight:600"], [style*="font-weight: 600"]{font-weight:var(--w-medium) !important}
-
-.mentor-row .grow,.author-row .grow,.reply-body.grow,.card-head .grow{
-  flex:1;min-width:0;
-}
-.mentor-row .muted,.author-row .muted{
-  overflow:visible;white-space:normal;word-break:break-word;
-}
-.author-row{
-  display:flex;align-items:center;gap:var(--s3);padding:var(--s3);
-  text-align:left;
-}
-.author-row .btn{flex:0 0 auto}
-.card-facts{
-  display:flex;flex-wrap:wrap;gap:var(--s2);margin-top:var(--s2);
-}
-.card-facts span{
-  font-size:var(--t-label);color:var(--mid);background:var(--fill);
-  padding:var(--s1) var(--s2);border-radius:var(--r-sm);
-}
-.tip-card{
-  margin:var(--s2) 0;padding:var(--s3) var(--s4);
-  border:1px solid var(--line);border-radius:var(--r-md);
-  background:var(--card);text-align:left;
-}
-.tip-card .eyebrow{margin-bottom:var(--s1)}
-.tip-caution{background:var(--red-soft);border-color:var(--red-line);border-left:4px solid var(--red)}
-.tip-proof{background:var(--blue-soft);border-color:var(--line);border-left:4px solid var(--blue)}
-.tip-leads_to{background:var(--gold-soft);border-color:var(--gold-line);border-left:4px solid var(--gold)}
-.tip-insider{background:var(--fill);border-color:var(--line)}
-.tip-myth{background:var(--card);border:1px solid var(--red);border-left:4px solid var(--red)}
-.tip-pick{
-  display:flex;gap:var(--s2);align-items:flex-start;
-  padding:var(--s3);margin-top:var(--s2);
-  border:1px solid var(--line);border-radius:var(--r-md);background:var(--card);
-  text-align:left;
-}
-.compose-step-row{margin:var(--s3) 0;display:flex;flex-direction:column;gap:var(--s2)}
-.compose-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--s1);margin:var(--s3) 0}
-.compose-steps i{height:4px;border-radius:var(--r-sm);background:var(--line)}
-.compose-steps i.on{background:var(--gold)}
-.field-error{color:var(--red);font-size:var(--t-meta);margin:var(--s1) 0 var(--s2)}
-.field-hint{color:var(--gold-ink);font-size:var(--t-meta);margin:0 0 var(--s2)}
-.composer input[type="text"],.composer input[type="url"],.composer input[type="date"],
-.composer input[type="number"],.composer input[type="datetime-local"],.composer select{
-  width:100%;min-height:var(--tap);padding:var(--s2) var(--s3);
-  border:1px solid var(--line);border-radius:var(--r-md);background:var(--card);
-  color:var(--ink);font:inherit;
-}
-.composer textarea{width:100%;display:block}
-.zone-next{margin-top:var(--s5)}
-.journey-steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:var(--s3)}
-.journey-steps li{
-  padding:var(--s3) var(--s4);background:var(--card);
-  border:1px solid var(--line);border-radius:var(--r-md);
-}
-.row-link{font-size:var(--t-action);color:var(--blue);margin-top:var(--s1)}
-.detail .card-head{align-items:flex-start}
-.sheet-body .detail{overflow-wrap:anywhere;word-break:break-word}
 </style>
 </head>
 <body>
+<div id="app-splash" class="app-splash" role="status" aria-label="Next Step Guyana">
+  <button type="button" class="splash-continue" id="splash-continue" aria-label="Continue to What's Steppin'">
+    <span class="splash-logo"><img src="logo.png" alt=""></span>
+    <span class="splash-rule" aria-hidden="true"></span>
+  </button>
+</div>
 <div id="app">
   <header class="top">
     <div class="top-inner">
-      <a class="brand" href="./index.html" id="logo" aria-label="Next Step Guyana home">
+      <a class="brand" href="./app.html" id="logo" data-nav="feed" aria-label="What's Steppin' home">
         <span class="logo-tile"><img src="logo.png" alt=""></span>
         <span class="wordmark"><b>NEXT STEP</b><small>GUYANA</small></span>
       </a>
@@ -1929,7 +1907,7 @@ body, p, .clamp3, .article, .composer textarea, .detail p, .sess-main .muted,
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
         <input type="search" id="top-q" placeholder="Search" aria-label="Search Next Step" autocomplete="off"/>
       </div>
-      <button type="button" class="top-av" id="arch-pill" data-open="profile" data-id="you" aria-label="Your profile">
+      <button type="button" class="top-av" id="arch-pill" data-nav="pathway" aria-label="Your profile">
         <span class="av" aria-hidden="true">You</span>
       </button>
     </div>
@@ -2086,81 +2064,23 @@ var STAGES = [
   }
 ];
 
-var TOPICS = [
+var CATS = [
   'Subject choice',
   'Science and health',
   'Technology',
   'Building and fixing things',
-  'Trades and technical',
   'Business',
   'Creative and media',
   'Sport and coaching',
-  'Leadership and service',
-  'Money and funding',
-  'Studying abroad'
-];
-
-var STAGE_TAGS = [
-  'Forms 1 to 3',
-  'Forms 4 to 5, CSEC',
-  'CAPE or Sixth Form',
-  'Just finished school',
-  'Any stage'
-];
-
-var DECISIONS = [
-  'Choosing subjects',
-  'What after CSEC',
-  'Where to study',
-  'Which field fits me',
-  'Paying for it',
-  'Testing an interest',
-  'Recovering from a setback'
-];
-
-var CONSTRAINTS = [
-  'No fee',
-  'No grade requirement',
-  'Outside Georgetown',
-  'Hinterland travel funded',
-  'Works alongside a job',
-  'No school club needed',
-  'Independent entry allowed'
-];
-
-var REGIONS = [
-  'Region 1',
-  'Region 2',
-  'Region 3',
-  'Region 4',
-  'Region 5',
-  'Region 6',
-  'Region 7',
-  'Region 8',
-  'Region 9',
-  'Region 10'
-];
-
-var CATS = TOPICS;
-
-var PODS = [
-  'Science and health pod',
-  'Trades pod',
-  'Technology pod',
-  'Sport and coaching pod',
-  'Creative and media pod',
-  'After CSEC pod'
+  'After CSEC',
+  'Scholarships'
 ];
 
 var AUTHORS = {
   raeka: {
     name: 'Raeka Persaud',
     init: 'RP',
-    role: 'mentor',
-    contactable: true,
-    short: 'Junior doctor',
-    headline: 'Junior doctor, Georgetown Public Hospital',
-    walks: 'Form 3 to Form 6 science subject choice and UG health routes',
+    role: 'Mentor',
     pos: 'Junior doctor, Georgetown Public Hospital',
     journey: 'raeka',
     pod: 'Science and health pod',
@@ -2170,11 +2090,7 @@ var AUTHORS = {
   omar: {
     name: 'Omar Khan',
     init: 'OK',
-    role: 'mentor',
-    contactable: true,
-    short: 'Electrician and site supervisor',
-    headline: 'Electrician and site supervisor, Berbice',
-    walks: 'TVET and trade routes as real plans, not leftovers',
+    role: 'Mentor',
     pos: 'Electrician and site supervisor, Berbice',
     journey: 'omar',
     pod: 'Trades pod',
@@ -2184,11 +2100,7 @@ var AUTHORS = {
   jerome: {
     name: 'Jerome DaSilva',
     init: 'JD',
-    role: 'collaborator',
-    contactable: false,
-    short: 'Software developer',
-    headline: 'Software developer, Georgetown',
-    walks: '',
+    role: 'Contributor',
     pos: 'Software developer, Georgetown',
     journey: 'jerome',
     cats: ['Technology'],
@@ -2197,11 +2109,7 @@ var AUTHORS = {
   keisha: {
     name: 'Keisha Daniels',
     init: 'KD',
-    role: 'mentor',
-    contactable: true,
-    short: 'Community coach and PE teacher',
-    headline: 'Community coach and PE teacher, Lethem',
-    walks: 'Hinterland sport routes without a private academy',
+    role: 'Mentor',
     pos: 'Community coach and PE teacher, Lethem',
     journey: 'keisha',
     pod: 'Sport and coaching pod',
@@ -2211,11 +2119,7 @@ var AUTHORS = {
   marcus: {
     name: 'Marcus Gomes',
     init: 'MG',
-    role: 'mentor',
-    contactable: true,
-    short: 'Videographer',
-    headline: 'Videographer, Georgetown',
-    walks: 'School reels and client-style shoots that make media look like work',
+    role: 'Contributor',
     pos: 'Videographer, Georgetown',
     journey: 'marcus',
     cats: ['Creative and media'],
@@ -2224,28 +2128,18 @@ var AUTHORS = {
   aisha: {
     name: 'Aisha Mohamed',
     init: 'AM',
-    role: 'student',
-    contactable: false,
-    short: 'Form 5 student',
-    headline: 'Form 5 student, Region 4',
-    walks: '',
+    role: 'Student',
     pos: 'Form 5 student, Region 4',
     cats: ['Business']
   },
   desk: {
     name: 'Opportunities desk',
     init: 'OD',
-    role: 'desk',
-    contactable: false,
-    short: 'Next Step team',
-    headline: 'Verified by Next Step',
-    walks: '',
+    role: 'Next Step',
     pos: 'Next Step team',
     system: true
   }
 };
-
-var PEOPLE = AUTHORS;
 
 var JOURNEYS = {
   raeka: {
@@ -3234,398 +3128,16 @@ var SLOTS = [
   { k: 'language', t: 'A foreign language', hint: 'Spanish or another language subject, kept long enough to use.' }
 ];
 
-var TIPS = {
-  'independent-entry': {
-    id: 'independent-entry',
-    type: 'myth',
-    text: 'You do not need your school to enter. Caribbean STEM Olympiads accept independent competitors with no institutional affiliation.',
-    topics: ['Technology', 'Science and health'],
-    stages: ['Forms 1 to 3', 'Forms 4 to 5, CSEC', 'CAPE or Sixth Form'],
-    constraints: ['Independent entry allowed'],
-    source: 'Caribbean Science Foundation',
-    last_verified: '2026-08-12',
-    status: 'published',
-    eligibility: false
-  },
-  'regional-is-entry': {
-    id: 'regional-is-entry',
-    type: 'myth',
-    text: 'The regional or district round is the actual entry point. The national final is what people see, not where you sign up.',
-    topics: ['Sport and coaching', 'Creative and media', 'Science and health', 'Technology'],
-    stages: ['Forms 1 to 3', 'Forms 4 to 5, CSEC', 'CAPE or Sixth Form'],
-    constraints: [],
-    source: 'Ministry of Education programme notices',
-    last_verified: '',
-    status: 'published',
-    eligibility: false
-  },
-  'confirm-pod': {
-    id: 'confirm-pod',
-    type: 'caution',
-    text: 'Coverage is uneven. Confirm a learning pod actually runs near you this term before you plan your year around it.',
-    topics: ['Technology', 'Science and health'],
-    stages: ['Forms 1 to 3', 'Forms 4 to 5, CSEC', 'Any stage'],
-    constraints: [],
-    source: 'STEMGuyana programme descriptions',
-    last_verified: '',
-    status: 'published',
-    eligibility: true
-  },
-  'calendars-shift': {
-    id: 'calendars-shift',
-    type: 'caution',
-    text: 'Competition calendars in Guyana shift year to year. Reconfirm dates with the organiser, not last year\'s flyer.',
-    topics: [
-      'Technology',
-      'Science and health',
-      'Sport and coaching',
-      'Creative and media',
-      'Business',
-      'Leadership and service'
-    ],
-    stages: ['Forms 1 to 3', 'Forms 4 to 5, CSEC', 'CAPE or Sixth Form', 'Any stage'],
-    constraints: [],
-    source: 'Youth opportunities guide, existing programme caveats',
-    last_verified: '',
-    status: 'published',
-    eligibility: true
-  },
-  'hinterland-placed': {
-    id: 'hinterland-placed',
-    type: 'proof',
-    text: 'Students from Port Kaituma, Tabatinga, Santa Rosa and Karaudarnau have placed nationally. Geography is not destiny here.',
-    topics: ['Technology', 'Creative and media', 'Sport and coaching'],
-    stages: ['Forms 1 to 3', 'Forms 4 to 5, CSEC'],
-    constraints: ['Outside Georgetown'],
-    source: 'STEMGuyana Scratch results and Mashramani national editions',
-    last_verified: '',
-    status: 'published',
-    eligibility: false
-  },
-  'hinterland-funded': {
-    id: 'hinterland-funded',
-    type: 'proof',
-    text: 'Hinterland travel and accommodation for Mashramani nationals is funded by the Unit of Allied Arts. Ask early. Do not assume you must pay your own way.',
-    topics: ['Creative and media', 'Sport and coaching'],
-    stages: ['Forms 1 to 3', 'Forms 4 to 5, CSEC'],
-    constraints: ['Hinterland travel funded'],
-    source: 'Ministry of Education Unit of Allied Arts',
-    last_verified: '',
-    status: 'published',
-    eligibility: false
-  },
-  'pyarg-noncompetitive': {
-    id: 'pyarg-noncompetitive',
-    type: 'insider',
-    text: 'The President\'s Youth Award is non-competitive. You are meeting a standard, not beating anyone.',
-    topics: ['Leadership and service', 'Sport and coaching'],
-    stages: ['Forms 1 to 3', 'Forms 4 to 5, CSEC', 'CAPE or Sixth Form', 'Just finished school'],
-    constraints: [],
-    source: 'President\'s Youth Award Republic of Guyana programme description',
-    last_verified: '',
-    status: 'published',
-    eligibility: false
-  },
-  'gold-is-rare': {
-    id: 'gold-is-rare',
-    type: 'insider',
-    text: 'Completing Gold is distinguishing precisely because most people stop earlier. Do not skip levels to look impressive.',
-    topics: ['Leadership and service', 'Sport and coaching'],
-    stages: ['Forms 4 to 5, CSEC', 'CAPE or Sixth Form', 'Just finished school'],
-    constraints: [],
-    source: 'President\'s Youth Award Republic of Guyana programme description',
-    last_verified: '',
-    status: 'published',
-    eligibility: false
-  },
-  'ask-the-student-above': {
-    id: 'ask-the-student-above',
-    type: 'insider',
-    text: 'Ask what the school did for the student above you. That is the real policy, not the brochure.',
-    topics: ['Subject choice', 'Science and health', 'Building and fixing things'],
-    stages: ['Forms 1 to 3', 'Forms 4 to 5, CSEC', 'CAPE or Sixth Form'],
-    constraints: [],
-    source: 'Mentor practice already used in clinic and subject-choice threads',
-    last_verified: '',
-    status: 'published',
-    eligibility: false
-  },
-  'nationals-to-carifta': {
-    id: 'nationals-to-carifta',
-    type: 'leads_to',
-    text: 'National schools track and field now feeds CARIFTA in the same year, since the meet moved to March.',
-    topics: ['Sport and coaching'],
-    stages: ['Forms 4 to 5, CSEC', 'CAPE or Sixth Form'],
-    constraints: [],
-    source: 'Ministry of Education secondary schools track and field programme notices',
-    last_verified: '',
-    status: 'published',
-    eligibility: false
-  },
-  'pods-feed-comps': {
-    id: 'pods-feed-comps',
-    type: 'leads_to',
-    text: 'Learning pods feed Scratch, Caribbean STEM Olympiads and regional STEAM fairs. Ask your coach which cycle is open next.',
-    topics: ['Technology', 'Science and health'],
-    stages: ['Forms 1 to 3', 'Forms 4 to 5, CSEC', 'CAPE or Sixth Form'],
-    constraints: [],
-    source: 'STEMGuyana programme descriptions',
-    last_verified: '',
-    status: 'published',
-    eligibility: false
-  }
-};
-
-var STAGE_KEY_TO_TAG = {
-  explore: 'Forms 1 to 3',
-  subject: 'Forms 1 to 3',
-  csec: 'Forms 4 to 5, CSEC',
-  fork: 'Just finished school',
-  special: 'CAPE or Sixth Form',
-  led: 'Just finished school'
-};
-
-var CAT_TO_TOPIC = {
-  'Subject choice': 'Subject choice',
-  'Science and health': 'Science and health',
-  'Technology': 'Technology',
-  'Building and fixing things': 'Building and fixing things',
-  'Trades and technical': 'Trades and technical',
-  Business: 'Business',
-  'Creative and media': 'Creative and media',
-  'Sport and coaching': 'Sport and coaching',
-  'After CSEC': 'Subject choice',
-  Scholarships: 'Money and funding',
-  'Leadership and service': 'Leadership and service',
-  'Money and funding': 'Money and funding',
-  'Studying abroad': 'Studying abroad'
-};
-
-var ASKED_AT_TO_STAGE = {
-  'Form 1': 'Forms 1 to 3',
-  'Form 2': 'Forms 1 to 3',
-  'Form 3': 'Forms 1 to 3',
-  'Form 4': 'Forms 4 to 5, CSEC',
-  'Form 5': 'Forms 4 to 5, CSEC',
-  'Form 6': 'CAPE or Sixth Form'
-};
-
-var SESSION_ATOMS = {
-  's-sci': { datetime: '2026-09-12T17:00:00', duration_mins: 60, platform: 'Google Meet' },
-  's-clinic': { datetime: '2026-09-16T18:30:00', duration_mins: 60, platform: 'Google Meet' },
-  's-trades': { datetime: '2026-09-18T18:00:00', duration_mins: 60, platform: 'Google Meet' },
-  's-tech': { datetime: '2026-09-20T16:00:00', duration_mins: 60, platform: 'Google Meet' },
-  's-sport': { datetime: '2026-09-21T17:30:00', duration_mins: 60, platform: 'Google Meet' },
-  's-media': { datetime: '2026-09-23T18:30:00', duration_mins: 60, platform: 'Google Meet' },
-  's-fork': { datetime: '2026-09-29T18:30:00', duration_mins: 60, platform: 'Google Meet' }
-};
-
-var OPP_GRADE = {
-  mash: 'None'
-};
-
-var OPP_TIPS = {
-  stem: ['confirm-pod', 'pods-feed-comps', 'hinterland-placed'],
-  pyarg: ['pyarg-noncompetitive', 'gold-is-rare'],
-  cso: ['independent-entry', 'calendars-shift'],
-  scratch: ['hinterland-placed', 'pods-feed-comps'],
-  jof: ['regional-is-entry'],
-  mash: ['regional-is-entry', 'hinterland-funded', 'hinterland-placed'],
-  steam: ['regional-is-entry', 'calendars-shift'],
-  track: ['regional-is-entry', 'nationals-to-carifta'],
-  blue: ['independent-entry', 'calendars-shift'],
-  sbb: [],
-  clinic: ['ask-the-student-above']
-};
-
-var STORY_META = {
-  f3: {
-    turning_point: 'I treated the mock like a verdict and lost a week to embarrassment.',
-    stage_at_time: 'Forms 4 to 5, CSEC',
-    decision: 'Recovering from a setback',
-    tips: ['ask-the-student-above']
-  },
-  f7: {
-    turning_point: 'I put both plans on one page. Years, cost, first job, and what happens if it does not work out.',
-    stage_at_time: 'Just finished school',
-    decision: 'What after CSEC',
-    tips: []
-  },
-  f12: {
-    turning_point: 'There was no transport that week from Lethem. I missed the trials and spent two days convinced the route had closed.',
-    stage_at_time: 'Forms 4 to 5, CSEC',
-    decision: 'Recovering from a setback',
-    tips: ['hinterland-funded']
-  }
-};
-
-function hydrateContentModel() {
-  var id, o, i, j, s, item, atoms, meta, steps, moment, text, topic;
-
-  for (id in OPPS) {
-    if (!OPPS.hasOwnProperty(id)) continue;
-    o = OPPS[id];
-    topic = CAT_TO_TOPIC[o.cat] || o.cat;
-    o.one_liner = o.one;
-    o.what_it_is = (o.what && o.what.length) ? o.what.join(' ') : '';
-    o.ages = o.who || '';
-    o.topic = topic;
-    o.stage = STAGE_KEY_TO_TAG[o.stage] || 'Any stage';
-    o.stage_tags = [];
-    if (o.stages) {
-      for (i = 0; i < o.stages.length; i++) {
-        if (STAGES[o.stages[i]]) {
-          o.stage_tags.push(STAGE_KEY_TO_TAG[STAGES[o.stages[i]].key] || 'Any stage');
-        }
-      }
-    }
-    o.regions = '';
-    o.grade_requirement = OPP_GRADE[id] || '';
-    o.when = o.season || '';
-    o.how_to_get_in = [];
-    if (o.entry) {
-      for (i = 0; i < o.entry.length; i++) {
-        o.how_to_get_in.push({ title: o.entry[i].b, detail: o.entry[i].s });
-      }
-    }
-    o.where_it_leads = o.leads || '';
-    o.source_url = '';
-    o.source_type = '';
-    o.last_verified = '';
-    o.verified_by = '';
-    o.confidence = '';
-    o.library_tips = OPP_TIPS[id] || [];
-    o.constraints = [];
-    if (o.independent) o.constraints.push('Independent entry allowed');
-    if (o.cost && (o.cost.indexOf('No fee') !== -1 || o.cost === 'Free')) o.constraints.push('No fee');
-    if (o.grade_requirement === 'None') o.constraints.push('No grade requirement');
-  }
-
-  for (i = 0; i < SESSIONS.length; i++) {
-    s = SESSIONS[i];
-    atoms = SESSION_ATOMS[s.id] || { datetime: '', duration_mins: 60, platform: 'Google Meet' };
-    s.datetime = atoms.datetime;
-    s.duration_mins = atoms.duration_mins;
-    s.platform = atoms.platform;
-    s.what_it_covers = s.what;
-    s.what_to_bring = s.bring;
-    s.capacity = s.seats;
-    s.booked = s.taken;
-    s.leads = s.lead ? [s.lead] : [];
-    s.stage_fit = [];
-    if (s.stages) {
-      for (j = 0; j < s.stages.length; j++) {
-        s.stage_fit.push(STAGE_KEY_TO_TAG[s.stages[j]] || 'Any stage');
-      }
-    }
-    s.topic = CAT_TO_TOPIC[s.cat] || s.cat;
-    s.submitted_questions = s.qs || [];
-    s.covers_opportunities = [];
-    s.library_tips = [];
-  }
-
-  for (id in OPPS) {
-    if (!OPPS.hasOwnProperty(id)) continue;
-    o = OPPS[id];
-    if (!o.sess) continue;
-    for (i = 0; i < o.sess.length; i++) {
-      s = null;
-      for (j = 0; j < SESSIONS.length; j++) {
-        if (SESSIONS[j].id === o.sess[i]) s = SESSIONS[j];
-      }
-      if (s && s.covers_opportunities.indexOf(id) === -1) s.covers_opportunities.push(id);
-    }
-  }
-
-  for (id in JOURNEYS) {
-    if (!JOURNEYS.hasOwnProperty(id)) continue;
-    j = JOURNEYS[id];
-    steps = [];
-    if (j.route) {
-      for (i = 0; i < j.route.length && steps.length < 7; i++) {
-        steps.push({
-          stage_or_age: stageNameForKey(j.route[i].stage),
-          did: j.route[i].text,
-          led_to: j.route[i].lesson || ''
-        });
-      }
-    }
-    j.model_steps = steps;
-    j.entry_stage = j.route && j.route[0] ? STAGE_KEY_TO_TAG[j.route[0].stage] || 'Forms 1 to 3' : 'Forms 1 to 3';
-    j.topic = CAT_TO_TOPIC[j.field] || j.field;
-    j.setback = '';
-    if (j.moments) {
-      for (i = 0; i < j.moments.length; i++) {
-        moment = j.moments[i];
-        if (moment.flag === 'setback') {
-          j.setback = moment.text;
-          break;
-        }
-      }
-    }
-    j.other_routes = '';
-    j.library_tips = [];
-  }
-
-  for (i = 0; i < FEED.length; i++) {
-    item = FEED[i];
-    item.topic = CAT_TO_TOPIC[item.cat] || item.cat;
-    if (item.kind === 'question') {
-      item.anonymous = item.anon !== false;
-      item.stage_asked = ASKED_AT_TO_STAGE[item.askedAt] || 'Forms 1 to 3';
-      item.similar_count = item.asks || 0;
-      item.decision = item.id === 'q-cape' ? 'What after CSEC' : item.id === 'q-bio' ? 'Choosing subjects' : '';
-      item.body = '';
-    }
-    if (item.kind === 'story') {
-      meta = STORY_META[item.id] || {};
-      item.turning_point = meta.turning_point || (item.body && item.body[0]) || '';
-      item.stage_at_time = meta.stage_at_time || '';
-      item.stage = item.stage_at_time;
-      item.decision = meta.decision || '';
-      item.tips = meta.tips || [];
-      item.honest_note = '';
-    }
-    if (item.kind === 'opportunity' && item.opp && OPPS[item.opp]) {
-      item.topic = OPPS[item.opp].topic;
-    }
-    if (item.kind === 'session' && item.session) {
-      for (j = 0; j < SESSIONS.length; j++) {
-        if (SESSIONS[j].id === item.session) item.topic = SESSIONS[j].topic;
-      }
-    }
-    if (item.kind === 'journey' && item.journey && JOURNEYS[item.journey]) {
-      item.topic = JOURNEYS[item.journey].topic;
-    }
-  }
-}
-
-function stageNameForKey(key) {
-  var n;
-  for (n = 0; n < STAGES.length; n++) {
-    if (STAGES[n].key === key) return STAGES[n].name;
-  }
-  return key;
-}
-
-hydrateContentModel();
-
 /* Next Step Guyana app core. ES5 only. No storage. No em/en dashes. */
 var NAV = [];
 var S = {
   view: 'feed',
   filter: 'all',
   query: '',
-  role: 'student',
   ctype: 'question',
   anon: true,
   draft: '',
   draftCat: '',
-  composeStep: 1,
-  composeDraft: null,
-  suggestTip: '',
-  suggestOpen: false,
-  composeTried: false,
   sessionStage: '',
   onboarded: false,
   stage: null,
@@ -3703,83 +3215,7 @@ function daysUntil(iso) {
 }
 
 function author(id) {
-  return (
-    (typeof PEOPLE !== 'undefined' && PEOPLE[id]) ||
-    AUTHORS[id] || { name: id, init: '?', role: '', pos: '', contactable: false, system: true }
-  );
-}
-
-function personRole(id) {
-  return (author(id).role || '').toLowerCase();
-}
-
-function isContactable(id) {
-  var a = author(id);
-  return !!(a && a.contactable);
-}
-
-function credibilityLine(id, anon, who) {
-  var a;
-  if (anon) return who || studentLabel();
-  a = author(id);
-  if (!a) return '';
-  if (a.role === 'desk' || a.system) {
-    return a.headline || 'Verified by Next Step';
-  }
-  if (a.role === 'collaborator') {
-    return a.headline || a.pos || a.short || '';
-  }
-  if (a.role === 'student') {
-    return a.headline || a.pos || studentLabel();
-  }
-  if (a.walks) return (a.headline || a.pos || '') + '. Walks students through ' + a.walks + '.';
-  return a.headline || a.pos || '';
-}
-
-function startsWithVerb(text) {
-  var first;
-  var verbs = [
-    'ask',
-    'add',
-    'book',
-    'bring',
-    'build',
-    'check',
-    'choose',
-    'confirm',
-    'keep',
-    'name',
-    'put',
-    'read',
-    'rebuild',
-    'start',
-    'treat',
-    'write',
-    'join',
-    'find',
-    'use',
-    'take',
-    'show',
-    'log',
-    'pair',
-    'pick',
-    'plan',
-    'talk',
-    'compete',
-    'register',
-    'set',
-    'ship',
-    'stay',
-    'map',
-    'protect',
-    'collect',
-    'stack'
-  ];
-  first = String(text || '')
-    .trim()
-    .split(/\s+/)[0];
-  if (!first) return false;
-  return verbs.indexOf(first.toLowerCase()) !== -1;
+  return AUTHORS[id] || { name: id, init: '?', role: '', pos: '', system: true };
 }
 
 function isFollowing(id) {
@@ -3965,391 +3401,6 @@ function sessionById(id) {
   return null;
 }
 
-function tipById(id) {
-  return TIPS[id] || null;
-}
-
-function formatChecked(iso) {
-  if (!iso) return '';
-  var d = new Date(iso.indexOf('T') === -1 ? iso + 'T12:00:00' : iso);
-  if (isNaN(d.getTime())) return '';
-  var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-  return 'Checked ' + d.getDate() + ' ' + months[d.getMonth()];
-}
-
-function composeSessionWhen(s) {
-  if (!s) return '';
-  var d;
-  var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-  var months = [
-    'January',
-    'February',
-    'March',
-    'April',
-    'May',
-    'June',
-    'July',
-    'August',
-    'September',
-    'October',
-    'November',
-    'December'
-  ];
-  var dayName;
-  var hours;
-  var mins;
-  var ampm;
-  var h12;
-  var timeStr;
-  var minsLabel;
-  if (!s.datetime) return s.when || '';
-  d = new Date(s.datetime);
-  if (isNaN(d.getTime())) return s.when || '';
-  dayName = days[d.getDay()];
-  hours = d.getHours();
-  mins = d.getMinutes();
-  ampm = hours >= 12 ? 'PM' : 'AM';
-  h12 = hours % 12;
-  if (h12 === 0) h12 = 12;
-  timeStr = h12 + ':' + (mins < 10 ? '0' : '') + mins + ' ' + ampm;
-  minsLabel = (s.duration_mins || 60) + ' minutes';
-  return dayName + ' ' + d.getDate() + ' ' + months[d.getMonth()] + ', ' + timeStr + ' · ' + minsLabel + ' · ' + (s.platform || '');
-}
-
-function placesLeftLabel(s) {
-  var cap = s.capacity != null ? s.capacity : s.seats;
-  var taken = s.booked != null ? s.booked : s.taken;
-  var left = Math.max(0, cap - taken);
-  return left + (left === 1 ? ' place left' : ' places left');
-}
-
-function emptyComposeDraft(kind) {
-  return {
-    kind: kind || '',
-    title: '',
-    body: '',
-    turning_point: '',
-    takeaways: ['', '', ''],
-    steps: [
-      { stage_or_age: '', did: '', led_to: '' },
-      { stage_or_age: '', did: '', led_to: '' },
-      { stage_or_age: '', did: '', led_to: '' }
-    ],
-    now: '',
-    setback: '',
-    other_routes: '',
-    name: '',
-    one_liner: '',
-    what_it_is: '',
-    ages: '',
-    stages: [],
-    regions: '',
-    grade_requirement: '',
-    cost: '',
-    when: '',
-    how_to_get_in: [
-      { title: '', detail: '' },
-      { title: '', detail: '' },
-      { title: '', detail: '' }
-    ],
-    where_it_leads: '',
-    source_url: '',
-    source_type: '',
-    last_verified: '',
-    verified_by: '',
-    confidence: '',
-    pod: PODS[0] || '',
-    datetime: '',
-    duration_mins: '60',
-    platform: '',
-    what_it_covers: '',
-    what_to_bring: '',
-    capacity: '',
-    leads: [],
-    stage_fit: [],
-    topic: '',
-    stage: S.onboarded ? pathwayStageTag() : '',
-    decision: '',
-    tips: [],
-    anonymous: S.role === 'student',
-    honest_note: ''
-  };
-}
-
-function pathwayStageTag() {
-  if (!S.stage) return '';
-  return STAGE_KEY_TO_TAG[S.stage] || '';
-}
-
-function kindsForRole(role) {
-  if (role === 'mentor' || role === 'collaborator') return ['story', 'journey'];
-  if (role === 'desk') return ['opportunity', 'session'];
-  return ['question'];
-}
-
-function resetCompose(kind) {
-  var offered = kindsForRole(S.role);
-  S.ctype = kind || offered[0];
-  S.composeDraft = emptyComposeDraft(S.ctype);
-  if (S.role === 'student') S.composeDraft.anonymous = true;
-  S.composeStep = kind || offered.length === 1 ? 1 : 0;
-  S.suggestTip = '';
-  S.suggestOpen = false;
-  S.composeTried = false;
-  S.anon = !!S.composeDraft.anonymous;
-}
-
-function submitCompose() {
-  var d = draft();
-  var err = composeErrors(d);
-  var nid;
-  var i;
-  var item;
-  var sid;
-  var oid;
-  var how;
-  if (firstComposeError(err)) {
-    paint();
-    return false;
-  }
-  nid = 'mine-' + Date.now();
-  if (d.kind === 'question') {
-    item = {
-      id: nid,
-      kind: 'question',
-      time: 'Just now',
-      cat: d.topic,
-      topic: d.topic,
-      anon: !!d.anonymous,
-      anonymous: !!d.anonymous,
-      who: studentLabel(),
-      title: d.title.trim(),
-      body: d.body || '',
-      askedAt: S.form || 'Form 3',
-      stage_asked: d.stage,
-      stage: d.stage,
-      asks: 1,
-      similar_count: 1,
-      replies: [],
-      rel: [],
-      tips: d.tips || [],
-      mine: true
-    };
-    FEED.unshift(item);
-    toast('Question posted.');
-    simulateReply(nid);
-  } else if (d.kind === 'story') {
-    item = {
-      id: nid,
-      kind: 'story',
-      time: 'Just now',
-      cat: d.topic,
-      topic: d.topic,
-      author: S.role === 'student' ? null : 'you',
-      title: d.title.trim(),
-      turning_point: d.turning_point.trim(),
-      body: [d.body.trim()],
-      takeaways: [d.takeaways[0], d.takeaways[1], d.takeaways[2]],
-      stage_at_time: d.stage,
-      stage: d.stage,
-      tips: d.tips || [],
-      honest_note: d.honest_note || '',
-      insp: 0,
-      rel: [],
-      mine: true,
-      anon: S.role === 'student' && !!d.anonymous
-    };
-    if (S.role !== 'student') {
-      PEOPLE.you = {
-        name: 'You',
-        init: 'YO',
-        role: S.role,
-        contactable: S.role === 'mentor',
-        short: S.role,
-        headline: S.role === 'collaborator' ? 'Collaborator' : 'Mentor',
-        walks: '',
-        pos: S.role === 'collaborator' ? 'Collaborator' : 'Mentor'
-      };
-    }
-    FEED.unshift(item);
-    toast('Story posted.');
-  } else if (d.kind === 'journey') {
-    sid = 'mine-j-' + Date.now();
-    JOURNEYS[sid] = {
-      age: 0,
-      ongoing: true,
-      field: d.topic,
-      topic: d.topic,
-      type: '',
-      place: '',
-      hook: d.steps[0] ? d.steps[0].did : '',
-      now: d.now,
-      quote: '',
-      blurb: '',
-      moments: [],
-      route: [],
-      model_steps: d.steps.slice(),
-      entry_stage: d.stage,
-      setback: d.setback || '',
-      other_routes: d.other_routes || '',
-      library_tips: d.tips || [],
-      dive: { title: '', req: '', cost: '', caveat: '' },
-      did: { text: '', src: '' },
-      steps: []
-    };
-    PEOPLE[sid] = {
-      name: S.role === 'collaborator' ? 'You (collaborator)' : 'You (mentor)',
-      init: 'YO',
-      role: S.role,
-      contactable: S.role === 'mentor',
-      short: '',
-      headline: '',
-      walks: '',
-      pos: '',
-      journey: sid
-    };
-    FEED.unshift({
-      id: nid,
-      kind: 'journey',
-      time: 'Just now',
-      cat: d.topic,
-      topic: d.topic,
-      journey: sid,
-      tips: d.tips || [],
-      mine: true
-    });
-    toast('Journey posted.');
-  } else if (d.kind === 'opportunity') {
-    oid = 'mine-o-' + Date.now();
-    how = [];
-    for (i = 0; i < d.how_to_get_in.length; i++) {
-      if (d.how_to_get_in[i].title && d.how_to_get_in[i].detail) how.push(d.how_to_get_in[i]);
-    }
-    OPPS[oid] = {
-      id: oid,
-      name: d.name.trim(),
-      cat: d.topic,
-      topic: d.topic,
-      one: d.one_liner.trim(),
-      one_liner: d.one_liner.trim(),
-      what: [d.what_it_is.trim()],
-      what_it_is: d.what_it_is.trim(),
-      ages: d.ages,
-      who: d.ages,
-      regions: d.regions,
-      grade_requirement: d.grade_requirement,
-      cost: d.cost,
-      when: d.when,
-      season: d.when,
-      how_to_get_in: how,
-      entry: [],
-      where_it_leads: d.where_it_leads,
-      leads: d.where_it_leads,
-      source_url: d.source_url,
-      source_type: d.source_type,
-      last_verified: d.last_verified,
-      verified_by: d.verified_by,
-      confidence: d.confidence,
-      library_tips: d.tips || [],
-      constraints: [],
-      stages: [0],
-      rel: [],
-      sess: [],
-      mentors: [],
-      independent: false
-    };
-    FEED.unshift({
-      id: nid,
-      kind: 'opportunity',
-      time: 'Just now',
-      cat: d.topic,
-      topic: d.topic,
-      author: 'desk',
-      opp: oid,
-      mine: true
-    });
-    toast('Opportunity posted.');
-  } else if (d.kind === 'session') {
-    sid = 'mine-s-' + Date.now();
-    SESSIONS.unshift({
-      id: sid,
-      title: d.title.trim(),
-      day: '',
-      date: '',
-      when: '',
-      pod: d.pod,
-      lead: d.leads[0],
-      leads: d.leads.slice(),
-      seats: parseInt(d.capacity, 10) || 20,
-      taken: 0,
-      capacity: parseInt(d.capacity, 10) || 20,
-      booked: 0,
-      stages: [],
-      stage_fit: d.stage ? [d.stage] : [],
-      cat: d.topic,
-      topic: d.topic,
-      what: d.what_it_covers,
-      what_it_covers: d.what_it_covers,
-      bring: d.what_to_bring,
-      what_to_bring: d.what_to_bring,
-      datetime: d.datetime,
-      duration_mins: parseInt(d.duration_mins, 10) || 60,
-      platform: d.platform,
-      qs: [],
-      submitted_questions: [],
-      covers_opportunities: [],
-      library_tips: d.tips || []
-    });
-    FEED.unshift({
-      id: nid,
-      kind: 'session',
-      time: 'Just now',
-      cat: d.topic,
-      topic: d.topic,
-      session: sid,
-      mine: true
-    });
-    toast('Session posted.');
-  }
-  S.composeDraft = null;
-  S.draft = '';
-  closeSheet();
-  setView('feed');
-  window.scrollTo(0, 0);
-  return true;
-}
-
-function draft() {
-  if (!S.composeDraft) S.composeDraft = emptyComposeDraft(S.ctype || 'question');
-  return S.composeDraft;
-}
-
-function applyDraftField(el) {
-  var key = el.getAttribute('data-draft');
-  var idx = parseInt(el.getAttribute('data-draft-index'), 10);
-  var sub = el.getAttribute('data-draft-key');
-  var val = el.type === 'checkbox' ? !!el.checked : el.value;
-  var d = draft();
-  if (key === 'takeaway') {
-    d.takeaways[idx] = val;
-    return;
-  }
-  if (key === 'step' && d.steps[idx]) {
-    d.steps[idx][sub] = val;
-    return;
-  }
-  if (key === 'how' && d.how_to_get_in[idx]) {
-    d.how_to_get_in[idx][sub] = val;
-    return;
-  }
-  if (key === 'anonymous') {
-    d.anonymous = !!val;
-    S.anon = d.anonymous;
-    return;
-  }
-  d[key] = val;
-}
-
 function oppOpenAtStage(opp, stageKey) {
   if (!opp || !stageKey) return false;
   var idx = stageIndex(stageKey);
@@ -4450,8 +3501,8 @@ function catChip(cat, clickable) {
   );
 }
 
-function cardChevron() {
-  return '<span class="engage-cta" aria-hidden="true">›</span>';
+function exploreCta() {
+  return '<span class="engage-cta">Explore</span>';
 }
 
 function iconHeart() {
@@ -4569,26 +3620,14 @@ function cardClickAttrs(kind, id) {
   return 'data-open="' + esc(kind) + '" data-id="' + esc(id) + '"';
 }
 
-function followBtn(id) {
-  if (!id || !isContactable(id)) return '';
-  return (
-    '<button type="button" class="btn quiet follow-btn' +
-    (isFollowing(id) ? ' following' : '') +
-    '" data-follow="' +
-    esc(id) +
-    '">' +
-    (isFollowing(id) ? 'Following' : 'Follow') +
-    '</button>'
-  );
-}
-
 function renderQuestionCard(item) {
-  var anon = item.anonymous !== false && (!!item.anon || !item.author);
+  var anon = !!item.anon || !item.author;
   var a = item.author ? author(item.author) : null;
   var name = anon ? item.who || youName() : a && a.name ? a.name : youName();
   var bits = ['Question'];
-  if (!anon && a) bits.push(credibilityLine(item.author, false));
+  if (!anon && a && a.pos) bits.push(a.pos);
   if (item.time) bits.push(item.time);
+  if (item.askedAt) bits.push('Asked at ' + item.askedAt);
   var first = item.replies && item.replies[0] ? item.replies[0] : null;
   var firstText = '';
   var firstWho = '';
@@ -4611,7 +3650,16 @@ function renderQuestionCard(item) {
     esc(bits.join(' · ')) +
     '</div>' +
     '</div>';
-  if (!anon && item.author) html += followBtn(item.author);
+  if (!anon && a && !a.system) {
+    html +=
+      '<button type="button" class="btn quiet follow-btn' +
+      (isFollowing(item.author) ? ' following' : '') +
+      '" data-follow="' +
+      esc(item.author) +
+      '">' +
+      (isFollowing(item.author) ? 'Following' : 'Follow') +
+      '</button>';
+  }
   html += '</div>';
   if (item.mine) {
     html += '<div class="flag-row">';
@@ -4628,11 +3676,11 @@ function renderQuestionCard(item) {
       '">Delete</button>';
     html += '</div>';
   }
-  if (item.topic || item.cat) html += '<div class="card-cats">' + catChip(item.topic || item.cat) + '</div>';
+  if (item.cat) html += '<div class="card-cats">' + catChip(item.cat) + '</div>';
   html += '<h3>' + esc(item.title) + '</h3>';
   if (first) {
     html +=
-      '<div class="reply-preview clamp3"><strong>' +
+      '<div class="reply-preview"><strong>' +
       esc(firstWho) +
       '</strong> ' +
       esc(firstText) +
@@ -4644,7 +3692,7 @@ function renderQuestionCard(item) {
     nReplies +
     (nReplies === 1 ? ' reply' : ' replies') +
     '</span>' +
-    cardChevron() +
+    exploreCta() +
     '</div></article>';
   return html;
 }
@@ -4655,9 +3703,9 @@ function renderStoryCard(item) {
   var a = !mine && item.author ? author(item.author) : null;
   var name = mine ? (anon ? studentLabel() : youName()) : a.name;
   var bits = ['Story'];
-  if (!mine && item.author) bits.push(credibilityLine(item.author, false));
+  if (!mine && a && a.pos) bits.push(a.pos);
   if (item.time) bits.push(item.time);
-  var preview = item.turning_point || (item.body && item.body[0]) || '';
+  var para = (item.body && item.body[0]) || '';
   var html =
     '<article class="card feed-card kind-story clickable" ' +
     cardClickAttrs('story', item.id) +
@@ -4669,7 +3717,16 @@ function renderStoryCard(item) {
     '</div><div class="sub">' +
     esc(bits.join(' · ')) +
     '</div></div>';
-  if (!mine && item.author) html += followBtn(item.author);
+  if (!mine && a && !a.system) {
+    html +=
+      '<button type="button" class="btn quiet follow-btn' +
+      (isFollowing(item.author) ? ' following' : '') +
+      '" data-follow="' +
+      esc(item.author) +
+      '">' +
+      (isFollowing(item.author) ? 'Following' : 'Follow') +
+      '</button>';
+  }
   html += '</div>';
   if (mine) {
     html +=
@@ -4682,13 +3739,13 @@ function renderStoryCard(item) {
       esc(item.id) +
       '">Delete</button></div>';
   }
-  if (item.topic || item.cat) html += '<div class="card-cats">' + catChip(item.topic || item.cat) + '</div>';
+  if (item.cat) html += '<div class="card-cats">' + catChip(item.cat) + '</div>';
   html +=
     '<h3>' +
     esc(item.title) +
     '</h3>' +
     '<p class="clamp3">' +
-    esc(preview) +
+    esc(para) +
     '</p>' +
     '<div class="engage">' +
     '<button type="button" class="engage-btn" data-inspire="' +
@@ -4698,23 +3755,18 @@ function renderStoryCard(item) {
     ' Inspired · ' +
     (item.insp || 0) +
     '</button>' +
-    cardChevron() +
+    exploreCta() +
     '</div></article>';
   return html;
 }
 
 function renderOppCard(item) {
-  var o = item.kind === 'opportunity' && item.name ? item : OPPS[item.opp];
+  var o = OPPS[item.opp];
   if (!o) return '';
   var desk = author('desk');
   var bits = ['Opportunity'];
   if (o.independent) bits.push('Self-entry');
   if (item.time) bits.push(item.time);
-  var facts = [];
-  if (o.when || o.season) facts.push(o.when || o.season);
-  if (o.cost) facts.push(o.cost);
-  if (o.ages || o.who) facts.push(o.ages || o.who);
-  if (o.grade_requirement) facts.push(o.grade_requirement);
   return (
     '<article class="card feed-card kind-opp opp-card clickable" ' +
     cardClickAttrs('opp', o.id) +
@@ -4726,64 +3778,54 @@ function renderOppCard(item) {
     '</div><div class="sub">' +
     esc(bits.join(' · ')) +
     '</div></div></div>' +
-    (o.topic || o.cat ? '<div class="card-cats">' + catChip(o.topic || o.cat) + '</div>' : '') +
+    (o.cat ? '<div class="card-cats">' + catChip(o.cat) + '</div>' : '') +
     '<h3>' +
     esc(o.name) +
     '</h3>' +
     '<p class="clamp3">' +
-    esc(o.one_liner || o.one || item.text || '') +
+    esc(item.text) +
     '</p>' +
-    (facts.length
-      ? '<div class="card-facts">' +
-        facts
-          .map(function (f) {
-            return '<span>' + esc(f) + '</span>';
-          })
-          .join('') +
-        '</div>'
-      : '') +
     '<div class="engage">' +
     '<button type="button" class="engage-btn" data-save="' +
     esc(o.id) +
     '">' +
     (isSaved(o.id) ? 'Saved' : 'Save') +
     '</button>' +
-    cardChevron() +
+    exploreCta() +
     '</div></article>'
   );
 }
 
 function renderSessionCard(item) {
-  var s = item.title && item.datetime ? item : sessionById(item.session || item.id);
+  var s = sessionById(item.session);
   if (!s) return '';
-  var cap = s.capacity != null ? s.capacity : s.seats;
-  var taken = s.booked != null ? s.booked : s.taken;
-  var left = Math.max(0, cap - taken);
-  var pct = cap ? Math.min(100, Math.round((taken / cap) * 100)) : 0;
-  var leadId = (s.leads && s.leads[0]) || s.lead;
-  var lead = author(leadId);
+  var left = Math.max(0, s.seats - s.taken);
+  var pct = Math.min(100, Math.round((s.taken / s.seats) * 100));
+  var lead = author(s.lead);
   return (
     '<article class="card feed-card kind-sess sess-card clickable" ' +
     cardClickAttrs('session', s.id) +
     '>' +
     '<div class="card-head">' +
     '<div class="date-chip" aria-hidden="true"><span class="d">' +
-    esc(s.date || '') +
+    esc(s.date) +
     '</span><span class="w">' +
-    esc(s.day || '') +
+    esc(s.day) +
     '</span></div>' +
     '<div class="meta"><div class="name">' +
     esc(s.title) +
     '</div><div class="sub">Session · ' +
-    esc(composeSessionWhen(s)) +
-    (lead && lead.name ? ' · ' + esc(lead.name) : '') +
+    esc(s.when) +
+    ' · ' +
+    esc(lead.name) +
     '</div></div></div>' +
     (s.pod ? '<div class="card-cats">' + catChip(s.pod, false) + '</div>' : '') +
     '<div class="sess-meta">' +
     '<span>' +
-    esc(placesLeftLabel(s)) +
+    left +
+    (left === 1 ? ' place left' : ' places left') +
     '</span>' +
-    '<div class="cap"><span class="cap-fill" style="width:' +
+    '<div class="cap"><span style="width:' +
     pct +
     '%"></span></div>' +
     '</div>' +
@@ -4793,26 +3835,25 @@ function renderSessionCard(item) {
     '">' +
     (left === 0 ? 'Join waitlist' : 'Book') +
     '</button>' +
-    cardChevron() +
+    exploreCta() +
     '</div></article>'
   );
 }
 
 function renderJourneyCard(item) {
-  var jid = item.journey || item.id;
-  var j = JOURNEYS[jid];
-  var a = author(jid);
+  var j = JOURNEYS[item.journey];
+  var a = author(item.journey);
   if (!j) return '';
   var bits = ['Journey'];
-  bits.push(credibilityLine(jid, false));
+  if (a.role) bits.push(a.role);
+  bits.push('Age ' + j.age);
   if (j.ongoing) bits.push('Ongoing');
-  var first = (j.model_steps && j.model_steps[0]) || (j.route && j.route[0]) || null;
-  var firstDid = first ? first.did || first.text || '' : j.hook;
   var cats = '';
-  if (j.topic || j.field) cats += catChip(j.topic || j.field, false);
+  if (j.field) cats += catChip(j.field, false);
+  if (a.pos) cats += catChip(a.pos, false);
   return (
     '<article class="card feed-card kind-journey journey-card clickable" ' +
-    cardClickAttrs('journey', jid) +
+    cardClickAttrs('journey', item.journey) +
     '>' +
     '<div class="card-head">' +
     '<span class="av gold">' +
@@ -4823,17 +3864,26 @@ function renderJourneyCard(item) {
     '</div><div class="sub">' +
     esc(bits.join(' · ')) +
     '</div></div>' +
-    followBtn(jid) +
+    '<button type="button" class="btn quiet follow-btn' +
+    (isFollowing(item.journey) ? ' following' : '') +
+    '" data-follow="' +
+    esc(item.journey) +
+    '">' +
+    (isFollowing(item.journey) ? 'Following' : 'Follow') +
+    '</button>' +
     '</div>' +
     (cats ? '<div class="card-cats">' + cats + '</div>' : '') +
     '<h3 class="hook">' +
-    esc(firstDid) +
+    esc(j.hook) +
     '</h3>' +
     '<p class="now-line">Now · ' +
     esc(j.now) +
     '</p>' +
     '<div class="engage">' +
-    cardChevron() +
+    '<button type="button" class="engage-btn" data-open="mentor" data-id="' +
+    esc(item.journey) +
+    '">Profile</button>' +
+    exploreCta() +
     '</div></article>'
   );
 }
@@ -4894,7 +3944,7 @@ function dupHintHtml(draft) {
   }
   return (
     '<div class="dup-box" id="dup-box">' +
-    '<p class="eyebrow">Two students asked something close to this in the last month</p>' +
+    '<p class="eyebrow">Someone already asked this</p>' +
     '<p class="serif"><strong>' +
     esc(item.title) +
     '</strong></p>' +
@@ -4912,528 +3962,55 @@ function dupHintHtml(draft) {
   );
 }
 
-function fieldError(name, errors) {
-  if (!errors || !errors[name]) return '';
-  return '<p class="field-error" data-error-for="' + esc(name) + '">' + esc(errors[name]) + '</p>';
-}
-
-function fieldHint(text) {
-  if (!text) return '';
-  return '<p class="field-hint">' + esc(text) + '</p>';
-}
-
-function optionList(values, selected) {
-  var html = '<option value="">Choose</option>';
+function renderComposerForm() {
   var i;
-  for (i = 0; i < values.length; i++) {
+  var html = '<div class="composer compose-panel" id="composer">';
+  html += '<div class="seg">';
+  html +=
+    '<button type="button" class="seg-btn' +
+    (S.ctype === 'question' ? ' on' : '') +
+    '" data-ctype="question">Ask a question</button>';
+  html +=
+    '<button type="button" class="seg-btn' +
+    (S.ctype === 'story' ? ' on' : '') +
+    '" data-ctype="story">Share a story</button>';
+  html += '</div>';
+  html +=
+    '<label class="sr" for="comp-text">' +
+    (S.ctype === 'question' ? 'Your question' : 'Your story') +
+    '</label>';
+  html +=
+    '<textarea id="comp-text" rows="5" placeholder="' +
+    (S.ctype === 'question'
+      ? 'What are you trying to decide?'
+      : 'What happened, and what did it change?') +
+    '">' +
+    esc(S.draft || '') +
+    '</textarea>';
+  html += '<div id="dup-slot">' + (S.ctype === 'question' ? dupHintHtml(S.draft || '') : '') + '</div>';
+  html += '<div class="composer-foot">';
+  html += '<label class="field-label" for="comp-cat">Category</label>';
+  html += '<select id="comp-cat" aria-label="Category">';
+  var selCat = S.draftCat || CATS[0];
+  for (i = 0; i < CATS.length; i++) {
     html +=
       '<option value="' +
-      esc(values[i]) +
+      esc(CATS[i]) +
       '"' +
-      (values[i] === selected ? ' selected' : '') +
+      (CATS[i] === selCat ? ' selected' : '') +
       '>' +
-      esc(values[i]) +
+      esc(CATS[i]) +
       '</option>';
   }
-  return html;
-}
-
-function composeErrors(d) {
-  var err = {};
-  var i;
-  var filled;
-  var lead;
-  var t;
-  if (!d) return { form: 'Nothing to post yet.' };
-  if (d.kind === 'question') {
-    t = (d.title || '').trim();
-    if (t.length < 15 || t.length > 140) err.title = 'Title needs 15 to 140 characters.';
-    else if (t.charAt(t.length - 1) !== '?') err.title = 'The title must end with a question mark.';
-    if (!d.topic) err.topic = 'Pick a topic.';
-    if (!d.stage) err.stage = 'Pick a stage.';
-  }
-  if (d.kind === 'story') {
-    t = (d.title || '').trim();
-    if (t.length < 20 || t.length > 120) err.title = 'Title needs 20 to 120 characters and should name a moment.';
-    if (!(d.turning_point || '').trim()) err.turning_point = 'Write the turning point.';
-    else if (d.turning_point.length > 200) err.turning_point = 'Turning point is 200 characters maximum.';
-    if ((d.body || '').trim().length < 300) err.body = 'The story body needs at least 300 characters.';
-    for (i = 0; i < 3; i++) {
-      if (!(d.takeaways[i] || '').trim()) err['takeaway' + i] = 'Write all three takeaways.';
-      else if (d.takeaways[i].length > 90) err['takeaway' + i] = 'Each takeaway is 90 characters maximum.';
-    }
-    if (!d.topic) err.topic = 'Pick a topic.';
-    if (!d.stage) err.stage = 'Pick the stage you were at.';
-  }
-  if (d.kind === 'journey') {
-    if (!d.steps || d.steps.length < 3 || d.steps.length > 7) err.steps = 'Use 3 to 7 steps.';
-    filled = 0;
-    if (d.steps) {
-      for (i = 0; i < d.steps.length; i++) {
-        if (d.steps[i].stage_or_age && d.steps[i].did && d.steps[i].led_to) filled += 1;
-        else err['step' + i] = 'Fill stage, what you did, and what it led to.';
-      }
-    }
-    if (filled < 3) err.steps = 'Each of at least 3 steps needs all three fields.';
-    if (!(d.now || '').trim()) err.now = 'Say what you do now.';
-    else if (d.now.length > 160) err.now = 'Now is 160 characters maximum.';
-    if (!d.topic) err.topic = 'Pick a topic.';
-    if (!d.stage) err.stage = 'Pick the entry stage.';
-  }
-  if (d.kind === 'opportunity') {
-    if (!(d.name || '').trim()) err.name = 'Name the opportunity.';
-    if (!(d.one_liner || '').trim()) err.one_liner = 'Write the one-liner.';
-    if ((d.what_it_is || '').trim().length < 150) err.what_it_is = 'Describe what it is in at least 150 characters.';
-    if (!(d.ages || '').trim()) err.ages = 'Who is it for, including ages.';
-    if (!d.stage && !(d.stages && d.stages.length)) err.stage = 'Pick at least one stage.';
-    if (!(d.regions || '').trim()) err.regions = 'Name the regions. Write Nationwide only when that is true.';
-    if (!(d.grade_requirement || '').trim()) err.grade_requirement = 'Grade requirement cannot be blank. Write None if there is none.';
-    if (!(d.cost || '').trim()) err.cost = 'Cost cannot be blank. Write No fee if there is none.';
-    if (!(d.when || '').trim()) err.when = 'Say when it runs.';
-    filled = 0;
-    if (d.how_to_get_in) {
-      for (i = 0; i < d.how_to_get_in.length; i++) {
-        if (d.how_to_get_in[i].title && d.how_to_get_in[i].detail) filled += 1;
-        else if (d.how_to_get_in[i].title || d.how_to_get_in[i].detail)
-          err['how' + i] = 'Each step needs a title and a detail.';
-      }
-    }
-    if (filled < 3 || filled > 5) err.how = 'Add 3 to 5 how-to-get-in steps, each with title and detail.';
-    if (!(d.where_it_leads || '').trim()) err.where_it_leads = 'Say where this leads.';
-    if (!(d.source_url || '').trim()) err.source_url = 'Add a source URL.';
-    if (!(d.source_type || '').trim()) err.source_type = 'Pick a source type.';
-    if (!(d.last_verified || '').trim()) err.last_verified = 'Add the date this was checked.';
-    if (!(d.verified_by || '').trim()) err.verified_by = 'Add the verifier initials.';
-    if (!(d.confidence || '').trim()) err.confidence = 'Pick confirmed or verify first.';
-    if (!d.topic) err.topic = 'Pick a topic.';
-  }
-  if (d.kind === 'session') {
-    if (!(d.title || '').trim()) err.title = 'Name the session.';
-    if (!(d.pod || '').trim()) err.pod = 'Pick a pod.';
-    if (!(d.datetime || '').trim()) err.datetime = 'Set the date and time.';
-    if (!d.duration_mins) err.duration_mins = 'Set the length in minutes.';
-    if (!(d.platform || '').trim()) err.platform = 'Name the platform.';
-    if ((d.what_it_covers || '').trim().length < 100) err.what_it_covers = 'Cover 100 to 400 characters.';
-    if (!(d.what_to_bring || '').trim()) err.what_to_bring = 'Say what to bring.';
-    if (!d.capacity) err.capacity = 'Set capacity.';
-    if (!d.leads || d.leads.length < 1 || d.leads.length > 3) err.leads = 'Assign 1 to 3 mentor leads.';
-    if (d.leads) {
-      for (i = 0; i < d.leads.length; i++) {
-        lead = author(d.leads[i]);
-        if (!lead || lead.role !== 'mentor') err.leads = 'Every lead must be a mentor. Collaborators cannot lead a session.';
-      }
-    }
-    if (!d.stage && !(d.stage_fit && d.stage_fit.length)) err.stage = 'Pick who this is for.';
-    if (!d.topic) err.topic = 'Pick a topic.';
-  }
-  return err;
-}
-
-function firstComposeError(err) {
-  var k;
-  for (k in err) {
-    if (err.hasOwnProperty(k)) return err[k];
-  }
-  return '';
-}
-
-function rankedTipsForDraft(d) {
-  var out = [];
-  var id;
-  var tip;
-  var score;
-  var i;
-  if (!d) return out;
-  for (id in TIPS) {
-    if (!TIPS.hasOwnProperty(id)) continue;
-    tip = TIPS[id];
-    if (tip.status !== 'published') continue;
-    score = 0;
-    if (d.topic && tip.topics && tip.topics.indexOf(d.topic) !== -1) score += 1;
-    if (d.stage && tip.stages && tip.stages.indexOf(d.stage) !== -1) score += 1;
-    if (score > 0) out.push({ tip: tip, score: score });
-  }
-  out.sort(function (a, b) {
-    return b.score - a.score;
-  });
-  for (i = 0; i < out.length; i++) out[i] = out[i].tip;
-  return out;
-}
-
-function kindLabel(kind) {
-  var map = {
-    question: 'Question',
-    story: 'Story',
-    journey: 'Journey',
-    opportunity: 'Opportunity',
-    session: 'Session'
-  };
-  return map[kind] || kind;
-}
-
-function substancePrompt(kind) {
-  if (kind === 'question') return 'What do you want to know? Be specific about your form and your region.';
-  if (kind === 'story') return 'What happened, and what would you do differently?';
-  if (kind === 'journey') return 'Start at the first thing you did. What did you do, and what did it lead to?';
-  if (kind === 'opportunity') return 'What is this opportunity, in plain language a Form 3 student can use?';
-  if (kind === 'session') return 'What will this session cover, and who should come?';
-  return '';
-}
-
-function renderComposerChooser() {
-  var offered = kindsForRole(S.role);
-  var html = '<div class="composer compose-panel" id="composer">';
-  var i;
-  html += '<p class="eyebrow">Prototype · posting as ' + esc(S.role) + '</p>';
-  html += '<h2>What are you posting?</h2>';
-  for (i = 0; i < offered.length; i++) {
-    html +=
-      '<button type="button" class="setup-opt" data-compose-kind="' +
-      esc(offered[i]) +
-      '"><strong>' +
-      esc(kindLabel(offered[i])) +
-      '</strong></button>';
-  }
-  html += '</div>';
-  return html;
-}
-
-function renderComposerForm() {
-  var d = draft();
-  var offered = kindsForRole(S.role);
-  var errors = S.composeTried || S.composeStep === 3 ? composeErrors(d) : {};
-  var reason = firstComposeError(errors);
-  var html;
-  var i;
-  var tips;
-  var tip;
-  var on;
-  var cautions;
-  if (offered.length > 1 && S.composeStep === 0) return renderComposerChooser();
-  html = '<div class="composer compose-panel" id="composer">';
-  html += '<p class="eyebrow">Prototype · posting as ' + esc(S.role) + ' · ' + esc(kindLabel(d.kind)) + '</p>';
-  html += '<div class="compose-steps" aria-hidden="true">';
-  html += '<i class="' + (S.composeStep >= 1 ? 'on' : '') + '"></i>';
-  html += '<i class="' + (S.composeStep >= 2 ? 'on' : '') + '"></i>';
-  html += '<i class="' + (S.composeStep >= 3 ? 'on' : '') + '"></i>';
-  html += '</div>';
-
-  if (S.composeStep === 1) {
-    html += '<h2>Substance</h2>';
-    html += '<p class="muted">' + esc(substancePrompt(d.kind)) + '</p>';
-    if (d.kind === 'question') {
-      html += '<label class="field-label" for="comp-title">Your question</label>';
-      html +=
-        '<textarea id="comp-title" data-draft="title" rows="5" placeholder="' +
-        esc(substancePrompt('question')) +
-        '">' +
-        esc(d.title) +
-        '</textarea>';
-      html += fieldError('title', errors);
-      html += '<div id="dup-slot">' + dupHintHtml(d.title || '') + '</div>';
-    } else if (d.kind === 'story') {
-      html += '<label class="field-label" for="comp-title">Title the moment</label>';
-      html +=
-        '<input id="comp-title" data-draft="title" type="text" placeholder="Name the week or the decision, not the topic" value="' +
-        esc(d.title) +
-        '"/>';
-      html += fieldError('title', errors);
-      html += '<label class="field-label" for="comp-text">What happened</label>';
-      html +=
-        '<textarea id="comp-text" data-draft="body" rows="8" placeholder="' +
-        esc(substancePrompt('story')) +
-        '">' +
-        esc(d.body) +
-        '</textarea>';
-      html += fieldError('body', errors);
-    } else if (d.kind === 'journey') {
-      html += '<label class="field-label" for="comp-text">The first move</label>';
-      html +=
-        '<textarea id="comp-text" data-draft="body" rows="6" placeholder="' +
-        esc(substancePrompt('journey')) +
-        '">' +
-        esc(d.body) +
-        '</textarea>';
-    } else if (d.kind === 'opportunity') {
-      html += '<label class="field-label" for="comp-name">Name</label>';
-      html += '<input id="comp-name" data-draft="name" type="text" value="' + esc(d.name) + '"/>';
-      html += fieldError('name', errors);
-      html += '<label class="field-label" for="comp-text">What it is</label>';
-      html +=
-        '<textarea id="comp-text" data-draft="what_it_is" rows="7" placeholder="' +
-        esc(substancePrompt('opportunity')) +
-        '">' +
-        esc(d.what_it_is) +
-        '</textarea>';
-      html += fieldError('what_it_is', errors);
-    } else {
-      html += '<label class="field-label" for="comp-title">Session title</label>';
-      html += '<input id="comp-title" data-draft="title" type="text" value="' + esc(d.title) + '"/>';
-      html += fieldError('title', errors);
-      html += '<label class="field-label" for="comp-text">What it covers</label>';
-      html +=
-        '<textarea id="comp-text" data-draft="what_it_covers" rows="6" placeholder="' +
-        esc(substancePrompt('session')) +
-        '">' +
-        esc(d.what_it_covers) +
-        '</textarea>';
-      html += fieldError('what_it_covers', errors);
-    }
-  }
-
-  if (S.composeStep === 2) {
-    html += '<h2>Structure</h2>';
-    if (d.kind === 'story') {
-      html += '<label class="field-label" for="comp-turn">Turning point</label>';
-      html +=
-        '<input id="comp-turn" data-draft="turning_point" type="text" maxlength="200" placeholder="The one sentence of what happened" value="' +
-        esc(d.turning_point) +
-        '"/>';
-      html += fieldError('turning_point', errors);
-      html += '<p class="field-label">Three takeaways</p>';
-      for (i = 0; i < 3; i++) {
-        html +=
-          '<input data-draft="takeaway" data-draft-index="' +
-          i +
-          '" type="text" maxlength="90" placeholder="Start with a verb" value="' +
-          esc(d.takeaways[i] || '') +
-          '"/>';
-        html += fieldError('takeaway' + i, errors);
-        if (d.takeaways[i] && !startsWithVerb(d.takeaways[i])) {
-          html += fieldHint('Start with a verb if you can. This is a nudge, not a block.');
-        }
-      }
-    } else if (d.kind === 'journey') {
-      html += '<p class="muted">3 to 7 steps. Each one is a stage, what you did, and what it led to.</p>';
-      for (i = 0; i < d.steps.length; i++) {
-        html += '<div class="compose-step-row">';
-        html += '<p class="eyebrow">Step ' + (i + 1) + '</p>';
-        html +=
-          '<input data-draft="step" data-draft-index="' +
-          i +
-          '" data-draft-key="stage_or_age" type="text" placeholder="Stage or age" value="' +
-          esc(d.steps[i].stage_or_age) +
-          '"/>';
-        html +=
-          '<input data-draft="step" data-draft-index="' +
-          i +
-          '" data-draft-key="did" type="text" placeholder="What you did" value="' +
-          esc(d.steps[i].did) +
-          '"/>';
-        html +=
-          '<input data-draft="step" data-draft-index="' +
-          i +
-          '" data-draft-key="led_to" type="text" placeholder="What it led to" value="' +
-          esc(d.steps[i].led_to) +
-          '"/>';
-        html += fieldError('step' + i, errors);
-        html += '</div>';
-      }
-      if (d.steps.length < 7) {
-        html += '<button type="button" class="btn sm g" data-add-step="1">Add a step</button>';
-      }
-      html += fieldError('steps', errors);
-      html += '<label class="field-label" for="comp-now">Now</label>';
-      html +=
-        '<input id="comp-now" data-draft="now" type="text" maxlength="160" placeholder="What you do today" value="' +
-        esc(d.now) +
-        '"/>';
-      html += fieldError('now', errors);
-      html += '<label class="field-label" for="comp-setback">Setback, optional</label>';
-      html +=
-        '<input id="comp-setback" data-draft="setback" type="text" maxlength="200" value="' +
-        esc(d.setback) +
-        '"/>';
-      html += '<label class="field-label" for="comp-routes">Other routes in, optional</label>';
-      html +=
-        '<input id="comp-routes" data-draft="other_routes" type="text" maxlength="200" value="' +
-        esc(d.other_routes) +
-        '"/>';
-    } else if (d.kind === 'opportunity') {
-      html += '<label class="field-label" for="comp-one">One-liner</label>';
-      html +=
-        '<input id="comp-one" data-draft="one_liner" type="text" maxlength="140" value="' +
-        esc(d.one_liner) +
-        '"/>';
-      html += fieldError('one_liner', errors);
-      html += '<label class="field-label" for="comp-ages">Ages / who it is for</label>';
-      html += '<input id="comp-ages" data-draft="ages" type="text" value="' + esc(d.ages) + '"/>';
-      html += fieldError('ages', errors);
-      html += '<label class="field-label" for="comp-regions">Regions</label>';
-      html += '<input id="comp-regions" data-draft="regions" type="text" value="' + esc(d.regions) + '"/>';
-      html += fieldError('regions', errors);
-      html += '<label class="field-label" for="comp-grade">Grade requirement</label>';
-      html +=
-        '<input id="comp-grade" data-draft="grade_requirement" type="text" placeholder="None is a valid answer" value="' +
-        esc(d.grade_requirement) +
-        '"/>';
-      html += fieldError('grade_requirement', errors);
-      html += '<label class="field-label" for="comp-cost">Cost</label>';
-      html +=
-        '<input id="comp-cost" data-draft="cost" type="text" placeholder="No fee is a valid answer" value="' +
-        esc(d.cost) +
-        '"/>';
-      html += fieldError('cost', errors);
-      html += '<label class="field-label" for="comp-when">When</label>';
-      html += '<input id="comp-when" data-draft="when" type="text" value="' + esc(d.when) + '"/>';
-      html += fieldError('when', errors);
-      html += '<p class="field-label">How to get in</p>';
-      for (i = 0; i < d.how_to_get_in.length; i++) {
-        html += '<div class="compose-step-row">';
-        html +=
-          '<input data-draft="how" data-draft-index="' +
-          i +
-          '" data-draft-key="title" type="text" placeholder="Step title" value="' +
-          esc(d.how_to_get_in[i].title) +
-          '"/>';
-        html +=
-          '<input data-draft="how" data-draft-index="' +
-          i +
-          '" data-draft-key="detail" type="text" placeholder="Step detail" value="' +
-          esc(d.how_to_get_in[i].detail) +
-          '"/>';
-        html += fieldError('how' + i, errors);
-        html += '</div>';
-      }
-      if (d.how_to_get_in.length < 5) {
-        html += '<button type="button" class="btn sm g" data-add-how="1">Add a step</button>';
-      }
-      html += fieldError('how', errors);
-      html += '<label class="field-label" for="comp-leads-to">Where it leads</label>';
-      html +=
-        '<input id="comp-leads-to" data-draft="where_it_leads" type="text" maxlength="200" value="' +
-        esc(d.where_it_leads) +
-        '"/>';
-      html += fieldError('where_it_leads', errors);
-      html += '<p class="field-label">Provenance</p>';
-      html += '<label class="field-label" for="comp-src">Source URL</label>';
-      html += '<input id="comp-src" data-draft="source_url" type="url" value="' + esc(d.source_url) + '"/>';
-      html += fieldError('source_url', errors);
-      html += '<label class="field-label" for="comp-srctype">Source type</label>';
-      html +=
-        '<select id="comp-srctype" data-draft="source_type">' +
-        optionList(['official', 'news', 'organisation'], d.source_type) +
-        '</select>';
-      html += fieldError('source_type', errors);
-      html += '<label class="field-label" for="comp-verified">Last verified</label>';
-      html += '<input id="comp-verified" data-draft="last_verified" type="date" value="' + esc(d.last_verified) + '"/>';
-      html += fieldError('last_verified', errors);
-      html += '<label class="field-label" for="comp-by">Verified by</label>';
-      html += '<input id="comp-by" data-draft="verified_by" type="text" value="' + esc(d.verified_by) + '"/>';
-      html += fieldError('verified_by', errors);
-      html += '<label class="field-label" for="comp-conf">Confidence</label>';
-      html +=
-        '<select id="comp-conf" data-draft="confidence">' +
-        optionList(['confirmed', 'verify_first'], d.confidence) +
-        '</select>';
-      html += fieldError('confidence', errors);
-    } else if (d.kind === 'session') {
-      html += '<label class="field-label" for="comp-pod">Pod</label>';
-      html += '<select id="comp-pod" data-draft="pod">' + optionList(PODS, d.pod) + '</select>';
-      html += fieldError('pod', errors);
-      html += '<label class="field-label" for="comp-dt">Date and time</label>';
-      html += '<input id="comp-dt" data-draft="datetime" type="datetime-local" value="' + esc(d.datetime) + '"/>';
-      html += fieldError('datetime', errors);
-      html += '<label class="field-label" for="comp-mins">Duration, minutes</label>';
-      html +=
-        '<input id="comp-mins" data-draft="duration_mins" type="number" min="15" value="' +
-        esc(String(d.duration_mins)) +
-        '"/>';
-      html += fieldError('duration_mins', errors);
-      html += '<label class="field-label" for="comp-plat">Platform</label>';
-      html += '<input id="comp-plat" data-draft="platform" type="text" value="' + esc(d.platform) + '"/>';
-      html += fieldError('platform', errors);
-      html += '<label class="field-label" for="comp-bring">What to bring</label>';
-      html += '<input id="comp-bring" data-draft="what_to_bring" type="text" value="' + esc(d.what_to_bring) + '"/>';
-      html += fieldError('what_to_bring', errors);
-      html += '<label class="field-label" for="comp-cap">Capacity</label>';
-      html += '<input id="comp-cap" data-draft="capacity" type="number" min="1" value="' + esc(String(d.capacity)) + '"/>';
-      html += fieldError('capacity', errors);
-      html += '<p class="field-label">Leads, mentors only</p>';
-      for (i in PEOPLE) {
-        if (!PEOPLE.hasOwnProperty(i)) continue;
-        if (PEOPLE[i].role !== 'mentor') continue;
-        on = d.leads.indexOf(i) !== -1;
-        html +=
-          '<label class="check"><input type="checkbox" data-draft-lead="' +
-          esc(i) +
-          '"' +
-          (on ? ' checked' : '') +
-          '/> ' +
-          esc(PEOPLE[i].name) +
-          '</label>';
-      }
-      html += fieldError('leads', errors);
-    }
-  }
-
-  if (S.composeStep === 3) {
-    html += '<h2>Tags and tips</h2>';
-    html += '<label class="field-label" for="comp-topic">Topic</label>';
-    html += '<select id="comp-topic" data-draft="topic">' + optionList(TOPICS, d.topic) + '</select>';
-    html += fieldError('topic', errors);
-    html +=
-      '<label class="field-label" for="comp-stage">' +
-      (d.kind === 'story' ? 'Stage at the time' : d.kind === 'journey' ? 'Entry stage' : 'Stage') +
-      '</label>';
-    html += '<select id="comp-stage" data-draft="stage">' + optionList(STAGE_TAGS, d.stage) + '</select>';
-    html += fieldError('stage', errors);
-    html += '<p class="field-label">Tips from the library</p>';
-    html += '<p class="muted">Full claim text. Pick up to four, and at most one caution.</p>';
-    tips = rankedTipsForDraft(d);
-    cautions = 0;
-    for (i = 0; i < d.tips.length; i++) {
-      tip = tipById(d.tips[i]);
-      if (tip && tip.type === 'caution') cautions += 1;
-    }
-    if (!tips.length) html += '<p class="muted">No published tips match these tags yet.</p>';
-    for (i = 0; i < tips.length; i++) {
-      tip = tips[i];
-      on = d.tips.indexOf(tip.id) !== -1;
-      html +=
-        '<label class="tip-pick tip-' +
-        esc(tip.type) +
-        '"><input type="checkbox" data-draft-tip="' +
-        esc(tip.id) +
-        '"' +
-        (on ? ' checked' : '') +
-        '/> <span>' +
-        esc(tip.text) +
-        '</span></label>';
-    }
-    html += '<button type="button" class="btn sm g" data-suggest-tip="1">Suggest a tip</button>';
-    html +=
-      '<div id="suggest-slot"' +
-      (S.suggestTip || S.suggestOpen ? '' : ' hidden') +
-      '><label class="field-label" for="comp-suggest">Suggested tip</label>' +
-      '<textarea id="comp-suggest" data-suggest-text="1" rows="3">' +
-      esc(S.suggestTip || '') +
-      '</textarea>' +
-      '<button type="button" class="btn sm" data-save-suggest="1">Send to the desk</button>' +
-      '<p class="muted" id="suggest-note" hidden>It goes to the desk for sourcing before it appears.</p></div>';
-    if (S.role === 'student') {
-      html +=
-        '<label class="check"><input type="checkbox" data-draft="anonymous"' +
-        (d.anonymous ? ' checked' : '') +
-        '/> Post without my name</label>';
-    }
-  }
-
-  html += '<div class="composer-foot">';
-  if (S.composeStep > 1 || (S.composeStep === 1 && offered.length > 1)) {
-    html += '<button type="button" class="btn g" data-compose-back="1">Back</button>';
-  }
-  if (S.composeStep < 3 && !(d.kind === 'question' && S.composeStep === 1)) {
-    html += '<button type="button" class="btn" data-compose-next="1">Continue</button>';
-  } else if (d.kind === 'question' && S.composeStep === 1) {
-    html += '<button type="button" class="btn" data-compose-next="1">Continue</button>';
-  } else {
-    html +=
-      '<button type="button" class="btn" id="comp-submit"' +
-      (reason ? ' disabled' : '') +
-      '>Post to the feed</button>';
-    if (reason) html += '<p class="field-error compose-block">' + esc(reason) + '</p>';
-  }
+  html += '</select>';
+  html +=
+    '<label class="check"><input type="checkbox" id="comp-anon"' +
+    (S.anon ? ' checked' : '') +
+    '/> Post without my name</label>';
+  html +=
+    '<button type="button" class="btn" id="comp-submit">' +
+    (S.ctype === 'question' ? 'Post question' : 'Share story') +
+    '</button>';
   html += '</div></div>';
   return html;
 }
@@ -6144,7 +4721,7 @@ function renderSessionMini(s) {
     '<h3>' +
     esc(s.title) +
     '</h3><p class="muted">' +
-    esc(composeSessionWhen(s)) +
+    esc(s.when) +
     ' · ' +
     left +
     ' left</p>' +
@@ -6157,673 +4734,19 @@ function renderSessionMini(s) {
 
 function mentorRow(id, reason) {
   var a = author(id);
-  var action = isContactable(id)
-    ? ''
-    : '<span class="row-link">Read their story</span>';
   return (
     '<button type="button" class="card mentor-row clickable" data-open="mentor" data-id="' +
     esc(id) +
     '">' +
     avatarHtml(a, false) +
-    '<div class="grow"><strong>' +
+    '<div><strong>' +
     esc(a.name) +
     '</strong><p class="muted">' +
-    esc(credibilityLine(id, false) || a.pos || '') +
-    '</p>' +
-    (reason ? '<p class="reason">' + esc(reason) + '</p>' : '') +
-    (action ? '<p class="row-link">' + action + '</p>' : '') +
-    '</div></button>'
+    esc(a.pos) +
+    '</p><p class="reason">' +
+    esc(reason || '') +
+    '</p></div></button>'
   );
-}
-
-function postModel(kind, id) {
-  var item;
-  var o;
-  var s;
-  var j;
-  var a;
-  var p;
-  var i;
-  if (kind === 'question' || kind === 'thread') {
-    item = feedById(id);
-    if (!item) return null;
-    p = {
-      id: item.id,
-      kind: 'question',
-      openKind: 'thread',
-      author: item.author || null,
-      anonymous: item.anonymous !== false && (!!item.anon || !item.author),
-      who: item.who,
-      time: item.time,
-      title: item.title,
-      body: item.body || '',
-      topic: item.topic || item.cat,
-      stage: item.stage_asked || item.stage,
-      decision: item.decision || '',
-      constraints: item.constraints || [],
-      replies: item.replies || [],
-      similar_count: item.similar_count || item.asks || 0,
-      takeaways: item.takeaways || [],
-      tips: item.tips || [],
-      related: {
-        questions: item.rel || [],
-        opportunities: item.opp ? [item.opp] : [],
-        sessions: item.sess ? [item.sess] : []
-      },
-      mine: !!item.mine,
-      raw: item
-    };
-    return p;
-  }
-  if (kind === 'story') {
-    item = feedById(id);
-    if (!item) return null;
-    return {
-      id: item.id,
-      kind: 'story',
-      openKind: 'story',
-      author: item.author,
-      anonymous: !!item.anon,
-      time: item.time,
-      title: item.title,
-      turning_point: item.turning_point,
-      body: item.body || [],
-      topic: item.topic || item.cat,
-      stage: item.stage_at_time || item.stage,
-      decision: item.decision || '',
-      constraints: [],
-      takeaways: item.takeaways || [],
-      tips: item.tips || [],
-      honest_note: item.honest_note || '',
-      related: {
-        questions: item.rel || [],
-        opportunities: item.opp ? [item.opp] : [],
-        sessions: item.sess ? [item.sess] : []
-      },
-      mine: !!item.mine,
-      raw: item
-    };
-  }
-  if (kind === 'opportunity' || kind === 'opp') {
-    o = OPPS[id];
-    if (!o) return null;
-    return {
-      id: o.id,
-      kind: 'opportunity',
-      openKind: 'opp',
-      author: 'desk',
-      title: o.name,
-      name: o.name,
-      one_liner: o.one_liner || o.one,
-      what_it_is: o.what || [],
-      topic: o.topic || o.cat,
-      stage: o.stage,
-      constraints: o.constraints || [],
-      ages: o.ages || o.who,
-      grade_requirement: o.grade_requirement || '',
-      cost: o.cost,
-      when: o.when || o.season,
-      how_to_get_in: o.how_to_get_in || [],
-      where_it_leads: o.where_it_leads || o.leads,
-      tips: o.library_tips || [],
-      source_url: o.source_url,
-      source_type: o.source_type,
-      last_verified: o.last_verified,
-      verified_by: o.verified_by,
-      confidence: o.confidence,
-      related: {
-        opportunities: o.rel || [],
-        sessions: o.sess || [],
-        people: o.mentors || []
-      },
-      raw: o
-    };
-  }
-  if (kind === 'session') {
-    s = sessionById(id);
-    if (!s) return null;
-    return {
-      id: s.id,
-      kind: 'session',
-      openKind: 'session',
-      author: (s.leads && s.leads[0]) || s.lead,
-      title: s.title,
-      topic: s.topic || s.cat,
-      stage: (s.stage_fit && s.stage_fit[0]) || '',
-      constraints: [],
-      pod: s.pod,
-      datetime: s.datetime,
-      duration_mins: s.duration_mins,
-      platform: s.platform,
-      when: composeSessionWhen(s),
-      what_it_covers: s.what_it_covers || s.what,
-      what_to_bring: s.what_to_bring || s.bring,
-      capacity: s.capacity != null ? s.capacity : s.seats,
-      booked: s.booked != null ? s.booked : s.taken,
-      leads: s.leads || (s.lead ? [s.lead] : []),
-      stage_fit: s.stage_fit || [],
-      submitted_questions: s.submitted_questions || s.qs || [],
-      tips: s.library_tips || [],
-      related: { opportunities: s.covers_opportunities || [] },
-      raw: s
-    };
-  }
-  if (kind === 'journey') {
-    j = JOURNEYS[id];
-    a = author(id);
-    if (!j) return null;
-    return {
-      id: id,
-      kind: 'journey',
-      openKind: 'journey',
-      author: id,
-      title: a.name,
-      topic: j.topic || j.field,
-      stage: j.entry_stage,
-      constraints: [],
-      steps: j.model_steps || [],
-      now: j.now,
-      setback: j.setback || '',
-      other_routes: j.other_routes || '',
-      tips: j.library_tips || [],
-      quote: j.quote,
-      related: { journeys: [] },
-      raw: j
-    };
-  }
-  return null;
-}
-
-function selectedTips(p, zone) {
-  var out = [];
-  var i;
-  var tip;
-  var list = p.tips || [];
-  var cautionCount = 0;
-  if (p.kind === 'opportunity' && p.confidence === 'verify_first') {
-    list = ['calendars-shift'].concat(list);
-  }
-  for (i = 0; i < list.length; i++) {
-    tip = typeof list[i] === 'string' ? tipById(list[i]) : list[i];
-    if (!tip || tip.status !== 'published') continue;
-    if (tip.type === 'caution') {
-      if (cautionCount >= 1) continue;
-      cautionCount += 1;
-      if (zone === 1 && tip.eligibility) out.push(tip);
-      if (zone === 4 && !tip.eligibility) out.push(tip);
-    } else if (zone === 4) {
-      out.push(tip);
-    }
-    if (out.length >= 4) break;
-  }
-  return out;
-}
-
-function renderTipCard(tip) {
-  if (!tip) return '';
-  return (
-    '<div class="tip-card tip-' +
-    esc(tip.type) +
-    '"><p class="eyebrow">' +
-    esc(tip.type.replace('_', ' ')) +
-    '</p><p>' +
-    esc(tip.text) +
-    '</p></div>'
-  );
-}
-
-function renderHeader(p) {
-  var html = '<div class="zone zone-header">';
-  var anon = !!p.anonymous;
-  var a = p.author ? author(p.author) : null;
-  var name = anon ? p.who || studentLabel() : a ? a.name : '';
-  var left;
-  html += '<div class="card-head">';
-  html += avatarHtml(a, anon || !p.author);
-  html += '<div class="meta grow"><div class="name">' + esc(name) + '</div>';
-  html += '<div class="sub">' + esc(credibilityLine(p.author, anon, p.who)) + '</div></div>';
-  if (p.author && isContactable(p.author) && !anon) html += followBtn(p.author);
-  if (p.kind === 'opportunity') {
-    html +=
-      '<button type="button" class="btn quiet" data-save="' +
-      esc(p.id) +
-      '">' +
-      (isSaved(p.id) ? 'Saved' : 'Save for later') +
-      '</button>';
-  }
-  html += '</div>';
-  html += '<p class="eyebrow">' + esc(kindLabel(p.kind)) + (p.time ? ' · ' + esc(p.time) : '') + '</p>';
-  html += '<h2 class="t25">' + esc(p.title || p.name) + '</h2>';
-  html += '<div class="pill-row">';
-  if (p.topic) html += pill(p.topic, 'dot', 'data-topic="' + esc(p.topic) + '"');
-  if (p.stage) html += '<span class="p blue">' + esc(p.stage) + '</span>';
-  html += '</div>';
-  if (p.kind === 'opportunity' || p.kind === 'session') {
-    html += '<div class="facts4">';
-    if (p.kind === 'opportunity') {
-      html +=
-        '<div><p class="eyebrow">When</p><p>' +
-        esc(p.when || 'Not listed') +
-        '</p></div><div><p class="eyebrow">Cost</p><p>' +
-        esc(p.cost || 'Not listed') +
-        '</p></div><div><p class="eyebrow">Who it is for</p><p>' +
-        esc(p.ages || 'Not listed') +
-        '</p></div><div><p class="eyebrow">Grade requirement</p><p>' +
-        esc(p.grade_requirement || 'Not listed') +
-        '</p></div>';
-    } else {
-      left = Math.max(0, p.capacity - p.booked);
-      html +=
-        '<div><p class="eyebrow">When</p><p>' +
-        esc(p.when) +
-        '</p></div><div><p class="eyebrow">Places</p><p>' +
-        esc(placesLeftLabel(p.raw || p)) +
-        '</p></div><div><p class="eyebrow">What to bring</p><p>' +
-        esc(p.what_to_bring || '') +
-        '</p></div><div><p class="eyebrow">Pod</p><p>' +
-        esc(p.pod || '') +
-        '</p></div>';
-    }
-    html += '</div>';
-  }
-  html += selectedTips(p, 1)
-    .map(function (tip) {
-      return renderTipCard(tip);
-    })
-    .join('');
-  html += '</div>';
-  return html;
-}
-
-function renderSubstance(p) {
-  var html = '';
-  var i;
-  var step;
-  var r;
-  var ra;
-  var paras;
-  if (p.kind === 'question') {
-    html += '<div class="zone zone-substance">';
-    if (p.body) html += '<p>' + esc(p.body) + '</p>';
-    html +=
-      '<p class="reply-label">' +
-      (p.replies ? p.replies.length : 0) +
-      ' replies, in the order they were written</p>';
-    for (i = 0; i < (p.replies || []).length; i++) {
-      r = p.replies[i];
-      ra = r.a ? author(r.a) : { name: r.who || 'Student', init: '?', pos: '', system: true };
-      html +=
-        '<div class="card reply-card" id="reply-' +
-        esc(r.id || '') +
-        '">' +
-        avatarHtml(ra, !r.a) +
-        '<div class="reply-body grow"><strong>' +
-        esc(ra.name) +
-        '</strong><p class="muted">' +
-        esc(r.a ? credibilityLine(r.a, false) : ra.pos || '') +
-        '</p><p>' +
-        esc(r.text) +
-        '</p>';
-      if (r.a && isContactable(r.a)) {
-        html +=
-          '<div class="flag-row"><button type="button" class="btn sm g" data-open="mentor" data-id="' +
-          esc(r.a) +
-          '">Profile</button></div>';
-      } else if (r.a) {
-        html +=
-          '<div class="flag-row"><button type="button" class="btn sm g" data-open="journey" data-id="' +
-          esc(r.a) +
-          '">Read their story</button></div>';
-      }
-      if (r.mine) {
-        html +=
-          '<button type="button" class="btn q" data-del-reply="' +
-          esc(p.id) +
-          '" data-rid="' +
-          esc(r.id) +
-          '">Delete reply</button>';
-      }
-      html += '</div></div>';
-    }
-    html +=
-      '<div class="card reply-composer"><label class="field-label" for="thread-reply">Add a reply</label>' +
-      '<textarea id="thread-reply" rows="3" placeholder="One clear point is enough"></textarea>' +
-      '<button type="button" class="btn sm" data-thread-reply="' +
-      esc(p.id) +
-      '">Post reply</button></div></div>';
-    return html;
-  }
-  if (p.kind === 'story') {
-    html += '<div class="zone zone-substance card article">';
-    paras = p.body || [];
-    for (i = 0; i < paras.length; i++) {
-      html += '<p' + (i === 0 ? ' class="drop"' : '') + '>' + esc(paras[i]) + '</p>';
-    }
-    if (p.honest_note) html += '<p class="honest-note">' + esc(p.honest_note) + '</p>';
-    html += '</div>';
-    return html;
-  }
-  if (p.kind === 'journey') {
-    html += '<div class="zone zone-substance">';
-    if (p.quote) html += '<blockquote class="quote">' + esc(p.quote) + '</blockquote>';
-    html += '<ol class="journey-steps">';
-    for (i = 0; i < (p.steps || []).length; i++) {
-      step = p.steps[i];
-      html +=
-        '<li><p class="eyebrow">' +
-        esc(i === 0 ? 'THEN · ' + (step.stage_or_age || '') : step.stage_or_age || '') +
-        '</p><p>' +
-        esc(step.did) +
-        '</p><p class="muted">' +
-        esc(step.led_to) +
-        '</p></li>';
-    }
-    html += '</ol>';
-    if (p.now) {
-      html += '<p class="now-line"><span class="eyebrow">NOW</span> ' + esc(p.now) + '</p>';
-    }
-    if (p.setback) {
-      html +=
-        '<p class="setback"><span class="eyebrow">Setback</span> ' + esc(p.setback) + '</p>';
-    }
-    if (p.other_routes) html += '<p class="muted">' + esc(p.other_routes) + '</p>';
-    html += '</div>';
-    return html;
-  }
-  if (p.kind === 'opportunity') {
-    html += '<div class="zone zone-substance">';
-    html += '<section><h3>What it actually is</h3>';
-    if (p.what_it_is && p.what_it_is.length) {
-      if (typeof p.what_it_is === 'string') html += '<p>' + esc(p.what_it_is) + '</p>';
-      else {
-        for (i = 0; i < p.what_it_is.length; i++) html += '<p>' + esc(p.what_it_is[i]) + '</p>';
-      }
-    }
-    html += '</section>';
-    if (p.how_to_get_in && p.how_to_get_in.length) {
-      html += '<section><h3>How you actually get in</h3><ol class="steps-ol">';
-      for (i = 0; i < p.how_to_get_in.length; i++) {
-        html +=
-          '<li><strong class="step-title">' +
-          esc(p.how_to_get_in[i].title) +
-          '</strong><span class="step-detail">' +
-          esc(p.how_to_get_in[i].detail) +
-          '</span></li>';
-      }
-      html += '</ol></section>';
-    }
-    if (p.where_it_leads) {
-      html += '<section><h3>Where this leads</h3><p>' + esc(p.where_it_leads) + '</p></section>';
-    }
-    html += '</div>';
-    return html;
-  }
-  if (p.kind === 'session') {
-    html += '<div class="zone zone-substance">';
-    if (p.what_it_covers) html += '<p>' + esc(p.what_it_covers) + '</p>';
-    if (p.submitted_questions && p.submitted_questions.length) {
-      html += '<section><h3>Questions already submitted</h3><ul class="q-list">';
-      for (i = 0; i < p.submitted_questions.length; i++) {
-        html += '<li><span class="qmark">?</span>' + esc(p.submitted_questions[i]) + '</li>';
-      }
-      html += '</ul></section>';
-    }
-    html += '</div>';
-    return html;
-  }
-  return '';
-}
-
-function renderTakeaway(p) {
-  var html;
-  var i;
-  if (!p.takeaways || !p.takeaways.length) return '';
-  html = '<div class="zone zone-takeaway"><section><h3>What to take from it</h3><ul class="tips">';
-  for (i = 0; i < p.takeaways.length && i < 3; i++) {
-    html += '<li>' + iconCheck() + ' ' + esc(p.takeaways[i]) + '</li>';
-  }
-  html += '</ul></section></div>';
-  return html;
-}
-
-function renderTips(p) {
-  var tips = selectedTips(p, 4);
-  var html;
-  var i;
-  var myths = [];
-  var rest = [];
-  if (!tips.length) return '';
-  for (i = 0; i < tips.length; i++) {
-    if (tips[i].type === 'myth') myths.push(tips[i]);
-    else rest.push(tips[i]);
-  }
-  tips = myths.concat(rest);
-  html = '<div class="zone zone-tips"><section><h3>Tips</h3>';
-  for (i = 0; i < tips.length; i++) html += renderTipCard(tips[i]);
-  html += '</section></div>';
-  return html;
-}
-
-function renderProvenance(p) {
-  var html = '';
-  var i;
-  var seen;
-  var id;
-  if (p.kind === 'opportunity' || p.kind === 'session') {
-    if (!p.source_url && !p.last_verified && !p.verified_by && p.kind === 'opportunity') return '';
-    html += '<div class="zone zone-provenance"><section><h3>How we know</h3>';
-    if (p.source_url) {
-      html +=
-        '<p><a href="' +
-        esc(p.source_url) +
-        '" target="_blank" rel="noopener">' +
-        esc(p.source_url) +
-        '</a></p>';
-    }
-    if (p.source_type) html += '<p class="muted">' + esc(p.source_type) + '</p>';
-    if (p.last_verified) html += '<p>' + esc(formatChecked(p.last_verified)) + '</p>';
-    if (p.verified_by) html += '<p class="muted">Verified by Next Step · ' + esc(p.verified_by) + '</p>';
-    if (p.kind === 'session' && p.leads && p.leads.length) {
-      html += '<div class="author-rows">';
-      for (i = 0; i < p.leads.length; i++) html += authorCard(p.leads[i]);
-      html += '</div>';
-    }
-    html += '</section></div>';
-    return html;
-  }
-  if (p.kind === 'story' || p.kind === 'journey') {
-    if (!p.author) return '';
-    html += '<div class="zone zone-provenance"><section><h3>The person behind it</h3>';
-    html += authorCard(p.author);
-    html += '</section></div>';
-    return html;
-  }
-  if (p.kind === 'question') {
-    seen = {};
-    html += '<div class="zone zone-provenance"><section><h3>Who answered</h3>';
-    i = 0;
-    for (id = 0; id < (p.replies || []).length; id++) {
-      if (p.replies[id].a && !seen[p.replies[id].a]) {
-        seen[p.replies[id].a] = true;
-        html += authorCard(p.replies[id].a);
-        i += 1;
-      }
-    }
-    if (!i) return '';
-    html += '</section></div>';
-    return html;
-  }
-  return '';
-}
-
-function authorCard(id) {
-  var a = author(id);
-  var open = JOURNEYS[id] ? 'journey' : 'mentor';
-  var label = isContactable(id) ? 'Profile' : 'Read their story';
-  return (
-    '<div class="card author-row">' +
-    avatarHtml(a, false) +
-    '<div class="grow"><strong>' +
-    esc(a.name) +
-    '</strong><p class="muted">' +
-    esc(credibilityLine(id, false)) +
-    '</p></div>' +
-    '<button type="button" class="btn sm g" data-open="' +
-    esc(open) +
-    '" data-id="' +
-    esc(id) +
-    '">' +
-    esc(label) +
-    '</button></div>'
-  );
-}
-
-function renderConnected(p) {
-  var html = '<div class="zone zone-connected">';
-  var blocks = '';
-  var i;
-  var rel;
-  var o;
-  var s;
-  var count;
-  var left;
-  var primary = '';
-  if (p.related && p.related.questions && p.related.questions.length) {
-    count = 0;
-    rel = '<section><h3>Related questions</h3>';
-    for (i = 0; i < p.related.questions.length; i++) {
-      o = feedById(p.related.questions[i]);
-      if (!o || o.kind !== 'question') continue;
-      count += 1;
-      rel +=
-        '<button type="button" class="card clickable row-btn" data-open="thread" data-id="' +
-        esc(o.id) +
-        '">' +
-        esc(o.title) +
-        '</button>';
-    }
-    if (count) blocks += rel + '</section>';
-  }
-  if (p.related && p.related.opportunities && p.related.opportunities.length) {
-    count = 0;
-    rel = '<section><h3>Related opportunities</h3>';
-    for (i = 0; i < p.related.opportunities.length; i++) {
-      o = OPPS[p.related.opportunities[i]];
-      if (!o) continue;
-      count += 1;
-      rel += miniOpp(o);
-    }
-    if (count) blocks += rel + '</section>';
-  }
-  if (p.related && p.related.sessions && p.related.sessions.length) {
-    count = 0;
-    rel = '<section><h3>Sessions that cover it</h3>';
-    for (i = 0; i < p.related.sessions.length; i++) {
-      s = sessionById(p.related.sessions[i]);
-      if (!s) continue;
-      count += 1;
-      rel += renderSessionMini(s);
-    }
-    if (count) blocks += rel + '</section>';
-  }
-  if (p.kind === 'story' && p.author) {
-    count = 0;
-    rel = '<section><h3>More from ' + esc(author(p.author).name.split(' ')[0]) + '</h3>';
-    for (i = 0; i < FEED.length; i++) {
-      if (FEED[i].kind === 'story' && FEED[i].author === p.author && FEED[i].id !== p.id) {
-        count += 1;
-        rel +=
-          '<button type="button" class="card clickable row-btn" data-open="story" data-id="' +
-          esc(FEED[i].id) +
-          '">' +
-          esc(FEED[i].title) +
-          '</button>';
-      }
-    }
-    if (count) blocks += rel + '</section>';
-  }
-  if (p.kind === 'journey') {
-    count = 0;
-    rel = '<section><h3>Other journeys</h3>';
-    for (i in JOURNEYS) {
-      if (!JOURNEYS.hasOwnProperty(i) || i === p.id) continue;
-      count += 1;
-      rel +=
-        '<button type="button" class="card clickable row-btn" data-open="journey" data-id="' +
-        esc(i) +
-        '">' +
-        esc(author(i).name) +
-        ' · ' +
-        esc(JOURNEYS[i].field) +
-        '</button>';
-    }
-    if (count) blocks += rel + '</section>';
-  }
-  html += blocks;
-  if (p.kind === 'opportunity') {
-    primary =
-      '<button type="button" class="btn" data-take-opp="' +
-      esc(p.id) +
-      '">Add to my pathway</button>';
-  } else if (p.kind === 'story' && p.takeaways && p.takeaways.length) {
-    primary =
-      '<button type="button" class="btn" data-take-story="' +
-      esc(p.id) +
-      '">Add to my pathway</button>';
-  } else if (p.kind === 'journey') {
-    primary =
-      '<button type="button" class="btn" data-jstep-all="' +
-      esc(p.id) +
-      '">Add to my pathway</button>';
-  } else if (p.kind === 'session') {
-    left = Math.max(0, p.capacity - p.booked);
-    primary =
-      '<button type="button" class="btn" data-open="book" data-id="' +
-      esc(p.id) +
-      '">' +
-      (S.booked.indexOf(p.id) !== -1 ? 'Manage booking' : left === 0 ? 'Join waitlist' : 'Book a place') +
-      '</button>';
-  } else if (p.kind === 'question' && p.related && p.related.opportunities && p.related.opportunities[0]) {
-    primary =
-      '<button type="button" class="btn" data-take-opp="' +
-      esc(p.related.opportunities[0]) +
-      '">Add to my pathway</button>';
-  }
-  if (primary) html += '<div class="zone-next">' + primary + '</div>';
-  html += '</div>';
-  if (!blocks && !primary) return '';
-  return html;
-}
-
-function viewDetail(kind, id) {
-  var p = postModel(kind, id);
-  var labels = {
-    question: 'Question',
-    story: 'Story',
-    opportunity: 'Opportunity',
-    session: 'Session',
-    journey: 'Journey'
-  };
-  var html;
-  if (!p) return { crumb: labels[kind] || 'Post', title: 'Missing', html: '<p>Not found.</p>' };
-  if (kind === 'question' || kind === 'thread') {
-    ensureReplyIds(p.raw);
-    if (p.raw.mine && p.raw.newReply) {
-      p.raw.newReply = false;
-      if (S.unread > 0) S.unread -= 1;
-    }
-  }
-  pushRecent(p.openKind, p.id, p.title || p.name);
-  html =
-    '<div class="detail">' +
-    renderHeader(p) +
-    renderSubstance(p) +
-    renderTakeaway(p) +
-    renderTips(p) +
-    renderProvenance(p) +
-    renderConnected(p) +
-    '</div>';
-  return { crumb: labels[p.kind] || 'Post', title: p.title || p.name, html: html };
 }
 
 function similarReason(id) {
@@ -6840,7 +4763,138 @@ function similarReason(id) {
 /* ---------- DETAIL VIEWS ---------- */
 
 function viewThread(v) {
-  return viewDetail('question', v.id);
+  var item = feedById(v.id);
+  if (!item) return { crumb: 'Thread', title: 'Missing', html: '<p>Not found.</p>' };
+  ensureReplyIds(item);
+  if (item.mine && item.newReply) {
+    item.newReply = false;
+    if (S.unread > 0) S.unread -= 1;
+  }
+  pushRecent('thread', item.id, item.title);
+  var anon = !!item.anon || !item.author;
+  var a = item.author ? author(item.author) : null;
+  var name = anon ? item.who || youName() : a && a.name ? a.name : youName();
+  var html = '<div class="detail">';
+  html +=
+    '<div class="card"><div class="card-head">' +
+    avatarHtml(a, anon) +
+    '<div class="meta"><div class="name">' +
+    esc(name) +
+    '</div><div class="sub">' +
+    esc(item.time || '') +
+    '</div></div></div>';
+  html +=
+    '<p class="muted">' +
+    (item.asks || 0) +
+    ' students asked something like this</p>';
+  html += '<h2 class="t25">' + esc(item.title) + '</h2>';
+  html +=
+    '<div class="pill-row">' +
+    pill(item.cat, 'dot', 'data-topic="' + esc(item.cat) + '"') +
+    '<span class="p blue">Asked at ' +
+    esc(item.askedAt || 'Form 3') +
+    '</span></div>';
+  if (item.mine) {
+    html +=
+      '<div class="flag-row"><button type="button" class="btn q" data-edit="' +
+      esc(item.id) +
+      '">Edit</button><button type="button" class="btn q" data-del="' +
+      esc(item.id) +
+      '">Delete</button></div>';
+  }
+  html += '</div>';
+  html +=
+    '<p class="reply-label">' +
+    (item.replies ? item.replies.length : 0) +
+    ' replies, in the order they were written</p>';
+  var i, r, ra;
+  for (i = 0; i < (item.replies || []).length; i++) {
+    r = item.replies[i];
+    ra = r.a ? author(r.a) : { name: r.who || 'Student', init: '?', pos: '', system: true };
+    html +=
+      '<div class="card reply-card" id="reply-' +
+      esc(r.id) +
+      '">' +
+      avatarHtml(ra, !r.a) +
+      '<div class="reply-body"><strong>' +
+      esc(ra.name) +
+      '</strong><p class="muted">' +
+      esc(ra.pos || '') +
+      '</p><p>' +
+      esc(r.text) +
+      '</p><div class="flag-row">';
+    if (r.a) {
+      html +=
+        '<button type="button" class="btn sm g" data-open="mentor" data-id="' +
+        esc(r.a) +
+        '">Profile</button>';
+    }
+    if (r.mine) {
+      html +=
+        '<button type="button" class="btn q" data-del-reply="' +
+        esc(item.id) +
+        '" data-rid="' +
+        esc(r.id) +
+        '">Delete reply</button>';
+    }
+    html += '</div></div></div>';
+  }
+  html +=
+    '<div class="card reply-composer"><label class="field-label" for="thread-reply">Add a reply</label>' +
+    '<textarea id="thread-reply" rows="3" placeholder="One clear point is enough"></textarea>' +
+    '<button type="button" class="btn sm" data-thread-reply="' +
+    esc(item.id) +
+    '">Post reply</button></div>';
+  if (item.opp && OPPS[item.opp]) {
+    html += miniOpp(OPPS[item.opp]);
+  }
+  if (item.sess) {
+    var ss = sessionById(item.sess);
+    if (ss) html += renderSessionMini(ss);
+  }
+  var answered = false;
+  html += '<section><h3>Who answered</h3>';
+  var seen = {};
+  for (i = 0; i < (item.replies || []).length; i++) {
+    if (item.replies[i].a && !seen[item.replies[i].a]) {
+      seen[item.replies[i].a] = true;
+      answered = true;
+      html += mentorRow(item.replies[i].a, '');
+    }
+  }
+  if (!answered) html += '<p class="muted">No mentor replies yet.</p>';
+  html += '</section>';
+  html += '<section><h3>Students asked these next</h3>';
+  var nextN = 0;
+  for (i = 0; i < (item.rel || []).length; i++) {
+    var rel = feedById(item.rel[i]);
+    if (rel) {
+      nextN++;
+      html +=
+        '<button type="button" class="card clickable row-btn" data-open="thread" data-id="' +
+        esc(rel.id) +
+        '">' +
+        esc(rel.title) +
+        '</button>';
+    }
+  }
+  for (i = 0; i < FEED.length; i++) {
+    if (FEED[i].kind === 'question' && FEED[i].cat === item.cat && FEED[i].id !== item.id) {
+      nextN++;
+      html +=
+        '<button type="button" class="card clickable row-btn" data-open="thread" data-id="' +
+        esc(FEED[i].id) +
+        '">' +
+        esc(FEED[i].title) +
+        '</button>';
+      break;
+    }
+  }
+  if (!nextN) html += '<p class="muted">No related questions yet.</p>';
+  html += '</section>';
+  html += askAboutBlock('About ' + item.title + ': ', item.cat);
+  html += '</div>';
+  return { crumb: 'Question', title: item.title, html: html };
 }
 
 function miniOpp(o) {
@@ -6856,15 +4910,287 @@ function miniOpp(o) {
 }
 
 function viewStory(v) {
-  return viewDetail('story', v.id);
+  var item = feedById(v.id);
+  if (!item) return { crumb: 'Story', title: 'Missing', html: '<p>Not found.</p>' };
+  pushRecent('story', item.id, item.title);
+  var mine = !!item.mine;
+  var anon = !!item.anon;
+  var a = !mine && item.author ? author(item.author) : null;
+  var j = !mine && item.author ? JOURNEYS[item.author] : null;
+  var name = mine ? (anon ? studentLabel() : youName()) : a.name;
+  var pos = mine ? '' : a.pos || '';
+  var html = '<div class="detail">';
+  html +=
+    '<div class="card"><div class="card-head">' +
+    avatarHtml(a, mine || anon) +
+    '<div class="meta"><div class="name">' +
+    esc(name) +
+    '</div><div class="sub">' +
+    esc(pos) +
+    '</div></div>';
+  if (!mine && a) {
+    html +=
+      '<button type="button" class="btn sm g" data-follow="' +
+      esc(item.author) +
+      '">' +
+      (isFollowing(item.author) ? 'Following' : 'Follow') +
+      '</button>';
+  }
+  html +=
+    '</div>' +
+    '<h2 class="t27">' +
+    esc(item.title) +
+    '</h2>' +
+    pill(item.cat, 'dot', 'data-topic="' + esc(item.cat) + '"');
+  if (mine) {
+    html +=
+      '<div class="flag-row"><span class="p green">Your post</span>' +
+      (item.edited ? '<span class="p">Edited</span>' : '') +
+      '<button type="button" class="btn q" data-edit="' +
+      esc(item.id) +
+      '">Edit</button>' +
+      '<button type="button" class="btn q" data-del="' +
+      esc(item.id) +
+      '">Delete</button></div>';
+  }
+  html += '</div>';
+  html += '<div class="card article">';
+  var i;
+  for (i = 0; i < item.body.length; i++) {
+    html += '<p' + (i === 0 ? ' class="drop"' : '') + '>' + esc(item.body[i]) + '</p>';
+  }
+  html +=
+    '<button type="button" class="btn g" data-inspire="' +
+    esc(item.id) +
+    '">' +
+    iconHeart() +
+    ' Inspired me · ' +
+    (item.insp || 0) +
+    '</button></div>';
+  if (item.takeaways && item.takeaways.length) {
+    html += '<section class="card"><h3>What to take from it</h3><ul class="tips">';
+    for (i = 0; i < item.takeaways.length; i++) {
+      html += '<li>' + iconCheck() + ' ' + esc(item.takeaways[i]) + '</li>';
+    }
+    html +=
+      '</ul><button type="button" class="btn sm" data-take-story="' +
+      esc(item.id) +
+      '">Put these on my pathway</button></section>';
+  }
+  if (!mine && a) {
+    html +=
+      '<button type="button" class="card clickable" data-open="mentor" data-id="' +
+      esc(item.author) +
+      '"><p class="eyebrow">The person behind it</p>' +
+      avatarHtml(a, false) +
+      '<strong>' +
+      esc(a.name) +
+      '</strong><p class="muted">' +
+      esc(a.pos) +
+      (j ? ' · ' + esc(j.place) : '') +
+      '</p>' +
+      (j ? '<p class="muted">' + esc(j.type) + ' · ' + esc(j.blurb) + '</p>' : '') +
+      '<p>See their full journey, stories and answers</p></button>';
+  }
+  if (item.opp && OPPS[item.opp]) html += miniOpp(OPPS[item.opp]);
+  if (item.sess) {
+    var ss = sessionById(item.sess);
+    if (ss) html += renderSessionMini(ss);
+  }
+  if (!mine && a) {
+    html += '<section><h3>More from ' + esc(a.name.split(' ')[0]) + '</h3>';
+    for (i = 0; i < FEED.length; i++) {
+      if (FEED[i].kind === 'story' && FEED[i].author === item.author && FEED[i].id !== item.id) {
+        html +=
+          '<button type="button" class="card clickable row-btn" data-open="story" data-id="' +
+          esc(FEED[i].id) +
+          '">' +
+          esc(FEED[i].title) +
+          '</button>';
+      }
+    }
+    html += '</section>';
+  }
+  html +=
+    '<section><h3>Stories like this one</h3><p class="muted">Different people, similar turn.</p>';
+  for (i = 0; i < FEED.length; i++) {
+    if (FEED[i].kind === 'story' && FEED[i].id !== item.id && FEED[i].cat === item.cat) {
+      html +=
+        '<button type="button" class="card clickable row-btn" data-open="story" data-id="' +
+        esc(FEED[i].id) +
+        '">' +
+        esc(FEED[i].title) +
+        '</button>';
+    }
+  }
+  html += '</section>';
+  html += '<section><h3>Questions in the same area.</h3>';
+  for (i = 0; i < FEED.length; i++) {
+    if (FEED[i].kind === 'question' && FEED[i].cat === item.cat) {
+      html +=
+        '<button type="button" class="card clickable row-btn" data-open="thread" data-id="' +
+        esc(FEED[i].id) +
+        '">' +
+        esc(FEED[i].title) +
+        '</button>';
+    }
+  }
+  html += '</section></div>';
+  return { crumb: 'Story', title: item.title, html: html };
 }
 
 function viewOpp(v) {
-  return viewDetail('opportunity', v.id);
+  var o = OPPS[v.id];
+  if (!o) return { crumb: 'Opportunity', title: 'Missing', html: '<p>Not found.</p>' };
+  pushRecent('opp', o.id, o.name);
+  var html = '<div class="detail">';
+  html +=
+    '<div class="hero blue"><span class="p">Opportunity</span><h2>' +
+    esc(o.name) +
+    '</h2><p>' +
+    esc(o.one) +
+    '</p><div class="card-actions">' +
+    '<button type="button" class="btn" data-take-opp="' +
+    esc(o.id) +
+    '">Add to my pathway</button>' +
+    '<button type="button" class="btn g" data-save="' +
+    esc(o.id) +
+    '">' +
+    (isSaved(o.id) ? 'Saved' : 'Save for later') +
+    '</button></div></div>';
+
+  /* Fit check */
+  if (!S.onboarded) {
+    html +=
+      '<div class="callout blue"><p>Is this open to you? Set up your pathway and this tells you directly, using your form and region rather than a general answer,</p>' +
+      '<button type="button" class="btn sm" data-open="setup" data-id="0">Build my pathway</button></div>';
+  } else if (oppOpenAtStage(o, S.stage)) {
+    html +=
+      '<div class="callout green"><p>Open to you at ' + esc(S.form) + '</p></div>';
+  } else {
+    html +=
+      '<div class="callout gold"><p>Not open to you yet at ' +
+      esc(S.form) +
+      '</p><p>' +
+      esc(o.who) +
+      '</p><p>The limit is set by the organisers, not by us. It is worth knowing about now so it is not a surprise later.</p></div>';
+  }
+
+  if (o.independent) {
+    html +=
+      '<div class="callout blue"><p>You can enter this yourself. No school sponsor and no teacher required. That single fact is why most students who could enter this never do.</p></div>';
+  }
+
+  html +=
+    '<div class="facts4">' +
+    '<div><p class="eyebrow">When</p><p>' +
+    esc(o.season) +
+    '</p></div>' +
+    '<div><p class="eyebrow">Cost</p><p>' +
+    esc(o.cost) +
+    '</p></div>' +
+    '<div><p class="eyebrow">Who it is for</p><p>' +
+    esc(o.who) +
+    '</p></div>' +
+    '<div><p class="eyebrow">Category</p><p>' +
+    esc(o.cat) +
+    '</p></div></div>';
+
+  html += '<section><h3>What it actually is</h3>';
+  var i;
+  for (i = 0; i < o.what.length; i++) html += '<p>' + esc(o.what[i]) + '</p>';
+  html += '</section>';
+
+  html += '<section><h3>How you actually get in</h3><ol class="steps-ol">';
+  for (i = 0; i < o.entry.length; i++) {
+    html +=
+      '<li><strong>' + esc(o.entry[i].b) + '</strong><span>' + esc(o.entry[i].s) + '</span></li>';
+  }
+  html += '</ol></section>';
+
+  html += '<section><h3>Quick tips</h3><ul class="tips gold">';
+  for (i = 0; i < o.tips.length; i++) html += '<li>' + esc(o.tips[i]) + '</li>';
+  html += '</ul></section>';
+
+  html +=
+    '<div class="blocker"><strong>' +
+    esc(o.truth.b) +
+    '</strong><p>' +
+    esc(o.truth.p) +
+    '</p></div>';
+  html +=
+    '<div class="callout blue"><strong>' +
+    esc(o.proof.b) +
+    '</strong><p>' +
+    esc(o.proof.p) +
+    '</p></div>';
+  html += '<div class="callout gold"><p class="eyebrow">Where this leads</p><p>' + esc(o.leads) + '</p></div>';
+
+  html += '<section><h3>Mentors who went that way</h3>';
+  for (i = 0; i < (o.mentors || []).length; i++) html += mentorRow(o.mentors[i], '');
+  html += '</section>';
+
+  html += '<section><h3>Sessions that cover it</h3>';
+  for (i = 0; i < (o.sess || []).length; i++) {
+    var ss = sessionById(o.sess[i]);
+    if (ss) html += renderSessionMini(ss);
+  }
+  html += '</section>';
+
+  html += '<section><h3>If this one fits, these do too</h3>';
+  for (i = 0; i < (o.rel || []).length; i++) {
+    if (OPPS[o.rel[i]]) html += miniOpp(OPPS[o.rel[i]]);
+  }
+  html += '</section>';
+  html += askAboutBlock('About ' + o.name + ': ', o.cat);
+  html +=
+    '<p class="footer-note">Dates, fees and requirements are illustrative in this prototype and must be confirmed with the organiser.</p></div>';
+  return { crumb: 'Opportunity', title: o.name, html: html };
 }
 
 function viewSession(v) {
-  return viewDetail('session', v.id);
+  var s = sessionById(v.id);
+  if (!s) return { crumb: 'Session', title: 'Missing', html: '<p>Not found.</p>' };
+  pushRecent('session', s.id, s.title);
+  var lead = author(s.lead);
+  var left = Math.max(0, s.seats - s.taken);
+  var html =
+    '<div class="detail"><div class="hero navy"><p class="eyebrow">' +
+    esc(s.pod) +
+    '</p><h2>' +
+    esc(s.title) +
+    '</h2><p>' +
+    esc(s.when) +
+    ' · One hour · Google Meet</p><p>' +
+    esc(s.what) +
+    '</p>' +
+    '<button type="button" class="btn" data-open="book" data-id="' +
+    esc(s.id) +
+    '">' +
+    (S.booked.indexOf(s.id) !== -1 ? 'Manage booking' : left === 0 ? 'Join waitlist' : 'Book a place') +
+    '</button></div>';
+  html +=
+    '<div class="facts4"><div><p class="eyebrow">Places left</p><p>' +
+    left +
+    '</p></div><div><p class="eyebrow">What to bring</p><p>' +
+    esc(s.bring) +
+    '</p></div></div>';
+  html += '<section><h3>Questions already submitted</h3><ul class="q-list">';
+  var i;
+  for (i = 0; i < s.qs.length; i++) {
+    html += '<li><span class="qmark">?</span>' + esc(s.qs[i]) + '</li>';
+  }
+  html +=
+    '</ul><p class="muted">Yours gets added when you book, and the mentor sees them beforehand.</p></section>';
+  html += '<section><h3>Who leads it</h3>' + mentorRow(s.lead, '') + '</section>';
+  html += '<section><h3>Opportunities this covers</h3>';
+  for (var k in OPPS) {
+    if (OPPS[k].sess && OPPS[k].sess.indexOf(s.id) !== -1) html += miniOpp(OPPS[k]);
+  }
+  html += '</section>';
+  html += askAboutBlock('About ' + s.title + ': ', s.cat);
+  html += '</div>';
+  return { crumb: 'Session', title: s.title, html: html };
 }
 
 function viewBook(v) {
@@ -6880,7 +5206,7 @@ function viewBook(v) {
     '</p><h2>' +
     esc(s.title) +
     '</h2><p class="muted">' +
-    esc(composeSessionWhen(s)) +
+    esc(s.when) +
     ' · ' +
     esc(lead.name) +
     '</p>';
@@ -6921,55 +5247,21 @@ function viewBook(v) {
 }
 
 function viewCompose() {
-  var d = draft();
   return {
     crumb: 'New post',
-    title: kindLabel(d.kind || S.ctype || 'question'),
+    title: S.ctype === 'story' ? 'Share a story' : 'Ask a question',
     html: renderComposerForm(),
     after: function () {
-      var first = byId('comp-title') || byId('comp-text') || byId('comp-name');
-      if (first) first.focus();
+      var ta = byId('comp-text');
+      if (ta) ta.focus();
     }
   };
 }
 
-function openCompose(seed, cat, kind) {
-  var offered = kindsForRole(S.role);
-  if (kind) resetCompose(kind);
-  else if (offered.length === 1) resetCompose(offered[0]);
-  else resetCompose();
-  if (seed != null && seed !== '') {
-    draft().title = seed;
-    draft().body = seed;
-    S.draft = seed;
-  }
-  if (cat) {
-    draft().topic = CAT_TO_TOPIC[cat] || cat;
-    S.draftCat = cat;
-  }
-  if (S.role === 'student' && S.onboarded) draft().stage = pathwayStageTag();
+function openCompose(seed, cat) {
+  if (seed != null && seed !== '') S.draft = seed;
+  if (cat) S.draftCat = cat;
   go({ t: 'compose', id: 'new' });
-}
-
-function viewProfile() {
-  var roles = ['student', 'mentor', 'collaborator', 'desk'];
-  var html = '<div class="detail"><p class="eyebrow">Prototype control</p>';
-  html += '<h2>View the app as</h2>';
-  html += '<p class="muted">This switcher is for the prototype only. It changes what the Post button offers.</p>';
-  var i;
-  for (i = 0; i < roles.length; i++) {
-    html +=
-      '<button type="button" class="setup-opt' +
-      (S.role === roles[i] ? ' on' : '') +
-      '" data-set-role="' +
-      esc(roles[i]) +
-      '"><strong>' +
-      esc(roles[i].charAt(0).toUpperCase() + roles[i].slice(1)) +
-      '</strong></button>';
-  }
-  html +=
-    '<div class="card-actions"><button type="button" class="btn" data-nav="pathway">My Pathways</button></div></div>';
-  return { crumb: 'You', title: 'Profile menu', html: html };
 }
 
 function viewMentor(v) {
@@ -6995,28 +5287,22 @@ function viewMentor(v) {
         esc(j.blurb) +
         '</p>'
       : '') +
-    '<div class="card-actions">';
-  if (isContactable(v.id)) {
-    html +=
-      '<button type="button" class="btn" data-follow="' +
-      esc(v.id) +
-      '">' +
-      (isFollowing(v.id) ? 'Following' : 'Follow') +
-      '</button>';
-    html +=
-      '<button type="button" class="btn g" data-ask-seed="Question for ' +
-      esc(a.name) +
-      ': " data-ask-cat="' +
-      esc((a.cats && a.cats[0]) || '') +
-      '">Ask in their pod</button>';
-  }
-  html +=
+    '<div class="card-actions">' +
+    '<button type="button" class="btn" data-follow="' +
+    esc(v.id) +
+    '">' +
+    (isFollowing(v.id) ? 'Following' : 'Follow') +
+    '</button>' +
     (j
       ? '<button type="button" class="btn g" data-open="journey" data-id="' +
         esc(v.id) +
-        '">Read their story</button>'
+        '">Read the full journey</button>'
       : '') +
-    '</div></div>';
+    '<button type="button" class="btn g" data-ask-seed="Question for ' +
+    esc(a.name) +
+    ': " data-ask-cat="' +
+    esc((a.cats && a.cats[0]) || '') +
+    '">Ask in their pod</button></div></div>';
   if (j) {
     html += '<blockquote class="quote">' + esc(j.quote) + '</blockquote>';
     html +=
@@ -7029,18 +5315,11 @@ function viewMentor(v) {
       esc(v.id) +
       '">Full journey</button></section>';
   }
+  html += '<section><h3>Their stories</h3>';
   var i;
-  var block;
-  var count;
-  var r;
-  var hit;
-  var ok;
-  block = '';
-  count = 0;
   for (i = 0; i < FEED.length; i++) {
     if (FEED[i].kind === 'story' && FEED[i].author === v.id) {
-      count += 1;
-      block +=
+      html +=
         '<button type="button" class="card clickable row-btn" data-open="story" data-id="' +
         esc(FEED[i].id) +
         '">' +
@@ -7048,18 +5327,15 @@ function viewMentor(v) {
         '</button>';
     }
   }
-  if (count) html += '<section><h3>Their stories</h3>' + block + '</section>';
-  block = '';
-  count = 0;
+  html += '</section><section><h3>Where they answered</h3>';
   for (i = 0; i < FEED.length; i++) {
     if (FEED[i].kind !== 'question' || !FEED[i].replies) continue;
-    hit = false;
+    var r, hit = false;
     for (r = 0; r < FEED[i].replies.length; r++) {
       if (FEED[i].replies[r].a === v.id) hit = true;
     }
     if (hit) {
-      count += 1;
-      block +=
+      html +=
         '<button type="button" class="card clickable row-btn" data-open="thread" data-id="' +
         esc(FEED[i].id) +
         '">' +
@@ -7067,25 +5343,15 @@ function viewMentor(v) {
         '</button>';
     }
   }
-  if (count) html += '<section><h3>Where they answered</h3>' + block + '</section>';
-  block = '';
-  count = 0;
+  html += '</section><section><h3>Sessions they lead</h3>';
   for (i = 0; i < SESSIONS.length; i++) {
-    if (SESSIONS[i].lead === v.id || (SESSIONS[i].leads && SESSIONS[i].leads.indexOf(v.id) !== -1)) {
-      count += 1;
-      block += renderSessionMini(SESSIONS[i]);
-    }
+    if (SESSIONS[i].lead === v.id) html += renderSessionMini(SESSIONS[i]);
   }
-  if (count) html += '<section><h3>Sessions they lead</h3>' + block + '</section>';
-  block = '';
-  count = 0;
-  for (ok in OPPS) {
-    if (OPPS[ok].mentors && OPPS[ok].mentors.indexOf(v.id) !== -1) {
-      count += 1;
-      block += miniOpp(OPPS[ok]);
-    }
+  html += '</section><section><h3>Opportunities they point at</h3>';
+  for (var ok in OPPS) {
+    if (OPPS[ok].mentors && OPPS[ok].mentors.indexOf(v.id) !== -1) html += miniOpp(OPPS[ok]);
   }
-  if (count) html += '<section><h3>Opportunities they point at</h3>' + block + '</section>';
+  html += '</section>';
   if (a.similar && a.similar.length) {
     html += '<section><h3>People with a similar turn</h3>';
     for (i = 0; i < a.similar.length; i++) {
@@ -7098,7 +5364,107 @@ function viewMentor(v) {
 }
 
 function viewJourney(v) {
-  return viewDetail('journey', v.id);
+  var a = author(v.id);
+  var j = JOURNEYS[v.id];
+  if (!j) return { crumb: 'Journey', title: 'Missing', html: '<p>Not found.</p>' };
+  pushRecent('journey', v.id, a.name + ' journey');
+  var html =
+    '<div class="detail"><div class="hero navy"><h2>' +
+    esc(a.name) +
+    '</h2><blockquote class="quote">' +
+    esc(j.quote) +
+    '</blockquote><p class="now-line"><span class="eyebrow">NOW</span> ' +
+    esc(j.now) +
+    '</p></div>';
+  html += '<section><h3>Moments</h3>';
+  var i, m;
+  for (i = 0; i < j.moments.length; i++) {
+    m = j.moments[i];
+    html +=
+      '<div class="card moment"><div class="age-box"><div class="n">' +
+      esc(String(m.age)) +
+      '</div><div class="l">AT THE TIME</div></div><p class="serif mtxt">' +
+      esc(m.text) +
+      '</p>' +
+      (m.flag ? '<span class="p red">Setback</span>' : '') +
+      '</div>';
+  }
+  html += '</section><section><h3>Route</h3>';
+  for (i = 0; i < j.route.length; i++) {
+    var rt = j.route[i];
+    var stn = stageByKey(rt.stage);
+    html +=
+      '<div class="card"><p class="eyebrow">' +
+      esc(stn.name) +
+      '</p><p class="serif">' +
+      esc(rt.text) +
+      '</p><p class="muted">' +
+      esc(rt.lesson) +
+      '</p></div>';
+  }
+  html += '</section>';
+  html +=
+    '<section class="card"><h3>Deep dive</h3><p><strong>' +
+    esc(j.dive.title) +
+    '</strong></p><p>Requirement: ' +
+    esc(j.dive.req) +
+    '</p><p>Cost: ' +
+    esc(j.dive.cost) +
+    '</p><p class="caveat">' +
+    esc(j.dive.caveat) +
+    '</p></section>';
+  html +=
+    '<section class="card"><h3>What ' +
+    esc(a.name.split(' ')[0]) +
+    ' did</h3><p class="muted">Tap anything to put it on your pathway at the stage where it happens. Tap again to remove it.</p><div class="step-chips">';
+  for (i = 0; i < j.steps.length; i++) {
+    var sp = j.steps[i];
+    var key = v.id + ':' + sp.label;
+    var on = takenHas(key);
+    html +=
+      '<button type="button" class="chip step' +
+      (on ? ' on' : '') +
+      '" data-jstep="' +
+      esc(v.id) +
+      '" data-label="' +
+      esc(sp.label) +
+      '" data-kind="' +
+      esc(sp.kind) +
+      '" data-stage="' +
+      esc(sp.stage) +
+      '">' +
+      esc(sp.kind) +
+      ': ' +
+      esc(sp.label) +
+      '</button>';
+  }
+  html +=
+    '</div><button type="button" class="btn sm" data-jstep-all="' +
+    esc(v.id) +
+    '">Add everything ' +
+    esc(a.name.split(' ')[0]) +
+    ' did</button></section>';
+  html +=
+    '<div class="callout blue"><p class="eyebrow">Did you know</p><p>' +
+    esc(j.did.text) +
+    '</p><p class="muted">Source: ' +
+    esc(j.did.src) +
+    '</p></div>';
+  html +=
+    '<section><h3>Other journeys</h3><p class="muted">Deliberately different routes.</p>';
+  for (var jid in JOURNEYS) {
+    if (jid === v.id) continue;
+    html +=
+      '<button type="button" class="card clickable row-btn" data-open="journey" data-id="' +
+      esc(jid) +
+      '">' +
+      esc(author(jid).name) +
+      ' · ' +
+      esc(JOURNEYS[jid].field) +
+      '</button>';
+  }
+  html += '</section></div>';
+  return { crumb: 'Journey', title: a.name, html: html };
 }
 
 function viewTopic(v) {
@@ -7259,8 +5625,7 @@ var VIEWS = {
   edit: viewEdit,
   del: viewDel,
   setup: viewSetup,
-  compose: viewCompose,
-  profile: viewProfile
+  compose: viewCompose
 };
 
 function renderChrome() {
@@ -7297,7 +5662,7 @@ function renderChrome() {
   var i;
   var sheetTop = NAV.length ? NAV[NAV.length - 1].t : '';
   for (i = 0; i < navs.length; i++) {
-    if (navs[i].id === 'arch-pill') {
+    if (navs[i].id === 'arch-pill' || navs[i].id === 'logo') {
       navs[i].classList.remove('on');
       navs[i].removeAttribute('aria-current');
       continue;
@@ -7415,8 +5780,7 @@ function openKind(kind, id) {
     edit: 'edit',
     del: 'del',
     setup: 'setup',
-    compose: 'compose',
-    profile: 'profile'
+    compose: 'compose'
   };
   if (!map[kind]) return;
   if (kind === 'book') {
@@ -7505,6 +5869,7 @@ function wire() {
 
     btn = closestEl(t, '[data-nav]');
     if (btn) {
+      e.preventDefault();
       var nav = btn.getAttribute('data-nav');
       if (nav === 'sessions') S.sessionStage = '';
       setView(nav);
@@ -7527,7 +5892,8 @@ function wire() {
     }
 
     if (t.id === 'logo' || closestEl(t, '#logo')) {
-      /* Let the brand link go to the marketing homepage. */
+      e.preventDefault();
+      setView('feed');
       return;
     }
 
@@ -7612,7 +5978,7 @@ function wire() {
       setView('feed');
       S.ctype = 'question';
       S.anon = true;
-      openCompose(btn.getAttribute('data-ask-seed') || '', btn.getAttribute('data-ask-cat') || '', 'question');
+      openCompose(btn.getAttribute('data-ask-seed') || '', btn.getAttribute('data-ask-cat') || '');
       return;
     }
 
@@ -7877,93 +6243,57 @@ function wire() {
       return;
     }
 
-    btn = closestEl(t, '[data-compose-kind]');
-    if (btn) {
-      resetCompose(btn.getAttribute('data-compose-kind'));
-      S.composeStep = 1;
-      paint();
-      return;
-    }
-
-    btn = closestEl(t, '[data-compose-next]');
-    if (btn) {
-      S.composeTried = true;
-      if (draft().kind === 'question' && S.composeStep === 1) S.composeStep = 3;
-      else S.composeStep += 1;
-      if (S.composeStep > 3) S.composeStep = 3;
-      paint();
-      return;
-    }
-
-    btn = closestEl(t, '[data-compose-back]');
-    if (btn) {
-      if (draft().kind === 'question' && S.composeStep === 3) S.composeStep = 1;
-      else S.composeStep -= 1;
-      if (S.composeStep < 0) S.composeStep = 0;
-      paint();
-      return;
-    }
-
-    btn = closestEl(t, '[data-add-step]');
-    if (btn) {
-      if (draft().steps.length < 7) draft().steps.push({ stage_or_age: '', did: '', led_to: '' });
-      paint();
-      return;
-    }
-
-    btn = closestEl(t, '[data-add-how]');
-    if (btn) {
-      if (draft().how_to_get_in.length < 5) draft().how_to_get_in.push({ title: '', detail: '' });
-      paint();
-      return;
-    }
-
-    btn = closestEl(t, '[data-suggest-tip]');
-    if (btn) {
-      S.suggestOpen = true;
-      paint();
-      return;
-    }
-
-    btn = closestEl(t, '[data-save-suggest]');
-    if (btn) {
-      var sug = (S.suggestTip || '').trim();
-      var sid;
-      if (sug) {
-        sid = 'review-' + Date.now();
-        TIPS[sid] = {
-          id: sid,
-          type: 'insider',
-          text: sug,
-          topics: draft().topic ? [draft().topic] : [],
-          stages: draft().stage ? [draft().stage] : [],
-          constraints: [],
-          source: '',
-          last_verified: '',
-          status: 'in_review'
-        };
-        S.suggestTip = '';
-        S.suggestOpen = false;
-        toast('Sent to the desk. It will not appear on the post until it is sourced.');
-        paint();
-        var note = byId('suggest-note');
-        if (note) note.hidden = false;
-      }
-      return;
-    }
-
-    btn = closestEl(t, '[data-set-role]');
-    if (btn) {
-      S.role = btn.getAttribute('data-set-role');
-      toast('Prototype: viewing as ' + S.role + '.');
-      paint();
-      render();
-      return;
-    }
-
     if (t.id === 'comp-submit' || closestEl(t, '#comp-submit')) {
-      if (t.disabled || (t.id !== 'comp-submit' && closestEl(t, '#comp-submit').disabled)) return;
-      submitCompose();
+      var textEl = byId('comp-text');
+      var catEl = byId('comp-cat');
+      var anonEl = byId('comp-anon');
+      var body = textEl.value.trim();
+      if (body.length < 8) {
+        toast('Write a little more before posting.');
+        return;
+      }
+      var nid = 'mine-' + Date.now();
+      var isAnon = !!(anonEl && anonEl.checked);
+      if (S.ctype === 'question') {
+        FEED.unshift({
+          id: nid,
+          kind: 'question',
+          time: 'Just now',
+          cat: catEl.value,
+          anon: isAnon,
+          who: studentLabel(),
+          title: body,
+          askedAt: S.form || 'Form 3',
+          asks: 1,
+          replies: [],
+          rel: [],
+          mine: true
+        });
+        toast('Question posted.');
+        simulateReply(nid);
+      } else {
+        FEED.unshift({
+          id: nid,
+          kind: 'story',
+          time: 'Just now',
+          cat: catEl.value,
+          author: null,
+          title: body.slice(0, 80),
+          body: [body],
+          takeaways: ['Write the decision down', 'Name who you will ask', 'Pick one next step'],
+          insp: 0,
+          rel: [],
+          mine: true,
+          anon: isAnon,
+          who: studentLabel()
+        });
+        toast('Story shared.');
+      }
+      S.draft = '';
+      S.draftCat = catEl.value;
+      closeSheet();
+      setView('feed');
+      window.scrollTo(0, 0);
       return;
     }
 
@@ -8010,63 +6340,22 @@ function wire() {
       }
       return;
     }
-    if (e.target && e.target.getAttribute && e.target.getAttribute('data-draft')) {
-      applyDraftField(e.target);
-      if (e.target.id === 'comp-title' || e.target.getAttribute('data-draft') === 'title') {
-        S.draft = e.target.value;
-        var slot = byId('dup-slot');
-        if (slot && draft().kind === 'question') slot.innerHTML = dupHintHtml(e.target.value);
-      }
+    if (e.target && e.target.id === 'comp-text') {
+      S.draft = e.target.value;
+      var slot = byId('dup-slot');
+      if (slot && S.ctype === 'question') slot.innerHTML = dupHintHtml(e.target.value);
     }
-    if (e.target && e.target.getAttribute && e.target.getAttribute('data-suggest-text')) {
-      S.suggestTip = e.target.value;
+    if (e.target && e.target.id === 'comp-cat') {
+      S.draftCat = e.target.value;
+    }
+    if (e.target && e.target.id === 'comp-anon') {
+      S.anon = e.target.checked;
     }
   });
 
   document.addEventListener('change', function (e) {
-    var el = e.target;
-    var id;
-    var d;
-    var idx;
-    if (!el || !el.getAttribute) return;
-    if (el.getAttribute('data-draft')) applyDraftField(el);
-    if (el.getAttribute('data-draft-tip')) {
-      d = draft();
-      id = el.getAttribute('data-draft-tip');
-      idx = d.tips.indexOf(id);
-      if (el.checked) {
-        if (d.tips.length >= 4) {
-          el.checked = false;
-          toast('Maximum four tips.');
-          return;
-        }
-        if (tipById(id) && tipById(id).type === 'caution') {
-          if (d.tips.some(function (t) { return tipById(t) && tipById(t).type === 'caution'; })) {
-            el.checked = false;
-            toast('Only one caution tip per post.');
-            return;
-          }
-        }
-        if (idx === -1) d.tips.push(id);
-      } else if (idx !== -1) {
-        d.tips.splice(idx, 1);
-      }
-    }
-    if (el.getAttribute('data-draft-lead')) {
-      d = draft();
-      id = el.getAttribute('data-draft-lead');
-      idx = d.leads.indexOf(id);
-      if (el.checked) {
-        if (d.leads.length >= 3) {
-          el.checked = false;
-          toast('Maximum three leads.');
-          return;
-        }
-        if (idx === -1) d.leads.push(id);
-      } else if (idx !== -1) {
-        d.leads.splice(idx, 1);
-      }
-    }
+    if (e.target && e.target.id === 'comp-cat') S.draftCat = e.target.value;
+    if (e.target && e.target.id === 'comp-anon') S.anon = e.target.checked;
   });
 
   document.addEventListener('keydown', function (e) {
@@ -8097,11 +6386,36 @@ function applyHash() {
   return '';
 }
 
+function dismissSplash() {
+  var el = byId('app-splash');
+  if (!el || el.getAttribute('data-done') === '1') return;
+  el.setAttribute('data-done', '1');
+  el.classList.add('out');
+  document.documentElement.classList.remove('splash-on');
+  setTimeout(function () {
+    if (el.parentNode) el.parentNode.removeChild(el);
+  }, 320);
+}
+
+function startSplash() {
+  var el = byId('app-splash');
+  if (!el) return;
+  document.documentElement.classList.add('splash-on');
+  var reduced =
+    window.matchMedia &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  setTimeout(dismissSplash, reduced ? 400 : 1400);
+  var go = byId('splash-continue');
+  if (go) go.addEventListener('click', dismissSplash);
+  el.addEventListener('click', dismissSplash);
+}
+
 function boot() {
   if (window.NSG_CMS && typeof NSG_CMS.applyAppGlobals === 'function') {
     NSG_CMS.applyAppGlobals();
   }
-  var hash = applyHash();
+  startSplash();
+  applyHash();
   wire();
   render();
   window.addEventListener('hashchange', function () {
