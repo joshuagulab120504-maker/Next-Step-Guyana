@@ -19,6 +19,14 @@ var S = {
   archetype: '',
   taken: [],
   following: [],
+  follow: [],
+  myArch: '',
+  commQ: '',
+  commRole: 'all',
+  commCareer: '',
+  archStep: 0,
+  archTally: {},
+  archPicks: [],
   saved: [],
   inspired: [],
   booked: [],
@@ -32,7 +40,47 @@ var S = {
   setupReason: '',
   pendingAction: null,
   hideJoinCard: false,
-  replyTimer: null
+  replyTimer: null,
+  role: 'visitor',
+  me: {
+    id: '',
+    name: '',
+    role: 'visitor',
+    pending: false,
+    verified: false,
+    contactable: false,
+    form: '',
+    region: ''
+  },
+  qFollow: [],
+  hidden: [],
+  reported: [],
+  menu: '',
+  compose: {
+    step: 'write',
+    kind: 'question',
+    title: '',
+    body: '',
+    extra: '',
+    when: '',
+    cost: '',
+    ages: '',
+    regions: '',
+    grade: '',
+    source: '',
+    date: '',
+    length: '',
+    where: '',
+    capacity: '',
+    lead: '',
+    topic: '',
+    stage: '',
+    res: [],
+    resOther: '',
+    images: [],
+    anon: true,
+    editId: ''
+  }
 };
 
 var DUP_MAP = [
@@ -85,28 +133,320 @@ function daysUntil(iso) {
 }
 
 function author(id) {
-  return AUTHORS[id] || { name: id, init: '?', role: '', pos: '', system: true };
+  return AUTHORS[id] || { name: id, init: '?', role: '', pending: false, verified: false, contactable: false, form: '', region: '', pos: '', system: true };
+}
+
+function postingRole() {
+  if (!S.onboarded || S.role === 'visitor' || (S.me && S.me.role === 'visitor')) return 'visitor';
+  if (S.me && S.me.pending) return 'student';
+  return S.role;
+}
+
+function isVisitor() {
+  return postingRole() === 'visitor';
+}
+
+function isPendingPoster() {
+  return !!(S.me && S.me.pending && (S.me.role === 'contributor' || S.me.role === 'mentor'));
+}
+
+function canCheckOpenings() {
+  if (!S.me || S.me.pending) return false;
+  return S.role === 'mentor' || S.role === 'admin';
+}
+
+function currentPosterId() {
+  return S.me && S.me.id ? S.me.id : null;
+}
+
+function applyPrototypeRole(key) {
+  var pending = key.indexOf('pending-') === 0;
+  var role = pending ? key.slice(8) : key;
+  S.role = role;
+  S.me.role = role;
+  S.me.pending = pending;
+  S.me.form = S.form || '';
+  S.me.region = S.region || '';
+  if (role === 'visitor') {
+    S.onboarded = false;
+    S.me.id = '';
+    S.me.verified = false;
+    S.me.contactable = false;
+    S.me.form = '';
+    S.me.region = '';
+    return;
+  }
+  S.onboarded = true;
+  S.hideJoinCard = true;
+  if (!S.form) {
+    S.form = 'Form 3';
+    S.stage = 'subject';
+  }
+  if (!S.region) S.region = 'Region 4';
+  S.me.form = S.form;
+  S.me.region = S.region;
+  if (role === 'student') {
+    S.me.id = '';
+    S.me.verified = false;
+    S.me.contactable = false;
+  } else if (role === 'contributor') {
+    S.me.id = 'jerome';
+    S.me.verified = false;
+    S.me.contactable = false;
+  } else if (role === 'mentor') {
+    S.me.id = 'raeka';
+    S.me.verified = !pending;
+    S.me.contactable = true;
+  } else if (role === 'admin') {
+    S.me.id = 'desk';
+    S.me.verified = false;
+    S.me.contactable = false;
+  }
+}
+
+function canContact(id) {
+  var a = author(id);
+  return !!(a && a.contactable && a.role === 'mentor');
+}
+
+function MONTHS_SHORT() {
+  return ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+}
+
+function timeAgo(iso) {
+  if (!iso) return '';
+  var then = new Date(iso);
+  if (isNaN(then.getTime())) return '';
+  var now = new Date();
+  var diff = now.getTime() - then.getTime();
+  if (diff < 0) diff = 0;
+  var mins = Math.floor(diff / 60000);
+  if (mins < 60) return String(Math.max(1, mins)) + 'm ago';
+  var hrs = Math.floor(mins / 60);
+  if (hrs < 24) return String(hrs) + 'h ago';
+  var days = Math.floor(hrs / 24);
+  if (days < 7) return String(days) + 'd ago';
+  var mon = MONTHS_SHORT()[then.getMonth()];
+  if (then.getFullYear() !== now.getFullYear()) {
+    return String(then.getDate()) + ' ' + mon + ' ' + then.getFullYear();
+  }
+  return String(then.getDate()) + ' ' + mon;
+}
+
+function formatCheckedDay(iso) {
+  if (!iso) return '';
+  var d = new Date(iso);
+  if (isNaN(d.getTime())) return '';
+  return String(d.getDate()) + ' ' + MONTHS_SHORT()[d.getMonth()] + ' ' + d.getFullYear();
+}
+
+function nowIso() {
+  return new Date().toISOString();
+}
+
+function kindTimeHtml(kindLabel, iso, edited) {
+  var t = timeAgo(iso);
+  var html = esc(kindLabel);
+  if (t) html += ' · ' + esc(t);
+  if (edited) html += '<span class="edited-mark"> · Edited</span>';
+  return html;
+}
+
+function mentorSealSvg() {
+  return (
+    '<svg class="badge-seal" viewBox="0 0 16 16" aria-hidden="true">' +
+    '<circle cx="8" cy="8" r="7"></circle>' +
+    '<path d="M4.8 8.2l2.1 2.1 4.4-4.8"></path>' +
+    '</svg>'
+  );
+}
+
+function roleBadgeHtml(a) {
+  if (!a) return '';
+  if (a.role === 'mentor') {
+    if (a.verified && !a.pending) {
+      return '<span class="role-badge is-mentor">' + mentorSealSvg() + 'Mentor</span>';
+    }
+    return '<span class="role-badge is-pending">Mentor</span>';
+  }
+  if (a.role === 'contributor') {
+    return '<span class="role-badge is-contributor">Contributor</span>';
+  }
+  if (a.role === 'admin') {
+    return '<span class="role-badge is-admin">Next Step team</span>';
+  }
+  return '';
+}
+
+function nameWithBadge(name, a) {
+  return (
+    '<div class="name-row"><span class="name">' +
+    esc(name) +
+    '</span>' +
+    roleBadgeHtml(a) +
+    '</div>'
+  );
+}
+
+function contactAffordance(id, mine) {
+  var a;
+  if (mine || !id) return '';
+  a = author(id);
+  if (a.role === 'contributor' && a.journey) {
+    return (
+      '<button type="button" class="d-readstory" data-open="journey" data-id="' +
+      esc(a.journey) +
+      '">Read their story</button>'
+    );
+  }
+  if (canContact(id)) {
+    return (
+      '<button type="button" class="btn quiet follow-btn' +
+      (isFollowing(id) ? ' following' : '') +
+      '" data-follow="' +
+      esc(id) +
+      '">' +
+      (isFollowing(id) ? 'Following' : 'Follow') +
+      '</button>'
+    );
+  }
+  return '';
+}
+
+function cardChevron() {
+  return '<svg class="card-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>';
+}
+
+function renderImages(images, mode) {
+  var list = images || [];
+  var html;
+  var i;
+  var n;
+  var cap;
+  if (!list.length) return '';
+  if (mode === 'card') {
+    return (
+      '<div class="card-photo"><img src="' +
+      esc(list[0].src) +
+      '" alt="' +
+      esc(list[0].alt || '') +
+      '"/></div>'
+    );
+  }
+  n = Math.min(3, list.length);
+  html = '<div class="d-imgs n' + n + '">';
+  for (i = 0; i < n; i++) {
+    html +=
+      '<figure><img src="' +
+      esc(list[i].src) +
+      '" alt="' +
+      esc(list[i].alt || '') +
+      '"/>';
+    cap = list[i].caption || '';
+    if (cap) html += '<figcaption>' + esc(cap) + '</figcaption>';
+    html += '</figure>';
+  }
+  html += '</div>';
+  return html;
+}
+
+function openingVisible(o) {
+  var st;
+  if (!o) return false;
+  st = o.state || 'live';
+  if (st === 'live') return true;
+  if (st === 'pending') {
+    return o.author === currentPosterId() || canCheckOpenings();
+  }
+  if (st === 'returned') return o.author === currentPosterId();
+  return false;
+}
+
+function openingCheckedHtml(o) {
+  var who;
+  var line;
+  var html;
+  if (!o || (o.state || 'live') !== 'live' || !o.checkedAt || !o.checkedBy) return '';
+  who = author(o.checkedBy);
+  line = 'Checked ' + formatCheckedDay(o.checkedAt) + ' by ' + who.name;
+  html = '<p class="check-line">' + esc(line);
+  if (o.source) {
+    html +=
+      ' <a class="check-src" href="' +
+      esc(o.source) +
+      '" target="_blank" rel="noopener">Source</a>';
+  }
+  html += '</p>';
+  return html;
+}
+
+function openingsToCheck() {
+  var list = [];
+  var k;
+  var o;
+  for (k in OPPS) {
+    if (!OPPS.hasOwnProperty(k)) continue;
+    o = OPPS[k];
+    if ((o.state || '') === 'pending' && o.author !== currentPosterId()) list.push(o);
+  }
+  return list;
+}
+
+function composeTypesFor(role) {
+  if (role === 'visitor') return [];
+  if (role === 'student') return ['question'];
+  if (role === 'contributor') return ['story', 'journey', 'opportunity'];
+  if (role === 'mentor') return ['story', 'journey', 'opportunity', 'session'];
+  if (role === 'admin') return ['question', 'story', 'journey', 'opportunity', 'session'];
+  return ['question'];
+}
+
+function sessionWhen(s) {
+  if (!s) return '';
+  if (s.dateText && s.length && s.platform) {
+    return s.dateText + ', ' + s.length.toLowerCase() + ' on ' + s.platform;
+  }
+  return s.when || '';
 }
 
 function isFollowing(id) {
-  return S.following.indexOf(id) !== -1;
+  return S.follow.indexOf(id) !== -1 || S.following.indexOf(id) !== -1;
+}
+
+function followSet(id, on) {
+  var i = S.follow.indexOf(id);
+  var j = S.following.indexOf(id);
+  if (on) {
+    if (i === -1) S.follow.push(id);
+    if (j === -1) S.following.push(id);
+  } else {
+    if (i !== -1) S.follow.splice(i, 1);
+    if (j !== -1) S.following.splice(j, 1);
+  }
 }
 
 function toggleFollow(id) {
-  var i = S.following.indexOf(id);
-  if (i === -1) {
-    S.following.push(id);
-    toast('Following ' + author(id).name + '. New posts and nodes reach your feed.');
-  } else {
-    S.following.splice(i, 1);
+  if (isFollowing(id)) {
+    followSet(id, false);
     toast('Unfollowed ' + author(id).name + '.');
+  } else {
+    followSet(id, true);
+    toast('Following ' + author(id).name + '. New posts and nodes reach your feed.');
   }
   paint();
   render();
 }
 
+function requireAccount(action) {
+  if (!isVisitor()) return false;
+  S.pendingAction = action || null;
+  S.setupReason = (action && action.reason) || '';
+  go({ t: 'postgate', id: '0' });
+  return true;
+}
+
 function requirePathway(action) {
-  if (S.onboarded) return false;
+  if (S.onboarded && !isVisitor()) return false;
   S.pendingAction = action || null;
   S.setupReason =
     (action && action.reason) || 'We need your form to hold you a place.';
@@ -126,8 +466,8 @@ function runPendingAction(action) {
   if (action.type === 'follow') {
     S.view = S.view || 'feed';
     render();
-    if (S.following.indexOf(action.id) === -1) {
-      S.following.push(action.id);
+    if (!isFollowing(action.id)) {
+      followSet(action.id, true);
       toast('Pathway built. Now following ' + author(action.id).name + '.');
       paint();
       render();
@@ -139,6 +479,42 @@ function runPendingAction(action) {
   if (action.type === 'reply') {
     go({ t: 'thread', id: action.id });
     postThreadReply(action.id, action.text || '', true);
+    return;
+  }
+  if (action.type === 'save') {
+    S.view = 'feed';
+    render();
+    if (S.saved.indexOf(action.id) === -1) S.saved.push(action.id);
+    toast('Pathway built. Saved for later.');
+    paint();
+    render();
+    return;
+  }
+  if (action.type === 'follow-q') {
+    if (S.qFollow.indexOf(action.id) === -1) S.qFollow.push(action.id);
+    go({ t: 'thread', id: action.id });
+    toast('Pathway built. Following this question.');
+    return;
+  }
+  if (action.type === 'inspire') {
+    var inspiredItem;
+    if (S.inspired.indexOf(action.id) === -1) {
+      S.inspired.push(action.id);
+      inspiredItem = feedById(action.id);
+      if (inspiredItem) inspiredItem.insp = (inspiredItem.insp || 0) + 1;
+    }
+    toast('Pathway built. Marked as inspired.');
+    S.view = 'feed';
+    render();
+    return;
+  }
+  if (action.type === 'report') {
+    go({ t: 'report', id: action.id });
+    toast('Pathway built. You can send the report now.');
+    return;
+  }
+  if (action.type === 'compose') {
+    openCompose();
     return;
   }
   S.view = 'pathway';
@@ -164,6 +540,15 @@ function isSaved(id) {
 }
 
 function toggleSave(id) {
+  if (
+    requirePathway({
+      type: 'save',
+      id: id,
+      reason: 'We need your form before we save a post for later.'
+    })
+  ) {
+    return;
+  }
   var i = S.saved.indexOf(id);
   if (i === -1) {
     S.saved.push(id);
@@ -181,8 +566,19 @@ function isInspired(id) {
 }
 
 function toggleInspired(id) {
-  var item = feedById(id);
-  var i = S.inspired.indexOf(id);
+  var item;
+  var i;
+  if (
+    requirePathway({
+      type: 'inspire',
+      id: id,
+      reason: 'We need your form before we mark a story as inspired.'
+    })
+  ) {
+    return;
+  }
+  item = feedById(id);
+  i = S.inspired.indexOf(id);
   if (i === -1) {
     S.inspired.push(id);
     if (item) item.insp = (item.insp || 0) + 1;
@@ -300,10 +696,13 @@ function back() {
 function hideSheetUi() {
   NAV = [];
   var sh = byId('sheet');
+  var body = byId('sheet-body');
   if (sh) {
     sh.hidden = true;
-    sh.className = sh.className.replace(/\bopen\b/g, '').replace(/\s+/g, ' ').trim();
+    sh.style.visibility = 'hidden';
+    sh.className = 'sheet';
   }
+  if (body) body.innerHTML = '';
   var scrim = byId('scrim');
   if (scrim) scrim.hidden = true;
   lockBody(false);
@@ -316,8 +715,12 @@ function closeSheet() {
 
 function openSheet() {
   var sh = byId('sheet');
+  var top = NAV.length ? NAV[NAV.length - 1].t : '';
+  var cls = 'sheet open';
+  if (top === 'archtest') cls += ' sheet-bottom';
   sh.hidden = false;
-  if ((' ' + sh.className + ' ').indexOf(' open ') === -1) sh.className = (sh.className + ' open').replace(/\s+/g, ' ').trim();
+  sh.style.visibility = 'visible';
+  sh.className = cls;
   byId('scrim').hidden = false;
   lockBody(true);
   byId('sheet-body').scrollTop = 0;
@@ -372,11 +775,39 @@ function catChip(cat, clickable) {
 }
 
 function exploreCta() {
-  return '<span class="engage-cta">Explore</span>';
+  return '';
 }
 
 function iconHeart() {
   return '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>';
+}
+
+function iconBookmark() {
+  return '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 4h12v17l-6-3.4L6 21V4z"/></svg>';
+}
+
+function iconFlag() {
+  return '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 21V4h10l-1.2 4.2L19 12H5"/></svg>';
+}
+
+function iconMore() {
+  return '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="19" cy="12" r="1.7"/></svg>';
+}
+
+function iconReply() {
+  return '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-8 8H7l-4 3V12a8 8 0 0 1 8-8h2a8 8 0 0 1 8 8z"/></svg>';
+}
+
+function iconHide() {
+  return '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3l18 18M10.5 10.7a3 3 0 0 0 4 4M9.2 5.6A10 10 0 0 1 12 5c5 0 9 4.5 10 7-0.4 1.1-1.3 2.6-2.6 3.9M6.1 6.2C4.4 7.5 3.2 9.2 2 12c1 2.5 5 7 10 7 1.4 0 2.7-.3 3.9-.8"/></svg>';
+}
+
+function iconFollow() {
+  return '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M16 11h6"/></svg>';
+}
+
+function iconCal() {
+  return '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>';
 }
 
 function iconCheck() {
@@ -457,7 +888,7 @@ function searchHay(item) {
 function filteredFeed() {
   var q = (S.query || '').trim().toLowerCase();
   var out = [];
-  var i, item, ok;
+  var i, item, ok, o;
   for (i = 0; i < FEED.length; i++) {
     item = FEED[i];
     ok = true;
@@ -466,7 +897,16 @@ function filteredFeed() {
     if (S.filter === 'opportunities' && item.kind !== 'opportunity') ok = false;
     if (S.filter === 'sessions' && item.kind !== 'session') ok = false;
     if (S.filter === 'journeys' && item.kind !== 'journey') ok = false;
+    if (ok && item.kind === 'opportunity') {
+      o = OPPS[item.opp];
+      if (!openingVisible(o)) ok = false;
+    }
     if (ok && q && searchHay(item).indexOf(q) === -1) ok = false;
+    if (ok && item.kind === 'question' && isHidden('thread', item.id)) ok = false;
+    if (ok && item.kind === 'story' && isHidden('story', item.id)) ok = false;
+    if (ok && item.kind === 'opportunity' && isHidden('opp', item.opp)) ok = false;
+    if (ok && item.kind === 'session' && isHidden('session', item.session)) ok = false;
+    if (ok && item.kind === 'journey' && isHidden('journey', item.journey)) ok = false;
     if (ok) out.push(item);
   }
   return out;
@@ -490,21 +930,191 @@ function cardClickAttrs(kind, id) {
   return 'data-open="' + esc(kind) + '" data-id="' + esc(id) + '"';
 }
 
+function hideKey(kind, id) {
+  return kind + ':' + id;
+}
+
+function isHidden(kind, id) {
+  return S.hidden.indexOf(hideKey(kind, id)) !== -1;
+}
+
+function refreshUi() {
+  if (NAV.length) paint();
+  else render();
+}
+
+function toggleMenu(key) {
+  S.menu = S.menu === key ? '' : key;
+  refreshUi();
+}
+
+function hidePost(key) {
+  if (!key) return;
+  if (S.hidden.indexOf(key) === -1) S.hidden.push(key);
+  S.menu = '';
+  toast('Hidden from your feed.');
+  if (NAV.length) closeSheet();
+  else render();
+}
+
+function submitReport(key, reason) {
+  if (!key || !reason) return;
+  if (
+    requirePathway({
+      type: 'report',
+      id: key,
+      reason: 'We need your form before we send a report.'
+    })
+  ) {
+    return;
+  }
+  S.reported.push({ key: key, reason: reason, at: new Date().toISOString() });
+  if (S.hidden.indexOf(key) === -1) S.hidden.push(key);
+  S.menu = '';
+  toast('Report sent. We hid this post from your feed.');
+  closeSheet();
+  render();
+}
+
+function savedTarget(id) {
+  var o = OPPS[id];
+  var item;
+  var s;
+  var j;
+  var a;
+  if (o) return { kind: 'opp', id: o.id, title: o.name, sub: o.cat || 'Opening' };
+  item = feedById(id);
+  if (item && item.kind === 'story') {
+    return { kind: 'story', id: item.id, title: item.title, sub: 'Story' };
+  }
+  if (item && item.kind === 'question') {
+    return { kind: 'thread', id: item.id, title: item.title, sub: 'Question' };
+  }
+  s = sessionById(id);
+  if (s) return { kind: 'session', id: s.id, title: s.title, sub: 'Session' };
+  j = JOURNEYS[id];
+  if (j) {
+    a = author(id);
+    return { kind: 'journey', id: id, title: j.hook || a.name, sub: 'Journey' };
+  }
+  return null;
+}
+
+function isOwnCard(kind, id, mine) {
+  var s;
+  if (mine) return true;
+  if (kind === 'opp' && OPPS[id] && OPPS[id].author === currentPosterId()) return true;
+  if (kind === 'session') {
+    s = sessionById(id);
+    if (s && (s.hosted_by === currentPosterId() || s.lead === currentPosterId())) return true;
+  }
+  if (kind === 'journey' && id && id === currentPosterId()) return true;
+  return false;
+}
+
+function moreItem(attrs, icon, label) {
+  return (
+    '<button type="button" class="more-item" role="menuitem" ' +
+    attrs +
+    '>' +
+    (icon || '') +
+    '<span>' +
+    esc(label) +
+    '</span></button>'
+  );
+}
+
+function cardMoreHtml(kind, id, mine) {
+  var key = hideKey(kind, id);
+  var open = S.menu === key;
+  var own = isOwnCard(kind, id, mine);
+  var canEdit = own && (kind === 'thread' || kind === 'story');
+  var html =
+    '<div class="more-wrap">' +
+    '<button type="button" class="more-btn" data-menu="' +
+    esc(key) +
+    '" aria-label="More actions" aria-expanded="' +
+    (open ? 'true' : 'false') +
+    '">' +
+    iconMore() +
+    '</button>';
+  if (open) {
+    html += '<div class="more-menu" role="menu">';
+    if (canEdit) {
+      html += moreItem('data-edit="' + esc(id) + '"', '', 'Edit');
+      html += moreItem('data-del="' + esc(id) + '"', '', 'Delete');
+    }
+    html += moreItem('data-hide="' + esc(key) + '"', iconHide(), 'Hide this post');
+    if (!own) {
+      html += moreItem(
+        'data-open="report" data-id="' + esc(key) + '"',
+        iconFlag(),
+        'Report'
+      );
+    }
+    html += '</div>';
+  }
+  html += '</div>';
+  return html;
+}
+
+function engageBtn(attrs, icon, label, on, extraCls) {
+  return (
+    '<button type="button" class="engage-btn' +
+    (on ? ' on' : '') +
+    (extraCls ? ' ' + extraCls : '') +
+    '" ' +
+    attrs +
+    '>' +
+    (icon || '') +
+    '<span>' +
+    esc(label) +
+    '</span></button>'
+  );
+}
+
+function engageBar(buttons) {
+  var html = '<div class="engage" role="group">';
+  var i;
+  var n = 0;
+  for (i = 0; i < buttons.length; i++) {
+    if (buttons[i]) {
+      html += buttons[i];
+      n += 1;
+    }
+  }
+  html += '</div>';
+  return n ? html : '';
+}
+
+function saveEngageBtn(id) {
+  var on = isSaved(id);
+  return engageBtn('data-save="' + esc(id) + '"', iconBookmark(), on ? 'Saved' : 'Save', on);
+}
+
+function reportEngageBtn(kind, id) {
+  return engageBtn(
+    'data-open="report" data-id="' + esc(hideKey(kind, id)) + '"',
+    iconFlag(),
+    'Report',
+    false
+  );
+}
+
+function mineFlagsHtml(item) {
+  if (!item || !item.mine) return '';
+  var html = '<div class="flag-row"><span class="mine-tag">Yours</span>';
+  if (item.newReply) html += '<span class="mine-tag alert">New reply</span>';
+  html += '</div>';
+  return html;
+}
+
 function renderQuestionCard(item) {
   var anon = !!item.anon || !item.author;
   var a = item.author ? author(item.author) : null;
-  var name = anon ? item.who || youName() : a && a.name ? a.name : youName();
-  var bits = ['Question'];
-  if (!anon && a && a.pos) bits.push(a.pos);
-  if (item.time) bits.push(item.time);
-  if (item.askedAt) bits.push('Asked at ' + item.askedAt);
+  var name = anon ? item.who || studentLabel() : a && a.name ? a.name : youName();
   var first = item.replies && item.replies[0] ? item.replies[0] : null;
-  var firstText = '';
-  var firstWho = '';
-  if (first) {
-    firstText = first.text;
-    firstWho = first.a ? author(first.a).name : first.who || 'Student';
-  }
+  var ra;
   var nReplies = item.replies ? item.replies.length : 0;
   var html =
     '<article class="card feed-card kind-q clickable" ' +
@@ -513,166 +1123,157 @@ function renderQuestionCard(item) {
     '<div class="card-head">' +
     avatarHtml(a, anon) +
     '<div class="meta">' +
-    '<div class="name">' +
-    esc(name) +
-    '</div>' +
+    nameWithBadge(name, anon ? null : a) +
     '<div class="sub">' +
-    esc(bits.join(' · ')) +
-    '</div>' +
+    kindTimeHtml('Question', item.at, item.edited) +
+    '</div></div>' +
+    contactAffordance(anon ? null : item.author, item.mine) +
+    cardMoreHtml('thread', item.id, item.mine) +
     '</div>';
-  if (!anon && a && !a.system) {
-    html +=
-      '<button type="button" class="btn quiet follow-btn' +
-      (isFollowing(item.author) ? ' following' : '') +
-      '" data-follow="' +
-      esc(item.author) +
-      '">' +
-      (isFollowing(item.author) ? 'Following' : 'Follow') +
-      '</button>';
-  }
-  html += '</div>';
-  if (item.mine) {
-    html += '<div class="flag-row">';
-    html += '<span class="mine-tag">Yours</span>';
-    if (item.newReply) html += '<span class="mine-tag alert">New reply</span>';
-    if (item.edited) html += '<span class="mine-tag">Edited</span>';
-    html +=
-      '<button type="button" class="btn quiet" data-edit="' +
-      esc(item.id) +
-      '">Edit</button>';
-    html +=
-      '<button type="button" class="btn quiet" data-del="' +
-      esc(item.id) +
-      '">Delete</button>';
-    html += '</div>';
-  }
+  html += mineFlagsHtml(item);
   if (item.cat) html += '<div class="card-cats">' + catChip(item.cat) + '</div>';
   html += '<h3>' + esc(item.title) + '</h3>';
   if (first) {
+    ra = first.a ? author(first.a) : null;
     html +=
-      '<div class="reply-preview"><strong>' +
-      esc(firstWho) +
-      '</strong> ' +
-      esc(firstText) +
-      '</div>';
+      '<div class="reply-preview"><div class="reply-who">' +
+      nameWithBadge(ra ? ra.name : first.who || 'Student', ra) +
+      (ra && ra.pos ? '<span class="reply-role">' + esc(ra.pos) + '</span>' : '') +
+      '</div><p class="clamp3">' +
+      esc(first.text) +
+      '</p></div>';
+  } else {
+    html += '<p class="reply-empty">No replies yet</p>';
   }
   html +=
-    '<div class="engage">' +
-    '<span class="engage-stat">' +
-    nReplies +
-    (nReplies === 1 ? ' reply' : ' replies') +
-    '</span>' +
-    exploreCta() +
-    '</div></article>';
+    engageBar([
+      engageBtn(
+        'data-open="thread" data-id="' + esc(item.id) + '"',
+        iconReply(),
+        nReplies === 1 ? '1 reply' : nReplies + ' replies',
+        false
+      ),
+      engageBtn(
+        'data-follow-q="' + esc(item.id) + '"',
+        iconFollow(),
+        S.qFollow.indexOf(item.id) !== -1 ? 'Following' : 'Follow',
+        S.qFollow.indexOf(item.id) !== -1
+      ),
+      item.mine ? '' : reportEngageBtn('thread', item.id)
+    ]) +
+    '</article>';
   return html;
 }
 
 function renderStoryCard(item) {
   var mine = !!item.mine;
   var anon = !!item.anon;
-  var a = !mine && item.author ? author(item.author) : null;
-  var name = mine ? (anon ? studentLabel() : youName()) : a.name;
-  var bits = ['Story'];
-  if (!mine && a && a.pos) bits.push(a.pos);
-  if (item.time) bits.push(item.time);
-  var para = (item.body && item.body[0]) || '';
+  var a = item.author ? author(item.author) : null;
+  var name = mine && !item.author ? (anon ? studentLabel() : youName()) : a ? a.name : youName();
+  var body = item.body || [];
+  var i;
   var html =
     '<article class="card feed-card kind-story clickable" ' +
     cardClickAttrs('story', item.id) +
     '>' +
     '<div class="card-head">' +
-    avatarHtml(a, mine || anon) +
-    '<div class="meta"><div class="name">' +
-    esc(name) +
-    '</div><div class="sub">' +
-    esc(bits.join(' · ')) +
-    '</div></div>';
-  if (!mine && a && !a.system) {
-    html +=
-      '<button type="button" class="btn quiet follow-btn' +
-      (isFollowing(item.author) ? ' following' : '') +
-      '" data-follow="' +
-      esc(item.author) +
-      '">' +
-      (isFollowing(item.author) ? 'Following' : 'Follow') +
-      '</button>';
-  }
-  html += '</div>';
-  if (mine) {
-    html +=
-      '<div class="flag-row"><span class="mine-tag">Yours</span>' +
-      (item.edited ? '<span class="mine-tag">Edited</span>' : '') +
-      '<button type="button" class="btn quiet" data-edit="' +
-      esc(item.id) +
-      '">Edit</button>' +
-      '<button type="button" class="btn quiet" data-del="' +
-      esc(item.id) +
-      '">Delete</button></div>';
-  }
+    avatarHtml(a, anon || (!a && mine)) +
+    '<div class="meta">' +
+    nameWithBadge(name, anon ? null : a) +
+    '<div class="sub">' +
+    kindTimeHtml('Story', item.at, item.edited) +
+    '</div></div>' +
+    contactAffordance(item.author, mine) +
+    cardMoreHtml('story', item.id, mine) +
+    '</div>';
+  html += mineFlagsHtml(item);
   if (item.cat) html += '<div class="card-cats">' + catChip(item.cat) + '</div>';
+  html += '<h3>' + esc(item.title) + '</h3><div class="card-read">';
+  for (i = 0; i < body.length && i < 3; i++) {
+    html += '<p>' + esc(body[i]) + '</p>';
+  }
+  if (body.length > 3) html += '<p class="card-take">' + esc(body[body.length - 1]) + '</p>';
+  html += '</div>';
+  html += renderImages(item.images, 'card');
   html +=
-    '<h3>' +
-    esc(item.title) +
-    '</h3>' +
-    '<p class="clamp3">' +
-    esc(para) +
-    '</p>' +
-    '<div class="engage">' +
-    '<button type="button" class="engage-btn" data-inspire="' +
-    esc(item.id) +
-    '">' +
-    iconHeart() +
-    ' Inspired · ' +
-    (item.insp || 0) +
-    '</button>' +
-    exploreCta() +
-    '</div></article>';
+    engageBar([
+      engageBtn(
+        'data-inspire="' + esc(item.id) + '"',
+        iconHeart(),
+        (item.insp || 0) ? 'Inspired · ' + (item.insp || 0) : 'Inspired',
+        isInspired(item.id)
+      ),
+      saveEngageBtn(item.id),
+      mine ? '' : reportEngageBtn('story', item.id)
+    ]) +
+    '</article>';
   return html;
 }
 
 function renderOppCard(item) {
   var o = OPPS[item.opp];
-  if (!o) return '';
-  var desk = author('desk');
-  var bits = ['Opportunity'];
-  if (o.independent) bits.push('Self-entry');
-  if (item.time) bits.push(item.time);
-  return (
+  var a;
+  var html;
+  if (!o || !openingVisible(o)) return '';
+  a = author(o.author || item.author || 'desk');
+  html =
     '<article class="card feed-card kind-opp opp-card clickable" ' +
     cardClickAttrs('opp', o.id) +
     '>' +
     '<div class="card-head">' +
-    avatarHtml(desk, false) +
-    '<div class="meta"><div class="name">' +
-    esc(desk.name) +
-    '</div><div class="sub">' +
-    esc(bits.join(' · ')) +
-    '</div></div></div>' +
-    (o.cat ? '<div class="card-cats">' + catChip(o.cat) + '</div>' : '') +
-    '<h3>' +
-    esc(o.name) +
-    '</h3>' +
-    '<p class="clamp3">' +
-    esc(item.text) +
-    '</p>' +
-    '<div class="engage">' +
-    '<button type="button" class="engage-btn" data-save="' +
-    esc(o.id) +
-    '">' +
-    (isSaved(o.id) ? 'Saved' : 'Save') +
-    '</button>' +
-    exploreCta() +
-    '</div></article>'
-  );
+    avatarHtml(a, false) +
+    '<div class="meta">' +
+    nameWithBadge(a.name, a) +
+    '<div class="sub">' +
+    kindTimeHtml('Opportunity', item.at, item.edited) +
+    '</div></div>' +
+    cardMoreHtml('opp', o.id, false) +
+    '</div>';
+  if (o.cat) html += '<div class="card-cats">' + catChip(o.cat) + '</div>';
+  html += '<h3>' + esc(o.name) + '</h3>';
+  html +=
+    '<p class="card-lead">' +
+    esc((o.what && o.what[0]) || o.one || item.text || '') +
+    '</p>';
+  if (o.what && o.what[1]) html += '<p class="card-more">' + esc(o.what[1]) + '</p>';
+  html += '<dl class="card-facts">';
+  if (o.season) {
+    html += '<div><dt>When</dt><dd>' + esc(o.season) + '</dd></div>';
+  }
+  if (o.cost) {
+    html +=
+      '<div><dt>Cost</dt><dd' +
+      (/no fee|^free$/i.test(o.cost) ? ' class="d-accent"' : '') +
+      '>' +
+      esc(o.cost) +
+      '</dd></div>';
+  }
+  if (o.who) html += '<div><dt>Ages</dt><dd>' + esc(o.who) + '</dd></div>';
+  if (o.regions) html += '<div><dt>Where</dt><dd>' + esc(o.regions) + '</dd></div>';
+  html += '</dl>';
+  if ((o.state || 'live') === 'pending' && o.author === currentPosterId()) {
+    html += '<p class="wait-line">Waiting for a mentor to check this.</p>';
+  }
+  html += openingCheckedHtml(o);
+  html += renderImages(o.images || item.images, 'card');
+  html +=
+    engageBar([
+      saveEngageBtn(o.id),
+      isOwnCard('opp', o.id, false) ? '' : reportEngageBtn('opp', o.id)
+    ]) +
+    '</article>';
+  return html;
 }
 
 function renderSessionCard(item) {
   var s = sessionById(item.session);
+  var left;
+  var lead;
+  var html;
   if (!s) return '';
-  var left = Math.max(0, s.seats - s.taken);
-  var pct = Math.min(100, Math.round((s.taken / s.seats) * 100));
-  var lead = author(s.lead);
-  return (
+  left = Math.max(0, s.seats - s.taken);
+  lead = author(s.hosted_by || s.lead);
+  html =
     '<article class="card feed-card kind-sess sess-card clickable" ' +
     cardClickAttrs('session', s.id) +
     '>' +
@@ -682,80 +1283,91 @@ function renderSessionCard(item) {
     '</span><span class="w">' +
     esc(s.day) +
     '</span></div>' +
-    '<div class="meta"><div class="name">' +
-    esc(s.title) +
-    '</div><div class="sub">Session · ' +
-    esc(s.when) +
-    ' · ' +
-    esc(lead.name) +
-    '</div></div></div>' +
-    (s.pod ? '<div class="card-cats">' + catChip(s.pod, false) + '</div>' : '') +
-    '<div class="sess-meta">' +
-    '<span>' +
+    '<div class="meta">' +
+    nameWithBadge(lead.name, lead) +
+    '<div class="sub">' +
+    kindTimeHtml('Session', item.at, item.edited) +
+    '</div></div>' +
+    cardMoreHtml('session', s.id, false) +
+    '</div>';
+  if (s.pod) html += '<div class="card-cats">' + catChip(s.pod, false) + '</div>';
+  html += '<h3>' + esc(s.title) + '</h3>';
+  html += '<p class="sess-when">' + esc(sessionWhen(s)) + '</p>';
+  html +=
+    '<div class="sess-meta"><span>' +
     left +
     (left === 1 ? ' place left' : ' places left') +
-    '</span>' +
-    '<div class="cap"><span style="width:' +
-    pct +
-    '%"></span></div>' +
-    '</div>' +
-    '<div class="engage">' +
-    '<button type="button" class="engage-btn primary" data-open="book" data-id="' +
-    esc(s.id) +
-    '">' +
-    (left === 0 ? 'Join waitlist' : 'Book') +
-    '</button>' +
-    exploreCta() +
-    '</div></article>'
-  );
+    '</span></div>';
+  html +=
+    engageBar([
+      engageBtn(
+        'data-open="book" data-id="' + esc(s.id) + '"',
+        iconCal(),
+        left === 0 ? 'Join waitlist' : 'Book',
+        S.booked.indexOf(s.id) !== -1,
+        'primary'
+      ),
+      saveEngageBtn(s.id),
+      isOwnCard('session', s.id, false) ? '' : reportEngageBtn('session', s.id)
+    ]) +
+    '</article>';
+  return html;
 }
 
 function renderJourneyCard(item) {
   var j = JOURNEYS[item.journey];
   var a = author(item.journey);
+  var html;
   if (!j) return '';
-  var bits = ['Journey'];
-  if (a.role) bits.push(a.role);
-  bits.push('Age ' + j.age);
-  if (j.ongoing) bits.push('Ongoing');
-  var cats = '';
-  if (j.field) cats += catChip(j.field, false);
-  if (a.pos) cats += catChip(a.pos, false);
-  return (
+  html =
     '<article class="card feed-card kind-journey journey-card clickable" ' +
     cardClickAttrs('journey', item.journey) +
     '>' +
     '<div class="card-head">' +
-    '<span class="av gold">' +
-    esc(a.init) +
-    '</span>' +
-    '<div class="meta"><div class="name">' +
-    esc(a.name) +
-    '</div><div class="sub">' +
-    esc(bits.join(' · ')) +
+    avatarHtml(a, false) +
+    '<div class="meta">' +
+    nameWithBadge(a.name, a) +
+    '<div class="sub">' +
+    kindTimeHtml('Journey', item.at, item.edited) +
     '</div></div>' +
-    '<button type="button" class="btn quiet follow-btn' +
-    (isFollowing(item.journey) ? ' following' : '') +
-    '" data-follow="' +
-    esc(item.journey) +
-    '">' +
-    (isFollowing(item.journey) ? 'Following' : 'Follow') +
-    '</button>' +
-    '</div>' +
-    (cats ? '<div class="card-cats">' + cats + '</div>' : '') +
-    '<h3 class="hook">' +
-    esc(j.hook) +
-    '</h3>' +
-    '<p class="now-line">Now · ' +
-    esc(j.now) +
-    '</p>' +
-    '<div class="engage">' +
-    '<button type="button" class="engage-btn" data-open="mentor" data-id="' +
-    esc(item.journey) +
-    '">Profile</button>' +
-    exploreCta() +
-    '</div></article>'
-  );
+    contactAffordance(item.journey, item.mine) +
+    cardMoreHtml('journey', item.journey, item.mine) +
+    '</div>';
+  html += mineFlagsHtml(item);
+  if (j.field) html += '<div class="card-cats">' + catChip(j.field, false) + '</div>';
+  html += '<h3 class="hook">' + esc(j.hook) + '</h3>';
+  if (j.place) html += '<p class="card-place">' + esc(j.place) + '</p>';
+  html += journeyPathPreview(j);
+  html += '<p class="now-line">Now: ' + esc(j.now) + '</p>';
+  html += renderImages(item.images || j.images, 'card');
+  html +=
+    engageBar([
+      saveEngageBtn(item.journey),
+      isOwnCard('journey', item.journey, item.mine)
+        ? ''
+        : reportEngageBtn('journey', item.journey)
+    ]) +
+    '</article>';
+  return html;
+}
+
+function journeyPathPreview(j) {
+  var html = '';
+  var i;
+  var start = 0;
+  var n = 0;
+  var line;
+  if (!j.body || !j.body.length) return '';
+  if (j.body[0] === j.hook) start = 1;
+  html = '<ol class="card-path">';
+  for (i = start; i < j.body.length && n < 4; i++) {
+    line = j.body[i];
+    if (!line || line === j.now) continue;
+    html += '<li>' + esc(line) + '</li>';
+    n += 1;
+  }
+  html += '</ol>';
+  return n ? html : '';
 }
 
 function renderFeedCard(item) {
@@ -961,6 +1573,7 @@ function renderSessionsPage() {
   for (k in OPPS) {
     if (!OPPS.hasOwnProperty(k)) continue;
     o = OPPS[k];
+    if (!openingVisible(o)) continue;
     if (S.onboarded && S.stage && oppOpenAtStage(o, S.stage)) open.push(o);
     else later.push(o);
   }
@@ -984,7 +1597,7 @@ function renderSessionsPage() {
       '<div class="card-actions">' +
       '<button type="button" class="btn sm" data-open="opp" data-id="' +
       esc(o.id) +
-      '">Explore</button>' +
+      '">Open</button>' +
       '<button type="button" class="btn sm g" data-save="' +
       esc(o.id) +
       '">' +
@@ -995,6 +1608,247 @@ function renderSessionsPage() {
     '<p class="footer-note">Dates, fees and requirements are illustrative in this prototype and must be confirmed with the organiser.</p></section>';
   html += '</div>';
   return html;
+}
+
+function personById(id) {
+  return PEOPLE[id] || null;
+}
+
+function personIds() {
+  var ids = [];
+  var k;
+  for (k in PEOPLE) {
+    if (!PEOPLE.hasOwnProperty(k)) continue;
+    if (PEOPLE[k].role === 'mentor' || PEOPLE[k].role === 'contributor') ids.push(k);
+  }
+  return ids;
+}
+
+function personSearchHay(p) {
+  return [p.name, p.career, p.title, p.region].join(' ').toLowerCase();
+}
+
+function personMatches(id) {
+  var p = personById(id);
+  var q;
+  if (!p) return false;
+  if (p.role !== 'mentor' && p.role !== 'contributor') return false;
+  if (S.commRole === 'mentors' && p.role !== 'mentor') return false;
+  if (S.commRole === 'contributors' && p.role !== 'contributor') return false;
+  if (S.commRole === 'likeme' && (!S.myArch || p.arch !== S.myArch)) return false;
+  if (S.commCareer && p.career !== S.commCareer) return false;
+  q = (S.commQ || '').trim().toLowerCase();
+  if (q && personSearchHay(p).indexOf(q) === -1) return false;
+  return true;
+}
+
+function sortPersonIds(ids) {
+  return ids.slice().sort(function (a, b) {
+    var pa = personById(a);
+    var pb = personById(b);
+    var aSame = S.myArch && pa && pa.arch === S.myArch ? 0 : 1;
+    var bSame = S.myArch && pb && pb.arch === S.myArch ? 0 : 1;
+    if (aSame !== bSame) return aSame - bSame;
+    return (pa.name || '').toLowerCase() < (pb.name || '').toLowerCase() ? -1 : 1;
+  });
+}
+
+function filteredPeople() {
+  var ids = personIds();
+  var out = [];
+  var i;
+  for (i = 0; i < ids.length; i++) {
+    if (personMatches(ids[i])) out.push(ids[i]);
+  }
+  return sortPersonIds(out);
+}
+
+function followedPeople() {
+  var seen = {};
+  var raw = S.follow.concat(S.following);
+  var ids = [];
+  var i;
+  var id;
+  for (i = 0; i < raw.length; i++) {
+    id = raw[i];
+    if (seen[id]) continue;
+    seen[id] = true;
+    if (personMatches(id) && isFollowing(id)) ids.push(id);
+  }
+  return sortPersonIds(ids);
+}
+
+function sameArchPeople(key) {
+  var ids = personIds();
+  var out = [];
+  var i;
+  var p;
+  for (i = 0; i < ids.length; i++) {
+    p = personById(ids[i]);
+    if (p && p.arch === key) out.push(ids[i]);
+  }
+  return sortPersonIds(out);
+}
+
+function personFollowBtn(id, extraCls) {
+  var p = personById(id);
+  if (!p || p.role !== 'mentor' || !p.contactable) return '';
+  if (!canContact(id)) return '';
+  return (
+    '<button type="button" class="pcard-act' +
+    (isFollowing(id) ? ' is-on' : '') +
+    (extraCls ? ' ' + extraCls : '') +
+    '" data-follow="' +
+    esc(id) +
+    '">' +
+    (isFollowing(id) ? 'Following' : 'Follow') +
+    '</button>'
+  );
+}
+
+function personCardHtml(id) {
+  var p = personById(id);
+  var a = author(id);
+  var html;
+  if (!p) return '';
+  html =
+    '<article class="pcard">' +
+    '<div class="pcard-cover ' +
+    esc(p.av || 'av-1') +
+    '" aria-hidden="true"></div>' +
+    '<button type="button" class="pcard-main" data-open="person" data-id="' +
+    esc(id) +
+    '">' +
+    '<span class="pcard-av av ' +
+    esc(p.av || 'av-1') +
+    '" aria-hidden="true">' +
+    esc(a.init || p.name.charAt(0)) +
+    '</span>' +
+    '<strong class="pcard-name">' +
+    esc(p.name) +
+    '</strong>' +
+    '<span class="pcard-badge">' +
+    roleBadgeHtml(a) +
+    '</span>' +
+    '<span class="pcard-title">' +
+    esc(p.title) +
+    '</span>';
+  if (S.myArch && p.arch === S.myArch) {
+    html += '<span class="pcard-why">Same archetype as you</span>';
+  }
+  html += '</button>';
+  if (p.role === 'mentor') {
+    html += personFollowBtn(id, '');
+  } else {
+    html +=
+      '<button type="button" class="pcard-act is-read" data-open="person" data-id="' +
+      esc(id) +
+      '">Read their posts</button>';
+  }
+  html += '</article>';
+  return html;
+}
+
+function personCardsHtml(ids) {
+  var html = '<div class="pcards">';
+  var i;
+  for (i = 0; i < ids.length; i++) html += personCardHtml(ids[i]);
+  html += '</div>';
+  return html;
+}
+
+function personPosts(id) {
+  var p = personById(id);
+  var listed = (p && p.posts) || [];
+  var out = [];
+  var seen = {};
+  var i;
+  var row;
+  var item;
+  var s;
+  var key;
+  function add(kind, pid) {
+    var k = kind + ':' + pid;
+    if (seen[k]) return;
+    seen[k] = true;
+    out.push({ kind: kind, id: pid });
+  }
+  for (i = 0; i < listed.length; i++) {
+    row = listed[i];
+    if (row && row.kind && row.id) add(row.kind, row.id);
+  }
+  for (i = 0; i < FEED.length; i++) {
+    item = FEED[i];
+    if (item.kind === 'question') continue;
+    if (item.author === id) {
+      if (item.kind === 'story') add('story', item.id);
+      if (item.kind === 'journey') add('journey', item.journey || id);
+    }
+    if (item.kind === 'session' && item.session) {
+      s = sessionById(item.session);
+      if (s && (s.hosted_by === id || s.lead === id)) add('session', s.id);
+    }
+  }
+  return out;
+}
+
+function archPickWinner(tally) {
+  var order = ['investigator', 'builder', 'organiser', 'storyteller', 'advocate'];
+  var best = order[0];
+  var bestN = tally[best] || 0;
+  var i;
+  var k;
+  var n;
+  for (i = 1; i < order.length; i++) {
+    k = order[i];
+    n = tally[k] || 0;
+    if (n > bestN) {
+      best = k;
+      bestN = n;
+    }
+  }
+  return best;
+}
+
+function startArchTest() {
+  S.archStep = 0;
+  S.archTally = {};
+  S.archPicks = [];
+  go({ t: 'archtest', id: '0' });
+}
+
+function archAdvance(key) {
+  if (!S.archPicks) S.archPicks = [];
+  S.archPicks.push(key);
+  S.archTally[key] = (S.archTally[key] || 0) + 1;
+  S.archStep += 1;
+  if (NAV.length && NAV[NAV.length - 1].t === 'archtest') {
+    NAV[NAV.length - 1].id = String(S.archStep);
+    paint();
+    return;
+  }
+  go({ t: 'archtest', id: String(S.archStep) });
+}
+
+function archBack() {
+  var key;
+  if (!S.archStep) return;
+  key = S.archPicks && S.archPicks.length ? S.archPicks.pop() : '';
+  if (key) S.archTally[key] = Math.max(0, (S.archTally[key] || 1) - 1);
+  S.archStep -= 1;
+  if (NAV.length && NAV[NAV.length - 1].t === 'archtest') {
+    NAV[NAV.length - 1].id = String(S.archStep);
+    paint();
+  }
+}
+
+function keepArchetype(key) {
+  S.myArch = key;
+  S.commRole = 'likeme';
+  closeSheet();
+  S.view = 'community';
+  render();
+  if (window.scrollTo) window.scrollTo(0, 0);
 }
 
 /* Pathway helpers and render continue in app-views.js / assembled file */

@@ -69,6 +69,16 @@ var SETUP_QS = [
       { v: 'The Advocate', label: 'Argue for a better rule', sub: 'The Advocate' },
       { v: 'The Pioneer', label: 'Build the replacement', sub: 'The Pioneer' }
     ]
+  },
+  {
+    q: 'Which describes you?',
+    hint: 'A student can ask immediately. Sharing experience or mentoring is checked by staff first.',
+    key: 'you',
+    opts: [
+      { v: 'student', label: 'I am a student', sub: '' },
+      { v: 'contributor', label: 'I have experience worth sharing', sub: '' },
+      { v: 'mentor', label: 'I want to mentor students', sub: '' }
+    ]
   }
 ];
 
@@ -141,6 +151,7 @@ function pathwaySubtitle() {
 function finishSetup() {
   var d = S.setupDraft;
   var pending = S.pendingAction;
+  var you = d.you || 'student';
   S.onboarded = true;
   S.stage = d.stage;
   S.form = d.form || stageByKey(d.stage).name;
@@ -149,6 +160,30 @@ function finishSetup() {
   S.priority = d.priority;
   S.blocker = d.blocker;
   S.archetype = d.archetype;
+  S.me.form = S.form;
+  S.me.region = S.region;
+  if (you === 'contributor') {
+    S.role = 'contributor';
+    S.me.role = 'contributor';
+    S.me.pending = true;
+    S.me.verified = false;
+    S.me.contactable = false;
+    S.me.id = '';
+  } else if (you === 'mentor') {
+    S.role = 'mentor';
+    S.me.role = 'mentor';
+    S.me.pending = true;
+    S.me.verified = false;
+    S.me.contactable = true;
+    S.me.id = '';
+  } else {
+    S.role = 'student';
+    S.me.role = 'student';
+    S.me.pending = false;
+    S.me.verified = false;
+    S.me.contactable = false;
+    S.me.id = '';
+  }
   S.setupStep = 0;
   S.setupDraft = {};
   S.setupReason = '';
@@ -180,7 +215,9 @@ function renderSetupHtml(step, opts) {
     '%"></span></div>' +
     '<p class="eyebrow">Question ' +
     (step + 1) +
-    ' of 6</p>' +
+    ' of ' +
+    SETUP_QS.length +
+    '</p>' +
     '<h2>' +
     esc(q.q) +
     '</h2>' +
@@ -234,7 +271,7 @@ function renderSetup(step) {
 
 function renderPathwayBlank() {
   var step = S.setupStep || 0;
-  if (step > 5) step = 0;
+  if (step > SETUP_QS.length - 1) step = 0;
   return (
     '<div class="page-path">' +
     '<div class="path-hero">' +
@@ -249,7 +286,7 @@ function renderPathwayBlank() {
 }
 
 function advanceSetupStep() {
-  if (S.setupStep >= 5) {
+  if (S.setupStep >= SETUP_QS.length - 1) {
     finishSetup();
     return;
   }
@@ -555,16 +592,18 @@ function renderPathway() {
   html += '<section class="section"><h2>Saved</h2>';
   if (!S.saved.length) html += '<p class="muted">Nothing saved.</p>';
   for (i = 0; i < S.saved.length; i++) {
-    o = OPPS[S.saved[i]];
-    if (!o) continue;
+    var saved = savedTarget(S.saved[i]);
+    if (!saved) continue;
     html +=
       '<div class="card row-between"><div><strong>' +
-      esc(o.name) +
+      esc(saved.title) +
       '</strong><p class="muted">' +
-      esc(o.cat) +
+      esc(saved.sub) +
       '</p></div>' +
-      '<button type="button" class="btn sm" data-open="opp" data-id="' +
-      esc(o.id) +
+      '<button type="button" class="btn sm" data-open="' +
+      esc(saved.kind) +
+      '" data-id="' +
+      esc(saved.id) +
       '">Open</button></div>';
   }
   html += '</section>';
@@ -590,7 +629,7 @@ function renderSessionMini(s) {
     '<h3>' +
     esc(s.title) +
     '</h3><p class="muted">' +
-    esc(s.when) +
+    esc(sessionWhen(s)) +
     ' · ' +
     left +
     ' left</p>' +
@@ -629,437 +668,1458 @@ function similarReason(id) {
   return map[id] || '';
 }
 
-/* ---------- DETAIL VIEWS ---------- */
+/* ---------- DETAIL VIEWS (four blocks, same order) ---------- */
+
+function resetCompose(kind) {
+  S.compose = {
+    step: 'write',
+    kind: kind || 'question',
+    title: S.draft || '',
+    body: '',
+    extra: '',
+    when: '',
+    cost: '',
+    ages: '',
+    regions: '',
+    grade: '',
+    source: '',
+    date: '',
+    length: '',
+    where: '',
+    capacity: '',
+    lead: '',
+    topic: S.draftCat || '',
+    stage: '',
+    res: [],
+    resOther: '',
+    images: [],
+    anon: S.anon !== false,
+    editId: ''
+  };
+  if (kind === 'question' && S.draft) {
+    S.compose.title = S.draft;
+  }
+}
+
+function isContactableAuthor(id) {
+  return canContact(id);
+}
+
+function detailStageLabel(key) {
+  if (!key) return '';
+  var i;
+  for (i = 0; i < STAGES.length; i++) {
+    if (STAGES[i].key === key) return STAGES[i].name;
+  }
+  return key;
+}
+
+function chevronSvg() {
+  return '<svg class="d-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>';
+}
+
+function loadDetail(kind, id) {
+  var item;
+  var o;
+  var s;
+  var j;
+  var a;
+  var p;
+  if (kind === 'thread' || kind === 'question') {
+    item = feedById(id);
+    if (!item) return null;
+    p = {
+      kind: 'question',
+      id: item.id,
+      title: item.title || '',
+      at: item.at || '',
+      edited: !!item.edited,
+      cat: item.cat || '',
+      stage: item.stage || '',
+      author: item.author || null,
+      anon: !!item.anon,
+      who: item.who || '',
+      body: item.body || item.title || '',
+      extra: item.extra || '',
+      replies: item.replies || [],
+      res: item.res || [],
+      similar: item.similar || [],
+      mine: !!item.mine
+    };
+    return p;
+  }
+  if (kind === 'story') {
+    item = feedById(id);
+    if (!item) return null;
+    return {
+      kind: 'story',
+      id: item.id,
+      title: item.title || '',
+      at: item.at || '',
+      edited: !!item.edited,
+      cat: item.cat || '',
+      stage: item.stage || '',
+      author: item.author || null,
+      anon: !!item.anon,
+      who: item.who || '',
+      body: item.body || [],
+      images: item.images || [],
+      res: item.res || [],
+      similar: item.similar || [],
+      mine: !!item.mine
+    };
+  }
+  if (kind === 'opp' || kind === 'opportunity') {
+    o = OPPS[id];
+    if (!o) return null;
+    item = null;
+    var fi;
+    for (fi = 0; fi < FEED.length; fi++) {
+      if (FEED[fi].kind === 'opportunity' && FEED[fi].opp === id) item = FEED[fi];
+    }
+    return {
+      kind: 'opportunity',
+      id: o.id,
+      title: o.name,
+      at: item ? item.at : '',
+      edited: !!(item && item.edited),
+      cat: o.cat || '',
+      stage: o.stage || '',
+      author: o.author || (item && item.author) || 'desk',
+      body: o.what || [],
+      images: o.images || (item && item.images) || [],
+      state: o.state || 'live',
+      checkedAt: o.checkedAt || '',
+      checkedBy: o.checkedBy || '',
+      source: o.source || '',
+      returnReason: o.returnReason || '',
+      details: [
+        { label: 'When', value: o.season || '' },
+        { label: 'Cost', value: o.cost || '', accent: /no fee|^free$/i.test(o.cost || '') },
+        { label: 'Ages', value: o.who || '' },
+        { label: 'Regions', value: o.regions || '' },
+        { label: 'Grade requirement', value: o.grade || '', accent: /^none$/i.test(o.grade || '') }
+      ],
+      verified: o.verified || '',
+      res: (item && item.res) || [],
+      similar: (item && item.similar) || o.rel || [],
+      mine: !!(o.author && o.author === currentPosterId())
+    };
+  }
+  if (kind === 'session') {
+    s = sessionById(id);
+    if (!s) return null;
+    item = null;
+    for (fi = 0; fi < FEED.length; fi++) {
+      if (FEED[fi].kind === 'session' && FEED[fi].session === id) item = FEED[fi];
+    }
+    a = author(s.lead);
+    return {
+      kind: 'session',
+      id: s.id,
+      title: s.title,
+      at: item ? item.at : '',
+      edited: !!(item && item.edited),
+      cat: s.cat || '',
+      stage: s.stages && s.stages[0] ? s.stages[0] : '',
+      author: s.hosted_by || s.lead,
+      body: s.what ? [s.what] : [],
+      details: [
+        { label: 'When', value: s.dateText || sessionWhen(s) },
+        { label: 'Length', value: s.length || '' },
+        { label: 'Where', value: s.platform || '' },
+        { label: 'Places', value: String(Math.max(0, s.seats - s.taken)) + ' of ' + String(s.seats) },
+        { label: 'Led by', value: a.name }
+      ],
+      verified: '',
+      res: (item && item.res) || [],
+      similar: (item && item.similar) || [],
+      mine: !!(s.hosted_by === currentPosterId() || s.lead === currentPosterId())
+    };
+  }
+  if (kind === 'journey') {
+    j = JOURNEYS[id];
+    a = author(id);
+    if (!j) return null;
+    item = null;
+    for (fi = 0; fi < FEED.length; fi++) {
+      if (FEED[fi].kind === 'journey' && FEED[fi].journey === id) item = FEED[fi];
+    }
+    return {
+      kind: 'journey',
+      id: id,
+      title: j.hook || a.name,
+      at: item ? item.at : '',
+      edited: !!(item && item.edited),
+      cat: (item && item.cat) || j.field || '',
+      stage: (item && item.stage) || '',
+      author: id,
+      body: j.body || [],
+      images: (item && item.images) || j.images || [],
+      res: (item && item.res) || [],
+      similar: (item && item.similar) || [],
+      mine: !!(item && item.mine) || !!(currentPosterId() && currentPosterId() === id)
+    };
+  }
+  return null;
+}
+
+function head(p) {
+  var a = p.author ? author(p.author) : null;
+  var name;
+  var kindLabel;
+  var html;
+  if (p.kind === 'question') kindLabel = 'Question';
+  else if (p.kind === 'story') kindLabel = 'Story';
+  else if (p.kind === 'journey') kindLabel = 'Journey';
+  else if (p.kind === 'opportunity') kindLabel = 'Opportunity';
+  else if (p.kind === 'session') kindLabel = 'Session';
+  else kindLabel = '';
+  if (p.anon || (p.kind === 'question' && !p.author)) {
+    name = p.who || studentLabel();
+    a = null;
+  } else if (p.mine && !p.author) {
+    name = p.anon ? studentLabel() : youName();
+  } else {
+    name = a ? a.name : p.who || '';
+  }
+  html = '<div class="d-head">';
+  html +=
+    '<div class="d-author">' +
+    '<span class="av av-lg' +
+    (p.anon || !a ? ' av-anon' : a.system ? ' av-desk' : '') +
+    '" aria-hidden="true">' +
+    esc(p.anon || !a ? '?' : a.init) +
+    '</span>' +
+    '<div class="d-who">' +
+    nameWithBadge(name, a) +
+    '<div class="d-sub">' +
+    kindTimeHtml(kindLabel, p.at, p.edited) +
+    '</div></div>';
+  html += contactAffordance(p.author, p.mine || p.anon);
+  html += cardMoreHtml(detailOpenKind(p), p.id, !!p.mine);
+  html += '</div>';
+  if (p.cat || p.stage) {
+    html += '<div class="d-chips">';
+    if (p.cat) html += '<span class="d-chip">' + esc(p.cat) + '</span>';
+    if (p.stage) html += '<span class="d-chip">' + esc(detailStageLabel(p.stage)) + '</span>';
+    html += '</div>';
+  }
+  html += '</div>';
+  return html;
+}
+
+function detailOpenKind(p) {
+  if (p.kind === 'question') return 'thread';
+  if (p.kind === 'opportunity') return 'opp';
+  return p.kind;
+}
+
+function detailEngage(p) {
+  var n;
+  var btns = [];
+  if (p.kind === 'question') {
+    n = p.replies ? p.replies.length : 0;
+    btns.push(
+      engageBtn(
+        'data-focus-reply="1"',
+        iconReply(),
+        n === 1 ? '1 reply' : n + ' replies',
+        false
+      )
+    );
+    if (!p.mine) btns.push(reportEngageBtn('thread', p.id));
+  } else if (p.kind === 'story') {
+    btns.push(
+      engageBtn(
+        'data-inspire="' + esc(p.id) + '"',
+        iconHeart(),
+        'Inspired',
+        isInspired(p.id)
+      )
+    );
+    btns.push(saveEngageBtn(p.id));
+    if (!p.mine) btns.push(reportEngageBtn('story', p.id));
+  } else if (p.kind === 'journey') {
+    btns.push(saveEngageBtn(p.id));
+    if (!p.mine) btns.push(reportEngageBtn('journey', p.id));
+  } else if (p.kind === 'opportunity') {
+    if (!isOwnCard('opp', p.id, !!p.mine)) btns.push(reportEngageBtn('opp', p.id));
+  } else if (p.kind === 'session') {
+    btns.push(saveEngageBtn(p.id));
+    if (!isOwnCard('session', p.id, !!p.mine)) btns.push(reportEngageBtn('session', p.id));
+  }
+  return engageBar(btns);
+}
+
+function readKindLabel(p) {
+  if (p.kind === 'question') return 'The question';
+  if (p.kind === 'story') return 'The story';
+  if (p.kind === 'journey') return 'The pathway';
+  if (p.kind === 'opportunity') return 'The opening';
+  if (p.kind === 'session') return 'The session';
+  return '';
+}
+
+function content(p) {
+  var html;
+  var i;
+  var rows;
+  var row;
+  var accent;
+  var qbody;
+  var paras = [];
+  if (p.kind === 'question') {
+    qbody = p.body || '';
+    if (qbody && qbody === p.title) qbody = '';
+    if (qbody) paras.push(qbody);
+    if (p.extra) paras.push(p.extra);
+  } else if (p.body && p.body.length) {
+    if (typeof p.body === 'string') paras.push(p.body);
+    else {
+      for (i = 0; i < p.body.length; i++) paras.push(p.body[i]);
+    }
+  }
+  if (paras.length && paras[0] === p.title) paras.shift();
+  html = '<div class="d-read">';
+  if (readKindLabel(p)) html += '<p class="d-read-kicker">' + esc(readKindLabel(p)) + '</p>';
+  html += '<h2 class="d-title">' + esc(p.title) + '</h2>';
+  if (p.kind === 'journey' && paras.length) {
+    html += '<ol class="d-path">';
+    for (i = 0; i < paras.length; i++) html += '<li>' + esc(paras[i]) + '</li>';
+    html += '</ol>';
+  } else {
+    for (i = 0; i < paras.length; i++) {
+      html += '<p' + (i === 0 ? ' class="d-lead"' : '') + '>' + esc(paras[i]) + '</p>';
+    }
+  }
+  html += renderImages(p.images, 'detail');
+  html += '</div>';
+  if (p.kind === 'opportunity') {
+    if ((p.state || 'live') === 'pending' && p.author === currentPosterId()) {
+      html += '<p class="wait-line">Waiting for a mentor to check this.</p>';
+    }
+    if ((p.state || '') === 'returned' && p.author === currentPosterId()) {
+      html +=
+        '<p class="wait-line">Sent back' +
+        (p.returnReason ? ': ' + esc(p.returnReason) : '.') +
+        '</p>';
+    }
+    html += openingCheckedHtml({
+      state: p.state,
+      checkedAt: p.checkedAt,
+      checkedBy: p.checkedBy,
+      source: p.source
+    });
+  }
+  if (p.kind === 'opportunity' || p.kind === 'session') {
+    rows = '';
+    if (p.details) {
+      for (i = 0; i < p.details.length; i++) {
+        row = p.details[i];
+        if (!row.value) continue;
+        accent = row.accent ? ' d-accent' : '';
+        rows +=
+          '<div class="d-fact"><dt>' +
+          esc(row.label) +
+          '</dt><dd class="' +
+          accent +
+          '">' +
+          esc(row.value) +
+          '</dd></div>';
+      }
+    }
+    if (rows) html += '<dl class="d-facts">' + rows + '</dl>';
+    if (p.kind === 'opportunity' && p.verified) {
+      html += '<p class="d-verified">' + esc(p.verified) + '</p>';
+    }
+  }
+  return html;
+}
+
+function replies(p) {
+  if (p.kind !== 'question') return '';
+  var list = p.replies || [];
+  var html;
+  var i;
+  var r;
+  var a;
+  var name;
+  var headline;
+  html =
+    '<div class="d-replies"><p class="d-count">' +
+    list.length +
+    (list.length === 1 ? ' reply' : ' replies') +
+    ', in the order they were written</p>';
+  for (i = 0; i < list.length; i++) {
+    r = list[i];
+    a = r.a ? author(r.a) : null;
+    name = a ? a.name : r.who || 'Student';
+    headline = a ? a.pos || '' : '';
+    html +=
+      '<div class="d-reply">' +
+      '<span class="av' +
+      (a ? '' : ' av-anon') +
+      '" aria-hidden="true">' +
+      esc(a ? a.init : '?') +
+      '</span>' +
+      '<div>' +
+      nameWithBadge(name, a) +
+      (headline ? '<div class="d-sub">' + esc(headline) + '</div>' : '') +
+      '<p>' +
+      esc(r.text) +
+      '</p></div></div>';
+  }
+  html +=
+    '<div class="d-replybox"><label class="field-label" for="thread-reply">Write a reply</label>' +
+    '<textarea id="thread-reply" rows="3" placeholder="One clear point is enough"></textarea>' +
+    '<button type="button" class="btn sm" data-thread-reply="' +
+    esc(p.id) +
+    '">Post reply</button></div></div>';
+  return html;
+}
+
+function resourceOpen(r) {
+  if (r.k === 'Opportunity' && r.ref) return { kind: 'opp', id: r.ref };
+  if (r.k === 'Session' && r.ref) return { kind: 'session', id: r.ref };
+  return null;
+}
+
+function attachRow(opts) {
+  var html;
+  var open = opts.open;
+  var tag = open ? 'button' : 'div';
+  var attrs = open
+    ? ' type="button" class="d-row clickable" data-open="' +
+      esc(open.kind) +
+      '" data-id="' +
+      esc(open.id) +
+      '"'
+    : ' class="d-row"';
+  html = '<' + tag + attrs + '>';
+  if (opts.d && opts.dw) {
+    html +=
+      '<span class="d-date" aria-hidden="true"><b>' +
+      esc(opts.d) +
+      '</b><small>' +
+      esc(opts.dw) +
+      '</small></span>';
+  } else if (opts.k) {
+    html += '<span class="d-kind">' + esc(opts.k) + '</span>';
+  }
+  html +=
+    '<span class="d-rowmain"><strong>' +
+    esc(opts.title) +
+    '</strong>' +
+    (opts.s ? '<span class="d-sub">' + esc(opts.s) + '</span>' : '') +
+    '</span>';
+  if (open) html += chevronSvg();
+  html += '</' + tag + '>';
+  return html;
+}
+
+function resources(p) {
+  var ids = p.res || [];
+  var rows = '';
+  var i;
+  var r;
+  var dest;
+  var heading;
+  for (i = 0; i < ids.length; i++) {
+    r = RES[ids[i]];
+    if (!r) continue;
+    dest = resourceOpen(r);
+    rows += attachRow({
+      k: r.k,
+      title: r.t,
+      s: r.s,
+      d: r.d,
+      dw: r.dw,
+      open: dest
+    });
+  }
+  if (!rows) return '';
+  if (p.kind === 'question') heading = 'Resources mentors added';
+  else if (p.kind === 'story' || p.kind === 'journey') heading = 'What they attached';
+  else heading = 'Useful with this';
+  return '<div class="d-block"><h3>' + heading + '</h3>' + rows + '</div>';
+}
+
+function similarItem(p, sid) {
+  var item;
+  var o;
+  var s;
+  var a;
+  var j;
+  if (p.kind === 'journey') {
+    a = author(sid);
+    j = JOURNEYS[sid];
+    if (!j) return '';
+    return attachRow({
+      k: 'Journey',
+      title: a.name,
+      s: j.field || j.hook || '',
+      open: { kind: 'journey', id: sid }
+    });
+  }
+  if (p.kind === 'opportunity') {
+    o = OPPS[sid];
+    if (!o) return '';
+    return attachRow({
+      k: 'Opportunity',
+      title: o.name,
+      s: o.one || '',
+      open: { kind: 'opp', id: sid }
+    });
+  }
+  if (p.kind === 'session') {
+    s = sessionById(sid);
+    if (!s) return '';
+    return attachRow({
+      k: 'Session',
+      title: s.title,
+      s: sessionWhen(s),
+      d: s.date,
+      dw: s.day,
+      open: { kind: 'session', id: sid }
+    });
+  }
+  item = feedById(sid);
+  if (!item) return '';
+  if (p.kind === 'question') {
+    return attachRow({
+      k: 'Question',
+      title: item.title,
+      s: item.who || timeAgo(item.at) || '',
+      open: { kind: 'thread', id: sid }
+    });
+  }
+  return attachRow({
+    k: 'Story',
+    title: item.title,
+    s: timeAgo(item.at) || '',
+    open: { kind: 'story', id: sid }
+  });
+}
+
+function similar(p) {
+  var ids = p.similar || [];
+  var rows = '';
+  var i;
+  var n = 0;
+  var heading;
+  for (i = 0; i < ids.length && n < 3; i++) {
+    var row = similarItem(p, ids[i]);
+    if (row) {
+      rows += row;
+      n += 1;
+    }
+  }
+  if (!rows) return '';
+  if (p.kind === 'question') heading = 'Similar questions';
+  else if (p.kind === 'story') heading = 'More stories like this';
+  else if (p.kind === 'journey') heading = 'Other journeys';
+  else if (p.kind === 'opportunity') heading = 'Similar openings';
+  else heading = 'Other sessions';
+  return '<div class="d-block"><h3>' + heading + '</h3>' + rows + '</div>';
+}
+
+function action(p) {
+  var line;
+  var label;
+  var attrs;
+  if (p.kind === 'question') {
+    line = 'We will alert you when someone else answers.';
+    label = S.qFollow.indexOf(p.id) !== -1 ? 'Following this question' : 'Follow this question';
+    attrs = 'data-follow-q="' + esc(p.id) + '"';
+  } else if (p.kind === 'story') {
+    line = 'It sits with your current step so you can come back to it.';
+    label = 'Save to my pathway';
+    attrs = 'data-take-story="' + esc(p.id) + '"';
+  } else if (p.kind === 'journey') {
+    line = 'It sits with your current step so you can come back to it.';
+    label = 'Save to my pathway';
+    attrs = 'data-jstep-all="' + esc(p.id) + '"';
+  } else if (p.kind === 'opportunity') {
+    line = 'It shows up under your pathway with the details attached.';
+    label = isSaved(p.id) ? 'Saved to my pathway' : 'Save this opening';
+    attrs = 'data-save="' + esc(p.id) + '"';
+  } else if (p.kind === 'session') {
+    line = 'Your question goes on the list the mentor sees beforehand.';
+    label = S.booked.indexOf(p.id) !== -1 ? 'Manage booking' : 'Book a place';
+    attrs = 'data-open="book" data-id="' + esc(p.id) + '"';
+  } else {
+    return '';
+  }
+  return (
+    '<div class="d-action"><p>' +
+    line +
+    '</p><button type="button" class="btn" ' +
+    attrs +
+    '>' +
+    label +
+    '</button></div>'
+  );
+}
+
+function renderSimpleDetail(p) {
+  var html = '<div class="detail d-simple">' + head(p) + content(p) + detailEngage(p) + action(p);
+  if (p.kind === 'question') {
+    html += replies(p) + '</div>';
+    return html;
+  }
+  html += resources(p) + similar(p) + '</div>';
+  return html;
+}
 
 function viewThread(v) {
   var item = feedById(v.id);
-  if (!item) return { crumb: 'Thread', title: 'Missing', html: '<p>Not found.</p>' };
+  var p;
+  if (!item) return { crumb: 'Question', title: 'Missing', html: '<p>Not found.</p>' };
   ensureReplyIds(item);
-  if (item.mine && item.newReply) {
-    item.newReply = false;
-    if (S.unread > 0) S.unread -= 1;
-  }
+  if (item.mine && item.newReply) item.newReply = false;
   pushRecent('thread', item.id, item.title);
-  var anon = !!item.anon || !item.author;
-  var a = item.author ? author(item.author) : null;
-  var name = anon ? item.who || youName() : a && a.name ? a.name : youName();
-  var html = '<div class="detail">';
-  html +=
-    '<div class="card"><div class="card-head">' +
-    avatarHtml(a, anon) +
-    '<div class="meta"><div class="name">' +
-    esc(name) +
-    '</div><div class="sub">' +
-    esc(item.time || '') +
-    '</div></div></div>';
-  html +=
-    '<p class="muted">' +
-    (item.asks || 0) +
-    ' students asked something like this</p>';
-  html += '<h2 class="t25">' + esc(item.title) + '</h2>';
-  html +=
-    '<div class="pill-row">' +
-    pill(item.cat, 'dot', 'data-topic="' + esc(item.cat) + '"') +
-    '<span class="p blue">Asked at ' +
-    esc(item.askedAt || 'Form 3') +
-    '</span></div>';
-  if (item.mine) {
-    html +=
-      '<div class="flag-row"><button type="button" class="btn q" data-edit="' +
-      esc(item.id) +
-      '">Edit</button><button type="button" class="btn q" data-del="' +
-      esc(item.id) +
-      '">Delete</button></div>';
-  }
-  html += '</div>';
-  html +=
-    '<p class="reply-label">' +
-    (item.replies ? item.replies.length : 0) +
-    ' replies, in the order they were written</p>';
-  var i, r, ra;
-  for (i = 0; i < (item.replies || []).length; i++) {
-    r = item.replies[i];
-    ra = r.a ? author(r.a) : { name: r.who || 'Student', init: '?', pos: '', system: true };
-    html +=
-      '<div class="card reply-card" id="reply-' +
-      esc(r.id) +
-      '">' +
-      avatarHtml(ra, !r.a) +
-      '<div class="reply-body"><strong>' +
-      esc(ra.name) +
-      '</strong><p class="muted">' +
-      esc(ra.pos || '') +
-      '</p><p>' +
-      esc(r.text) +
-      '</p><div class="flag-row">';
-    if (r.a) {
-      html +=
-        '<button type="button" class="btn sm g" data-open="mentor" data-id="' +
-        esc(r.a) +
-        '">Profile</button>';
-    }
-    if (r.mine) {
-      html +=
-        '<button type="button" class="btn q" data-del-reply="' +
-        esc(item.id) +
-        '" data-rid="' +
-        esc(r.id) +
-        '">Delete reply</button>';
-    }
-    html += '</div></div></div>';
-  }
-  html +=
-    '<div class="card reply-composer"><label class="field-label" for="thread-reply">Add a reply</label>' +
-    '<textarea id="thread-reply" rows="3" placeholder="One clear point is enough"></textarea>' +
-    '<button type="button" class="btn sm" data-thread-reply="' +
-    esc(item.id) +
-    '">Post reply</button></div>';
-  if (item.opp && OPPS[item.opp]) {
-    html += miniOpp(OPPS[item.opp]);
-  }
-  if (item.sess) {
-    var ss = sessionById(item.sess);
-    if (ss) html += renderSessionMini(ss);
-  }
-  var answered = false;
-  html += '<section><h3>Who answered</h3>';
-  var seen = {};
-  for (i = 0; i < (item.replies || []).length; i++) {
-    if (item.replies[i].a && !seen[item.replies[i].a]) {
-      seen[item.replies[i].a] = true;
-      answered = true;
-      html += mentorRow(item.replies[i].a, '');
-    }
-  }
-  if (!answered) html += '<p class="muted">No mentor replies yet.</p>';
-  html += '</section>';
-  html += '<section><h3>Students asked these next</h3>';
-  var nextN = 0;
-  for (i = 0; i < (item.rel || []).length; i++) {
-    var rel = feedById(item.rel[i]);
-    if (rel) {
-      nextN++;
-      html +=
-        '<button type="button" class="card clickable row-btn" data-open="thread" data-id="' +
-        esc(rel.id) +
-        '">' +
-        esc(rel.title) +
-        '</button>';
-    }
-  }
-  for (i = 0; i < FEED.length; i++) {
-    if (FEED[i].kind === 'question' && FEED[i].cat === item.cat && FEED[i].id !== item.id) {
-      nextN++;
-      html +=
-        '<button type="button" class="card clickable row-btn" data-open="thread" data-id="' +
-        esc(FEED[i].id) +
-        '">' +
-        esc(FEED[i].title) +
-        '</button>';
-      break;
-    }
-  }
-  if (!nextN) html += '<p class="muted">No related questions yet.</p>';
-  html += '</section>';
-  html += askAboutBlock('About ' + item.title + ': ', item.cat);
-  html += '</div>';
-  return { crumb: 'Question', title: item.title, html: html };
-}
-
-function miniOpp(o) {
-  return (
-    '<button type="button" class="card clickable opp-mini" data-open="opp" data-id="' +
-    esc(o.id) +
-    '"><span class="p blue">Opportunity</span><strong>' +
-    esc(o.name) +
-    '</strong><p class="muted">' +
-    esc(o.one) +
-    '</p></button>'
-  );
+  p = loadDetail('question', v.id);
+  return { crumb: 'Question', title: 'Question', html: renderSimpleDetail(p) };
 }
 
 function viewStory(v) {
   var item = feedById(v.id);
+  var p;
   if (!item) return { crumb: 'Story', title: 'Missing', html: '<p>Not found.</p>' };
   pushRecent('story', item.id, item.title);
-  var mine = !!item.mine;
-  var anon = !!item.anon;
-  var a = !mine && item.author ? author(item.author) : null;
-  var j = !mine && item.author ? JOURNEYS[item.author] : null;
-  var name = mine ? (anon ? studentLabel() : youName()) : a.name;
-  var pos = mine ? '' : a.pos || '';
-  var html = '<div class="detail">';
-  html +=
-    '<div class="card"><div class="card-head">' +
-    avatarHtml(a, mine || anon) +
-    '<div class="meta"><div class="name">' +
-    esc(name) +
-    '</div><div class="sub">' +
-    esc(pos) +
-    '</div></div>';
-  if (!mine && a) {
-    html +=
-      '<button type="button" class="btn sm g" data-follow="' +
-      esc(item.author) +
-      '">' +
-      (isFollowing(item.author) ? 'Following' : 'Follow') +
-      '</button>';
-  }
-  html +=
-    '</div>' +
-    '<h2 class="t27">' +
-    esc(item.title) +
-    '</h2>' +
-    pill(item.cat, 'dot', 'data-topic="' + esc(item.cat) + '"');
-  if (mine) {
-    html +=
-      '<div class="flag-row"><span class="p green">Your post</span>' +
-      (item.edited ? '<span class="p">Edited</span>' : '') +
-      '<button type="button" class="btn q" data-edit="' +
-      esc(item.id) +
-      '">Edit</button>' +
-      '<button type="button" class="btn q" data-del="' +
-      esc(item.id) +
-      '">Delete</button></div>';
-  }
-  html += '</div>';
-  html += '<div class="card article">';
-  var i;
-  for (i = 0; i < item.body.length; i++) {
-    html += '<p' + (i === 0 ? ' class="drop"' : '') + '>' + esc(item.body[i]) + '</p>';
-  }
-  html +=
-    '<button type="button" class="btn g" data-inspire="' +
-    esc(item.id) +
-    '">' +
-    iconHeart() +
-    ' Inspired me · ' +
-    (item.insp || 0) +
-    '</button></div>';
-  if (item.takeaways && item.takeaways.length) {
-    html += '<section class="card"><h3>What to take from it</h3><ul class="tips">';
-    for (i = 0; i < item.takeaways.length; i++) {
-      html += '<li>' + iconCheck() + ' ' + esc(item.takeaways[i]) + '</li>';
-    }
-    html +=
-      '</ul><button type="button" class="btn sm" data-take-story="' +
-      esc(item.id) +
-      '">Put these on my pathway</button></section>';
-  }
-  if (!mine && a) {
-    html +=
-      '<button type="button" class="card clickable" data-open="mentor" data-id="' +
-      esc(item.author) +
-      '"><p class="eyebrow">The person behind it</p>' +
-      avatarHtml(a, false) +
-      '<strong>' +
-      esc(a.name) +
-      '</strong><p class="muted">' +
-      esc(a.pos) +
-      (j ? ' · ' + esc(j.place) : '') +
-      '</p>' +
-      (j ? '<p class="muted">' + esc(j.type) + ' · ' + esc(j.blurb) + '</p>' : '') +
-      '<p>See their full journey, stories and answers</p></button>';
-  }
-  if (item.opp && OPPS[item.opp]) html += miniOpp(OPPS[item.opp]);
-  if (item.sess) {
-    var ss = sessionById(item.sess);
-    if (ss) html += renderSessionMini(ss);
-  }
-  if (!mine && a) {
-    html += '<section><h3>More from ' + esc(a.name.split(' ')[0]) + '</h3>';
-    for (i = 0; i < FEED.length; i++) {
-      if (FEED[i].kind === 'story' && FEED[i].author === item.author && FEED[i].id !== item.id) {
-        html +=
-          '<button type="button" class="card clickable row-btn" data-open="story" data-id="' +
-          esc(FEED[i].id) +
-          '">' +
-          esc(FEED[i].title) +
-          '</button>';
-      }
-    }
-    html += '</section>';
-  }
-  html +=
-    '<section><h3>Stories like this one</h3><p class="muted">Different people, similar turn.</p>';
-  for (i = 0; i < FEED.length; i++) {
-    if (FEED[i].kind === 'story' && FEED[i].id !== item.id && FEED[i].cat === item.cat) {
-      html +=
-        '<button type="button" class="card clickable row-btn" data-open="story" data-id="' +
-        esc(FEED[i].id) +
-        '">' +
-        esc(FEED[i].title) +
-        '</button>';
-    }
-  }
-  html += '</section>';
-  html += '<section><h3>Questions in the same area.</h3>';
-  for (i = 0; i < FEED.length; i++) {
-    if (FEED[i].kind === 'question' && FEED[i].cat === item.cat) {
-      html +=
-        '<button type="button" class="card clickable row-btn" data-open="thread" data-id="' +
-        esc(FEED[i].id) +
-        '">' +
-        esc(FEED[i].title) +
-        '</button>';
-    }
-  }
-  html += '</section></div>';
-  return { crumb: 'Story', title: item.title, html: html };
+  p = loadDetail('story', v.id);
+  return { crumb: 'Story', title: 'Story', html: renderSimpleDetail(p) };
 }
 
 function viewOpp(v) {
   var o = OPPS[v.id];
-  if (!o) return { crumb: 'Opportunity', title: 'Missing', html: '<p>Not found.</p>' };
+  var p;
+  if (!o || !openingVisible(o)) return { crumb: 'Opportunity', title: 'Missing', html: '<p>Not found.</p>' };
   pushRecent('opp', o.id, o.name);
-  var html = '<div class="detail">';
-  html +=
-    '<div class="hero blue"><span class="p">Opportunity</span><h2>' +
-    esc(o.name) +
-    '</h2><p>' +
-    esc(o.one) +
-    '</p><div class="card-actions">' +
-    '<button type="button" class="btn" data-take-opp="' +
-    esc(o.id) +
-    '">Add to my pathway</button>' +
-    '<button type="button" class="btn g" data-save="' +
-    esc(o.id) +
-    '">' +
-    (isSaved(o.id) ? 'Saved' : 'Save for later') +
-    '</button></div></div>';
-
-  /* Fit check */
-  if (!S.onboarded) {
-    html +=
-      '<div class="callout blue"><p>Is this open to you? Set up your pathway and this tells you directly, using your form and region rather than a general answer,</p>' +
-      '<button type="button" class="btn sm" data-open="setup" data-id="0">Build my pathway</button></div>';
-  } else if (oppOpenAtStage(o, S.stage)) {
-    html +=
-      '<div class="callout green"><p>Open to you at ' + esc(S.form) + '</p></div>';
-  } else {
-    html +=
-      '<div class="callout gold"><p>Not open to you yet at ' +
-      esc(S.form) +
-      '</p><p>' +
-      esc(o.who) +
-      '</p><p>The limit is set by the organisers, not by us. It is worth knowing about now so it is not a surprise later.</p></div>';
-  }
-
-  if (o.independent) {
-    html +=
-      '<div class="callout blue"><p>You can enter this yourself. No school sponsor and no teacher required. That single fact is why most students who could enter this never do.</p></div>';
-  }
-
-  html +=
-    '<div class="facts4">' +
-    '<div><p class="eyebrow">When</p><p>' +
-    esc(o.season) +
-    '</p></div>' +
-    '<div><p class="eyebrow">Cost</p><p>' +
-    esc(o.cost) +
-    '</p></div>' +
-    '<div><p class="eyebrow">Who it is for</p><p>' +
-    esc(o.who) +
-    '</p></div>' +
-    '<div><p class="eyebrow">Category</p><p>' +
-    esc(o.cat) +
-    '</p></div></div>';
-
-  html += '<section><h3>What it actually is</h3>';
-  var i;
-  for (i = 0; i < o.what.length; i++) html += '<p>' + esc(o.what[i]) + '</p>';
-  html += '</section>';
-
-  html += '<section><h3>How you actually get in</h3><ol class="steps-ol">';
-  for (i = 0; i < o.entry.length; i++) {
-    html +=
-      '<li><strong>' + esc(o.entry[i].b) + '</strong><span>' + esc(o.entry[i].s) + '</span></li>';
-  }
-  html += '</ol></section>';
-
-  html += '<section><h3>Quick tips</h3><ul class="tips gold">';
-  for (i = 0; i < o.tips.length; i++) html += '<li>' + esc(o.tips[i]) + '</li>';
-  html += '</ul></section>';
-
-  html +=
-    '<div class="blocker"><strong>' +
-    esc(o.truth.b) +
-    '</strong><p>' +
-    esc(o.truth.p) +
-    '</p></div>';
-  html +=
-    '<div class="callout blue"><strong>' +
-    esc(o.proof.b) +
-    '</strong><p>' +
-    esc(o.proof.p) +
-    '</p></div>';
-  html += '<div class="callout gold"><p class="eyebrow">Where this leads</p><p>' + esc(o.leads) + '</p></div>';
-
-  html += '<section><h3>Mentors who went that way</h3>';
-  for (i = 0; i < (o.mentors || []).length; i++) html += mentorRow(o.mentors[i], '');
-  html += '</section>';
-
-  html += '<section><h3>Sessions that cover it</h3>';
-  for (i = 0; i < (o.sess || []).length; i++) {
-    var ss = sessionById(o.sess[i]);
-    if (ss) html += renderSessionMini(ss);
-  }
-  html += '</section>';
-
-  html += '<section><h3>If this one fits, these do too</h3>';
-  for (i = 0; i < (o.rel || []).length; i++) {
-    if (OPPS[o.rel[i]]) html += miniOpp(OPPS[o.rel[i]]);
-  }
-  html += '</section>';
-  html += askAboutBlock('About ' + o.name + ': ', o.cat);
-  html +=
-    '<p class="footer-note">Dates, fees and requirements are illustrative in this prototype and must be confirmed with the organiser.</p></div>';
-  return { crumb: 'Opportunity', title: o.name, html: html };
+  p = loadDetail('opp', v.id);
+  return { crumb: 'Opportunity', title: 'Opportunity', html: renderSimpleDetail(p) };
 }
 
 function viewSession(v) {
   var s = sessionById(v.id);
+  var p;
   if (!s) return { crumb: 'Session', title: 'Missing', html: '<p>Not found.</p>' };
   pushRecent('session', s.id, s.title);
-  var lead = author(s.lead);
-  var left = Math.max(0, s.seats - s.taken);
-  var html =
-    '<div class="detail"><div class="hero navy"><p class="eyebrow">' +
-    esc(s.pod) +
-    '</p><h2>' +
-    esc(s.title) +
-    '</h2><p>' +
-    esc(s.when) +
-    ' · One hour · Google Meet</p><p>' +
-    esc(s.what) +
-    '</p>' +
-    '<button type="button" class="btn" data-open="book" data-id="' +
-    esc(s.id) +
-    '">' +
-    (S.booked.indexOf(s.id) !== -1 ? 'Manage booking' : left === 0 ? 'Join waitlist' : 'Book a place') +
-    '</button></div>';
-  html +=
-    '<div class="facts4"><div><p class="eyebrow">Places left</p><p>' +
-    left +
-    '</p></div><div><p class="eyebrow">What to bring</p><p>' +
-    esc(s.bring) +
-    '</p></div></div>';
-  html += '<section><h3>Questions already submitted</h3><ul class="q-list">';
+  p = loadDetail('session', v.id);
+  return { crumb: 'Session', title: 'Session', html: renderSimpleDetail(p) };
+}
+
+function viewJourney(v) {
+  var a = author(v.id);
+  var j = JOURNEYS[v.id];
+  var p;
+  if (!j) return { crumb: 'Journey', title: 'Missing', html: '<p>Not found.</p>' };
+  pushRecent('journey', v.id, a.name + ' journey');
+  p = loadDetail('journey', v.id);
+  return { crumb: 'Journey', title: 'Journey', html: renderSimpleDetail(p) };
+}
+
+function viewCompose() {
+  return {
+    crumb: 'New post',
+    title: composeSheetTitle(),
+    html: renderComposer(),
+    after: function () {
+      wireComposeLive();
+      var first = byId('comp-title') || byId('comp-text');
+      if (first) first.focus();
+    }
+  };
+}
+
+function composeSheetTitle() {
+  var k = S.compose.kind;
+  if (S.compose.step === 'choose') return 'What are you posting';
+  if (k === 'question') return 'Ask a question';
+  if (k === 'story') return 'Share a story';
+  if (k === 'journey') return 'Share a journey';
+  if (k === 'opportunity') return 'Post an opening';
+  if (k === 'session') return 'Post a session';
+  return 'New post';
+}
+
+function openCompose(seed, cat) {
+  var types;
+  if (isVisitor()) {
+    S.pendingAction = { type: 'compose' };
+    go({ t: 'postgate', id: '0' });
+    return;
+  }
+  types = composeTypesFor(postingRole());
+  if (!types.length) {
+    go({ t: 'postgate', id: '0' });
+    return;
+  }
+  if (seed != null && seed !== '') S.draft = seed;
+  if (cat) S.draftCat = cat;
+  if (types.length === 1) {
+    resetCompose(types[0]);
+    S.compose.step = 'write';
+  } else {
+    resetCompose(types[0]);
+    S.compose.step = 'choose';
+  }
+  if (seed && types[0] === 'question') S.compose.title = seed;
+  if (cat) S.compose.topic = cat;
+  go({ t: 'compose', id: 'new' });
+}
+
+function fieldErr(id, msg) {
+  if (!msg) return '<span class="d-err" id="' + id + '-err" hidden></span>';
+  return '<span class="d-err" id="' + id + '-err">' + esc(msg) + '</span>';
+}
+
+function composeValidate() {
+  var c = S.compose;
+  var k = c.kind;
+  var errs = {};
+  var reason = '';
+  var t;
+  var n;
+  if (k === 'question') {
+    t = (c.title || '').trim();
+    n = t.length;
+    if (n < 15 || n > 140) errs.title = '15 to 140 characters.';
+    if (t && t.charAt(t.length - 1) !== '?') errs.title = 'End with a question mark.';
+    if (!t) errs.title = 'Write the question.';
+  } else if (k === 'story' || k === 'journey') {
+    if ((c.title || '').trim().length < 10) errs.title = 'Title needs 10 or more characters.';
+    if ((c.body || '').trim().length < 200) errs.body = 'Write at least 200 characters.';
+  } else if (k === 'opportunity') {
+    if (!(c.when || '').trim()) errs.when = 'When is required.';
+    if (!(c.cost || '').trim()) errs.cost = 'Cost is required. "No fee" is fine.';
+    if (!(c.ages || '').trim()) errs.ages = 'Ages is required.';
+    if (!(c.regions || '').trim()) errs.regions = 'Regions is required.';
+    if (!(c.grade || '').trim()) errs.grade = 'Grade requirement is required. "None" is fine.';
+    if (!(c.source || '').trim()) errs.source = 'Source link is required.';
+    if (!(c.title || '').trim()) errs.title = 'Title is required.';
+    if (!(c.body || '').trim()) errs.body = 'Write what it is.';
+  } else if (k === 'session') {
+    if (!(c.date || '').trim()) errs.date = 'Date and time is required.';
+    if (!(c.length || '').trim()) errs.length = 'Length is required.';
+    if (!(c.where || '').trim()) errs.where = 'Where is required.';
+    if (!(c.capacity || '').trim()) errs.capacity = 'Capacity is required.';
+    if (!(c.title || '').trim()) errs.title = 'Title is required.';
+    if (!(c.body || '').trim()) errs.body = 'Write what it is.';
+  }
+  if (c.step === 'attach') {
+    if (!(c.topic || '').trim()) errs.topic = 'Topic is required.';
+    if (!(c.stage || '').trim()) errs.stage = 'Stage is required.';
+  }
+  if (c.step === 'write') {
+    if (k === 'question' && errs.title) reason = errs.title;
+    else if ((k === 'story' || k === 'journey') && (errs.title || errs.body)) {
+      reason = errs.body || errs.title;
+    } else if (k === 'opportunity') {
+      reason = errs.title || errs.body || errs.when || errs.cost || errs.ages || errs.regions || errs.grade || errs.source || '';
+    } else if (k === 'session') {
+      reason = errs.title || errs.body || errs.date || errs.length || errs.where || errs.capacity || '';
+    }
+  } else if (c.step === 'attach') {
+    reason = errs.topic || errs.stage || '';
+  }
+  return { errs: errs, reason: reason, ok: !reason };
+}
+
+function paintComposeErrors(errs) {
+  var ids = ['title', 'body', 'when', 'cost', 'ages', 'regions', 'grade', 'source', 'date', 'length', 'where', 'capacity', 'lead', 'topic', 'stage'];
   var i;
-  for (i = 0; i < s.qs.length; i++) {
-    html += '<li><span class="qmark">?</span>' + esc(s.qs[i]) + '</li>';
+  var el;
+  var msg;
+  for (i = 0; i < ids.length; i++) {
+    el = byId('comp-' + ids[i] + '-err');
+    if (!el) continue;
+    msg = errs[ids[i]] || '';
+    el.textContent = msg;
+    el.hidden = !msg;
+  }
+  el = byId('comp-text-err');
+  if (el) {
+    msg = errs.title || errs.body || '';
+    el.textContent = msg;
+    el.hidden = !msg;
+  }
+}
+
+function refreshComposeValid() {
+  var v = composeValidate();
+  var btn = byId('comp-next') || byId('comp-submit');
+  var why = byId('comp-why');
+  var count;
+  paintComposeErrors(v.errs);
+  if (btn) btn.disabled = !v.ok;
+  if (why) {
+    why.textContent = v.ok ? '' : v.reason;
+    why.hidden = v.ok;
+  }
+  count = byId('comp-count');
+  if (count) {
+    if (S.compose.kind === 'question') count.textContent = String((S.compose.title || '').length) + ' / 140';
+    else if (S.compose.kind === 'story' || S.compose.kind === 'journey') {
+      count.textContent = String((S.compose.body || '').length) + ' characters';
+    }
+  }
+}
+
+function readComposeFields() {
+  var c = S.compose;
+  function val(id) {
+    var el = byId(id);
+    return el ? el.value : '';
+  }
+  function checked(id) {
+    var el = byId(id);
+    return !!(el && el.checked);
+  }
+  if (byId('comp-title')) c.title = val('comp-title');
+  if (byId('comp-text')) {
+    if (c.kind === 'question') c.title = val('comp-text');
+    else c.body = val('comp-text');
+  }
+  if (byId('comp-extra')) c.extra = val('comp-extra');
+  if (byId('comp-when')) c.when = val('comp-when');
+  if (byId('comp-cost')) c.cost = val('comp-cost');
+  if (byId('comp-ages')) c.ages = val('comp-ages');
+  if (byId('comp-regions')) c.regions = val('comp-regions');
+  if (byId('comp-grade')) c.grade = val('comp-grade');
+  if (byId('comp-source')) c.source = val('comp-source');
+  if (byId('comp-date')) c.date = val('comp-date');
+  if (byId('comp-length')) c.length = val('comp-length');
+  if (byId('comp-where')) c.where = val('comp-where');
+  if (byId('comp-capacity')) c.capacity = val('comp-capacity');
+  if (byId('comp-lead')) c.lead = val('comp-lead');
+  if (byId('comp-topic')) c.topic = val('comp-topic');
+  if (byId('comp-stage')) c.stage = val('comp-stage');
+  if (byId('comp-res-other')) c.resOther = val('comp-res-other');
+  if (byId('comp-anon')) c.anon = checked('comp-anon');
+}
+
+function wireComposeLive() {
+  refreshComposeValid();
+}
+
+function inputLabel(id, text) {
+  return '<label class="field-label" for="' + id + '">' + text + '</label>';
+}
+
+function textField(id, key, label, ph) {
+  return (
+    inputLabel(id, label) +
+    '<input type="text" id="' +
+    id +
+    '" data-compose="' +
+    key +
+    '" placeholder="' +
+    esc(ph || '') +
+    '" value="' +
+    esc(S.compose[key] || '') +
+    '"/>' +
+    fieldErr(id, '')
+  );
+}
+
+function renderComposerChoose() {
+  var types = composeTypesFor(postingRole());
+  var labels = {
+    question: 'Question',
+    story: 'Story',
+    journey: 'Journey',
+    opportunity: 'Opening',
+    session: 'Session'
+  };
+  var html = '<div class="composer compose-panel"><p class="muted">Pick what you are posting.</p>';
+  var i;
+  for (i = 0; i < types.length; i++) {
+    html +=
+      '<button type="button" class="d-row clickable" data-compose-kind="' +
+      types[i] +
+      '"><span class="d-rowmain"><strong>' +
+      labels[types[i]] +
+      '</strong></span>' +
+      chevronSvg() +
+      '</button>';
+  }
+  html += '</div>';
+  return html;
+}
+
+function mentorLeadOptions() {
+  var html = '<option value="">Select a mentor</option>';
+  var k;
+  var a;
+  for (k in AUTHORS) {
+    if (!AUTHORS.hasOwnProperty(k)) continue;
+    a = AUTHORS[k];
+    if (a.role !== 'mentor') continue;
+    html +=
+      '<option value="' +
+      esc(k) +
+      '"' +
+      (S.compose.lead === k ? ' selected' : '') +
+      '>' +
+      esc(a.name) +
+      '</option>';
+  }
+  return html;
+}
+
+function renderImagePicker() {
+  var c = S.compose;
+  var html;
+  var i;
+  var img;
+  if (c.kind !== 'story' && c.kind !== 'journey' && c.kind !== 'opportunity') return '';
+  html = '<div class="comp-imgs"><p class="field-label">Pictures</p>';
+  for (i = 0; i < (c.images || []).length; i++) {
+    img = c.images[i];
+    html +=
+      '<div class="comp-thumb"><img src="' +
+      esc(img.src) +
+      '" alt="' +
+      esc(img.alt || '') +
+      '"/><button type="button" class="btn sm g" data-img-remove="' +
+      i +
+      '">Remove</button></div>';
+  }
+  if ((c.images || []).length < 3) {
+    html +=
+      '<label class="btn sm g" for="comp-img">Add a picture</label>' +
+      '<input type="file" id="comp-img" accept="image/*" hidden/>';
+  }
+  html += '</div>';
+  return html;
+}
+
+function renderComposerWrite() {
+  var c = S.compose;
+  var k = c.kind;
+  var html = '<div class="composer compose-panel" id="composer">';
+  if (isPendingPoster()) {
+    html +=
+      '<p class="wait-line">Your application is being reviewed. You can ask questions in the meantime.</p>';
+  }
+  if (k === 'question') {
+    html += inputLabel('comp-text', 'What do you want to know?');
+    html +=
+      '<textarea id="comp-text" data-compose="title" rows="5" placeholder="Be specific about your form and your region. End with a question mark.">' +
+      esc(c.title || '') +
+      '</textarea>' +
+      fieldErr('comp-text', '') +
+      '<p class="d-count" id="comp-count"></p>';
+    html += inputLabel('comp-extra', 'Anything else we should know');
+    html +=
+      '<textarea id="comp-extra" data-compose="extra" rows="3" placeholder="Optional">' +
+      esc(c.extra || '') +
+      '</textarea>';
+    html += '<div id="dup-slot">' + dupHintHtml(c.title || '') + '</div>';
+  } else if (k === 'story' || k === 'journey') {
+    html += textField('comp-title', 'title', 'Title', 'Give it a name');
+    html += inputLabel('comp-text', 'Write it your way');
+    html +=
+      '<textarea id="comp-text" data-compose="body" rows="10" placeholder="' +
+      (k === 'story'
+        ? 'One turning point is enough. What happened, and what you would do differently.'
+        : 'The road you took, in your own words. Where it started, what changed, where you are now.') +
+      '">' +
+      esc(c.body || '') +
+      '</textarea>' +
+      fieldErr('comp-text', '') +
+      '<p class="d-count" id="comp-count"></p>';
+    html += renderImagePicker();
+  } else if (k === 'opportunity') {
+    html += textField('comp-title', 'title', 'Title', 'Name of the opening');
+    html += inputLabel('comp-text', 'What it is');
+    html +=
+      '<textarea id="comp-text" data-compose="body" rows="6" placeholder="Write the opening in plain language.">' +
+      esc(c.body || '') +
+      '</textarea>' +
+      fieldErr('comp-text', '');
+    html += textField('comp-when', 'when', 'When', 'Season or dates');
+    html += textField('comp-cost', 'cost', 'Cost', 'No fee is a valid answer');
+    html += textField('comp-ages', 'ages', 'Ages', 'Who it is for');
+    html += textField('comp-regions', 'regions', 'Regions', 'Where it runs');
+    html += textField('comp-grade', 'grade', 'Grade requirement', 'None is a valid answer');
+    html += textField('comp-source', 'source', 'Source link', 'The organiser page');
+    html += renderImagePicker();
+  } else if (k === 'session') {
+    html += textField('comp-title', 'title', 'Title', 'Name of the session');
+    html += inputLabel('comp-text', 'What it is');
+    html +=
+      '<textarea id="comp-text" data-compose="body" rows="6" placeholder="What students will walk through.">' +
+      esc(c.body || '') +
+      '</textarea>' +
+      fieldErr('comp-text', '');
+    html += textField('comp-date', 'date', 'Date and time', 'Thursday 18 September, 6:00 PM');
+    html += textField('comp-length', 'length', 'Length in minutes', '60');
+    html += textField('comp-where', 'where', 'Where', 'Google Meet');
+    html += textField('comp-capacity', 'capacity', 'Capacity', '25');
+    html += '<p class="hosted-by">Hosted by you</p>';
   }
   html +=
-    '</ul><p class="muted">Yours gets added when you book, and the mentor sees them beforehand.</p></section>';
-  html += '<section><h3>Who leads it</h3>' + mentorRow(s.lead, '') + '</section>';
-  html += '<section><h3>Opportunities this covers</h3>';
-  for (var k in OPPS) {
-    if (OPPS[k].sess && OPPS[k].sess.indexOf(s.id) !== -1) html += miniOpp(OPPS[k]);
+    '<div class="d-submit"><p class="d-err" id="comp-why" hidden></p>' +
+    '<button type="button" class="btn" id="comp-next" disabled>Continue</button></div></div>';
+  return html;
+}
+
+function renderComposerAttach() {
+  var c = S.compose;
+  var k = c.kind;
+  var html = '<div class="composer compose-panel" id="composer">';
+  html += '<p class="field-label">Attach from the list</p>';
+  var k;
+  var r;
+  var on;
+  for (k in RES) {
+    if (!RES.hasOwnProperty(k)) continue;
+    r = RES[k];
+    on = c.res.indexOf(k) !== -1;
+    html +=
+      '<label class="d-pick"><input type="checkbox" data-res="' +
+      esc(k) +
+      '"' +
+      (on ? ' checked' : '') +
+      '/> <span><strong>' +
+      esc(r.t) +
+      '</strong><span class="d-sub">' +
+      esc(r.k) +
+      (r.s ? ' · ' + esc(r.s) : '') +
+      '</span></span></label>';
   }
-  html += '</section>';
-  html += askAboutBlock('About ' + s.title + ': ', s.cat);
+  html +=
+    '<div class="comp-file"><label class="btn sm g" for="comp-file">Attach a file</label>' +
+    '<input type="file" id="comp-file" hidden/>' +
+    '<p class="hint">A PDF, a form or a syllabus extract becomes a File row.</p></div>';
+  html +=
+    inputLabel('comp-res-other', 'Something not listed') +
+    '<input type="text" id="comp-res-other" data-compose="resOther" placeholder="The desk checks links before they go live" value="' +
+    esc(c.resOther || '') +
+    '"/>';
+  html += inputLabel('comp-topic', 'Topic');
+  html += '<select id="comp-topic" data-compose="topic"><option value="">Select a topic</option>';
+  var i;
+  for (i = 0; i < CATS.length; i++) {
+    html +=
+      '<option value="' +
+      esc(CATS[i]) +
+      '"' +
+      (c.topic === CATS[i] ? ' selected' : '') +
+      '>' +
+      esc(CATS[i]) +
+      '</option>';
+  }
+  html += '</select>' + fieldErr('comp-topic', '');
+  html += inputLabel('comp-stage', 'Stage');
+  html += '<select id="comp-stage" data-compose="stage"><option value="">Select a stage</option>';
+  for (i = 0; i < STAGES.length; i++) {
+    html +=
+      '<option value="' +
+      esc(STAGES[i].key) +
+      '"' +
+      (c.stage === STAGES[i].key ? ' selected' : '') +
+      '>' +
+      esc(STAGES[i].name) +
+      '</option>';
+  }
+  html += '</select>' + fieldErr('comp-stage', '');
+  if (postingRole() === 'student') {
+    html +=
+      '<label class="check"><input type="checkbox" id="comp-anon"' +
+      (c.anon ? ' checked' : '') +
+      '/> Post without my name</label>';
+  }
+  html +=
+    '<p class="d-err" id="comp-why" hidden></p>' +
+    '<button type="button" class="btn" id="comp-submit" disabled>' +
+    (c.editId ? 'Save changes' : k === 'opportunity' ? 'Send for a mentor check' : 'Post to the feed') +
+    '</button></div>';
+  return html;
+}
+
+function renderComposer() {
+  if (S.compose.step === 'choose') return renderComposerChoose();
+  if (S.compose.step === 'attach') return renderComposerAttach();
+  return renderComposerWrite();
+}
+
+function submitCompose() {
+  var c = S.compose;
+  var v = composeValidate();
+  var nid;
+  var body;
+  var host;
+  var s;
+  var poster = currentPosterId();
+  var images = (c.images || []).slice();
+  if (!v.ok) {
+    refreshComposeValid();
+    return;
+  }
+  if (c.editId && c.kind === 'opportunity' && OPPS[c.editId]) {
+    OPPS[c.editId].name = c.title.trim();
+    OPPS[c.editId].one = c.body.trim();
+    OPPS[c.editId].what = [c.body.trim()];
+    OPPS[c.editId].season = c.when.trim();
+    OPPS[c.editId].cost = c.cost.trim();
+    OPPS[c.editId].who = c.ages.trim();
+    OPPS[c.editId].regions = c.regions.trim();
+    OPPS[c.editId].grade = c.grade.trim();
+    OPPS[c.editId].source = c.source.trim();
+    OPPS[c.editId].images = images;
+    OPPS[c.editId].state = 'pending';
+    OPPS[c.editId].returnReason = '';
+    OPPS[c.editId].checkedAt = '';
+    OPPS[c.editId].checkedBy = '';
+    toast('Sent back for a mentor check.');
+    S.draft = '';
+    closeSheet();
+    setView('feed');
+    return;
+  }
+  nid = 'mine-' + Date.now();
+  if (c.kind === 'question') {
+    FEED.unshift({
+      id: nid,
+      kind: 'question',
+      at: nowIso(),
+      cat: c.topic,
+      stage: c.stage,
+      anon: c.anon,
+      who: studentLabel(),
+      title: c.title.trim(),
+      body: c.title.trim(),
+      extra: (c.extra || '').trim(),
+      askedAt: S.form || detailStageLabel(c.stage),
+      asks: 1,
+      replies: [],
+      res: c.res.slice(),
+      similar: [],
+      rel: [],
+      mine: true
+    });
+    toast('Question posted.');
+    simulateReply(nid);
+  } else if (c.kind === 'story') {
+    body = c.body.trim();
+    FEED.unshift({
+      id: nid,
+      kind: 'story',
+      at: nowIso(),
+      cat: c.topic,
+      stage: c.stage,
+      author: postingRole() === 'student' ? null : poster,
+      title: c.title.trim(),
+      body: [body],
+      images: images,
+      res: c.res.slice(),
+      similar: [],
+      insp: 0,
+      rel: [],
+      mine: true,
+      anon: false
+    });
+    toast('Story posted.');
+  } else if (c.kind === 'journey') {
+    FEED.unshift({
+      id: nid,
+      kind: 'journey',
+      at: nowIso(),
+      cat: c.topic,
+      stage: c.stage,
+      journey: poster || 'raeka',
+      author: poster,
+      images: images,
+      res: c.res.slice(),
+      similar: [],
+      mine: true
+    });
+    toast('Journey posted.');
+  } else if (c.kind === 'opportunity') {
+    nid = 'opp-' + Date.now();
+    OPPS[nid] = {
+      id: nid,
+      name: c.title.trim(),
+      cat: c.topic,
+      stage: c.stage,
+      stages: [0],
+      one: c.body.trim(),
+      what: [c.body.trim()],
+      season: c.when.trim(),
+      cost: c.cost.trim(),
+      who: c.ages.trim(),
+      regions: c.regions.trim(),
+      grade: c.grade.trim(),
+      source: c.source.trim(),
+      verified: '',
+      entry: [],
+      tips: [],
+      truth: { b: '', p: '' },
+      proof: { b: '', p: '' },
+      leads: '',
+      mentors: [],
+      rel: [],
+      sess: [],
+      independent: false,
+      state: 'pending',
+      author: poster || '',
+      checkedAt: '',
+      checkedBy: '',
+      returnReason: '',
+      images: images
+    };
+    FEED.unshift({
+      id: 'f-' + nid,
+      kind: 'opportunity',
+      at: nowIso(),
+      cat: c.topic,
+      author: poster || '',
+      opp: nid,
+      stage: c.stage,
+      images: images,
+      res: c.res.slice(),
+      similar: [],
+      text: c.body.trim(),
+      mine: true
+    });
+    toast('Sent for a mentor check. It is not on the public feed yet.');
+  } else if (c.kind === 'session') {
+    nid = 's-' + Date.now();
+    host = poster;
+    s = {
+      id: nid,
+      title: c.title.trim(),
+      day: '',
+      date: '',
+      dateText: c.date.trim(),
+      length: c.length.trim(),
+      platform: c.where.trim(),
+      when: c.date.trim() + ', ' + c.length.trim() + ' on ' + c.where.trim(),
+      pod: '',
+      lead: host,
+      hosted_by: host,
+      seats: parseInt(c.capacity, 10) || 20,
+      taken: 0,
+      stages: [c.stage],
+      cat: c.topic,
+      what: c.body.trim(),
+      bring: '',
+      qs: []
+    };
+    SESSIONS.push(s);
+    FEED.unshift({
+      id: 'f-' + nid,
+      kind: 'session',
+      at: nowIso(),
+      cat: c.topic,
+      session: nid,
+      stage: c.stage,
+      res: c.res.slice(),
+      similar: [],
+      mine: true
+    });
+    toast('Session posted.');
+  }
+  S.draft = '';
+  S.draftCat = c.topic;
+  closeSheet();
+  setView('feed');
+  window.scrollTo(0, 0);
+}
+
+function protoRoleKey() {
+  if (S.role === 'visitor' || !S.onboarded) return 'visitor';
+  if (S.me && S.me.pending && S.role === 'mentor') return 'pending-mentor';
+  if (S.me && S.me.pending && S.role === 'contributor') return 'pending-contributor';
+  return S.role;
+}
+
+function viewProfile() {
+  var roles = [
+    ['visitor', 'Visitor'],
+    ['student', 'Student'],
+    ['pending-contributor', 'Pending contributor'],
+    ['contributor', 'Contributor'],
+    ['pending-mentor', 'Pending mentor'],
+    ['mentor', 'Mentor'],
+    ['admin', 'Admin']
+  ];
+  var html =
+    '<div class="detail"><p class="eyebrow">Prototype control</p><h2>Viewing as</h2>' +
+    '<p class="muted">This switch is for demonstrating posting roles. It is not a real login. Visitor, student, contributor, mentor and admin are the five roles. Pending states show the review line.</p><div class="d-roles">';
+  var i;
+  var check = openingsToCheck();
+  var key = protoRoleKey();
+  for (i = 0; i < roles.length; i++) {
+    html +=
+      '<button type="button" class="btn' +
+      (key === roles[i][0] ? '' : ' g') +
+      '" data-role="' +
+      roles[i][0] +
+      '">' +
+      roles[i][1] +
+      '</button>';
+  }
   html += '</div>';
-  return { crumb: 'Session', title: s.title, html: html };
+  if (canCheckOpenings()) {
+    html +=
+      '<button type="button" class="btn g" data-nav="alerts">Openings to check' +
+      (check.length ? ' · ' + check.length : '') +
+      '</button>';
+  }
+  html +=
+    '<button type="button" class="btn" data-nav="pathway">My Pathways</button></div>';
+  return { crumb: 'Profile', title: 'You', html: html };
+}
+
+function viewPostgate() {
+  return {
+    crumb: 'Post',
+    title: 'Build your pathway to post',
+    html:
+      '<div class="detail post-gate"><h2>Build your pathway to post</h2>' +
+      '<p>Six questions. It also tells us which openings fit your form.</p>' +
+      '<button type="button" class="btn" data-open="setup" data-id="0">Build my pathway</button></div>'
+  };
+}
+
+function reportSubject(key) {
+  var parts = String(key || '').split(':');
+  var kind = parts[0] || '';
+  var id = parts.slice(1).join(':');
+  var item;
+  var o;
+  var s;
+  var j;
+  if (kind === 'thread' || kind === 'story') {
+    item = feedById(id);
+    if (item) return item.title;
+  }
+  if (kind === 'opp') {
+    o = OPPS[id];
+    if (o) return o.name;
+  }
+  if (kind === 'session') {
+    s = sessionById(id);
+    if (s) return s.title;
+  }
+  if (kind === 'journey') {
+    j = JOURNEYS[id];
+    if (j) return j.hook;
+  }
+  return 'this post';
+}
+
+function viewReport(v) {
+  var key = v.id || '';
+  var title = reportSubject(key);
+  var reasons = [
+    { v: 'wrong', t: 'The facts look wrong' },
+    { v: 'unkind', t: 'This is unkind' },
+    { v: 'off', t: 'This should not be here' }
+  ];
+  var html =
+    '<div class="detail report-sheet"><p>The desk reads these. Pick the reason that fits.</p>' +
+    '<p class="report-target">' +
+    esc(title) +
+    '</p><div class="report-reasons">';
+  var i;
+  for (i = 0; i < reasons.length; i++) {
+    html +=
+      '<button type="button" class="report-opt" data-report-key="' +
+      esc(key) +
+      '" data-report-reason="' +
+      esc(reasons[i].v) +
+      '">' +
+      esc(reasons[i].t) +
+      '</button>';
+  }
+  html += '</div></div>';
+  return { crumb: 'Report', title: 'Report this post', html: html };
+}
+
+function addComposeFile(f) {
+  var kid = 'file-' + Date.now();
+  var kb = Math.max(1, Math.round(f.size / 1024));
+  RES[kid] = { k: 'File', t: f.name, s: String(kb) + ' KB' };
+  if (S.compose.res.indexOf(kid) === -1) S.compose.res.push(kid);
+}
+
+function publishOpening(id) {
+  var o = OPPS[id];
+  if (!o) return;
+  if (!canCheckOpenings() || o.author === currentPosterId()) {
+    toast('You cannot check your own opening.');
+    return;
+  }
+  o.state = 'live';
+  o.checkedAt = nowIso();
+  o.checkedBy = currentPosterId();
+  o.returnReason = '';
+  toast('Published. It is on the public feed.');
+  paint();
+  render();
+}
+
+function returnOpening(id) {
+  var o = OPPS[id];
+  var reason;
+  if (!o) return;
+  if (!canCheckOpenings() || o.author === currentPosterId()) {
+    toast('You cannot check your own opening.');
+    return;
+  }
+  reason = window.prompt('Why are you sending this back?', '');
+  if (reason == null) return;
+  reason = String(reason).trim();
+  if (!reason) {
+    toast('A reason is required to send it back.');
+    return;
+  }
+  o.state = 'returned';
+  o.returnReason = reason;
+  toast('Sent back to the author.');
+  paint();
+  render();
+}
+
+function viewAlerts() {
+  var list = canCheckOpenings() ? openingsToCheck() : [];
+  var html = '<div class="detail"><h2>Alerts</h2>';
+  var i;
+  var o;
+  var a;
+  if (canCheckOpenings()) {
+    html +=
+      '<h3>Openings to check' +
+      (list.length ? ' · ' + list.length : '') +
+      '</h3>';
+    if (!list.length) html += '<p class="muted">Nothing waiting.</p>';
+    for (i = 0; i < list.length; i++) {
+      o = list[i];
+      a = author(o.author);
+      html +=
+        '<div class="check-row"><div><strong>' +
+        esc(o.name) +
+        '</strong><span class="d-sub">' +
+        esc(a.name || 'Unknown') +
+        '</span></div>' +
+        '<button type="button" class="btn sm" data-opp-live="' +
+        esc(o.id) +
+        '">Looks right, publish it</button>' +
+        '<button type="button" class="btn sm g" data-opp-return="' +
+        esc(o.id) +
+        '">Send it back</button></div>';
+    }
+  } else {
+    html += '<p class="muted">No alerts right now.</p>';
+  }
+  html += '</div>';
+  return { crumb: 'Alerts', title: 'Alerts', html: html };
 }
 
 function viewBook(v) {
@@ -1075,7 +2135,7 @@ function viewBook(v) {
     '</p><h2>' +
     esc(s.title) +
     '</h2><p class="muted">' +
-    esc(s.when) +
+    esc(sessionWhen(s)) +
     ' · ' +
     esc(lead.name) +
     '</p>';
@@ -1115,225 +2175,320 @@ function viewBook(v) {
   return { crumb: 'Booking', title: s.title, html: html };
 }
 
-function viewCompose() {
-  return {
-    crumb: 'New post',
-    title: S.ctype === 'story' ? 'Share a story' : 'Ask a question',
-    html: renderComposerForm(),
-    after: function () {
-      var ta = byId('comp-text');
-      if (ta) ta.focus();
-    }
-  };
+function commChip(label, on, attrs) {
+  return (
+    '<button type="button" class="comm-chip' +
+    (on ? ' on' : '') +
+    '" ' +
+    attrs +
+    '>' +
+    esc(label) +
+    '</button>'
+  );
 }
 
-function openCompose(seed, cat) {
-  if (seed != null && seed !== '') S.draft = seed;
-  if (cat) S.draftCat = cat;
-  go({ t: 'compose', id: 'new' });
+function renderArchCard() {
+  var arch = S.myArch ? ARCHETYPES[S.myArch] : null;
+  var nDir;
+  var nStu;
+  var html = '<section class="comm-arch">';
+  if (!arch) {
+    html +=
+      '<p class="eyebrow">Start here</p>' +
+      '<h2>Which explorer are you?</h2>' +
+      '<p class="comm-arch-line">Five questions. It names the kind of explorer you are and shows you mentors and contributors who came out the same way.</p>' +
+      '<button type="button" class="btn" data-arch-start="1">Take the archetype check</button>';
+  } else {
+    nDir = sameArchPeople(arch.key).length;
+    nStu = ARCH_COUNTS[arch.key] || 0;
+    html +=
+      '<div class="comm-arch-after">' +
+      '<span class="comm-glyph" aria-hidden="true">' +
+      esc(arch.glyph) +
+      '</span>' +
+      '<div><p class="eyebrow">Your archetype</p><h2>' +
+      esc(arch.name) +
+      '</h2></div></div>' +
+      '<p class="comm-arch-line">' +
+      esc(arch.blurb) +
+      '</p>' +
+      '<div class="comm-arch-acts">' +
+      '<button type="button" class="btn" data-comm-role="likeme">See the ' +
+      nDir +
+      ' like you</button>' +
+      '<button type="button" class="btn g" data-arch-start="1">Retake</button></div>' +
+      '<p class="comm-arch-note">' +
+      nStu +
+      ' students share it. We do not list students here, so their names stay private.</p>';
+  }
+  html += '</section>';
+  return html;
+}
+
+function renderCommTools() {
+  var html =
+    '<section class="comm-tools"><div class="comm-search">' +
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>' +
+    '<input type="search" id="q" value="' +
+    esc(S.commQ || '') +
+    '" placeholder="Search a name or a career" aria-label="Search a name or a career" autocomplete="off"/>' +
+    '</div><div class="comm-chips" role="group" aria-label="Role">';
+  html += commChip('Everyone', S.commRole === 'all', 'data-comm-role="all"');
+  html += commChip('Mentors', S.commRole === 'mentors', 'data-comm-role="mentors"');
+  html += commChip(
+    'Contributors',
+    S.commRole === 'contributors',
+    'data-comm-role="contributors"'
+  );
+  if (S.myArch) {
+    html += commChip('Like me', S.commRole === 'likeme', 'data-comm-role="likeme"');
+  }
+  html += '</div><div class="comm-chips" role="group" aria-label="Career">';
+  html += commChip('All careers', !S.commCareer, 'data-comm-career=""');
+  var i;
+  for (i = 0; i < CAREER_FILTERS.length; i++) {
+    html += commChip(
+      CAREER_FILTERS[i],
+      S.commCareer === CAREER_FILTERS[i],
+      'data-comm-career="' + esc(CAREER_FILTERS[i]) + '"'
+    );
+  }
+  html += '</div></section>';
+  return html;
+}
+
+function renderCommunity() {
+  var dir = filteredPeople();
+  var followed = followedPeople();
+  var html = '<div class="page-comm">';
+  html += '<h1>Community</h1>';
+  html += renderArchCard();
+  html += renderCommTools();
+  if (followed.length) {
+    html +=
+      '<section class="comm-sec"><h2>People you follow · ' +
+      followed.length +
+      '</h2>' +
+      personCardsHtml(followed) +
+      '</section>';
+  }
+  html += '<section class="comm-sec">';
+  if (S.commRole === 'likeme' && S.myArch) {
+    html += '<h2>Same archetype as you · ' + dir.length + '</h2>';
+  } else {
+    html += '<h2>Mentors and contributors · ' + dir.length + '</h2>';
+  }
+  if (!dir.length) {
+    html +=
+      '<div class="comm-empty"><p class="comm-empty-t">Nobody matches that</p>' +
+      '<p>Try a shorter word, or clear the filters.</p></div>';
+  } else {
+    html += personCardsHtml(dir);
+  }
+  html += '</section></div>';
+  return html;
+}
+
+function personPostRow(ref) {
+  var kind = ref.kind;
+  var id = ref.id;
+  var title = '';
+  var meta = '';
+  var openK = kind;
+  var item;
+  var o;
+  var s;
+  var j;
+  var a;
+  var fi;
+  if (kind === 'story' || kind === 'question') {
+    item = feedById(id);
+    if (!item) return '';
+    title = item.title;
+    meta = timeAgo(item.at);
+    openK = kind === 'question' ? 'thread' : 'story';
+  } else if (kind === 'journey') {
+    j = JOURNEYS[id];
+    a = author(id);
+    if (!j) return '';
+    title = j.hook || a.name;
+    for (fi = 0; fi < FEED.length; fi++) {
+      if (FEED[fi].kind === 'journey' && FEED[fi].journey === id) item = FEED[fi];
+    }
+    meta = item ? timeAgo(item.at) : '';
+    openK = 'journey';
+  } else if (kind === 'session') {
+    s = sessionById(id);
+    if (!s) return '';
+    title = s.title;
+    meta = s.dateText || sessionWhen(s);
+    openK = 'session';
+  } else if (kind === 'opportunity' || kind === 'opp') {
+    o = OPPS[id];
+    if (!o) return '';
+    title = o.name;
+    meta = o.checkedAt ? 'Checked ' + formatCheckedDay(o.checkedAt) : '';
+    openK = 'opp';
+  } else {
+    return '';
+  }
+  if (kind === 'session' && s) {
+    return (
+      '<button type="button" class="d-row clickable" data-open="' +
+      esc(openK) +
+      '" data-id="' +
+      esc(id) +
+      '"><span class="d-date" aria-hidden="true"><b>' +
+      esc(s.date) +
+      '</b><small>' +
+      esc(s.day) +
+      '</small></span><span class="d-rowmain"><strong>' +
+      esc(title) +
+      '</strong><span class="d-sub">' +
+      esc(meta) +
+      '</span></span>' +
+      chevronSvg() +
+      '</button>'
+    );
+  }
+  return (
+    '<button type="button" class="d-row clickable" data-open="' +
+    esc(openK) +
+    '" data-id="' +
+    esc(id) +
+    '"><span class="d-kind k-' +
+    esc(kind) +
+    '">' +
+    esc(kind === 'opportunity' || kind === 'opp' ? 'Opening' : kind.charAt(0).toUpperCase() + kind.slice(1)) +
+    '</span><span class="d-rowmain"><strong>' +
+    esc(title) +
+    '</strong>' +
+    (meta ? '<span class="d-sub">' + esc(meta) + '</span>' : '') +
+    '</span>' +
+    chevronSvg() +
+    '</button>'
+  );
+}
+
+function viewPerson(v) {
+  var p = personById(v.id);
+  var a = author(v.id);
+  var posts;
+  var html;
+  var i;
+  if (!p) return { crumb: 'Person', title: 'Missing', html: '<p>Not found.</p>' };
+  posts = personPosts(v.id);
+  pushRecent('person', v.id, p.name);
+  html =
+    '<div class="page-person">' +
+    '<button type="button" class="person-back" data-person-back="1">' +
+    iconBack() +
+    '<span>Back</span></button>' +
+    '<div class="person-cover ' +
+    esc(p.av || 'av-1') +
+    '" aria-hidden="true"></div>' +
+    '<div class="person-id">' +
+    '<span class="person-av av ' +
+    esc(p.av || 'av-1') +
+    '" aria-hidden="true">' +
+    esc(a.init || p.name.charAt(0)) +
+    '</span>' +
+    nameWithBadge(p.name, a) +
+    '<p class="person-title">' +
+    esc(p.title) +
+    '</p>';
+  html += personFollowBtn(v.id, 'is-wide');
+  html += '</div>';
+  if (p.about) {
+    html +=
+      '<section class="person-block"><p class="eyebrow">About</p><p>' +
+      esc(p.about) +
+      '</p></section>';
+  }
+  html +=
+    '<section class="person-block"><h3>Their posts · ' +
+    posts.length +
+    '</h3>';
+  for (i = 0; i < posts.length; i++) html += personPostRow(posts[i]);
+  html += '</section></div>';
+  return { crumb: 'Community', title: p.name, html: html };
+}
+
+function viewArchtest(v) {
+  var step = parseInt(v.id, 10);
+  var q;
+  var html;
+  var i;
+  var key;
+  var arch;
+  var same;
+  var n;
+  if (isNaN(step)) step = S.archStep || 0;
+  if (step >= ARCH_QUIZ.length) {
+    key = archPickWinner(S.archTally || {});
+    arch = ARCHETYPES[key];
+    same = sameArchPeople(key);
+    html =
+      '<div class="page-arch page-arch-result">' +
+      '<span class="comm-glyph" aria-hidden="true">' +
+      esc(arch.glyph) +
+      '</span>' +
+      '<h2>' +
+      esc(arch.name) +
+      '</h2>' +
+      '<p>' +
+      esc(arch.blurb) +
+      '</p>' +
+      '<div class="arch-traits">';
+    for (i = 0; i < arch.traits.length; i++) {
+      html += '<span class="arch-trait">' + esc(arch.traits[i]) + '</span>';
+    }
+    html += '</div>';
+    if (same.length) {
+      html +=
+        '<h3>People who came out the same</h3>' + personCardsHtml(same);
+    }
+    html +=
+      '<button type="button" class="btn" data-arch-keep="' +
+      esc(key) +
+      '">Keep this and see the community</button>' +
+      '<p class="comm-arch-note">It is a starting point, not a verdict. You can retake it whenever you want.</p></div>';
+    return { crumb: 'Archetype', title: arch.name, html: html };
+  }
+  q = ARCH_QUIZ[step];
+  n = step + 1;
+  html =
+    '<div class="page-arch">' +
+    (step > 0
+      ? '<button type="button" class="person-back" data-arch-back="1">' +
+        iconBack() +
+        '<span>Back</span></button>'
+      : '') +
+    '<p class="arch-prog-lab">Question ' +
+    n +
+    ' of ' +
+    ARCH_QUIZ.length +
+    '</p>' +
+    '<div class="arch-bar n' +
+    n +
+    '" aria-hidden="true"><i></i></div>' +
+    '<h2>' +
+    esc(q.q) +
+    '</h2><div class="arch-opts">';
+  for (i = 0; i < q.opts.length; i++) {
+    html +=
+      '<button type="button" class="arch-opt" data-arch-pick="' +
+      esc(q.opts[i].a) +
+      '">' +
+      esc(q.opts[i].t) +
+      '</button>';
+  }
+  html += '</div></div>';
+  return { crumb: 'Archetype', title: 'Which explorer are you?', html: html };
 }
 
 function viewMentor(v) {
-  var a = author(v.id);
-  var j = JOURNEYS[v.id];
-  pushRecent('mentor', v.id, a.name);
-  var html =
-    '<div class="detail"><div class="hero navy"><span class="p">' +
-    esc(a.role) +
-    '</span><h2>' +
-    esc(a.name) +
-    '</h2><p>' +
-    esc(a.pos) +
-    '</p>' +
-    (j
-      ? '<p>' +
-        esc(j.place) +
-        ' · ' +
-        esc(j.type) +
-        ' · ' +
-        esc(j.field) +
-        '</p><p>' +
-        esc(j.blurb) +
-        '</p>'
-      : '') +
-    '<div class="card-actions">' +
-    '<button type="button" class="btn" data-follow="' +
-    esc(v.id) +
-    '">' +
-    (isFollowing(v.id) ? 'Following' : 'Follow') +
-    '</button>' +
-    (j
-      ? '<button type="button" class="btn g" data-open="journey" data-id="' +
-        esc(v.id) +
-        '">Read the full journey</button>'
-      : '') +
-    '<button type="button" class="btn g" data-ask-seed="Question for ' +
-    esc(a.name) +
-    ': " data-ask-cat="' +
-    esc((a.cats && a.cats[0]) || '') +
-    '">Ask in their pod</button></div></div>';
-  if (j) {
-    html += '<blockquote class="quote">' + esc(j.quote) + '</blockquote>';
-    html +=
-      '<section class="card"><h3>The short version</h3><p class="serif">' +
-      esc(j.hook) +
-      '</p><p class="now-line"><span class="eyebrow">NOW</span> ' +
-      esc(j.now) +
-      '</p>' +
-      '<button type="button" class="btn sm" data-open="journey" data-id="' +
-      esc(v.id) +
-      '">Full journey</button></section>';
-  }
-  html += '<section><h3>Their stories</h3>';
-  var i;
-  for (i = 0; i < FEED.length; i++) {
-    if (FEED[i].kind === 'story' && FEED[i].author === v.id) {
-      html +=
-        '<button type="button" class="card clickable row-btn" data-open="story" data-id="' +
-        esc(FEED[i].id) +
-        '">' +
-        esc(FEED[i].title) +
-        '</button>';
-    }
-  }
-  html += '</section><section><h3>Where they answered</h3>';
-  for (i = 0; i < FEED.length; i++) {
-    if (FEED[i].kind !== 'question' || !FEED[i].replies) continue;
-    var r, hit = false;
-    for (r = 0; r < FEED[i].replies.length; r++) {
-      if (FEED[i].replies[r].a === v.id) hit = true;
-    }
-    if (hit) {
-      html +=
-        '<button type="button" class="card clickable row-btn" data-open="thread" data-id="' +
-        esc(FEED[i].id) +
-        '">' +
-        esc(FEED[i].title) +
-        '</button>';
-    }
-  }
-  html += '</section><section><h3>Sessions they lead</h3>';
-  for (i = 0; i < SESSIONS.length; i++) {
-    if (SESSIONS[i].lead === v.id) html += renderSessionMini(SESSIONS[i]);
-  }
-  html += '</section><section><h3>Opportunities they point at</h3>';
-  for (var ok in OPPS) {
-    if (OPPS[ok].mentors && OPPS[ok].mentors.indexOf(v.id) !== -1) html += miniOpp(OPPS[ok]);
-  }
-  html += '</section>';
-  if (a.similar && a.similar.length) {
-    html += '<section><h3>People with a similar turn</h3>';
-    for (i = 0; i < a.similar.length; i++) {
-      html += mentorRow(a.similar[i], similarReason(a.similar[i]));
-    }
-    html += '</section>';
-  }
-  html += '</div>';
-  return { crumb: 'Mentor', title: a.name, html: html };
-}
-
-function viewJourney(v) {
-  var a = author(v.id);
-  var j = JOURNEYS[v.id];
-  if (!j) return { crumb: 'Journey', title: 'Missing', html: '<p>Not found.</p>' };
-  pushRecent('journey', v.id, a.name + ' journey');
-  var html =
-    '<div class="detail"><div class="hero navy"><h2>' +
-    esc(a.name) +
-    '</h2><blockquote class="quote">' +
-    esc(j.quote) +
-    '</blockquote><p class="now-line"><span class="eyebrow">NOW</span> ' +
-    esc(j.now) +
-    '</p></div>';
-  html += '<section><h3>Moments</h3>';
-  var i, m;
-  for (i = 0; i < j.moments.length; i++) {
-    m = j.moments[i];
-    html +=
-      '<div class="card moment"><div class="age-box"><div class="n">' +
-      esc(String(m.age)) +
-      '</div><div class="l">AT THE TIME</div></div><p class="serif mtxt">' +
-      esc(m.text) +
-      '</p>' +
-      (m.flag ? '<span class="p red">Setback</span>' : '') +
-      '</div>';
-  }
-  html += '</section><section><h3>Route</h3>';
-  for (i = 0; i < j.route.length; i++) {
-    var rt = j.route[i];
-    var stn = stageByKey(rt.stage);
-    html +=
-      '<div class="card"><p class="eyebrow">' +
-      esc(stn.name) +
-      '</p><p class="serif">' +
-      esc(rt.text) +
-      '</p><p class="muted">' +
-      esc(rt.lesson) +
-      '</p></div>';
-  }
-  html += '</section>';
-  html +=
-    '<section class="card"><h3>Deep dive</h3><p><strong>' +
-    esc(j.dive.title) +
-    '</strong></p><p>Requirement: ' +
-    esc(j.dive.req) +
-    '</p><p>Cost: ' +
-    esc(j.dive.cost) +
-    '</p><p class="caveat">' +
-    esc(j.dive.caveat) +
-    '</p></section>';
-  html +=
-    '<section class="card"><h3>What ' +
-    esc(a.name.split(' ')[0]) +
-    ' did</h3><p class="muted">Tap anything to put it on your pathway at the stage where it happens. Tap again to remove it.</p><div class="step-chips">';
-  for (i = 0; i < j.steps.length; i++) {
-    var sp = j.steps[i];
-    var key = v.id + ':' + sp.label;
-    var on = takenHas(key);
-    html +=
-      '<button type="button" class="chip step' +
-      (on ? ' on' : '') +
-      '" data-jstep="' +
-      esc(v.id) +
-      '" data-label="' +
-      esc(sp.label) +
-      '" data-kind="' +
-      esc(sp.kind) +
-      '" data-stage="' +
-      esc(sp.stage) +
-      '">' +
-      esc(sp.kind) +
-      ': ' +
-      esc(sp.label) +
-      '</button>';
-  }
-  html +=
-    '</div><button type="button" class="btn sm" data-jstep-all="' +
-    esc(v.id) +
-    '">Add everything ' +
-    esc(a.name.split(' ')[0]) +
-    ' did</button></section>';
-  html +=
-    '<div class="callout blue"><p class="eyebrow">Did you know</p><p>' +
-    esc(j.did.text) +
-    '</p><p class="muted">Source: ' +
-    esc(j.did.src) +
-    '</p></div>';
-  html +=
-    '<section><h3>Other journeys</h3><p class="muted">Deliberately different routes.</p>';
-  for (var jid in JOURNEYS) {
-    if (jid === v.id) continue;
-    html +=
-      '<button type="button" class="card clickable row-btn" data-open="journey" data-id="' +
-      esc(jid) +
-      '">' +
-      esc(author(jid).name) +
-      ' · ' +
-      esc(JOURNEYS[jid].field) +
-      '</button>';
-  }
-  html += '</section></div>';
-  return { crumb: 'Journey', title: a.name, html: html };
+  return viewPerson(v);
 }
 
 function viewTopic(v) {
@@ -1494,7 +2649,13 @@ var VIEWS = {
   edit: viewEdit,
   del: viewDel,
   setup: viewSetup,
-  compose: viewCompose
+  compose: viewCompose,
+  profile: viewProfile,
+  postgate: viewPostgate,
+  alerts: viewAlerts,
+  report: viewReport,
+  person: viewPerson,
+  archtest: viewArchtest
 };
 
 function renderChrome() {
@@ -1516,13 +2677,22 @@ function renderChrome() {
     pill.hidden = false;
   }
   var badge = byId('dock-badge');
+  var checkN = canCheckOpenings() ? openingsToCheck().length : 0;
   if (badge) {
-    if (S.unread > 0) {
+    if (checkN > 0) {
+      badge.hidden = false;
+      badge.textContent = String(checkN);
+    } else if (S.unread > 0) {
       badge.hidden = false;
       badge.textContent = String(S.unread);
     } else {
       badge.hidden = true;
     }
+  }
+  var postBtn = byId('dock-post');
+  if (postBtn) {
+    if (isVisitor()) postBtn.classList.add('is-locked');
+    else postBtn.classList.remove('is-locked');
   }
   var pathDot = byId('path-dot');
   if (pathDot) pathDot.hidden = !!S.onboarded;
@@ -1539,6 +2709,7 @@ function renderChrome() {
     var navKey = navs[i].getAttribute('data-nav');
     var on =
       navKey === S.view ||
+      (navKey === 'community' && (sheetTop === 'person' || sheetTop === 'archtest' || sheetTop === 'mentor')) ||
       (navKey === 'sessions' && (sheetTop === 'session' || sheetTop === 'book' || sheetTop === 'opp'));
     if (on) {
       navs[i].classList.add('on');
@@ -1627,6 +2798,8 @@ function render() {
   var main = byId('main');
   if (S.view === 'pathway') main.innerHTML = renderPathway();
   else if (S.view === 'sessions') main.innerHTML = renderSessionsPage();
+  else if (S.view === 'alerts') main.innerHTML = viewAlerts().html;
+  else if (S.view === 'community') main.innerHTML = renderCommunity();
   else main.innerHTML = renderFeed();
   renderChrome();
 }
@@ -1642,16 +2815,32 @@ function openKind(kind, id) {
     story: 'story',
     opp: 'opp',
     session: 'session',
-    mentor: 'mentor',
     journey: 'journey',
     topic: 'topic',
     book: 'book',
     edit: 'edit',
     del: 'del',
     setup: 'setup',
-    compose: 'compose'
+    compose: 'compose',
+    profile: 'profile',
+    report: 'report',
+    person: 'person',
+    mentor: 'person',
+    archtest: 'archtest'
   };
   if (!map[kind]) return;
+  S.menu = '';
+  if (kind === 'report') {
+    if (
+      requirePathway({
+        type: 'report',
+        id: id,
+        reason: 'We need your form before we send a report.'
+      })
+    ) {
+      return;
+    }
+  }
   if (kind === 'book') {
     if (
       requirePathway({
@@ -1725,6 +2914,11 @@ function wire() {
     var btn;
     var innerBtn = closestEl(t, 'button');
     var card = closestEl(t, '.clickable[data-open]');
+    if (S.menu && !closestEl(t, '.more-wrap')) {
+      S.menu = '';
+      if (NAV.length) paint();
+      else render();
+    }
     if (card && (!innerBtn || innerBtn === card)) {
       openKind(card.getAttribute('data-open'), card.getAttribute('data-id'));
       return;
@@ -1733,6 +2927,165 @@ function wire() {
     btn = closestEl(t, 'button[data-open]');
     if (btn) {
       openKind(btn.getAttribute('data-open'), btn.getAttribute('data-id'));
+      return;
+    }
+
+    btn = closestEl(t, '[data-compose-kind]');
+    if (btn) {
+      resetCompose(btn.getAttribute('data-compose-kind'));
+      S.compose.step = 'write';
+      paint();
+      return;
+    }
+
+    if (t.id === 'comp-next' || closestEl(t, '#comp-next')) {
+      readComposeFields();
+      if (!composeValidate().ok) {
+        refreshComposeValid();
+        return;
+      }
+      S.compose.step = 'attach';
+      paint();
+      return;
+    }
+
+    btn = closestEl(t, '[data-follow-q]');
+    if (btn) {
+      if (
+        requirePathway({
+          type: 'follow-q',
+          id: btn.getAttribute('data-follow-q'),
+          reason: 'We need your form before we can follow a question.'
+        })
+      ) {
+        return;
+      }
+      var qid = btn.getAttribute('data-follow-q');
+      var qi = S.qFollow.indexOf(qid);
+      if (qi === -1) {
+        S.qFollow.push(qid);
+        toast('Following this question.');
+      } else {
+        S.qFollow.splice(qi, 1);
+        toast('Stopped following.');
+      }
+      paint();
+      if (!NAV.length) render();
+      return;
+    }
+
+    btn = closestEl(t, '[data-menu]');
+    if (btn) {
+      e.stopPropagation();
+      toggleMenu(btn.getAttribute('data-menu'));
+      return;
+    }
+
+    btn = closestEl(t, '[data-hide]');
+    if (btn) {
+      e.stopPropagation();
+      hidePost(btn.getAttribute('data-hide'));
+      return;
+    }
+
+    btn = closestEl(t, '[data-report-reason]');
+    if (btn) {
+      submitReport(btn.getAttribute('data-report-key'), btn.getAttribute('data-report-reason'));
+      return;
+    }
+
+    btn = closestEl(t, '[data-focus-reply]');
+    if (btn) {
+      var box = byId('thread-reply');
+      if (box) {
+        box.focus();
+        if (box.scrollIntoView) box.scrollIntoView({ block: 'center' });
+      }
+      return;
+    }
+
+    btn = closestEl(t, '[data-role]');
+    if (btn) {
+      applyPrototypeRole(btn.getAttribute('data-role'));
+      toast('Prototype: viewing as ' + protoRoleKey() + '.');
+      closeSheet();
+      render();
+      return;
+    }
+
+    btn = closestEl(t, '[data-img-remove]');
+    if (btn) {
+      var rmix = parseInt(btn.getAttribute('data-img-remove'), 10);
+      if (S.compose.images && !isNaN(rmix)) S.compose.images.splice(rmix, 1);
+      paint();
+      return;
+    }
+
+    btn = closestEl(t, '[data-opp-live]');
+    if (btn) {
+      publishOpening(btn.getAttribute('data-opp-live'));
+      return;
+    }
+
+    btn = closestEl(t, '[data-opp-return]');
+    if (btn) {
+      returnOpening(btn.getAttribute('data-opp-return'));
+      return;
+    }
+
+    if (t.getAttribute && t.getAttribute('data-res')) {
+      readComposeFields();
+      var rid = t.getAttribute('data-res');
+      var ri = S.compose.res.indexOf(rid);
+      if (t.checked) {
+        if (ri === -1) S.compose.res.push(rid);
+      } else if (ri !== -1) {
+        S.compose.res.splice(ri, 1);
+      }
+      return;
+    }
+
+    btn = closestEl(t, '[data-arch-start]');
+    if (btn) {
+      startArchTest();
+      return;
+    }
+
+    btn = closestEl(t, '[data-arch-pick]');
+    if (btn) {
+      archAdvance(btn.getAttribute('data-arch-pick'));
+      return;
+    }
+
+    btn = closestEl(t, '[data-arch-back]');
+    if (btn) {
+      archBack();
+      return;
+    }
+
+    btn = closestEl(t, '[data-arch-keep]');
+    if (btn) {
+      keepArchetype(btn.getAttribute('data-arch-keep'));
+      return;
+    }
+
+    btn = closestEl(t, '[data-person-back]');
+    if (btn) {
+      closeSheet();
+      return;
+    }
+
+    btn = closestEl(t, '[data-comm-role]');
+    if (btn) {
+      S.commRole = btn.getAttribute('data-comm-role') || 'all';
+      render();
+      return;
+    }
+
+    btn = closestEl(t, '[data-comm-career]');
+    if (btn) {
+      S.commCareer = btn.getAttribute('data-comm-career') || '';
+      render();
       return;
     }
 
@@ -2048,6 +3401,11 @@ function wire() {
       }
       if (ec) eitem.cat = ec.value;
       eitem.edited = true;
+      if (eitem.kind === 'opportunity' && eitem.opp && OPPS[eitem.opp]) {
+        OPPS[eitem.opp].state = 'pending';
+        OPPS[eitem.opp].checkedAt = '';
+        OPPS[eitem.opp].checkedBy = '';
+      }
       toast('Saved.');
       back();
       render();
@@ -2113,56 +3471,8 @@ function wire() {
     }
 
     if (t.id === 'comp-submit' || closestEl(t, '#comp-submit')) {
-      var textEl = byId('comp-text');
-      var catEl = byId('comp-cat');
-      var anonEl = byId('comp-anon');
-      var body = textEl.value.trim();
-      if (body.length < 8) {
-        toast('Write a little more before posting.');
-        return;
-      }
-      var nid = 'mine-' + Date.now();
-      var isAnon = !!(anonEl && anonEl.checked);
-      if (S.ctype === 'question') {
-        FEED.unshift({
-          id: nid,
-          kind: 'question',
-          time: 'Just now',
-          cat: catEl.value,
-          anon: isAnon,
-          who: studentLabel(),
-          title: body,
-          askedAt: S.form || 'Form 3',
-          asks: 1,
-          replies: [],
-          rel: [],
-          mine: true
-        });
-        toast('Question posted.');
-        simulateReply(nid);
-      } else {
-        FEED.unshift({
-          id: nid,
-          kind: 'story',
-          time: 'Just now',
-          cat: catEl.value,
-          author: null,
-          title: body.slice(0, 80),
-          body: [body],
-          takeaways: ['Write the decision down', 'Name who you will ask', 'Pick one next step'],
-          insp: 0,
-          rel: [],
-          mine: true,
-          anon: isAnon,
-          who: studentLabel()
-        });
-        toast('Story shared.');
-      }
-      S.draft = '';
-      S.draftCat = catEl.value;
-      closeSheet();
-      setView('feed');
-      window.scrollTo(0, 0);
+      readComposeFields();
+      submitCompose();
       return;
     }
 
@@ -2185,6 +3495,20 @@ function wire() {
     }
 
     if (t.id === 'sheet-back' || closestEl(t, '#sheet-back')) {
+      if (NAV.length && NAV[NAV.length - 1].t === 'compose' && S.compose.step === 'attach') {
+        readComposeFields();
+        S.compose.step = 'write';
+        paint();
+        return;
+      }
+      if (NAV.length && NAV[NAV.length - 1].t === 'compose' && S.compose.step === 'write') {
+        var types = composeTypesFor(postingRole());
+        if (types.length > 1) {
+          S.compose.step = 'choose';
+          paint();
+          return;
+        }
+      }
       back();
       return;
     }
@@ -2199,6 +3523,19 @@ function wire() {
   });
 
   document.addEventListener('input', function (e) {
+    if (e.target && e.target.id === 'q') {
+      var pos = e.target.selectionStart;
+      S.commQ = e.target.value;
+      render();
+      var f = document.getElementById('q');
+      if (f) {
+        f.focus();
+        try {
+          f.setSelectionRange(pos, pos);
+        } catch (err) {}
+      }
+      return;
+    }
     if (e.target && e.target.id === 'feed-q') {
       S.query = e.target.value;
       render();
@@ -2209,22 +3546,43 @@ function wire() {
       }
       return;
     }
-    if (e.target && e.target.id === 'comp-text') {
-      S.draft = e.target.value;
+    if (e.target && (e.target.getAttribute('data-compose') || e.target.id === 'comp-text' || e.target.id === 'comp-extra' || e.target.id === 'comp-anon')) {
+      readComposeFields();
+      S.draft = S.compose.title || S.compose.body || '';
+      S.anon = S.compose.anon;
       var slot = byId('dup-slot');
-      if (slot && S.ctype === 'question') slot.innerHTML = dupHintHtml(e.target.value);
-    }
-    if (e.target && e.target.id === 'comp-cat') {
-      S.draftCat = e.target.value;
-    }
-    if (e.target && e.target.id === 'comp-anon') {
-      S.anon = e.target.checked;
+      if (slot && S.compose.kind === 'question') slot.innerHTML = dupHintHtml(S.compose.title || '');
+      refreshComposeValid();
+      return;
     }
   });
 
   document.addEventListener('change', function (e) {
+    var f;
+    var reader;
     if (e.target && e.target.id === 'comp-cat') S.draftCat = e.target.value;
     if (e.target && e.target.id === 'comp-anon') S.anon = e.target.checked;
+    if (e.target && e.target.id === 'comp-img') {
+      f = e.target.files && e.target.files[0];
+      if (!f) return;
+      reader = new FileReader();
+      reader.onload = function () {
+        var alt = window.prompt('Describe it for someone who cannot see it.', '') || '';
+        if (!S.compose.images) S.compose.images = [];
+        if (S.compose.images.length < 3) {
+          S.compose.images.push({ src: reader.result, caption: '', alt: alt });
+        }
+        paint();
+      };
+      reader.readAsDataURL(f);
+      return;
+    }
+    if (e.target && e.target.id === 'comp-file') {
+      f = e.target.files && e.target.files[0];
+      if (!f) return;
+      addComposeFile(f);
+      paint();
+    }
   });
 
   document.addEventListener('keydown', function (e) {
@@ -2251,6 +3609,11 @@ function applyHash() {
     hideSheetUi();
     S.view = 'feed';
     return 'feed';
+  }
+  if (h === 'community' || h === 'network') {
+    hideSheetUi();
+    S.view = 'community';
+    return 'community';
   }
   return '';
 }

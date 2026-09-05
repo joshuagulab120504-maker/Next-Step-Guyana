@@ -15,7 +15,7 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
         <input type="search" id="top-q" placeholder="Search" aria-label="Search Next Step" autocomplete="off"/>
       </div>
-      <button type="button" class="top-av" id="arch-pill" data-nav="pathway" aria-label="Your profile">
+      <button type="button" class="top-av" id="arch-pill" data-open="profile" data-id="you" aria-label="Your profile">
         <span class="av" aria-hidden="true">You</span>
       </button>
     </div>
@@ -26,6 +26,7 @@
     <aside class="rail left" id="left-rail">
       <nav class="lnav" aria-label="Primary">
         <button type="button" class="on" id="nav-feed" data-nav="feed">Feed</button>
+        <button type="button" id="nav-community" data-nav="community">Community</button>
         <button type="button" id="nav-pathway" data-nav="pathway">My Pathway</button>
         <button type="button" id="nav-sessions" data-nav="sessions">Happening</button>
       </nav>
@@ -61,9 +62,9 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10.5L12 4l8 6.5V20a1 1 0 0 1-1 1h-5v-6H10v6H5a1 1 0 0 1-1-1v-9.5z"/></svg>
       Feed
     </button>
-    <button type="button" class="dock-item" id="dock-network" data-tab="network" aria-label="Network">
+    <button type="button" class="dock-item" id="dock-community" data-tab="community" data-nav="community" aria-label="Community">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 19c0-3 2.5-5 6-5s6 2 6 5"/><path d="M14.5 19c.3-2 1.8-3.5 4-3.5 1.2 0 2.3.4 3 1"/></svg>
-      Network
+      Community
     </button>
     <button type="button" class="dock-item dock-post" id="dock-post" aria-label="Post">
       <span class="post-mark" aria-hidden="true">
@@ -76,7 +77,7 @@
       My Pathways
       <span class="path-dot" id="path-dot" hidden aria-hidden="true"></span>
     </button>
-    <button type="button" class="dock-item" id="dock-alerts" data-tab="notifications" aria-label="Alerts">
+    <button type="button" class="dock-item" id="dock-alerts" data-tab="notifications" data-nav="alerts" aria-label="Alerts">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 16V10a6 6 0 1 1 12 0v6l2 2H4l2-2z"/><path d="M10 19a2 2 0 0 0 4 0"/></svg>
       Alerts
       <span class="dock-badge" id="dock-badge" hidden></span>

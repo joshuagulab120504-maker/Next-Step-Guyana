@@ -81,7 +81,12 @@ var AUTHORS = {
   raeka: {
     name: 'Raeka Persaud',
     init: 'RP',
-    role: 'Mentor',
+    role: 'mentor',
+    pending: false,
+    verified: true,
+    contactable: true,
+    form: '',
+    region: '',
     pos: 'Junior doctor, Georgetown Public Hospital',
     journey: 'raeka',
     pod: 'Science and health pod',
@@ -91,7 +96,12 @@ var AUTHORS = {
   omar: {
     name: 'Omar Khan',
     init: 'OK',
-    role: 'Mentor',
+    role: 'mentor',
+    pending: false,
+    verified: true,
+    contactable: true,
+    form: '',
+    region: '',
     pos: 'Electrician and site supervisor, Berbice',
     journey: 'omar',
     pod: 'Trades pod',
@@ -101,7 +111,12 @@ var AUTHORS = {
   jerome: {
     name: 'Jerome DaSilva',
     init: 'JD',
-    role: 'Contributor',
+    role: 'contributor',
+    pending: false,
+    verified: false,
+    contactable: false,
+    form: '',
+    region: '',
     pos: 'Software developer, Georgetown',
     journey: 'jerome',
     cats: ['Technology'],
@@ -110,7 +125,12 @@ var AUTHORS = {
   keisha: {
     name: 'Keisha Daniels',
     init: 'KD',
-    role: 'Mentor',
+    role: 'mentor',
+    pending: false,
+    verified: true,
+    contactable: true,
+    form: '',
+    region: '',
     pos: 'Community coach and PE teacher, Lethem',
     journey: 'keisha',
     pod: 'Sport and coaching pod',
@@ -120,7 +140,12 @@ var AUTHORS = {
   marcus: {
     name: 'Marcus Gomes',
     init: 'MG',
-    role: 'Contributor',
+    role: 'contributor',
+    pending: false,
+    verified: false,
+    contactable: false,
+    form: '',
+    region: '',
     pos: 'Videographer, Georgetown',
     journey: 'marcus',
     cats: ['Creative and media'],
@@ -129,14 +154,24 @@ var AUTHORS = {
   aisha: {
     name: 'Aisha Mohamed',
     init: 'AM',
-    role: 'Student',
+    role: 'student',
+    pending: false,
+    verified: false,
+    contactable: false,
+    form: 'Form 5',
+    region: 'Region 4',
     pos: 'Form 5 student, Region 4',
     cats: ['Business']
   },
   desk: {
     name: 'Opportunities desk',
     init: 'OD',
-    role: 'Next Step',
+    role: 'admin',
+    pending: false,
+    verified: false,
+    contactable: false,
+    form: '',
+    region: '',
     pos: 'Next Step team',
     system: true
   }
@@ -151,6 +186,16 @@ var JOURNEYS = {
     place: 'Georgetown, Region 4',
     hook: "Joined the school science club at St Rose's and stayed after every lab to clean glassware.",
     now: 'Junior doctor at Georgetown Public Hospital. Mentors CSEC science students on weekends.',
+    body: [
+      "Joined the school science club at St Rose's and stayed after every lab to clean glassware.",
+      'Chose the pure science stream even though friends pushed her toward business subjects.',
+      'Failed her first CSEC Biology mock. Rebuilt her notes from past papers and a neighbour\'s textbooks.',
+      'Sat CAPE Biology and Chemistry while volunteering at a health centre in Kitty.',
+      'Took every science elective she could and kept a notebook of hospital stories from her aunt. Locked Biology, Chemistry, Physics, Maths, English and Caribbean History.',
+      'Sat CSEC with strong Biology and Chemistry. Used free past paper clinics after school. Stayed for CAPE Sciences instead of jumping straight to work.',
+      'Completed CAPE Biology, Chemistry and Caribbean Studies. Applied to UG Medicine. Entered UG medical training and began junior clinical work in Georgetown.',
+      'Junior doctor at Georgetown Public Hospital. Mentors CSEC science students on weekends.'
+    ],
     quote: 'Steady care beats flashy grades.',
     blurb: 'Walks Form 3 to Form 6 students through science subject choice and UG health routes.',
     moments: [
@@ -195,6 +240,16 @@ var JOURNEYS = {
     place: 'New Amsterdam, Region 6',
     hook: "Fixed a neighbour's fan with a borrowed multimeter and got asked to look at three more that week.",
     now: 'Electrician and site supervisor in Berbice. Evening instructor at a local TVET centre.',
+    body: [
+      "Fixed a neighbour's fan with a borrowed multimeter and got asked to look at three more that week.",
+      'Picked Industrial Technology and Maths even when the academic stream looked more prestigious.',
+      'Missed a CSEC English resit window and had to wait a full sitting. Kept working on sites anyway.',
+      'Took a GTTi electrical short course while earning on residential jobs in New Amsterdam.',
+      'Helped the school caretaker with small repairs and logged every tool he learned. Chose Industrial Technology, Maths, English, Integrated Science and EDPM.',
+      'Sat CSEC while apprenticing Saturdays with a licensed electrician in Berbice. Left the full-time academic track for GTTi electrical training plus paid site work.',
+      'Completed electrical installation modules and safety tickets part time. Became a licensed electrician and began supervising small residential crews.',
+      'Electrician and site supervisor in Berbice. Evening instructor at a local TVET centre.'
+    ],
     quote: 'A certificate is a door. Your hands are what walk you through it.',
     blurb: 'Helps students see TVET and trade routes as real plans, not leftovers.',
     moments: [
@@ -239,6 +294,16 @@ var JOURNEYS = {
     place: 'Sophia, Region 4',
     hook: "Built a simple HTML page for his cousin's cake business on a shared family laptop.",
     now: 'Software developer in Georgetown. Runs a weekend coding circle for secondary students.',
+    body: [
+      "Built a simple HTML page for his cousin's cake business on a shared family laptop.",
+      'Joined a STEMGuyana robotics pod and learned to debug in public without freezing.',
+      'Lost a national hackathon final when the demo crashed. Rewrote the pitch around the failure.',
+      'Used CAPE Computer Science projects as portfolio pieces for UG and internship apps.',
+      'Taught himself basic HTML and CSS from free tutorials and school computer lab hours. Chose Information Technology, Maths, Physics, English and EDPM.',
+      'Sat CSEC while shipping small apps for church and school events. Stayed for CAPE Computer Science and Applied Maths rather than a quick certificate only.',
+      'Built a CAPE project that tracked school club attendance. Presented it at a regional STEAM fair. Entered UG Computer Science and freelanced for local SMEs while studying.',
+      'Software developer in Georgetown. Runs a weekend coding circle for secondary students.'
+    ],
     quote: 'Ship something small before you wait for perfect.',
     blurb: 'Shares coding club and scholarship tips from a documented Georgetown developer path.',
     moments: [
@@ -283,6 +348,16 @@ var JOURNEYS = {
     place: 'Lethem, Region 9',
     hook: 'Started keeping a lined exercise book of every PE session she helped run at her Lethem school, including who showed up and what drills they did.',
     now: 'Community coach and PE teacher in Lethem. Mentors hinterland students who want a sport route without a private academy.',
+    body: [
+      'Started keeping a lined exercise book of every PE session she helped run at her Lethem school, including who showed up and what drills they did.',
+      'Missed regional trials because there was no transport that week. Logged the absence and kept training the younger students instead.',
+      'Used her written log of sessions to apply for travel support. The log is what got her funded to a regional coaching workshop.',
+      'Took a short coaching course and first aid certificate, then began PE teaching while still coaching community leagues.',
+      'Joined every school sport she could reach on foot and kept the attendance book when teachers asked. Kept Physical Education, Biology, English and Maths when friends dropped PE for prestige subjects.',
+      'Sat CSEC while coaching under-14 community football on Saturdays and writing up every session. Chose a mix: short coaching courses plus work, not only CAPE full time.',
+      'Completed first aid and a coaching module while teaching PE parts of the week in Lethem. Became a community coach and PE teacher, mentoring students who face the same transport gaps she did.',
+      'Community coach and PE teacher in Lethem. Mentors hinterland students who want a sport route without a private academy.'
+    ],
     quote: 'If nothing is organised where you live, write down what you do until someone can fund the next step.',
     blurb: 'Shows Region 9 and hinterland students how community leagues, PE subjects and a paper trail become a serious coaching pathway.',
     moments: [
@@ -359,7 +434,14 @@ var OPPS = {
     mentors: ['jerome', 'raeka'],
     rel: ['scratch', 'cso', 'steam'],
     sess: ['s-tech', 's-clinic'],
-    independent: false
+    independent: false,
+    state: 'live',
+    author: 'desk',
+    checkedAt: '',
+    checkedBy: '',
+    source: '',
+    returnReason: '',
+    images: []
   },
 
   pyarg: {
@@ -400,7 +482,14 @@ var OPPS = {
     mentors: ['keisha', 'omar'],
     rel: ['track', 'mash', 'clinic'],
     sess: ['s-sport', 's-fork'],
-    independent: true
+    independent: true,
+    state: 'live',
+    author: 'desk',
+    checkedAt: '',
+    checkedBy: '',
+    source: '',
+    returnReason: '',
+    images: []
   },
 
   cso: {
@@ -441,7 +530,14 @@ var OPPS = {
     mentors: ['jerome', 'raeka'],
     rel: ['stem', 'scratch', 'steam'],
     sess: ['s-tech'],
-    independent: true
+    independent: true,
+    state: 'live',
+    author: 'desk',
+    checkedAt: '',
+    checkedBy: '',
+    source: '',
+    returnReason: '',
+    images: []
   },
 
   scratch: {
@@ -481,7 +577,14 @@ var OPPS = {
     mentors: ['jerome'],
     rel: ['stem', 'cso', 'steam'],
     sess: ['s-tech'],
-    independent: false
+    independent: false,
+    state: 'live',
+    author: 'desk',
+    checkedAt: '',
+    checkedBy: '',
+    source: '',
+    returnReason: '',
+    images: []
   },
 
   jof: {
@@ -521,7 +624,14 @@ var OPPS = {
     mentors: ['marcus', 'aisha'],
     rel: ['mash', 'blue', 'clinic'],
     sess: ['s-media', 's-clinic'],
-    independent: false
+    independent: false,
+    state: 'live',
+    author: 'desk',
+    checkedAt: '',
+    checkedBy: '',
+    source: '',
+    returnReason: '',
+    images: []
   },
 
   mash: {
@@ -562,7 +672,14 @@ var OPPS = {
     mentors: ['marcus', 'keisha'],
     rel: ['jof', 'blue', 'track'],
     sess: ['s-media', 's-sport'],
-    independent: false
+    independent: false,
+    state: 'live',
+    author: 'desk',
+    checkedAt: '',
+    checkedBy: '',
+    source: '',
+    returnReason: '',
+    images: []
   },
 
   steam: {
@@ -602,7 +719,14 @@ var OPPS = {
     mentors: ['raeka', 'jerome'],
     rel: ['stem', 'cso', 'clinic'],
     sess: ['s-sci', 's-tech'],
-    independent: false
+    independent: false,
+    state: 'live',
+    author: 'desk',
+    checkedAt: '',
+    checkedBy: '',
+    source: '',
+    returnReason: '',
+    images: []
   },
 
   track: {
@@ -642,7 +766,14 @@ var OPPS = {
     mentors: ['keisha'],
     rel: ['pyarg', 'mash', 'clinic'],
     sess: ['s-sport'],
-    independent: false
+    independent: false,
+    state: 'live',
+    author: 'desk',
+    checkedAt: '',
+    checkedBy: '',
+    source: '',
+    returnReason: '',
+    images: []
   },
 
   blue: {
@@ -682,7 +813,14 @@ var OPPS = {
     mentors: ['aisha', 'omar'],
     rel: ['sbb', 'jof', 'pyarg'],
     sess: ['s-biz', 's-fork'],
-    independent: true
+    independent: true,
+    state: 'live',
+    author: 'desk',
+    checkedAt: '',
+    checkedBy: '',
+    source: '',
+    returnReason: '',
+    images: []
   },
 
   sbb: {
@@ -722,7 +860,14 @@ var OPPS = {
     mentors: ['omar', 'aisha'],
     rel: ['blue', 'pyarg', 'clinic'],
     sess: ['s-biz', 's-fork'],
-    independent: false
+    independent: false,
+    state: 'live',
+    author: 'desk',
+    checkedAt: '',
+    checkedBy: '',
+    source: '',
+    returnReason: '',
+    images: []
   },
 
   clinic: {
@@ -762,7 +907,14 @@ var OPPS = {
     mentors: ['raeka', 'omar'],
     rel: ['steam', 'stem', 'jof'],
     sess: ['s-clinic', 's-sci', 's-subj'],
-    independent: false
+    independent: false,
+    state: 'live',
+    author: 'desk',
+    checkedAt: '',
+    checkedBy: '',
+    source: '',
+    returnReason: '',
+    images: []
   }
 };
 
@@ -773,8 +925,12 @@ var SESSIONS = [
     day: 'Sat',
     date: '12',
     when: 'Saturday 12 September, 5:00 PM, one hour on Google Meet',
+    dateText: 'Saturday 12 September, 5:00 PM',
+    length: 'One hour',
+    platform: 'Google Meet',
     pod: 'Science and health pod',
     lead: 'raeka',
+    hosted_by: 'raeka',
     seats: 25,
     taken: 14,
     stages: ['subject', 'csec', 'fork'],
@@ -793,8 +949,12 @@ var SESSIONS = [
     day: 'Wed',
     date: '16',
     when: 'Wednesday 16 September, 6:30 PM, one hour on Google Meet',
+    dateText: 'Wednesday 16 September, 6:30 PM',
+    length: 'One hour',
+    platform: 'Google Meet',
     pod: 'Science and health pod',
     lead: 'raeka',
+    hosted_by: 'raeka',
     seats: 20,
     taken: 11,
     stages: ['csec', 'special'],
@@ -813,8 +973,12 @@ var SESSIONS = [
     day: 'Thu',
     date: '18',
     when: 'Thursday 18 September, 6:00 PM, one hour on Google Meet',
+    dateText: 'Thursday 18 September, 6:00 PM',
+    length: 'One hour',
+    platform: 'Google Meet',
     pod: 'Trades pod',
     lead: 'omar',
+    hosted_by: 'omar',
     seats: 30,
     taken: 22,
     stages: ['subject', 'csec', 'fork'],
@@ -833,8 +997,12 @@ var SESSIONS = [
     day: 'Sat',
     date: '20',
     when: 'Saturday 20 September, 4:00 PM, one hour on Google Meet',
+    dateText: 'Saturday 20 September, 4:00 PM',
+    length: 'One hour',
+    platform: 'Google Meet',
     pod: 'Technology pod',
     lead: 'jerome',
+    hosted_by: 'jerome',
     seats: 28,
     taken: 17,
     stages: ['explore', 'subject', 'csec'],
@@ -853,8 +1021,12 @@ var SESSIONS = [
     day: 'Sun',
     date: '21',
     when: 'Sunday 21 September, 5:30 PM, one hour on Google Meet',
+    dateText: 'Sunday 21 September, 5:30 PM',
+    length: 'One hour',
+    platform: 'Google Meet',
     pod: 'Sport and coaching pod',
     lead: 'keisha',
+    hosted_by: 'keisha',
     seats: 24,
     taken: 24,
     stages: ['explore', 'subject', 'csec', 'fork'],
@@ -873,8 +1045,12 @@ var SESSIONS = [
     day: 'Tue',
     date: '23',
     when: 'Tuesday 23 September, 6:30 PM, one hour on Google Meet',
+    dateText: 'Tuesday 23 September, 6:30 PM',
+    length: 'One hour',
+    platform: 'Google Meet',
     pod: 'Creative and media pod',
     lead: 'marcus',
+    hosted_by: 'marcus',
     seats: 22,
     taken: 9,
     stages: ['subject', 'csec', 'fork'],
@@ -893,8 +1069,12 @@ var SESSIONS = [
     day: 'Mon',
     date: '29',
     when: 'Monday 29 September, 6:30 PM, one hour on Google Meet',
+    dateText: 'Monday 29 September, 6:30 PM',
+    length: 'One hour',
+    platform: 'Google Meet',
     pod: 'After CSEC pod',
     lead: 'omar',
+    hosted_by: 'omar',
     seats: 30,
     taken: 19,
     stages: ['fork', 'special'],
@@ -909,16 +1089,46 @@ var SESSIONS = [
   }
 ];
 
+var RES = {
+  'opp-stem': { k: 'Opportunity', t: 'STEMGuyana learning pod', s: 'Free coding and robotics pods for ages 8 to 18 in several regions.', ref: 'stem' },
+  'opp-pyarg': { k: 'Opportunity', t: "President's Youth Award", s: 'Non-competitive award from age 14. Bronze, Silver and Gold.', ref: 'pyarg' },
+  'opp-cso': { k: 'Opportunity', t: 'Caribbean STEM Olympiads', s: 'Regional Maths, Coding and Robotics olympiads. Independent entry allowed.', ref: 'cso' },
+  'opp-scratch': { k: 'Opportunity', t: 'National Scratch coding competition', s: 'Grades 1 to 10 build a Scratch animation on a set theme.', ref: 'scratch' },
+  'opp-jof': { k: 'Opportunity', t: 'J.O.F. Haynes schools debating competition', s: 'National schools debate, entered through your school.', ref: 'jof' },
+  'opp-mash': { k: 'Opportunity', t: "National Children's Mashramani competitions", s: 'Largest youth participation event in Guyana. District round is the entry.', ref: 'mash' },
+  'opp-steam': { k: 'Opportunity', t: 'National STEAM fair', s: 'Biennial national fair. The regional fair is the real entry point.', ref: 'steam' },
+  'opp-track': { k: 'Opportunity', t: 'National secondary schools track and field', s: 'Main national schools athletics meet, now in March.', ref: 'track' },
+  'opp-blue': { k: 'Opportunity', t: 'Blue Ocean student entrepreneur competition', s: 'Fully virtual. Direct registration, no school sponsor required.', ref: 'blue' },
+  'opp-sbb': { k: 'Opportunity', t: 'Tertiary entrepreneurship award', s: 'SBB award for TVET students. Training, a pitch, and grants.', ref: 'sbb' },
+  'opp-clinic': { k: 'Opportunity', t: 'Weekly past paper clinic', s: 'Free after-school past paper sessions run by mentors who sat the papers.', ref: 'clinic' },
+  'sess-s-sci': { k: 'Session', t: 'Pathways into medicine and health', s: 'Saturday 12 September, 5:00 PM', d: '12', dw: 'Sat', ref: 's-sci' },
+  'sess-s-clinic': { k: 'Session', t: 'Past paper clinic: Biology and Chemistry', s: 'Wednesday 16 September, 6:30 PM', d: '16', dw: 'Wed', ref: 's-clinic' },
+  'sess-s-trades': { k: 'Session', t: 'GTTi, sites and keeping Maths', s: 'Thursday 18 September, 6:00 PM', d: '18', dw: 'Thu', ref: 's-trades' },
+  'sess-s-tech': { k: 'Session', t: 'Building proof before a credential', s: 'Saturday 20 September, 4:00 PM', d: '20', dw: 'Sat', ref: 's-tech' },
+  'sess-s-sport': { k: 'Session', t: 'Sport pathways without a private academy', s: 'Sunday 21 September, 5:30 PM', d: '21', dw: 'Sun', ref: 's-sport' },
+  'sess-s-media': { k: 'Session', t: 'Making media look like real work', s: 'Tuesday 23 September, 6:30 PM', d: '23', dw: 'Tue', ref: 's-media' },
+  'sess-s-fork': { k: 'Session', t: 'After CSEC without a fight at home', s: 'Monday 29 September, 6:30 PM', d: '29', dw: 'Mon', ref: 's-fork' },
+  'note-mock': { k: 'Note', t: 'Mocks are rehearsal, not judgment.', s: 'Rebuild from past papers the same week, not the same term.' },
+  'note-tvet': { k: 'Note', t: 'Write both routes with years, cost and first job.', s: 'Name a certificate and a mentor on the trade side.' },
+  'note-travel': { k: 'Note', t: 'Ask about travel funding before meet week.', s: 'A session log is evidence, not paperwork for its own sake.' },
+  'note-pod': { k: 'Note', t: 'If your school has no club, the pod is the entry.', s: 'Keep a photo or short note of what you built.' },
+  'note-self': { k: 'Note', t: 'If your school will not organise entry, register yourself.', s: 'Keep your project writeup. University apps ask for it.' }
+};
+
 var FEED = [
   {
     id: 'q-bio',
     kind: 'question',
-    time: '2h ago',
+    at: '2026-09-04T23:20:00-04:00',
     cat: 'Subject choice',
     anon: true,
     who: 'Form 3 student, Region 4',
     title: 'If I might want medicine later, do I have to keep Biology and Chemistry in Form 3?',
+    body: 'If I might want medicine later, do I have to keep Biology and Chemistry in Form 3?',
     askedAt: 'Form 3',
+    stage: 'subject',
+    res: ['opp-clinic', 'sess-s-sci'],
+    similar: ['q-cape', 'q-lethem'],
     asks: 3,
     replies: [
       { a: 'raeka', text: 'Keep both. Some schools let you add Chemistry back in Form 4 and some do not, and you usually find out too late to do anything about it.' },
@@ -932,29 +1142,31 @@ var FEED = [
   {
     id: 'f2',
     kind: 'opportunity',
-    time: '2 days ago',
+    at: '2026-09-03T10:00:00-04:00',
     cat: 'Technology',
     author: 'desk',
     opp: 'stem',
+    stage: 'explore',
+    res: ['sess-s-tech', 'sess-s-clinic', 'note-pod'],
+    similar: ['cso', 'scratch'],
     text: 'STEMGuyana holiday pods are open for ages 8 to 18 in several regions. Coding, robotics and AI taster weeks, and there is no fee to join.'
   },
   {
     id: 'f3',
     kind: 'story',
-    time: '5h ago',
+    at: '2026-09-04T20:20:00-04:00',
     cat: 'Science and health',
     author: 'raeka',
     title: 'What I wish I had done the week after my first failed Biology mock.',
     body: [
       'I treated the mock like a verdict. I lost a week to embarrassment before I opened a past paper again.',
       'The rebuild was boring and it worked. Same topics, timed, marked against the scheme, then a short list of the three ideas I kept missing.',
-      'If your mock goes badly, start that week. Waiting for the final term is how a weak paper becomes your aggregate.'
+      'If your mock goes badly, start that week. Waiting for the final term is how a weak paper becomes your aggregate.',
+      'Mocks are rehearsal, not judgment. Rebuild from past papers the same week, not the same term. Ask a mentor which topics repeat before you reread the whole book.'
     ],
-    takeaways: [
-      'Mocks are rehearsal, not judgment.',
-      'Rebuild from past papers the same week, not the same term.',
-      'Ask a mentor which topics repeat before you reread the whole book.'
-    ],
+    stage: 'csec',
+    res: ['opp-clinic', 'sess-s-clinic', 'note-mock'],
+    similar: ['f7', 'f12'],
     insp: 18,
     rel: ['q-bio', 'f5'],
     opp: 'clinic',
@@ -963,26 +1175,37 @@ var FEED = [
   {
     id: 'f4',
     kind: 'session',
-    time: 'Yesterday',
+    at: '2026-09-04T10:00:00-04:00',
     cat: 'Building and fixing things',
-    session: 's-trades'
+    session: 's-trades',
+    stage: 'fork',
+    res: ['opp-sbb', 'note-tvet'],
+    similar: ['s-fork', 's-tech']
   },
   {
     id: 'f5',
     kind: 'journey',
-    time: '3 days ago',
+    at: '2026-09-02T10:00:00-04:00',
     cat: 'Science and health',
-    journey: 'raeka'
+    journey: 'raeka',
+    author: 'raeka',
+    stage: 'special',
+    res: ['opp-clinic', 'sess-s-sci'],
+    similar: ['omar', 'jerome']
   },
   {
     id: 'q-lethem',
     kind: 'question',
-    time: '5 days ago',
+    at: '2026-08-31T10:00:00-04:00',
     cat: 'Sport and coaching',
     anon: true,
     who: 'Form 2 student, Region 9',
     title: 'There is no private academy in Lethem. How do I build a sport pathway that still looks serious?',
+    body: 'There is no private academy in Lethem. How do I build a sport pathway that still looks serious?',
     askedAt: 'Form 2',
+    stage: 'explore',
+    res: ['opp-track', 'sess-s-sport'],
+    similar: ['q-media', 'q-bio'],
     asks: 2,
     replies: [
       { a: 'keisha', text: 'Community leagues, PE subjects, a first aid certificate and a short coaching course. Travel funding is usually the real blocker, so ask about it early.' },
@@ -995,20 +1218,19 @@ var FEED = [
   {
     id: 'f7',
     kind: 'story',
-    time: 'Yesterday',
+    at: '2026-09-04T10:00:00-04:00',
     cat: 'Building and fixing things',
     author: 'omar',
     title: 'How I stopped the CAPE versus GTTi argument at home.',
     body: [
       'My parents heard electrical work as giving up. I heard CAPE as two more years with no tool in my hand.',
       'I put both plans on one page. Years, cost, first job, and what happens if it does not work out. I named a certificate and a licensed mentor on the trade side.',
-      'The fight got quieter when the page was specific. TVET stops sounding like a leftover once the route has names on it.'
+      'The fight got quieter when the page was specific. TVET stops sounding like a leftover once the route has names on it.',
+      'Write both routes with years, cost and first job. Name a certificate and a mentor on the trade side. Keep Maths and English even when the work is with your hands.'
     ],
-    takeaways: [
-      'Write both routes with years, cost and first job.',
-      'Name a certificate and a mentor on the trade side.',
-      'Keep Maths and English even when the work is with your hands.'
-    ],
+    stage: 'fork',
+    res: ['opp-sbb', 'sess-s-fork', 'note-tvet'],
+    similar: ['f3', 'f12'],
     insp: 27,
     rel: ['q-cape', 'f9'],
     opp: 'sbb',
@@ -1017,12 +1239,16 @@ var FEED = [
   {
     id: 'q-cape',
     kind: 'question',
-    time: '1 week ago',
+    at: '2026-08-29T10:00:00-04:00',
     cat: 'After CSEC',
     anon: true,
     who: 'Form 5 student, Region 4',
     title: 'My parents want CAPE. I want GTTi electrical after CSEC. How do we decide without it turning into a fight?',
+    body: 'My parents want CAPE. I want GTTi electrical after CSEC. How do we decide without it turning into a fight?',
     askedAt: 'Form 5',
+    stage: 'fork',
+    res: ['opp-sbb', 'sess-s-fork'],
+    similar: ['q-bio', 'q-media'],
     asks: 2,
     replies: [
       { a: 'omar', text: 'Put both plans on one page. Years, cost, first job, and what happens if it does not work out. TVET stops sounding like giving up once a certificate and a mentor are named.' },
@@ -1035,28 +1261,39 @@ var FEED = [
   {
     id: 'f9',
     kind: 'journey',
-    time: '4 days ago',
+    at: '2026-09-01T10:00:00-04:00',
     cat: 'Building and fixing things',
-    journey: 'omar'
+    journey: 'omar',
+    author: 'omar',
+    stage: 'fork',
+    res: ['opp-sbb', 'sess-s-trades'],
+    similar: ['raeka', 'keisha']
   },
   {
     id: 'f10',
     kind: 'opportunity',
-    time: '3 days ago',
+    at: '2026-09-02T10:00:00-04:00',
     cat: 'Technology',
     author: 'desk',
     opp: 'cso',
+    stage: 'csec',
+    res: ['sess-s-tech', 'note-self'],
+    similar: ['stem', 'scratch'],
     text: 'Caribbean STEM Olympiads accept independent competitors. If your school will not organise a team, you can still enter.'
   },
   {
     id: 'q-media',
     kind: 'question',
-    time: '4 days ago',
+    at: '2026-09-01T10:00:00-04:00',
     cat: 'Creative and media',
     anon: true,
     who: 'Form 4 student, Region 3',
     title: 'People keep telling me media is not a real career in Guyana. What proof should I be collecting?',
+    body: 'People keep telling me media is not a real career in Guyana. What proof should I be collecting?',
     askedAt: 'Form 4',
+    stage: 'csec',
+    res: ['opp-mash', 'sess-s-media'],
+    similar: ['q-lethem', 'q-cape'],
     asks: 2,
     replies: [
       { a: 'marcus', text: 'A weekly school reel, three shoots run like client work, and everything delivered on time. Show the work instead of arguing for it.' },
@@ -1069,20 +1306,19 @@ var FEED = [
   {
     id: 'f12',
     kind: 'story',
-    time: '6 days ago',
+    at: '2026-08-30T10:00:00-04:00',
     cat: 'Sport and coaching',
     author: 'keisha',
     title: 'The week I missed regional trials, and what the log fixed later.',
     body: [
       'There was no transport that week from Lethem. I missed the trials and spent two days convinced the route had closed.',
       'I kept training the younger students and writing every session in the same exercise book I had started at thirteen.',
-      'Months later that written log is what got me funded to a regional coaching workshop. The absence still hurt. The paper trail is what travelled.'
+      'Months later that written log is what got me funded to a regional coaching workshop. The absence still hurt. The paper trail is what travelled.',
+      'Ask about travel funding before meet week. A session log is evidence, not paperwork for its own sake. Missing one trial is a setback, not the end of a hinterland route.'
     ],
-    takeaways: [
-      'Ask about travel funding before meet week.',
-      'A session log is evidence, not paperwork for its own sake.',
-      'Missing one trial is a setback, not the end of a hinterland route.'
-    ],
+    stage: 'csec',
+    res: ['opp-track', 'sess-s-sport', 'note-travel'],
+    similar: ['f3', 'f7'],
     insp: 31,
     rel: ['q-lethem', 'f15'],
     opp: 'track',
@@ -1091,35 +1327,249 @@ var FEED = [
   {
     id: 'f13',
     kind: 'session',
-    time: '2 days ago',
+    at: '2026-09-03T10:00:00-04:00',
     cat: 'Sport and coaching',
-    session: 's-sport'
+    session: 's-sport',
+    stage: 'csec',
+    res: ['opp-track', 'note-travel'],
+    similar: ['s-sci', 's-media']
   },
   {
     id: 'f14',
     kind: 'opportunity',
-    time: '6 days ago',
+    at: '2026-08-30T10:00:00-04:00',
     cat: 'Business',
     author: 'desk',
     opp: 'blue',
+    stage: 'subject',
+    res: ['sess-s-fork', 'opp-sbb'],
+    similar: ['sbb', 'pyarg'],
     text: 'Blue Ocean is fully virtual and open to Guyanese secondary students with direct registration. No school sponsor required.'
   },
   {
     id: 'f15',
     kind: 'journey',
-    time: '5 days ago',
+    at: '2026-08-31T10:00:00-04:00',
     cat: 'Sport and coaching',
-    journey: 'keisha'
+    journey: 'keisha',
+    author: 'keisha',
+    stage: 'csec',
+    res: ['opp-track', 'sess-s-sport'],
+    similar: ['omar', 'raeka']
   },
   {
     id: 'f16',
     kind: 'journey',
-    time: '1 week ago',
+    at: '2026-08-29T10:00:00-04:00',
     cat: 'Technology',
-    journey: 'jerome'
+    journey: 'jerome',
+    author: 'jerome',
+    stage: 'explore',
+    res: ['opp-stem', 'sess-s-tech'],
+    similar: ['raeka', 'omar']
   }
 ];
 
+
+var CAREER_FILTERS = [
+  'Science and health',
+  'Technology',
+  'Trades and technical',
+  'Business',
+  'Creative and media',
+  'Law and public service',
+  'Sport and coaching',
+  'Education'
+];
+
+var ARCHETYPES = {
+  investigator: {
+    key: 'investigator',
+    name: 'The Investigator',
+    blurb:
+      'You want to know why something happens before you accept that it does. Science, health and research routes reward that.',
+    traits: ['Curious', 'Careful', 'Evidence first'],
+    glyph: 'I'
+  },
+  builder: {
+    key: 'builder',
+    name: 'The Builder',
+    blurb:
+      'You would rather make the thing than read about it. Trades, engineering and technical routes turn that into a living faster than most people expect.',
+    traits: ['Hands on', 'Practical', 'Makes it work'],
+    glyph: 'B'
+  },
+  organiser: {
+    key: 'organiser',
+    name: 'The Organiser',
+    blurb:
+      'You notice when something is badly run and you can see how to fix it. Business, enterprise and leadership routes need exactly that.',
+    traits: ['Steady', 'Sees the gaps', 'Follows through'],
+    glyph: 'O'
+  },
+  storyteller: {
+    key: 'storyteller',
+    name: 'The Storyteller',
+    blurb:
+      'You think in words and pictures, and you can make other people care about something. Media, design and communication routes are built on it.',
+    traits: ['Clear', 'Makes people care', 'Shows the work'],
+    glyph: 'S'
+  },
+  advocate: {
+    key: 'advocate',
+    name: 'The Advocate',
+    blurb:
+      'You argue for people who are not in the room. Law, policy and community routes are where that stops being a habit and becomes work.',
+    traits: ['Speaks up', 'Fair', 'Holds the line'],
+    glyph: 'A'
+  }
+};
+
+var ARCH_COUNTS = {
+  investigator: 288,
+  builder: 214,
+  organiser: 176,
+  storyteller: 151,
+  advocate: 98
+};
+
+var ARCH_QUIZ = [
+  {
+    q: 'A machine at school stops working. What do you do first?',
+    opts: [
+      { t: 'Open it up and find out what broke', a: 'builder' },
+      { t: 'Ask what changed just before it stopped', a: 'investigator' },
+      { t: 'Work out who is meant to fix it and chase them', a: 'organiser' },
+      { t: 'Argue that the school should have replaced it already', a: 'advocate' }
+    ]
+  },
+  {
+    q: 'You have a free Saturday and no money. What sounds best?',
+    opts: [
+      { t: 'A project with your hands', a: 'builder' },
+      { t: 'Reading about something that has been bothering you', a: 'investigator' },
+      { t: 'Filming or writing something', a: 'storyteller' },
+      { t: 'Helping run a community event', a: 'organiser' }
+    ]
+  },
+  {
+    q: 'A teacher says something you think is wrong. You...',
+    opts: [
+      { t: 'Check it yourself before saying anything', a: 'investigator' },
+      { t: 'Say so, politely, in front of the class', a: 'advocate' },
+      { t: 'Write it up properly and show them after', a: 'storyteller' },
+      { t: 'Let it go, it is not worth the fight', a: 'organiser' }
+    ]
+  },
+  {
+    q: 'Which compliment would land hardest?',
+    opts: [
+      { t: 'You explained that better than anyone', a: 'storyteller' },
+      { t: 'You actually got it working', a: 'builder' },
+      { t: 'You spotted what everyone else missed', a: 'investigator' },
+      { t: 'Nothing would have happened without you', a: 'organiser' }
+    ]
+  },
+  {
+    q: 'Ten years out, what would make you say it went well?',
+    opts: [
+      { t: 'I understand something almost nobody does', a: 'investigator' },
+      { t: 'Things I made are still standing', a: 'builder' },
+      { t: 'I built something that employs people', a: 'organiser' },
+      { t: 'A rule changed because of work I did', a: 'advocate' }
+    ]
+  }
+];
+
+var PEOPLE = {
+  raeka: {
+    name: 'Raeka Persaud',
+    role: 'mentor',
+    verified: true,
+    contactable: true,
+    av: 'av-1',
+    career: 'Science and health',
+    title: 'Junior doctor, Georgetown Public Hospital',
+    region: 'Region 4',
+    arch: 'investigator',
+    about:
+      'I treated my first failed Biology mock like a verdict and lost a week before I opened a past paper again. The rebuild was boring and it worked. I kept Biology and Chemistry because those are the gates I actually needed, and I still mentor CSEC science students on weekends at Georgetown Public Hospital.',
+    posts: [
+      { kind: 'story', id: 'f3' },
+      { kind: 'journey', id: 'raeka' },
+      { kind: 'session', id: 's-sci' },
+      { kind: 'session', id: 's-clinic' }
+    ]
+  },
+  omar: {
+    name: 'Omar Khan',
+    role: 'mentor',
+    verified: true,
+    contactable: true,
+    av: 'av-2',
+    career: 'Trades and technical',
+    title: 'Electrician and site supervisor, Berbice',
+    region: 'Region 6',
+    arch: 'builder',
+    about:
+      'My parents heard electrical work as giving up. I put both plans on one page, years, cost, first job, and a licensed mentor on the trade side. A certificate is a door. Your hands are what walk you through it.',
+    posts: [
+      { kind: 'story', id: 'f7' },
+      { kind: 'journey', id: 'omar' },
+      { kind: 'session', id: 's-trades' },
+      { kind: 'session', id: 's-fork' }
+    ]
+  },
+  jerome: {
+    name: 'Jerome DaSilva',
+    role: 'contributor',
+    verified: false,
+    contactable: false,
+    av: 'av-3',
+    career: 'Technology',
+    title: 'Software developer, Georgetown',
+    region: 'Region 4',
+    arch: 'builder',
+    about:
+      'I shipped small things before I waited for perfect, starting with a simple page on a shared family laptop. I still run a weekend coding circle for secondary students in Georgetown. One small project beats ten unread tutorials.',
+    posts: [
+      { kind: 'journey', id: 'jerome' },
+      { kind: 'session', id: 's-tech' }
+    ]
+  },
+  keisha: {
+    name: 'Keisha Daniels',
+    role: 'mentor',
+    verified: true,
+    contactable: true,
+    av: 'av-4',
+    career: 'Sport and coaching',
+    title: 'Community coach and PE teacher, Lethem',
+    region: 'Region 9',
+    arch: 'organiser',
+    about:
+      'If nothing is organised where you live, write down what you do until someone can fund the next step. I missed regional trials because there was no transport from Lethem. The session log is what travelled.',
+    posts: [
+      { kind: 'story', id: 'f12' },
+      { kind: 'journey', id: 'keisha' },
+      { kind: 'session', id: 's-sport' }
+    ]
+  },
+  marcus: {
+    name: 'Marcus Gomes',
+    role: 'contributor',
+    verified: false,
+    contactable: false,
+    av: 'av-5',
+    career: 'Creative and media',
+    title: 'Videographer, Georgetown',
+    region: 'Region 4',
+    arch: 'storyteller',
+    about:
+      'Show the work instead of arguing for it. A weekly school reel, three shoots run like client work, and everything delivered on time. That is the proof I tell students to collect.',
+    posts: [{ kind: 'session', id: 's-media' }]
+  }
+};
 
 var SLOTS = [
   { k: 'sport', t: 'A sport', hint: 'Team, club or community league you actually train with.' },
