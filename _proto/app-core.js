@@ -574,20 +574,18 @@ function toggleFollow(id) {
 }
 
 function requireAccount(action) {
-  if (!isVisitor()) return false;
-  S.pendingAction = action || null;
-  S.setupReason = (action && action.reason) || '';
-  go({ t: 'postgate', id: '0' });
-  return true;
+  return requirePathway(action);
 }
 
 function requirePathway(action) {
-  if (S.onboarded && !isVisitor()) return false;
+  ensurePw();
+  if (S.pw.done && !isVisitor()) return false;
   S.pendingAction = action || null;
   S.setupReason =
     (action && action.reason) || 'We need your form to hold you a place.';
   S.setupDraft = {};
   S.setupStep = 0;
+  S.pw.step = 0;
   go({ t: 'setup', id: '0' });
   return true;
 }
@@ -663,7 +661,7 @@ function renderJoinCard() {
   return (
     '<article class="feed-card kind-join">' +
     '<div class="join-body">' +
-    '<p class="join-lead">You\'re seeing posts for every form. Answer six questions and see only what applies to yours.</p>' +
+    '<p class="join-lead">You\'re seeing posts for every form. Answer four questions and see only what applies to yours.</p>' +
     '<div class="card-actions">' +
     '<button type="button" class="btn" data-open="setup" data-id="0">Build my pathway</button>' +
     '<button type="button" class="btn quiet" data-dismiss-join="1">Not now</button>' +

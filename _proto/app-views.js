@@ -148,123 +148,23 @@ function pathwaySubtitle() {
   );
 }
 
+function inSetupSheet() {
+  return !!(NAV.length && NAV[NAV.length - 1].t === 'setup');
+}
+
 function finishSetup() {
-  var d = S.setupDraft;
-  var pending = S.pendingAction;
-  var you = d.you || 'student';
-  S.onboarded = true;
-  S.stage = d.stage;
-  S.form = d.form || stageByKey(d.stage).name;
-  S.region = d.region;
-  S.goal = d.goal;
-  S.priority = d.priority;
-  S.blocker = d.blocker;
-  S.archetype = d.archetype;
-  S.me.form = S.form;
-  S.me.region = S.region;
-  if (you === 'contributor') {
-    S.role = 'contributor';
-    S.me.role = 'contributor';
-    S.me.pending = true;
-    S.me.verified = false;
-    S.me.contactable = false;
-    S.me.id = '';
-  } else if (you === 'mentor') {
-    S.role = 'mentor';
-    S.me.role = 'mentor';
-    S.me.pending = true;
-    S.me.verified = false;
-    S.me.contactable = true;
-    S.me.id = '';
-  } else {
-    S.role = 'student';
-    S.me.role = 'student';
-    S.me.pending = false;
-    S.me.verified = false;
-    S.me.contactable = false;
-    S.me.id = '';
-  }
-  S.setupStep = 0;
-  S.setupDraft = {};
-  S.setupReason = '';
-  S.pendingAction = null;
-  S.hideJoinCard = true;
-  S.unread = 0;
-  hideSheetUi();
-  if (pending) {
-    runPendingAction(pending);
-    return;
-  }
-  S.view = 'pathway';
-  render();
-  toast('Pathway built. Your timeline starts at ' + S.form + '.');
+  finishPwWizard();
 }
 
-function renderSetupHtml(step, opts) {
-  var q = SETUP_QS[step];
-  if (!q) return '';
-  opts = opts || {};
-  var pct = Math.round(((step + 1) / SETUP_QS.length) * 100);
-  var html = '<div class="setup">';
-  if (opts.reason) {
-    html += '<p class="setup-reason">' + esc(opts.reason) + '</p>';
-  }
-  html +=
-    '<div class="prog"><span style="width:' +
-    pct +
-    '%"></span></div>' +
-    '<p class="eyebrow">Question ' +
-    (step + 1) +
-    ' of ' +
-    SETUP_QS.length +
-    '</p>' +
-    '<h2>' +
-    esc(q.q) +
-    '</h2>' +
-    '<p class="hint">' +
-    esc(q.hint) +
-    '</p>' +
-    '<div class="opt-list">';
-  var i, o;
-  for (i = 0; i < q.opts.length; i++) {
-    o = q.opts[i];
-    var selected = S.setupDraft[q.key] === o.v;
-    html +=
-      '<button type="button" class="opt' +
-      (selected ? ' on' : '') +
-      '" data-setup-key="' +
-      esc(q.key) +
-      '" data-setup-val="' +
-      esc(o.v) +
-      '" data-setup-form="' +
-      esc(o.form || '') +
-      '"><strong>' +
-      esc(o.label) +
-      '</strong>' +
-      (o.sub ? '<span>' + esc(o.sub) + '</span>' : '') +
-      '</button>';
-  }
-  html += '</div>';
-  if (step > 0) {
-    html +=
-      '<button type="button" class="btn g sm" data-setup-back="1">Back</button>';
-  }
-  html += '</div>';
-  return html;
-}
-
-function renderSetup(step) {
-  var q = SETUP_QS[step];
-  if (!q) {
-    finishSetup();
-    return { crumb: 'Setup', title: 'Done', html: '' };
-  }
+function renderSetup() {
+  ensurePw();
   return {
     crumb: 'Setup',
     title: 'Build my pathway',
-    html: renderSetupHtml(step, { reason: S.setupReason }),
+    html: renderPwWizardBody({ reason: S.setupReason }),
     after: function () {
-      byId('sheet-back').hidden = step < 1;
+      var backBtn = byId('sheet-back');
+      if (backBtn) backBtn.hidden = (S.pw.step || 0) < 1;
     }
   };
 }
@@ -365,6 +265,12 @@ function statusLabel(s) {
   if (s === 'confirmed') return 'Route confirmed';
   if (s === 'varies') return 'Route varies';
   return 'Talent decides';
+}
+
+function statusShort(s) {
+  if (s === 'confirmed') return 'Confirmed';
+  if (s === 'varies') return 'Varies';
+  return 'Talent';
 }
 
 function statusClass(s) {
@@ -503,6 +409,8 @@ function postState(it) {
 
 function finishPwWizard() {
   var p = ensurePw();
+  var pending = S.pendingAction;
+  var fromSheet = inSetupSheet();
   p.done = true;
   S.onboarded = true;
   S.hideJoinCard = true;
@@ -527,9 +435,28 @@ function finishPwWizard() {
     p.sub = '';
     p.open = p.level;
   }
+  S.setupStep = 0;
+  S.setupDraft = {};
+  S.setupReason = '';
+  S.pendingAction = null;
+  S.unread = 0;
+  if (pending) {
+    hideSheetUi();
+    runPendingAction(pending);
+    return;
+  }
+  if (fromSheet) {
+    hideSheetUi();
+    S.view = 'pathway';
+    render();
+    toast('Pathway built. Your timeline starts at ' + S.form + '.');
+    return;
+  }
+  render();
+  toast('Pathway built. Your timeline starts at ' + S.form + '.');
 }
 
-function renderPwWizard() {
+function renderPwWizardBody(opts) {
   var p = ensurePw();
   var step = p.step || 0;
   var i;
@@ -541,8 +468,12 @@ function renderPwWizard() {
     { t: 'Which fields interest you most?', h: 'Pick as many as you like. You can skip this.' },
     { t: 'How clear are you right now?', h: 'This only decides where we land you first.' }
   ][step];
-  html =
-    '<div class="page-pw"><div class="pw-wiz">' +
+  opts = opts || {};
+  html = '<div class="pw-wiz">';
+  if (opts.reason) {
+    html += '<p class="setup-reason">' + esc(opts.reason) + '</p>';
+  }
+  html +=
     '<p class="eyebrow">QUESTION ' +
     (step + 1) +
     ' OF 4</p>' +
@@ -627,8 +558,12 @@ function renderPwWizard() {
   if (step === 2 && !p.fields.length) {
     html += '<p class="pw-skip">You can continue without picking a field.</p>';
   }
-  html += '</div></div>';
+  html += '</div>';
   return html;
+}
+
+function renderPwWizard() {
+  return '<div class="page-pw">' + renderPwWizardBody() + '</div>';
 }
 
 function renderPwQueue() {
@@ -676,42 +611,50 @@ function renderCareerCard(ix) {
   var c = careerAt(ix);
   var facts;
   var sm;
-  var fields = [];
-  var i;
+  var f;
+  var subj;
+  var saved;
   if (!c) return '';
   facts = careerFacts(c);
   sm = subjectMatch(c);
-  for (i = 0; i < c.b.length; i++) fields.push(fieldName(c.b[i]));
+  f = fieldByKey(c.b && c.b[0]);
+  if (sm.total) subj = sm.have + ' of ' + sm.total + ' subjects';
+  else subj = 'Subjects not listed';
+  saved = isConsidering(ix);
   return (
     '<article class="pw-card" data-pw-open="' +
     ix +
-    '"><div class="minw"><h3>' +
+    '"><span class="pw-card-mark" style="background:var(--i-' +
+    esc(f.c) +
+    ')" aria-hidden="true">' +
+    esc(f.g) +
+    '</span><div class="pw-card-body"><h3>' +
     esc(c.n) +
-    '</h3><div class="pw-facts"><span class="pw-fact">' +
-    esc(facts.entry) +
-    '</span><span class="pw-fact">' +
-    esc(facts.time) +
-    '</span><span class="pw-fact' +
-    (sm.total && sm.have === sm.total ? ' ok' : '') +
-    '">' +
-    sm.have +
-    ' of ' +
-    sm.total +
-    ' subjects</span></div><p class="pw-jobs">' +
-    esc(c.jobs || 'First jobs vary by intake.') +
-    '</p><p class="pw-fields">' +
-    esc(fields.join(', ')) +
-    '</p></div><div class="pw-card-side"><span class="p ' +
+    '</h3><p class="pw-card-co">' +
+    esc(f.n) +
+    ' · <span class="pw-card-st ' +
     statusClass(c.s) +
     '">' +
-    esc(statusLabel(c.s)) +
-    '</span><button type="button" class="pw-book' +
-    (isConsidering(ix) ? ' on' : '') +
+    esc(statusShort(c.s)) +
+    '</span></p><p class="pw-card-meta">' +
+    esc(facts.entry) +
+    ' · ' +
+    esc(facts.time) +
+    ' · <span' +
+    (sm.total && sm.have === sm.total ? ' class="ok"' : '') +
+    '>' +
+    esc(subj) +
+    '</span></p></div><button type="button" class="pw-book' +
+    (saved ? ' on' : '') +
     '" data-pw-book="' +
     ix +
-    '" aria-label="Bookmark">' +
-    (isConsidering(ix) ? 'Saved' : 'Save') +
-    '</button></div></article>'
+    '" aria-label="' +
+    (saved ? 'Remove from considering' : 'Save to considering') +
+    '" aria-pressed="' +
+    (saved ? 'true' : 'false') +
+    '"><svg viewBox="0 0 24 24" fill="' +
+    (saved ? 'currentColor' : 'none') +
+    '" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4h10a1 1 0 0 1 1 1v15l-6-3.4L6 20V5a1 1 0 0 1 1-1z"/></svg></button></article>'
   );
 }
 
@@ -2329,8 +2272,10 @@ function composeSheetTitle() {
 function openCompose(seed, cat) {
   var types;
   if (isVisitor()) {
-    S.pendingAction = { type: 'compose' };
-    go({ t: 'postgate', id: '0' });
+    requirePathway({
+      type: 'compose',
+      reason: 'Answer four questions first. This is the same quiz as My Pathway.'
+    });
     return;
   }
   types = composeTypesFor(postingRole());
@@ -2964,7 +2909,7 @@ function viewPostgate() {
     title: 'Build your pathway to post',
     html:
       '<div class="detail post-gate"><h2>Build your pathway to post</h2>' +
-      '<p>Six questions. It also tells us which openings fit your form.</p>' +
+      '<p>Four questions. The same quiz as My Pathway. It tells us which openings fit your form.</p>' +
       '<button type="button" class="btn" data-open="setup" data-id="0">Build my pathway</button></div>'
   };
 }
@@ -3462,12 +3407,11 @@ function viewDel(v) {
 }
 
 function viewSetup(v) {
-  var step = parseInt(v.id, 10) || 0;
-  if (String(v.id) === '0' && NAV.length === 1) {
-    /* fresh open keeps prior draft so redo can resume; clear only when redo requested */
+  ensurePw();
+  if (v && v.id && String(v.id) !== '0') {
+    S.pw.step = parseInt(v.id, 10) || S.pw.step || 0;
   }
-  S.setupStep = step;
-  return renderSetup(step);
+  return renderSetup();
 }
 
 var VIEWS = {
@@ -3700,6 +3644,8 @@ function openKind(kind, id) {
     if (!S.pendingAction) S.setupReason = '';
     S.setupDraft = {};
     S.setupStep = 0;
+    ensurePw();
+    S.pw.step = 0;
     id = '0';
   }
   go({ t: map[kind], id: id });
@@ -3778,13 +3724,13 @@ function handlePwClick(t) {
   btn = closestEl(t, '[data-pw-level]');
   if (btn) {
     S.pw.level = btn.getAttribute('data-pw-level');
-    render();
+    refreshUi();
     return true;
   }
   btn = closestEl(t, '[data-pw-region]');
   if (btn) {
     S.pw.region = btn.getAttribute('data-pw-region');
-    render();
+    refreshUi();
     return true;
   }
   btn = closestEl(t, '[data-pw-field]');
@@ -3793,26 +3739,29 @@ function handlePwClick(t) {
     ix = S.pw.fields.indexOf(key);
     if (ix === -1) S.pw.fields.push(key);
     else S.pw.fields.splice(ix, 1);
-    render();
+    refreshUi();
     return true;
   }
   btn = closestEl(t, '[data-pw-clarity]');
   if (btn) {
     S.pw.clarity = btn.getAttribute('data-pw-clarity');
-    render();
+    refreshUi();
     return true;
   }
   btn = closestEl(t, '[data-pw-next]');
   if (btn) {
-    if (S.pw.step >= 3) finishPwWizard();
-    else S.pw.step += 1;
-    render();
+    if (S.pw.step >= 3) {
+      finishPwWizard();
+      return true;
+    }
+    S.pw.step += 1;
+    refreshUi();
     return true;
   }
   btn = closestEl(t, '[data-pw-back]');
   if (btn) {
     if (S.pw.step > 0) S.pw.step -= 1;
-    render();
+    refreshUi();
     return true;
   }
   btn = closestEl(t, '[data-pw-tab]');
@@ -4378,8 +4327,10 @@ function wire() {
     }
 
     if ((t.id === 'sheet-back' || closestEl(t, '#sheet-back')) && NAV.length && NAV[NAV.length - 1].t === 'setup') {
-      if (S.setupStep > 0) {
-        backSetupStep();
+      ensurePw();
+      if (S.pw.step > 0) {
+        S.pw.step -= 1;
+        paint();
         return;
       }
     }
