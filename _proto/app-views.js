@@ -140,6 +140,7 @@ function pathwaySubtitle() {
 
 function finishSetup() {
   var d = S.setupDraft;
+  var pending = S.pendingAction;
   S.onboarded = true;
   S.stage = d.stage;
   S.form = d.form || stageByKey(d.stage).name;
@@ -149,22 +150,31 @@ function finishSetup() {
   S.blocker = d.blocker;
   S.archetype = d.archetype;
   S.setupStep = 0;
-  hideSheetUi();
-  S.view = 'pathway';
+  S.setupDraft = {};
+  S.setupReason = '';
+  S.pendingAction = null;
+  S.hideJoinCard = true;
   S.unread = 0;
+  hideSheetUi();
+  if (pending) {
+    runPendingAction(pending);
+    return;
+  }
+  S.view = 'pathway';
   render();
   toast('Pathway built. Your timeline starts at ' + S.form + '.');
 }
 
-function renderSetup(step) {
+function renderSetupHtml(step, opts) {
   var q = SETUP_QS[step];
-  if (!q) {
-    finishSetup();
-    return { crumb: 'Setup', title: 'Done', html: '' };
-  }
+  if (!q) return '';
+  opts = opts || {};
   var pct = Math.round(((step + 1) / SETUP_QS.length) * 100);
-  var html =
-    '<div class="setup">' +
+  var html = '<div class="setup">';
+  if (opts.reason) {
+    html += '<p class="setup-reason">' + esc(opts.reason) + '</p>';
+  }
+  html +=
     '<div class="prog"><span style="width:' +
     pct +
     '%"></span></div>' +
@@ -203,10 +213,19 @@ function renderSetup(step) {
       '<button type="button" class="btn g sm" data-setup-back="1">Back</button>';
   }
   html += '</div>';
+  return html;
+}
+
+function renderSetup(step) {
+  var q = SETUP_QS[step];
+  if (!q) {
+    finishSetup();
+    return { crumb: 'Setup', title: 'Done', html: '' };
+  }
   return {
     crumb: 'Setup',
     title: 'Build my pathway',
-    html: html,
+    html: renderSetupHtml(step, { reason: S.setupReason }),
     after: function () {
       byId('sheet-back').hidden = step < 1;
     }
@@ -214,38 +233,67 @@ function renderSetup(step) {
 }
 
 function renderPathwayBlank() {
-  var waiting = S.taken.length;
+  var step = S.setupStep || 0;
+  if (step > 5) step = 0;
   return (
     '<div class="page-path">' +
     '<div class="path-hero">' +
-    '<p class="eyebrow">You</p>' +
-    '<h1>Nothing set up yet</h1>' +
-    '<div class="stat-pills"><span class="p">' +
-    waiting +
-    ' steps waiting</span><span class="p">' +
-    S.booked.length +
-    ' sessions</span><span class="p">' +
-    S.saved.length +
-    ' saved</span></div>' +
+    '<p class="eyebrow">Your pathway</p>' +
+    '<h1>Answer six questions</h1>' +
+    '<p class="lead">Six questions about where you are and what is in your way. It builds your timeline, marks the decisions that are actually near, and points you at sessions worth sitting in. The feed stays open meanwhile.</p>' +
     '</div>' +
-    '<div class="card gold-edge">' +
-    '<h2>This page is empty on purpose.</h2>' +
-    '<p>Six questions about where you are and what is in your way. It builds your timeline, marks the decisions that are actually near, and points you at sessions worth sitting in.</p>' +
-    (waiting
-      ? '<p class="muted">' +
-        waiting +
-        ' item' +
-        (waiting === 1 ? '' : 's') +
-        ' already waiting to land on your timeline once setup is done.</p>'
-      : '') +
-    '<button type="button" class="btn" data-open="setup" data-id="0">Build my pathway</button>' +
-    '</div>' +
-    '<div class="card">' +
-    '<h2>Meanwhile. The feed works without any of this.</h2>' +
-    '<p>Read journeys, open an opportunity, ask a question. Anything you take lands here once your timeline exists.</p>' +
-    '<button type="button" class="btn g" data-goto="feed">Go to the feed</button>' +
+    '<div class="path-setup">' +
+    renderSetupHtml(step) +
     '</div></div>'
   );
+}
+
+function advanceSetupStep() {
+  if (S.setupStep >= 5) {
+    finishSetup();
+    return;
+  }
+  S.setupStep += 1;
+  if (NAV.length && NAV[NAV.length - 1].t === 'setup') {
+    NAV[NAV.length - 1] = { t: 'setup', id: String(S.setupStep) };
+    paint();
+    return;
+  }
+  render();
+}
+
+function backSetupStep() {
+  if (S.setupStep < 1) return;
+  S.setupStep -= 1;
+  if (NAV.length && NAV[NAV.length - 1].t === 'setup') {
+    NAV[NAV.length - 1] = { t: 'setup', id: String(S.setupStep) };
+    paint();
+    return;
+  }
+  render();
+}
+
+function postThreadReply(tid, rtext, afterPathway) {
+  var titem = feedById(tid);
+  if (!titem) return;
+  if (!rtext || rtext.length < 4) {
+    toast('Write a short reply before posting.');
+    var tr = byId('thread-reply');
+    if (tr) tr.focus();
+    return;
+  }
+  ensureReplyIds(titem);
+  titem.replies = titem.replies || [];
+  titem.replies.push({
+    id: tid + '-r' + Date.now(),
+    a: null,
+    who: studentLabel(),
+    text: rtext,
+    mine: true
+  });
+  toast(afterPathway ? 'Pathway built. Reply posted.' : 'Reply posted.');
+  paint();
+  render();
 }
 
 function renderTimeline() {
@@ -1457,12 +1505,10 @@ function renderChrome() {
       var parts = S.archetype.split(' ');
       init = parts[parts.length - 1].charAt(0);
     }
-    var dot = S.onboarded ? '' : '<span class="setup-dot" id="setup-dot" aria-hidden="true"></span>';
     pill.innerHTML =
       '<span class="av" aria-hidden="true">' +
       esc(init) +
-      '</span>' +
-      dot;
+      '</span>';
     pill.setAttribute(
       'aria-label',
       S.onboarded ? 'Your profile, open My Pathway' : 'Profile not set up, open My Pathway'
@@ -1478,6 +1524,8 @@ function renderChrome() {
       badge.hidden = true;
     }
   }
+  var pathDot = byId('path-dot');
+  if (pathDot) pathDot.hidden = !!S.onboarded;
 
   var navs = document.querySelectorAll('[data-nav]');
   var i;
@@ -1500,25 +1548,6 @@ function renderChrome() {
     } else {
       navs[i].classList.remove('on');
       navs[i].removeAttribute('aria-current');
-    }
-  }
-
-  /* Left next decision */
-  var nd = byId('next-decision');
-  if (nd) {
-    if (!S.onboarded) {
-      nd.innerHTML =
-        '<p class="eyebrow">Your next decision</p><p class="muted">Set up your pathway to see what is actually near.</p>' +
-        '<button type="button" class="btn sm" data-open="setup" data-id="0">Build my pathway</button>';
-    } else {
-      var st = stageByKey(S.stage);
-      var d = daysUntil(st.dec.due);
-      nd.innerHTML =
-        '<p class="eyebrow">Your next decision</p><h3>' +
-        esc(st.dec.t) +
-        '</h3>' +
-        (d != null ? '<p class="due">' + d + ' days on the usual calendar</p>' : '') +
-        '<button type="button" class="btn sm g" data-goto="pathway">Open pathway</button>';
     }
   }
 
@@ -1623,7 +1652,19 @@ function openKind(kind, id) {
     compose: 'compose'
   };
   if (!map[kind]) return;
+  if (kind === 'book') {
+    if (
+      requirePathway({
+        type: 'book',
+        id: id,
+        reason: 'We need your form to hold you a place.'
+      })
+    ) {
+      return;
+    }
+  }
   if (kind === 'setup') {
+    if (!S.pendingAction) S.setupReason = '';
     S.setupDraft = {};
     S.setupStep = 0;
     id = '0';
@@ -1750,7 +1791,25 @@ function wire() {
     btn = closestEl(t, '[data-follow]');
     if (btn) {
       e.stopPropagation();
-      toggleFollow(btn.getAttribute('data-follow'));
+      var fid = btn.getAttribute('data-follow');
+      if (
+        requirePathway({
+          type: 'follow',
+          id: fid,
+          reason: 'We need your form to hold you a place.'
+        })
+      ) {
+        return;
+      }
+      toggleFollow(fid);
+      return;
+    }
+
+    btn = closestEl(t, '[data-dismiss-join]');
+    if (btn) {
+      e.stopPropagation();
+      S.hideJoinCard = true;
+      render();
       return;
     }
 
@@ -1798,31 +1857,19 @@ function wire() {
       S.setupDraft[key] = val;
       if (form) S.setupDraft.form = form;
       if (key === 'stage') S.setupDraft.stage = val;
-      if (S.setupStep >= 5) {
-        finishSetup();
-        return;
-      }
-      S.setupStep += 1;
-      NAV[NAV.length - 1] = { t: 'setup', id: String(S.setupStep) };
-      paint();
+      advanceSetupStep();
       return;
     }
 
     btn = closestEl(t, '[data-setup-back]');
     if (btn) {
-      if (S.setupStep > 0) {
-        S.setupStep -= 1;
-        NAV[NAV.length - 1] = { t: 'setup', id: String(S.setupStep) };
-        paint();
-      }
+      backSetupStep();
       return;
     }
 
     if ((t.id === 'sheet-back' || closestEl(t, '#sheet-back')) && NAV.length && NAV[NAV.length - 1].t === 'setup') {
       if (S.setupStep > 0) {
-        S.setupStep -= 1;
-        NAV[NAV.length - 1] = { t: 'setup', id: String(S.setupStep) };
-        paint();
+        backSetupStep();
         return;
       }
     }
@@ -2027,25 +2074,23 @@ function wire() {
     if (btn) {
       var tr = byId('thread-reply');
       var tid = btn.getAttribute('data-thread-reply');
-      var titem = feedById(tid);
       var rtext = tr && tr.value ? tr.value.trim() : '';
       if (!rtext || rtext.length < 4) {
         toast('Write a short reply before posting.');
         if (tr) tr.focus();
         return;
       }
-      ensureReplyIds(titem);
-      titem.replies = titem.replies || [];
-      titem.replies.push({
-        id: tid + '-r' + Date.now(),
-        a: null,
-        who: studentLabel(),
-        text: rtext,
-        mine: true
-      });
-      toast('Reply posted.');
-      paint();
-      render();
+      if (
+        requirePathway({
+          type: 'reply',
+          id: tid,
+          text: rtext,
+          reason: 'We need your form to hold you a place.'
+        })
+      ) {
+        return;
+      }
+      postThreadReply(tid, rtext, false);
       return;
     }
 

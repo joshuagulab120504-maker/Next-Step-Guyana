@@ -9,13 +9,8 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
         <input type="search" id="top-q" placeholder="Search" aria-label="Search Next Step" autocomplete="off"/>
       </div>
-      <button type="button" class="top-msg" id="top-msg" aria-label="Messages">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16v10H8l-4 3V6z"/></svg>
-        <span class="msg-badge" id="msg-badge" hidden>0</span>
-      </button>
       <button type="button" class="top-av" id="arch-pill" data-nav="pathway" aria-label="Your profile">
         <span class="av" aria-hidden="true">You</span>
-        <span class="setup-dot" id="setup-dot" aria-hidden="true"></span>
       </button>
     </div>
     <div class="gold-rule" aria-hidden="true"></div>
@@ -28,8 +23,6 @@
         <button type="button" id="nav-pathway" data-nav="pathway">My Pathway</button>
         <button type="button" id="nav-sessions" data-nav="sessions">Happening</button>
       </nav>
-
-      <div class="card sec-card next-decision" id="next-decision"></div>
 
       <div class="card sec-card browse-topics">
         <span class="eyebrow">Browse by topic</span>
@@ -72,9 +65,10 @@
       </span>
       Post
     </button>
-    <button type="button" class="dock-item" id="dock-pathway" data-tab="pathway" data-nav="pathway" aria-label="Pathway">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/><path d="M12 7v3M12 14v3"/></svg>
-      Pathway
+    <button type="button" class="dock-item" id="dock-pathway" data-tab="pathway" data-nav="pathway" aria-label="My Pathways">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.25"/><path d="M5.2 19.5c.9-3.3 3.5-5.3 6.8-5.3s5.9 2 6.8 5.3"/></svg>
+      My Pathways
+      <span class="path-dot" id="path-dot" hidden aria-hidden="true"></span>
     </button>
     <button type="button" class="dock-item" id="dock-alerts" data-tab="notifications" aria-label="Alerts">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 16V10a6 6 0 1 1 12 0v6l2 2H4l2-2z"/><path d="M10 19a2 2 0 0 0 4 0"/></svg>

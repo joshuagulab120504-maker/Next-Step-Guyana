@@ -29,6 +29,9 @@ var S = {
   recent: [],
   setupStep: 0,
   setupDraft: {},
+  setupReason: '',
+  pendingAction: null,
+  hideJoinCard: false,
   replyTimer: null
 };
 
@@ -100,6 +103,60 @@ function toggleFollow(id) {
   }
   paint();
   render();
+}
+
+function requirePathway(action) {
+  if (S.onboarded) return false;
+  S.pendingAction = action || null;
+  S.setupReason =
+    (action && action.reason) || 'We need your form to hold you a place.';
+  S.setupDraft = {};
+  S.setupStep = 0;
+  go({ t: 'setup', id: '0' });
+  return true;
+}
+
+function runPendingAction(action) {
+  if (!action) return;
+  if (action.type === 'book') {
+    go({ t: 'book', id: action.id });
+    toast('Pathway built. Continuing your booking.');
+    return;
+  }
+  if (action.type === 'follow') {
+    S.view = S.view || 'feed';
+    render();
+    if (S.following.indexOf(action.id) === -1) {
+      S.following.push(action.id);
+      toast('Pathway built. Now following ' + author(action.id).name + '.');
+      paint();
+      render();
+    } else {
+      toast('Pathway built.');
+    }
+    return;
+  }
+  if (action.type === 'reply') {
+    go({ t: 'thread', id: action.id });
+    postThreadReply(action.id, action.text || '', true);
+    return;
+  }
+  S.view = 'pathway';
+  render();
+  toast('Pathway built. Your timeline starts at ' + S.form + '.');
+}
+
+function renderJoinCard() {
+  if (S.onboarded || S.hideJoinCard) return '';
+  return (
+    '<article class="feed-card kind-join">' +
+    '<div class="join-body">' +
+    '<p class="join-lead">You\'re seeing posts for every form. Answer six questions and see only what applies to yours.</p>' +
+    '<div class="card-actions">' +
+    '<button type="button" class="btn" data-open="setup" data-id="0">Build my pathway</button>' +
+    '<button type="button" class="btn quiet" data-dismiss-join="1">Not now</button>' +
+    '</div></div></article>'
+  );
 }
 
 function isSaved(id) {
@@ -839,18 +896,7 @@ function renderFeed() {
     ['journeys', 'Journeys']
   ];
   var html = '<div class="page-feed">';
-  html += '<h1>What\'s Steppin\'</h1>';
-  if (!S.onboarded) {
-    html +=
-      '<div class="card onboard-banner">' +
-      '<p class="eyebrow">Start here</p>' +
-      '<h2>Build your pathway in six questions</h2>' +
-      '<p class="muted">It marks the decisions that are near, opens the right sessions, and tells you which opportunities fit your form.</p>' +
-      '<div class="card-actions">' +
-      '<button type="button" class="btn" data-open="setup" data-id="0">Build my pathway</button>' +
-      '<button type="button" class="btn g" data-goto="pathway">See My Pathway</button>' +
-      '</div></div>';
-  }
+  html += '<h1>What\'s Steppin\'?</h1>';
   html +=
     '<label class="sr" for="feed-q">Search the feed</label>' +
     '<input type="search" id="feed-q" class="search" placeholder="Search titles, people, places, categories" value="' +
@@ -869,10 +915,12 @@ function renderFeed() {
       '</button>';
   }
   html += '</div>';
-  html += renderRecentRow();
-  html += '<p class="count-line">' + esc(resultCountLine(list)) + '</p>';
   html += '<div class="stream">';
-  for (i = 0; i < list.length; i++) html += renderFeedCard(list[i]);
+  for (i = 0; i < list.length; i++) {
+    html += renderFeedCard(list[i]);
+    if (i === 3) html += renderJoinCard();
+  }
+  if (list.length > 0 && list.length < 4) html += renderJoinCard();
   if (!list.length) {
     html +=
       '<div class="empty card">' +
@@ -880,6 +928,7 @@ function renderFeed() {
       '<p>Clear search or switch filter to bring the feed back.</p>' +
       '<button type="button" class="btn sm g" data-filter="all" id="clear-filters">Show all posts</button>' +
       '</div>';
+    html += renderJoinCard();
   }
   html += '</div></div>';
   return html;
