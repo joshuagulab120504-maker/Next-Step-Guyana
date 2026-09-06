@@ -1502,6 +1502,40 @@ function backSetupStep() {
   render();
 }
 
+function syncReplyComposer(el) {
+  var bar = closestEl(el, '.reply-bar');
+  var h;
+  if (!bar) return;
+  if (el.value && el.value.replace(/\s/g, '')) bar.classList.add('has-text');
+  else bar.classList.remove('has-text');
+  el.style.height = 'auto';
+  h = el.scrollHeight;
+  if (h < 44) h = 44;
+  if (h > 120) h = 120;
+  el.style.height = h + 'px';
+}
+
+function tryPostThreadReply(tid) {
+  var tr = byId('thread-reply');
+  var rtext = tr && tr.value ? tr.value.trim() : '';
+  if (!rtext || rtext.length < 4) {
+    toast('Write a short reply before posting.');
+    if (tr) tr.focus();
+    return;
+  }
+  if (
+    requirePathway({
+      type: 'reply',
+      id: tid,
+      text: rtext,
+      reason: 'We need your form to hold you a place.'
+    })
+  ) {
+    return;
+  }
+  postThreadReply(tid, rtext, false);
+}
+
 function postThreadReply(tid, rtext, afterPathway) {
   var titem = feedByEngageId(tid) || feedById(tid);
   if (!titem) return;
@@ -1518,7 +1552,8 @@ function postThreadReply(tid, rtext, afterPathway) {
     a: null,
     who: studentLabel(),
     text: rtext,
-    mine: true
+    mine: true,
+    at: nowIso()
   });
   toast(afterPathway ? 'Pathway built. Reply posted.' : 'Reply posted.');
   paint();
@@ -1984,23 +2019,22 @@ function replies(p) {
     a = r.a ? author(r.a) : null;
     html +=
       '<div class="d-reply">' +
-      '<span class="av' +
-      (a ? '' : ' av-anon') +
-      '" aria-hidden="true">' +
-      esc(a ? a.init : '?') +
-      '</span>' +
-      '<div>' +
-      replyIdentityHtml(a, r.who || 'Student') +
-      '<p>' +
+      replyIdentityHtml(a, r.who || 'Student', true, r.at || p.at) +
+      '<p class="reply-text">' +
       esc(r.text) +
-      '</p></div></div>';
+      '</p></div>';
   }
   html +=
-    '<div class="d-replybox"><label class="field-label" for="thread-reply">Write a reply</label>' +
-    '<textarea id="thread-reply" rows="3" placeholder="One clear point is enough"></textarea>' +
-    '<button type="button" class="btn sm" data-thread-reply="' +
+    '<div class="d-replybox">' +
+    '<label class="sr" for="thread-reply">Write a reply</label>' +
+    '<div class="reply-bar">' +
+    youAvatarHtml() +
+    '<textarea id="thread-reply" rows="1" placeholder="Write a reply"></textarea>' +
+    '<button type="button" class="reply-send" data-thread-reply="' +
     esc(p.id) +
-    '">Post reply</button></div></div>';
+    '" aria-label="Post reply">' +
+    iconSendUp() +
+    '</button></div></div></div>';
   return html;
 }
 
@@ -3245,10 +3279,7 @@ function viewPerson(v) {
     '" aria-hidden="true">' +
     esc(a.init || p.name.charAt(0)) +
     '</span>' +
-    nameWithBadge(p.name, a) +
-    '<p class="person-title">' +
-    esc(p.title) +
-    '</p>';
+    nameWithBadge(p.name, a);
   html += personFollowBtn(v.id, 'is-wide');
   html += '</div>';
   if (p.about) {
@@ -3504,12 +3535,7 @@ function renderChrome() {
   if (bt && !bt.getAttribute('data-ready')) {
     var h = '';
     for (i = 0; i < 6; i++) {
-      h +=
-        '<button type="button" data-topic="' +
-        esc(CATS[i]) +
-        '">' +
-        esc(CATS[i]) +
-        '</button>';
+      h += catChip(CATS[i]);
     }
     bt.innerHTML = h;
     bt.setAttribute('data-ready', '1');
@@ -3677,7 +3703,8 @@ function simulateReply(itemId) {
     item.replies.push({
       a: mid,
       text:
-        'I saw your question. Write down the subjects you hold now and the ones you wish you still had. Bring that list to a session and we will map what still opens.'
+        'I saw your question. Write down the subjects you hold now and the ones you wish you still had. Bring that list to a session and we will map what still opens.',
+      at: nowIso()
     });
     item.newReply = true;
     if (S.view !== 'pathway' && S.view !== 'alerts') S.unread += 1;
@@ -4539,25 +4566,7 @@ function wire() {
 
     btn = closestEl(t, '[data-thread-reply]');
     if (btn) {
-      var tr = byId('thread-reply');
-      var tid = btn.getAttribute('data-thread-reply');
-      var rtext = tr && tr.value ? tr.value.trim() : '';
-      if (!rtext || rtext.length < 4) {
-        toast('Write a short reply before posting.');
-        if (tr) tr.focus();
-        return;
-      }
-      if (
-        requirePathway({
-          type: 'reply',
-          id: tid,
-          text: rtext,
-          reason: 'We need your form to hold you a place.'
-        })
-      ) {
-        return;
-      }
-      postThreadReply(tid, rtext, false);
+      tryPostThreadReply(btn.getAttribute('data-thread-reply'));
       return;
     }
 
@@ -4661,6 +4670,10 @@ function wire() {
       }
       return;
     }
+    if (e.target && e.target.id === 'thread-reply') {
+      syncReplyComposer(e.target);
+      return;
+    }
     if (e.target && (e.target.getAttribute('data-compose') || e.target.id === 'comp-text' || e.target.id === 'comp-extra' || e.target.id === 'comp-anon')) {
       readComposeFields();
       S.draft = S.compose.title || S.compose.body || '';
@@ -4708,6 +4721,15 @@ function wire() {
   });
 
   document.addEventListener('keydown', function (e) {
+    var bar;
+    var btn;
+    if (e.target && e.target.id === 'thread-reply' && e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      bar = closestEl(e.target, '.reply-bar');
+      btn = bar ? bar.querySelector('[data-thread-reply]') : null;
+      if (btn) tryPostThreadReply(btn.getAttribute('data-thread-reply'));
+      return;
+    }
     if (e.key === 'Escape' && NAV.length) {
       back();
     }

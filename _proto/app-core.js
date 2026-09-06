@@ -376,9 +376,14 @@ function nowIso() {
   return new Date().toISOString();
 }
 
-function kindTimeHtml(kindLabel, iso, edited) {
+function kindTimeHtml(kindLabel, iso, edited, kindKey) {
   var t = timeAgo(iso);
-  var html = esc(kindLabel);
+  var html;
+  if (kindKey) {
+    html = '<span class="k-word k-' + esc(kindKey) + '">' + esc(kindLabel) + '</span>';
+  } else {
+    html = esc(kindLabel);
+  }
   if (t) html += ' · ' + esc(t);
   if (edited) html += '<span class="edited-mark"> · Edited</span>';
   return html;
@@ -410,24 +415,59 @@ function roleBadgeHtml(a) {
   return '';
 }
 
+function authorRoleLabel(a) {
+  if (!a || !a.role) return '';
+  if (a.role === 'mentor') return 'Mentor';
+  if (a.role === 'contributor') return 'Collaborator';
+  if (a.role === 'admin') return 'Next Step team';
+  return '';
+}
+
+function verifiedMarkHtml(a) {
+  if (!a || a.pending || !a.verified) return '';
+  if (a.role !== 'mentor') return '';
+  return '<span class="name-verify" title="Verified mentor">' + mentorSealSvg() + '</span>';
+}
+
+function authorMetaHtml(a) {
+  var role = authorRoleLabel(a);
+  var pos;
+  if (!role) return '';
+  pos = a.pos && a.pos !== role ? a.pos : '';
+  if (pos) {
+    return '<p class="author-meta">' + esc(role) + ' • ' + esc(pos) + '</p>';
+  }
+  return '<p class="author-meta">' + esc(role) + '</p>';
+}
+
 function nameWithBadge(name, a) {
   return (
+    '<div class="name-block">' +
     '<div class="name-row"><span class="name">' +
     esc(name) +
     '</span>' +
-    roleBadgeHtml(a) +
+    verifiedMarkHtml(a) +
+    '</div>' +
+    authorMetaHtml(a) +
     '</div>'
   );
 }
 
-function replyIdentityHtml(a, fallbackName) {
+function replyIdentityHtml(a, fallbackName, withAv, whenIso) {
   var name = a && a.name ? a.name : fallbackName || 'Student';
-  var html = '<div class="reply-id">' + nameWithBadge(name, a);
-  if (a && (a.role === 'mentor' || a.role === 'contributor') && a.pos) {
-    html += '<p class="reply-role">' + esc(a.pos) + '</p>';
+  var when = timeAgo(whenIso);
+  var who = nameWithBadge(name, a);
+  if (when) who += '<p class="reply-when">' + esc(when) + '</p>';
+  if (withAv) {
+    return (
+      '<div class="reply-id has-av">' +
+      avatarHtml(a, !a) +
+      '<div class="reply-who">' +
+      who +
+      '</div></div>'
+    );
   }
-  html += '</div>';
-  return html;
+  return '<div class="reply-id">' + who + '</div>';
 }
 
 function followPersonBtn(id, extraCls) {
@@ -893,11 +933,50 @@ function paint() {
   renderChrome();
 }
 
-function avatarHtml(a, anon) {
+/* Feed avatars take the post kind colour so kinds are readable at a glance.
+   Community avatars stay a name-hash tint so the same person is the same colour
+   everywhere. Different surface, different job. Do not unify them. */
+function iconAnonMark() {
+  return (
+    '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+    '<path d="M9.2 9.2a3.2 3.2 0 1 1 3.6 3.1c-.8.3-1.3.8-1.3 1.7V15"/>' +
+    '<circle cx="12" cy="17.6" r="1" fill="currentColor" stroke="none"/>' +
+    '</svg>'
+  );
+}
+
+function youAvatarHtml() {
+  var a;
+  var init = 'You';
+  if (currentPosterId()) {
+    a = author(currentPosterId());
+    if (a && a.init && a.init !== '?') init = a.init;
+  }
+  return '<span class="av av-you" aria-hidden="true">' + esc(init) + '</span>';
+}
+
+function avatarHtml(a, anon, kind) {
+  var cls = 'av';
+  if (kind) {
+    cls += ' av-k av-k-' + kind;
+    if (kind === 'opportunity') cls += ' av-sq';
+    if (kind === 'question') {
+      cls += ' av-sq';
+      return (
+        '<span class="' +
+        cls +
+        '" aria-hidden="true"><span class="av-qmark">?</span><span class="av-qlabel">Q&amp;A</span></span>'
+      );
+    }
+    if (anon || !a) {
+      return '<span class="' + cls + '" aria-hidden="true">' + iconAnonMark() + '</span>';
+    }
+    return '<span class="' + cls + '" aria-hidden="true">' + esc(a.init || '?') + '</span>';
+  }
   if (anon) {
     return '<span class="av av-anon" aria-hidden="true">?</span>';
   }
-  var cls = a && a.system ? 'av av-desk' : 'av';
+  cls = a && a.system ? 'av av-desk' : 'av';
   return '<span class="' + cls + '" aria-hidden="true">' + esc((a && a.init) || '?') + '</span>';
 }
 
@@ -905,16 +984,34 @@ function pill(label, cls, attrs) {
   return '<button type="button" class="p ' + (cls || '') + '" ' + (attrs || '') + '>' + esc(label) + '</button>';
 }
 
-function catChip(cat, clickable) {
+function hashTagLabel(cat) {
+  var parts;
+  var i;
+  var word;
+  var out;
   if (!cat) return '';
+  parts = String(cat).split(/[^A-Za-z0-9]+/);
+  out = '#';
+  for (i = 0; i < parts.length; i++) {
+    word = parts[i];
+    if (!word) continue;
+    out += word.charAt(0).toUpperCase() + word.slice(1);
+  }
+  return out;
+}
+
+function catChip(cat, clickable) {
+  var label;
+  if (!cat) return '';
+  label = hashTagLabel(cat);
   if (clickable === false) {
-    return '<span class="cat-chip">' + esc(cat) + '</span>';
+    return '<span class="cat-chip">' + esc(label) + '</span>';
   }
   return (
     '<button type="button" class="cat-chip" data-topic="' +
     esc(cat) +
     '">' +
-    esc(cat) +
+    esc(label) +
     '</button>'
   );
 }
@@ -936,7 +1033,11 @@ function iconFlag() {
 }
 
 function iconMore() {
-  return '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="19" cy="12" r="1.7"/></svg>';
+  return '<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="5" r="2.2"/><circle cx="12" cy="12" r="2.2"/><circle cx="12" cy="19" r="2.2"/></svg>';
+}
+
+function iconSendUp() {
+  return '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5"/><path d="M6 11l6-6 6 6"/></svg>';
 }
 
 function iconReply() {
@@ -1282,7 +1383,7 @@ function moreEngageBtn(kind, id) {
   return engageBtn(
     'data-open="' + esc(kind) + '" data-id="' + esc(id) + '"',
     '',
-    'View more',
+    kind === 'thread' ? 'View answer' : 'View more',
     false,
     'primary'
   );
@@ -1326,11 +1427,11 @@ function renderQuestionCard(item) {
     cardClickAttrs('thread', item.id) +
     '>' +
     '<div class="card-head">' +
-    avatarHtml(a, anon) +
+    avatarHtml(a, anon, 'question') +
     '<div class="meta">' +
     nameWithBadge(name, anon ? null : a) +
     '<div class="sub">' +
-    kindTimeHtml('Question', item.at, item.edited) +
+    kindTimeHtml('Student Question', item.at, item.edited, 'question') +
     '</div></div>' +
     contactAffordance(anon ? null : item.author, item.mine) +
     cardMoreHtml('thread', item.id, item.mine) +
@@ -1342,7 +1443,7 @@ function renderQuestionCard(item) {
     ra = first.a ? author(first.a) : null;
     html +=
       '<div class="reply-preview">' +
-      replyIdentityHtml(ra, first.who || 'Student') +
+      replyIdentityHtml(ra, first.who || 'Student', true, first.at || item.at) +
       '<p class="clamp3">' +
       esc(first.text) +
       '</p></div>';
@@ -1368,11 +1469,11 @@ function renderStoryCard(item) {
     cardClickAttrs('story', item.id) +
     '>' +
     '<div class="card-head">' +
-    avatarHtml(a, anon || (!a && mine)) +
+    avatarHtml(a, anon || (!a && mine), 'story') +
     '<div class="meta">' +
     nameWithBadge(name, anon ? null : a) +
     '<div class="sub">' +
-    kindTimeHtml('Story', item.at, item.edited) +
+    kindTimeHtml('Story', item.at, item.edited, 'story') +
     '</div></div>' +
     contactAffordance(item.author, mine) +
     cardMoreHtml('story', item.id, mine) +
@@ -1401,11 +1502,11 @@ function renderOppCard(item) {
     cardClickAttrs('opp', o.id) +
     '>' +
     '<div class="card-head">' +
-    avatarHtml(a, false) +
+    avatarHtml(a, false, 'opportunity') +
     '<div class="meta">' +
     nameWithBadge(a.name, a) +
     '<div class="sub">' +
-    kindTimeHtml('Opportunity', item.at, item.edited) +
+    kindTimeHtml('Opportunity', item.at, item.edited, 'opportunity') +
     '</div></div>' +
     contactAffordance(o.author || item.author, false) +
     cardMoreHtml('opp', o.id, false) +
@@ -1465,7 +1566,7 @@ function renderSessionCard(item) {
     '<div class="meta">' +
     nameWithBadge(lead.name, lead) +
     '<div class="sub">' +
-    kindTimeHtml('Session', item.at, item.edited) +
+    kindTimeHtml('Session', item.at, item.edited, 'session') +
     '</div></div>' +
     contactAffordance(s.hosted_by || s.lead, false) +
     cardMoreHtml('session', s.id, false) +
@@ -1495,11 +1596,11 @@ function renderJourneyCard(item) {
     cardClickAttrs('journey', item.journey) +
     '>' +
     '<div class="card-head">' +
-    avatarHtml(a, false) +
+    avatarHtml(a, false, 'journey') +
     '<div class="meta">' +
     nameWithBadge(a.name, a) +
     '<div class="sub">' +
-    kindTimeHtml('Journey', item.at, item.edited) +
+    kindTimeHtml('Journey', item.at, item.edited, 'journey') +
     '</div></div>' +
     contactAffordance(item.journey, item.mine) +
     cardMoreHtml('journey', item.journey, item.mine) +
