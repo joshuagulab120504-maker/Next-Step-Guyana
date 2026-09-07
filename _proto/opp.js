@@ -62,6 +62,7 @@ function oppOverlayOpen() {
   var sug;
   if (NAV.length) return true;
   if (S.qa && S.qa.dialog) return true;
+  if (S.sess && S.sess.dialog) return true;
   if (S.opp && (S.opp.dialog || S.opp.lightUrl || (S.opp.lightPhotos && S.opp.lightPhotos.length))) return true;
   if (S.menu) return true;
   sug = byId('opp-sug');
@@ -205,27 +206,12 @@ function oppDateLabel(iso) {
 
 function oppCloseCopy(o) {
   var ms;
-  var hours;
-  var days;
+  var phrase;
   if (!o || o.rolling || !o.closesAt) return null;
   ms = oppMsLeft(o);
   if (ms <= 0) return { text: 'Closed on ' + oppDateLabel(o.closesAt), tone: 'shut' };
-  hours = Math.floor(ms / 3600000);
-  days = Math.floor(ms / 86400000);
-  if (hours < 1) return { text: 'Closes within the hour', tone: 'soon' };
-  if (hours < 48) {
-    return {
-      text: 'Closes in ' + hours + (hours === 1 ? ' hour' : ' hours'),
-      tone: 'soon'
-    };
-  }
-  if (days <= 14) {
-    return {
-      text: 'Closes in ' + days + (days === 1 ? ' day' : ' days') + ' · ' + oppDateLabel(o.closesAt),
-      tone: 'soon'
-    };
-  }
-  return { text: 'Closes ' + oppDateLabel(o.closesAt), tone: 'ok' };
+  phrase = countDownPhrase(new Date(o.closesAt).getTime(), 'Closes');
+  return { text: phrase || 'Closes in 1 minute', tone: 'soon' };
 }
 
 function oppWarnPhrase(o) {
@@ -342,18 +328,29 @@ function oppAvHtml(o, size) {
 function oppAuthorHtml(o, withMenu, hideMenu) {
   var role = o.author.role + (o.author.pos ? ' · ' + o.author.pos : '');
   var when = qaTimeAgo(o.createdAt);
-  return (
-    '<div class="opp-author">' +
-    oppAvHtml(o, 48) +
-    '<div><div class="opp-name">' +
-    esc(o.author.name) +
-    (o.author.verified ? qaTickSvg() + '<span class="sr">Verified</span>' : '') +
-    '</div><p class="opp-role">' +
-    esc(role) +
-    '</p><p class="opp-meta"><span class="k-word k-opportunity">Opportunity</span>' +
+  var aid = hideMenu ? '' : o.authorId || o.author.id || '';
+  var ident =
+    authorHitBtn(oppAvHtml(o, 48), aid, 'av-hit') +
+    '<div class="ident-name">' +
+    authorHitBtn(
+      '<div class="opp-name"><span class="ident-text">' +
+        esc(o.author.name) +
+        '</span>' +
+        (o.author.verified ? qaTickSvg() + '<span class="sr">Verified</span>' : '') +
+        '</div><p class="opp-role">' +
+        esc(role) +
+        '</p>',
+      aid,
+      'name-hit'
+    ) +
+    '<p class="opp-meta">' +
+    kindOpenBtn('opportunity', 'Opportunity') +
     (when ? ' · ' + esc(when) : '') +
     (o.editedAt ? ' · edited' : '') +
-    '</p></div>' +
+    '</p></div>';
+  return (
+    '<div class="opp-author">' +
+    authorLinkWrap(ident) +
     (hideMenu ? '' : withMenu ? oppMenuHtml(o) : '') +
     '</div>'
   );
@@ -398,7 +395,13 @@ function oppMenuHtml(o) {
 
 function oppTopicHtml(tag) {
   if (!tag) return '';
-  return '<div class="opp-topics"><span class="opp-chip">' + esc(tag) + '</span></div>';
+  return (
+    '<div class="opp-topics"><button type="button" class="opp-chip" data-topic="' +
+    esc(qaTopicRaw(tag) || tag) +
+    '">' +
+    esc(tag) +
+    '</button></div>'
+  );
 }
 
 function oppDeadlineHtml(o) {
@@ -486,7 +489,7 @@ function oppEngageHtml(o, opts) {
   var inspired = isInspired(o.id);
   var saved = isSaved(o.id);
   var closed = oppClosed(o);
-  var replyLabel = n === 0 ? 'Ask' : n === 1 ? '1 reply' : n + ' replies';
+  var replyLabel = n === 0 ? 'Reply' : n === 1 ? '1 reply' : n + ' replies';
   var inspN = o.inspiredCount || 0;
   var html = '<div class="qa-actions opp-actions">';
   html +=
@@ -648,22 +651,34 @@ function storyFollowHtml(item, preview) {
 function storyAuthorRow(item, opts) {
   var s = oppStoryAuthor(item);
   var when = qaTimeAgo(s.createdAt);
+  var ident;
   opts = opts || {};
-  return (
-    '<div class="story-author">' +
-    oppAvHtml(s, 48) +
-    '<div><div class="opp-name">' +
-    esc(s.author.name) +
-    (s.author.verified ? qaTickSvg() + '<span class="sr">Verified</span>' : '') +
-    '</div><p class="opp-role">' +
-    esc(s.author.role + (s.author.pos ? ' · ' + s.author.pos : '')) +
-    '</p><p class="opp-meta">Story' +
+  ident =
+    authorHitBtn(oppAvHtml(s, 48), opts.preview ? '' : item.author || s.authorId, 'av-hit') +
+    '<div class="ident-name">' +
+    authorHitBtn(
+      '<div class="opp-name"><span class="ident-text">' +
+        esc(s.author.name) +
+        '</span>' +
+        (s.author.verified ? qaTickSvg() + '<span class="sr">Verified</span>' : '') +
+        '</div><p class="opp-role">' +
+        esc(s.author.role + (s.author.pos ? ' · ' + s.author.pos : '')) +
+        '</p>',
+      opts.preview ? '' : item.author || s.authorId,
+      'name-hit'
+    ) +
+    '<p class="opp-meta">' +
+    kindOpenBtn('story', 'Story') +
     (when ? ' · ' + esc(when) : '') +
     (item.edited || item.editedAt ? ' · edited' : '') +
-    '</p></div>' +
+    '</p></div>';
+  return (
+    '<div class="story-author">' +
+    authorLinkWrap(ident) +
+    '<div class="story-tools">' +
     storyFollowHtml(item, !!opts.preview) +
     (opts.preview ? '' : oppStoryMenu(item)) +
-    '</div>'
+    '</div></div>'
   );
 }
 
@@ -847,7 +862,14 @@ function oppStoryEngage(item, inSheet) {
     qaIconSave(saved) +
     '<span>' +
     (saved ? 'Saved' : 'Save') +
-    '</span></button></div>';
+    '</span></button>';
+  if (!inSheet) {
+    html +=
+      '<button type="button" class="opp-primary" data-open="story" data-id="' +
+      esc(item.id) +
+      '">View more</button>';
+  }
+  html += '</div>';
   return html;
 }
 
@@ -1045,9 +1067,12 @@ function oppLeadHtml() {
   var av;
   if (oppIsAskOnly()) {
     return (
+      '<div class="qa-ask-block">' +
       '<div class="qa-ask-row">' +
       qaYouAv() +
-      '<button type="button" class="qa-ask-open" data-qa-ask="1">What do you want to ask?</button></div>'
+      '<button type="button" class="qa-ask-open" data-qa-ask="1">What do you want to ask?</button></div>' +
+      (typeof sessStudentLineHtml === 'function' ? sessStudentLineHtml() : '') +
+      '</div>'
     );
   }
   if (!oppCanAuthor()) return '';
@@ -1068,6 +1093,7 @@ function oppLeadHtml() {
       ? '<button type="button" class="opp-drafts-btn" data-opp-drafts="1">Drafts ' + drafts + '</button>'
       : '') +
     oppOwnClosingWarn() +
+    (typeof sessHostWarnHtml === 'function' ? sessHostWarnHtml() : '') +
     '</div>'
   );
 }
@@ -1101,7 +1127,7 @@ function oppWhoHtml() {
   return (
     '<div class="opp-pick">' +
     '<button type="button" data-opp-who="student"><i aria-hidden="true">S</i><div><strong>Student or parent</strong><span>What do you want to ask? One tap into a question.</span></div></button>' +
-    '<button type="button" data-opp-who="mentor"><i aria-hidden="true">M</i><div><strong>Mentor or collaborator</strong><span>Post a question, a story, or an opening.</span></div></button>' +
+    '<button type="button" data-opp-who="mentor"><i aria-hidden="true">M</i><div><strong>Mentor or collaborator</strong><span>Post a question, a story, an opening, or a session.</span></div></button>' +
     '</div>'
   );
 }
@@ -1474,6 +1500,7 @@ function oppPickerHtml() {
     '<button type="button" data-opp-type="question"><i aria-hidden="true">?</i><div><strong>Question</strong><span>Ask the community something.</span></div></button>' +
     '<button type="button" data-opp-type="story"><i aria-hidden="true">S</i><div><strong>Story</strong><span>Share an update, or something you learned.</span></div></button>' +
     '<button type="button" data-opp-type="opportunity"><i aria-hidden="true">O</i><div><strong>Opportunity</strong><span>Something students can apply to.</span></div></button>' +
+    '<button type="button" data-opp-type="session"><i aria-hidden="true">T</i><div><strong>Session</strong><span>Something you are hosting at a time.</span></div></button>' +
     '</div>'
   );
 }
@@ -1791,6 +1818,7 @@ function oppPaintLayer() {
   var focus;
   if (!layer) return;
   if (S.qa && S.qa.dialog) return;
+  if (S.sess && S.sess.dialog) return;
   if (!c.dialog) {
     if (!layer.hidden && layer.querySelector('.opp-box')) {
       layer.hidden = true;
@@ -2177,6 +2205,7 @@ function oppHandleClick(e, t) {
   var o;
   var item;
   var file;
+  var fromWho;
   btn = closestEl(t, '[data-opp-post]');
   if (btn) {
     e.stopPropagation();
@@ -2220,6 +2249,13 @@ function oppHandleClick(e, t) {
     if (id === 'question') {
       oppCloseDialog();
       qaOpenDialog('ask', { text: '' });
+      return true;
+    }
+    if (id === 'session') {
+      fromWho = !!c.fromWho;
+      oppCloseDialog();
+      ensureOpp().fromWho = fromWho;
+      if (typeof sessOpenCompose === 'function') sessOpenCompose();
       return true;
     }
     oppResetCompose(false);
@@ -2769,8 +2805,9 @@ function oppInit() {
   }
   setInterval(function () {
     if (oppOverlayOpen()) return;
-    if (S.view !== 'feed') return;
+    if (typeof sessOverlayOpen === 'function' && sessOverlayOpen()) return;
+    if (S.view !== 'feed' && S.view !== 'kind') return;
     render();
-  }, 60000);
+  }, 30000);
 }
 

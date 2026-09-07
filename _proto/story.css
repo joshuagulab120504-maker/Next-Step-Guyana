@@ -13,11 +13,13 @@
 }
 
 .story-author{
-  display:grid; grid-template-columns:48px minmax(0,1fr) auto auto;
-  gap:12px; align-items:start;
+  display:grid; grid-template-columns:minmax(0,1fr) auto;
+  gap:8px 12px; align-items:start;
 }
+.story-author .author-link{min-width:0}
+.story-tools{display:flex; align-items:center; gap:6px; flex:0 0 auto; min-width:0}
 .story-follow{
-  align-self:center; min-height:38px; padding:0 15px; border:1px solid var(--navy); border-radius:999px;
+  align-self:center; flex:0 0 auto; min-height:38px; padding:0 15px; border:1px solid var(--navy); border-radius:999px;
   background:#fff; color:var(--navy); white-space:nowrap;
   font-family:var(--f); font-size:14px; font-weight:600; cursor:pointer;
 }
@@ -114,7 +116,4 @@
   .story-mosaic.n1 img{max-height:360px}
   .story-mosaic.n3{grid-template-columns:1fr 1fr; grid-template-rows:auto auto; aspect-ratio:auto}
   .story-mosaic.n3 button:first-child{grid-column:1 / -1; grid-row:auto; aspect-ratio:16/10; height:auto}
-  .opp-story .qa-act span{
-    position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0,0,0,0);
-  }
 }

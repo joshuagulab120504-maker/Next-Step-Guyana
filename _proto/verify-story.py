@@ -154,7 +154,7 @@ def main():
         page.wait_for_timeout(200)
         assert page.locator("#qa-dlg-title").inner_text() == "What are you posting?"
         assert "Each one asks for different things" in page.locator(".qa-sub").inner_text()
-        assert page.locator("[data-opp-type]").count() == 3
+        assert page.locator("[data-opp-type]").count() == 4
         page.screenshot(path=str(SHOT / "1440-story-picker.png"), full_page=False)
         page.locator('[data-opp-type="story"]').click()
         page.wait_for_timeout(200)

@@ -179,7 +179,23 @@ p{margin:0;max-width:none}
   position:absolute;width:1px;height:1px;padding:0;margin:-1px;
   overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;
 }
+#app, #main, .stream{overflow-x:hidden}
+html{
+  -webkit-text-size-adjust:100%; text-size-adjust:100%;
+  -webkit-tap-highlight-color:transparent;
+  touch-action:manipulation;
+}
+input:not([type="checkbox"]):not([type="radio"]), textarea, select{font-size:16px}
+:focus{outline:none}
 :focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+input:focus, textarea:focus, select:focus,
+input:focus-visible, textarea:focus-visible, select:focus-visible{
+  outline:none;
+}
+button, a, .clickable, .qa-act, .qa-chip, .opp-chip, .story-follow, .qa-see, .qa-more-btn, .author-link, .k-word{
+  touch-action:manipulation;
+  -webkit-tap-highlight-color:transparent;
+}
 
 .eyebrow,.field-label,.type-tag,.age-box .l,.date-box .w,.day-box .l,.now-line .eyebrow,.now b{
   display:inline-block;
@@ -288,7 +304,7 @@ p{margin:0;max-width:none}
   border:1px solid rgba(255,255,255,.16);border-radius:var(--r-sm);
   background:rgba(255,255,255,.1);color:var(--card);
   padding:0 var(--s3) 0 40px;
-  font-size:var(--t-body);font-weight:var(--w-regular);
+  font-size:16px;font-weight:var(--w-regular);
   outline:none;caret-color:var(--gold);
 }
 .top-search input::placeholder{color:#b3cae0}
@@ -314,8 +330,6 @@ p{margin:0;max-width:none}
 @media(max-width:420px){
   .wordmark small{display:none}
   .wordmark b{font-size:var(--t-meta)}
-  .engage-btn{flex-direction:column;gap:4px}
-  .engage-btn.primary{flex-direction:row;gap:4px}
 }
 
 /* Layout shell */
@@ -500,7 +514,7 @@ input.search::-webkit-search-cancel-button{filter:invert(1);opacity:.7;cursor:po
   box-shadow:0 8px 22px rgba(6,28,51,.18);margin:14px 0 12px;
 }
 .search-wrap svg{width:18px;height:18px;color:#9bb8d4;flex:0 0 18px}
-.search-wrap input{flex:1;border:0;outline:0;background:transparent;font-size:14.5px;min-width:0;padding:0;color:#fff;caret-color:var(--gold)}
+.search-wrap input{flex:1;border:0;outline:0;background:transparent;font-size:16px;min-width:0;padding:0;color:#fff;caret-color:var(--gold)}
 .search-wrap input::placeholder{color:#9bb8d4}
 
 .filters{
@@ -547,7 +561,7 @@ input.search::-webkit-search-cancel-button{filter:invert(1);opacity:.7;cursor:po
 .composer textarea{
   width:100%;min-height:92px;resize:vertical;border:1px solid var(--line);
   border-radius:12px;padding:13px 14px;background:var(--paper);
-  font-size:14.5px;line-height:1.55;font-family:var(--sans);
+  font-size:16px;line-height:1.55;font-family:var(--sans);
 }
 .composer textarea:focus{outline:none;border-color:#9bb4ce;background:#fff}
 .composer-foot{
@@ -743,6 +757,9 @@ input.search::-webkit-search-cancel-button{filter:invert(1);opacity:.7;cursor:po
   padding:14px 16px 12px;
   border-bottom:1px solid var(--line);
 }
+.card-head .author-link{
+  display:flex;align-items:flex-start;gap:var(--s3);min-width:0;flex:1;
+}
 .card-body{
   padding:12px 16px 14px;
   min-width:0;
@@ -899,7 +916,10 @@ input.search::-webkit-search-cancel-button{filter:invert(1);opacity:.7;cursor:po
 .av.av-k-opportunity{background:var(--k-opportunity)}
 .av.av-k-session{background:var(--k-session)}
 .av.av-sq{border-radius:var(--r-sm)}
-.k-word{font-weight:var(--w-medium)}
+.k-word{
+  -webkit-appearance:none;appearance:none;
+  font-weight:var(--w-medium);
+}
 .k-word.k-question{color:var(--k-question)}
 .k-word.k-story{color:var(--k-story)}
 .k-word.k-journey{color:var(--k-journey)}
@@ -944,23 +964,29 @@ input.search::-webkit-search-cancel-button{filter:invert(1);opacity:.7;cursor:po
 
 /* Engagement row — own strip under the post, same on every card */
 .engage{
-  display:grid;
-  grid-template-columns:repeat(4,minmax(0,1fr));
-  gap:var(--s1);
+  display:flex;
+  align-items:center;
+  flex-wrap:nowrap;
+  gap:0;
   margin:0;
-  padding:4px 8px;
+  padding:6px 8px 8px;
   border-top:1px solid var(--line);
   background:var(--card);
-  min-height:var(--tap);
 }
 .engage-stat,
 .engage-btn{
-  display:inline-flex;align-items:center;justify-content:center;gap:var(--s2);
+  display:inline-flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:3px;flex:1 1 0;min-width:0;
   font-family:var(--f);
-  font-size:var(--t-action);font-weight:var(--w-medium);
-  color:var(--meta);line-height:1;
-  min-height:var(--tap);padding:0 2px;
-  background:transparent;border:0;border-radius:var(--r-sm);cursor:pointer;
+  font-size:12px;font-weight:var(--w-medium);
+  color:var(--meta);line-height:1.2;
+  min-height:52px;padding:6px 8px;
+  background:transparent;border:0;border-radius:8px;cursor:pointer;
+}
+.engage-btn span{
+  display:block;max-width:100%;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  font-size:12px;font-weight:var(--w-medium);
 }
 .engage-btn:hover{background:var(--fill);color:var(--ink)}
 .engage-btn:active,
@@ -974,13 +1000,14 @@ input.search::-webkit-search-cancel-button{filter:invert(1);opacity:.7;cursor:po
   fill:var(--gold);
 }
 .engage-btn.primary{
+  flex:0 0 auto;flex-direction:row;align-self:center;margin-left:auto;
   color:var(--navy-deep);
   background:var(--gold);
   font-weight:var(--w-bold);
-  margin:4px 2px;
-  padding:0 8px;
-  min-height:36px;
-  border-radius:var(--r-md);
+  margin:4px 2px 4px auto;
+  padding:0 14px;
+  min-height:44px;
+  border-radius:8px;
 }
 .engage-btn.primary:hover{
   color:var(--navy-deep);
@@ -992,7 +1019,7 @@ input.search::-webkit-search-cancel-button{filter:invert(1);opacity:.7;cursor:po
   background:var(--gold-deep);
 }
 .engage-btn.primary svg{stroke:var(--navy-deep);fill:none}
-.engage-btn svg{flex:0 0 auto}
+.engage-btn svg{flex:0 0 auto;width:20px;height:20px}
 .engage-cta{
   margin-left:auto;
   font-size:var(--t-action);font-weight:var(--w-medium);color:var(--blue);
@@ -1954,7 +1981,8 @@ span.cat-chip{cursor:default}
 .detail select:focus-visible,
 #book-q:focus-visible,
 .reply-composer textarea:focus-visible{
-  outline:3px solid #2f7fd4;outline-offset:2px;
+  outline:none;
+  border-color:var(--navy);
 }
 .reply-composer,.reply-box{
   display:flex;flex-direction:column;gap:10px;margin-top:8px;
@@ -2159,7 +2187,7 @@ body, p, .clamp3, .article, .composer textarea, .detail p, .sess-main .muted,
 .av.av-k-question .av-qmark{font-size:16px !important;color:var(--k-question)}
 .av.av-k-question .av-qlabel{font-size:8px !important;color:var(--ink);font-weight:var(--w-bold) !important}
 .engage-stat, .engage-btn, .engage-cta{
-  font-size:var(--t-action) !important;
+  font-size:12px !important;
   font-weight:var(--w-medium) !important;
   font-family:var(--f) !important;
 }
@@ -2504,7 +2532,7 @@ button.d-row:hover{border-color:var(--line-2);background:#f7fafc}
 .comm-search svg{width:var(--s4);height:var(--s4);flex:0 0 var(--s4);color:var(--meta)}
 .comm-search input{
   flex:1;min-width:0;border:0;background:transparent;
-  font:inherit;color:var(--ink);min-height:var(--tap);
+  font:inherit;font-size:16px;color:var(--ink);min-height:var(--tap);
 }
 .comm-chips{
   display:flex;gap:var(--s2);
@@ -2877,7 +2905,7 @@ button.d-row:hover{border-color:var(--line-2);background:#f7fafc}
 .pw-search input{
   width:100%;min-height:var(--tap);border:1px solid var(--line);
   border-radius:var(--r-md);padding:var(--s2) var(--s3);
-  background:var(--fill);font:inherit;color:var(--ink);
+  background:var(--fill);font:inherit;font-size:16px;color:var(--ink);
 }
 .pw-fgrid{
   display:grid;grid-template-columns:minmax(0,1fr);gap:var(--s2);
@@ -3047,11 +3075,12 @@ button.d-row:hover{border-color:var(--line-2);background:#f7fafc}
 
 .qa-id{
   display:grid;
-  grid-template-columns:auto 1fr auto;
+  grid-template-columns:auto minmax(0,1fr) auto;
   gap:12px;
   align-items:start;
 }
 .qa-tile{
+  -webkit-appearance:none; appearance:none;
   width:48px;height:48px;flex:0 0 48px;
   border-radius:10px;
   background:#fff;
@@ -3059,6 +3088,7 @@ button.d-row:hover{border-color:var(--line-2);background:#f7fafc}
   display:flex;flex-direction:column;align-items:center;justify-content:center;
   gap:1px;
   box-sizing:border-box;
+  padding:0;cursor:pointer;font-family:var(--f);
 }
 .qa-tile .qa-qmark{
   color:var(--red);
@@ -3069,8 +3099,49 @@ button.d-row:hover{border-color:var(--line-2);background:#f7fafc}
   font-size:8.5px;font-weight:600;line-height:1;
   letter-spacing:.05em;
 }
-.qa-ask-name{
+.ident-name{min-width:0; overflow:hidden}
+.ident-text{
+  min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+}
+.qa-ask-name, .qa-r-name, .opp-name{
+  min-width:0;
   font-size:15px;font-weight:600;color:var(--ink);line-height:1.3;
+  display:flex;align-items:center;gap:6px;
+}
+.qa-ask-name .ident-text, .qa-r-name .ident-text, .opp-name .ident-text{
+  flex:0 1 auto;
+  min-width:0;
+  max-width:100%;
+}
+.qa-r-role, .opp-role, .qa-ask-meta, .opp-meta{
+  margin:2px 0 0;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.author-link{
+  display:grid; grid-template-columns:48px minmax(0,1fr);
+  gap:12px; min-width:0; max-width:100%;
+  padding:0; border:0; background:transparent;
+  color:inherit; text-align:left; font:inherit;
+}
+.qa-reply .author-link{display:contents}
+.author-hit, .kind-hit{
+  -webkit-appearance:none; appearance:none;
+  padding:0; border:0; background:transparent;
+  color:inherit; font:inherit; text-align:left; line-height:inherit;
+  min-width:0; max-width:100%;
+}
+.author-hit.av-hit, .kind-hit.av-hit{
+  flex:0 0 auto; min-width:auto; max-width:none; overflow:visible;
+}
+button.author-hit, button.kind-hit{cursor:pointer}
+div.author-hit{cursor:default}
+.author-hit.name-hit{
+  display:block; width:100%; overflow:hidden;
+}
+.k-word{
+  -webkit-appearance:none; appearance:none;
+  display:inline; padding:0; border:0; background:transparent;
+  font:inherit; font-weight:600; cursor:pointer; line-height:inherit;
 }
 .qa-ask-meta{
   margin:2px 0 0;
@@ -3135,6 +3206,7 @@ button.d-row:hover{border-color:var(--line-2);background:#f7fafc}
   cursor:pointer;
 }
 .qa-chip[disabled]{cursor:default}
+button.qa-chip, a.qa-chip{cursor:pointer}
 .qa-chip-x{
   width:20px;height:20px;border-radius:50%;
   display:grid;place-items:center;
@@ -3163,9 +3235,11 @@ button.d-row:hover{border-color:var(--line-2);background:#f7fafc}
 .qa-av.is-student{background:#e4e9ed;color:#5f7284;font-size:15.5px}
 .qa-r-name{
   font-size:15px;font-weight:600;color:var(--ink);line-height:1.3;
-  display:flex;align-items:center;gap:6px;
+  display:flex;align-items:center;gap:6px;min-width:0;
 }
-.qa-tick{width:14px;height:14px;flex:0 0 14px;color:var(--green)}
+.qa-tick{
+  width:14px;height:14px;flex:0 0 14px;display:block;color:var(--green);
+}
 .qa-tick circle{fill:var(--green)}
 .qa-tick path{fill:none;stroke:#fff;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .qa-r-role{
@@ -3177,7 +3251,7 @@ button.d-row:hover{border-color:var(--line-2);background:#f7fafc}
   font-size:12.5px;font-weight:400;color:var(--muted-2);line-height:1.35;
 }
 .qa-r-body{
-  margin:10px 0 0;
+  margin:8px 0 0 48px;
   font-size:15.5px;font-weight:400;line-height:1.62;color:#28394a;
 }
 .qa-clamp{
@@ -3189,29 +3263,38 @@ button.d-row:hover{border-color:var(--line-2);background:#f7fafc}
   cursor:pointer;
 }
 .qa-more-replies{
-  display:block;margin:10px 0 0 18px;padding:0;border:0;background:transparent;
+  display:block;margin:10px 0 0 48px;padding:0;border:0;background:transparent;
   font-family:var(--f);font-size:14px;font-weight:600;color:var(--navy);
   cursor:pointer;text-align:left;
 }
 
 .qa-actions{
-  display:flex;align-items:center;flex-wrap:wrap;
+  display:flex;align-items:center;flex-wrap:nowrap;
   border-top:1px solid var(--line-soft);
-  padding:5px 8px;
+  padding:6px 8px 8px;
+  gap:0;
 }
 .qa-act{
-  display:inline-flex;align-items:center;gap:8px;
-  min-height:44px;padding:0 13px;
+  display:inline-flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:3px;flex:1 1 0;min-width:0;
+  min-height:52px;padding:6px 8px;
   border:0;background:transparent;border-radius:8px;
-  font-family:var(--f);font-size:14.5px;font-weight:600;color:var(--muted);
-  cursor:pointer;
+  font-family:var(--f);font-size:12px;font-weight:600;color:var(--muted);
+  cursor:pointer;line-height:1.2;
 }
-.qa-act svg{width:18px;height:18px;flex:0 0 18px}
+.qa-act svg{width:20px;height:20px;flex:0 0 20px}
+.qa-act span{
+  display:block;max-width:100%;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  font-size:12px;font-weight:600;
+}
 .qa-act:hover{background:var(--line-soft)}
 .qa-act.is-inspired[aria-pressed="true"]{color:var(--red)}
 .qa-act.is-save[aria-pressed="true"],
 .qa-act.is-updates[aria-pressed="true"]{color:var(--green)}
-.qa-act.is-updates{margin-left:auto;font-weight:500}
+.qa-actions .opp-primary{
+  flex:0 0 auto;margin-left:auto;align-self:center;
+}
 
 .qa-ask-row{
   display:flex;align-items:center;gap:12px;
@@ -3272,13 +3355,12 @@ body.qa-thread-open .scrim{
   padding:10px 12px 8px;
 }
 .qa-compose-field:focus-within{
-  border-color:var(--focus);
-  box-shadow:0 0 0 3px rgba(29,127,212,.14);
+  border-color:var(--navy);
 }
 .qa-compose-field textarea{
   width:100%;min-height:44px;max-height:220px;
-  border:0;padding:6px 0;resize:none;
-  font-family:var(--f);font-size:15.5px;line-height:1.5;color:var(--ink);
+  border:0;padding:6px 0;resize:none;outline:none;
+  font-family:var(--f);font-size:16px;line-height:1.5;color:var(--ink);
   background:transparent;
 }
 .qa-compose-field textarea::placeholder{color:var(--muted-2)}
@@ -3306,7 +3388,7 @@ body.qa-thread-open .scrim{
   width:100%;min-height:44px;
   border:1px solid var(--line);border-radius:9px;
   padding:0 12px;
-  font-family:var(--f);font-size:15px;color:var(--ink);background:#fff;
+  font-family:var(--f);font-size:16px;color:var(--ink);background:#fff;
 }
 .qa-tag-foot{
   display:flex;align-items:center;justify-content:space-between;gap:10px;
@@ -3358,7 +3440,17 @@ body.qa-thread-open .scrim{
 }
 .qa-dialog textarea{
   width:100%;min-height:110px;border:1px solid var(--line);border-radius:10px;
-  padding:10px 12px;font-family:var(--f);font-size:15.5px;line-height:1.5;color:var(--ink);
+  padding:10px 12px;font-family:var(--f);font-size:16px;line-height:1.5;color:var(--ink);
+  outline:none;
+}
+.qa-dialog textarea:focus,
+.qa-dialog textarea:focus-visible,
+#qa-layer textarea:focus,
+#qa-layer textarea:focus-visible,
+#qa-layer input:focus,
+#qa-layer input:focus-visible{
+  outline:none;
+  border-color:var(--navy);
 }
 .qa-count{margin:8px 0 0;font-size:13px;color:var(--muted-2)}
 .qa-count.is-low{color:var(--red)}
@@ -3404,21 +3496,30 @@ body.qa-thread-open .scrim{
   #toast,#qa-layer,.qa-dialog{transition:none}
 }
 
-.qa-card :focus-visible,
-.qa-sheet :focus-visible,
-.qa-dialog :focus-visible,
-.qa-ask-row :focus-visible,
+.qa-card :focus-visible:not(input):not(textarea):not(select),
+.qa-sheet :focus-visible:not(input):not(textarea):not(select),
+.qa-dialog :focus-visible:not(input):not(textarea):not(select),
+.qa-ask-row :focus-visible:not(input):not(textarea):not(select),
 .qa-menu button:focus-visible,
-#qa-layer :focus-visible{
+#qa-layer button:focus-visible{
   outline:2px solid #1d7fd4;
   outline-offset:2px;
 }
 
-@media (max-width:560px){
-  .qa-q{font-size:18px}
-  .qa-menu{min-width:216px}
-  .qa-act.is-updates span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+.page-list{padding-bottom:24px}
+.page-list h1{font-size:22px; font-weight:600; letter-spacing:0; margin:0}
+.page-kicker{margin:6px 0 18px; font-size:14px; font-weight:400; color:var(--muted)}
+.page-sec{margin:22px 0 0}
+.page-sec h2{
+  display:flex; align-items:baseline; justify-content:space-between; gap:12px;
+  font-size:16px; font-weight:600; letter-spacing:0; margin:0 0 10px;
 }
+.page-sec h2 button{
+  padding:0; border:0; background:transparent;
+  font-family:var(--f); font-size:14px; font-weight:600; color:var(--navy); cursor:pointer;
+}
+.page-empty{margin:12px 0; font-size:15px; color:var(--muted); line-height:1.5}
+.page-sec .feed-card{margin:0 0 12px}
 
 /* Opportunity card, story card, and role-gated composer. Tokens match Q&A. */
 .opp-card, .opp-sheet, .opp-story, .opp-lead, .opp-compose, .opp-light {
@@ -3443,10 +3544,12 @@ body.qa-thread-open .scrim{
 .opp-card.closed .glance dd{color:var(--muted)}
 .opp-card.closed .glance{background:#f3f5f6}
 .opp-pad{padding:16px 16px 14px}
-.opp-author{
-  display:grid; grid-template-columns:48px minmax(0,1fr) auto;
-  gap:12px; align-items:start;
+.opp-author, .story-author{
+  display:grid; grid-template-columns:minmax(0,1fr) auto;
+  gap:8px 12px; align-items:start;
 }
+.story-author{grid-template-columns:minmax(0,1fr) auto auto}
+.opp-author .author-link, .story-author .author-link{min-width:0}
 .opp-av{
   width:48px;height:48px; display:grid; place-items:center;
   background:var(--navy); color:#fff;
@@ -3456,10 +3559,10 @@ body.qa-thread-open .scrim{
 .opp-av.is-org{border-radius:10px}
 .opp-name{
   font-size:15px; font-weight:600; color:var(--ink);
-  display:flex; align-items:center; gap:6px; line-height:1.3;
+  display:flex; align-items:center; gap:6px; line-height:1.3; min-width:0;
 }
-.opp-role{margin:2px 0 0; font-size:13px; font-weight:400; color:var(--muted)}
-.opp-meta{margin:2px 0 0; font-size:13px; font-weight:400; color:var(--muted)}
+.opp-role{margin:2px 0 0; font-size:13px; font-weight:400; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.opp-meta{margin:2px 0 0; font-size:13px; font-weight:400; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
 .opp-meta .k-word.k-opportunity{
   font-weight:600;
   color:var(--blue);
@@ -3478,6 +3581,7 @@ body.qa-thread-open .scrim{
   background:var(--chip); color:var(--chip-ink);
   border:0; border-radius:999px; padding:7px 13px;
   font-family:var(--f); font-size:13.5px; font-weight:600; line-height:1.25;
+  cursor:pointer;
 }
 .opp-deadline{
   display:inline-flex; align-items:center; gap:8px;
@@ -3516,14 +3620,17 @@ body.qa-thread-open .scrim{
   display:grid; grid-template-columns:repeat(3, minmax(0, 1fr));
   gap:14px 18px; padding:14px 16px; margin:0; background:#f5f8f9;
 }
-.glance .g{display:grid; grid-template-columns:auto minmax(0,1fr); gap:10px; align-items:start; min-width:0}
+.glance .g{
+  display:flex; flex-direction:row; align-items:center; gap:10px; min-width:0;
+}
 .glance .gi{
-  width:28px; height:28px; display:grid; place-items:center;
+  width:28px; height:28px; flex:0 0 28px; display:grid; place-items:center;
   background:#fff; border:1px solid var(--line); border-radius:9px; color:var(--muted);
 }
-.glance .gi svg{width:14px; height:14px}
+.glance .g > div{min-width:0; display:flex; align-items:center}
+.glance dt, .glance dd{margin:0}
 .glance dd{
-  margin:0; font-size:14px; line-height:1.45; font-weight:600; color:var(--ink);
+  font-size:14px; line-height:1.45; font-weight:600; color:var(--ink);
   display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
 }
 
@@ -3570,7 +3677,7 @@ body.qa-thread-open .scrim{
 .opp-compose input, .opp-compose textarea, .opp-compose select{
   width:100%; min-height:44px; box-sizing:border-box;
   border:1px solid var(--line); border-radius:9px; padding:10px 12px;
-  font-family:var(--f); font-size:15px; color:var(--ink);
+  font-family:var(--f); font-size:16px; color:var(--ink);
 }
 .opp-compose textarea{min-height:96px; resize:vertical; line-height:1.5}
 .opp-hint{margin:6px 0 0; font-size:13px; color:var(--muted); line-height:1.45}
@@ -3629,6 +3736,7 @@ body.opp-sheet-open .scrim{background:rgba(6,20,32,.74)}
 
 @media (max-width:620px){
   .glance{grid-template-columns:1fr; gap:11px}
+  .glance .g{flex-direction:row; align-items:center}
 }
 .opp-card .qa-menu, .opp-sheet .qa-menu, .opp-story .qa-menu{min-width:250px}
 .qa-dialog.opp-box{width:min(560px,100%); max-height:88vh; overflow:auto}
@@ -3657,13 +3765,13 @@ body.opp-sheet-open .scrim{background:rgba(6,20,32,.74)}
 #sheet:has(.story-sheet) .sheet-bar .icon-btn#sheet-close{
   width:38px; height:38px; border-radius:50%;
 }
-.opp-card :focus-visible,
-.opp-sheet :focus-visible,
-.opp-story :focus-visible,
-.opp-lead :focus-visible,
-.opp-compose :focus-visible,
-.opp-light :focus-visible,
-.qa-dialog.opp-box :focus-visible{
+.opp-card :focus-visible:not(input):not(textarea):not(select),
+.opp-sheet :focus-visible:not(input):not(textarea):not(select),
+.opp-story :focus-visible:not(input):not(textarea):not(select),
+.opp-lead :focus-visible:not(input):not(textarea):not(select),
+.opp-compose :focus-visible:not(input):not(textarea):not(select),
+.opp-light :focus-visible:not(input):not(textarea):not(select),
+.qa-dialog.opp-box :focus-visible:not(input):not(textarea):not(select){
   outline:2px solid var(--focus);
   outline-offset:2px;
 }
@@ -3694,11 +3802,13 @@ body.opp-sheet-open .scrim{background:rgba(6,20,32,.74)}
 }
 
 .story-author{
-  display:grid; grid-template-columns:48px minmax(0,1fr) auto auto;
-  gap:12px; align-items:start;
+  display:grid; grid-template-columns:minmax(0,1fr) auto;
+  gap:8px 12px; align-items:start;
 }
+.story-author .author-link{min-width:0}
+.story-tools{display:flex; align-items:center; gap:6px; flex:0 0 auto; min-width:0}
 .story-follow{
-  align-self:center; min-height:38px; padding:0 15px; border:1px solid var(--navy); border-radius:999px;
+  align-self:center; flex:0 0 auto; min-height:38px; padding:0 15px; border:1px solid var(--navy); border-radius:999px;
   background:#fff; color:var(--navy); white-space:nowrap;
   font-family:var(--f); font-size:14px; font-weight:600; cursor:pointer;
 }
@@ -3795,9 +3905,192 @@ body.opp-sheet-open .scrim{background:rgba(6,20,32,.74)}
   .story-mosaic.n1 img{max-height:360px}
   .story-mosaic.n3{grid-template-columns:1fr 1fr; grid-template-rows:auto auto; aspect-ratio:auto}
   .story-mosaic.n3 button:first-child{grid-column:1 / -1; grid-row:auto; aspect-ratio:16/10; height:auto}
-  .opp-story .qa-act span{
-    position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0,0,0,0);
-  }
+}
+
+/* Session card, sheet, booking, and host composer. Tokens match Q&A / Opportunity / Story. */
+.sess-card, .sess-sheet, .qa-dialog.sess-box {
+  --navy:#0d2b45; --navy-deep:#061a2d; --ink:#152739;
+  --muted:#64778a; --muted-2:#8a9aa8;
+  --paper:#eceff1; --line:#dfe4e8; --line-soft:#e9edf0;
+  --red:#c4392f; --red-soft:#fdf1f0;
+  --green:#07864d; --green-soft:#eef8f2;
+  --gold:#ffcf27; --gold-ink:#8a6612;
+  --chip:#edf1f5; --chip-ink:#20456a;
+  --focus:#1d7fd4;
+  --f:"Source Sans 3","Source Sans Pro",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  font-family:var(--f); font-weight:400; letter-spacing:0; color:var(--ink);
+}
+
+.sess-card{
+  background:#fff; border:1px solid var(--line); border-radius:12px;
+  box-shadow:0 1px 2px rgba(11,38,56,.045); overflow:hidden;
+}
+.sess-card.finished .sess-title,
+.sess-card.finished .sess-desc,
+.sess-card.finished .glance dd{color:var(--muted)}
+.sess-card.finished .glance{background:#f3f5f6}
+.sess-pad{padding:16px 16px 14px}
+.sess-author{
+  display:grid; grid-template-columns:minmax(0,1fr) auto;
+  gap:8px 12px; align-items:start;
+}
+.sess-main{min-width:0}
+.sess-tools{display:flex; align-items:center; gap:6px; flex:0 0 auto}
+.sess-face{
+  display:grid; grid-template-columns:48px minmax(0,1fr);
+  gap:12px; align-items:start; width:100%; min-width:0;
+  padding:0; border:0; background:transparent;
+  color:inherit; font:inherit; text-align:left;
+  -webkit-appearance:none; appearance:none;
+}
+button.sess-face{cursor:pointer}
+div.sess-face{cursor:default}
+.sess-kind{
+  margin:2px 0 0 60px;
+  font-size:13px; font-weight:400; color:var(--muted);
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.sess-card .k-word.k-session,
+.sess-sheet .k-word.k-session{
+  color:var(--gold-ink); font-weight:600;
+}
+.qa-ask-block{margin:0 0 12px}
+.qa-dialog.sess-box a.qa-go{
+  display:inline-flex; align-items:center; justify-content:center;
+  text-decoration:none;
+}
+.sess-title{
+  margin:14px 0 0; max-width:34em;
+  font-size:19px; font-weight:600; line-height:1.42; color:var(--ink);
+}
+.sess-desc{
+  margin:10px 0 0; max-width:34em;
+  font-size:15.5px; font-weight:400; line-height:1.62; color:#28394a;
+}
+@media (max-width:560px){
+  .sess-title{font-size:18px}
+  .sess-sheet .sess-title{font-size:21px}
+}
+
+.sess-count{
+  display:inline-flex; align-items:center; gap:8px;
+  margin:12px 0 0; padding:8px 13px; border-radius:999px;
+  font-size:14px; font-weight:600;
+}
+.sess-count svg{width:16px;height:16px;flex:0 0 16px}
+.sess-count.is-soon{background:var(--red-soft); color:var(--red)}
+.sess-count.is-now{background:var(--green-soft); color:var(--green)}
+.sess-count.is-done{background:#f0f2f3; color:var(--muted)}
+.sess-dot{
+  width:8px;height:8px;border-radius:50%;background:var(--green);flex:0 0 8px;
+}
+@media (prefers-reduced-motion: reduce){
+  .sess-dot{animation:none}
+}
+@media (prefers-reduced-motion: no-preference){
+  .sess-dot{animation:sessPulse 1.6s ease-in-out infinite}
+}
+@keyframes sessPulse{
+  0%,100%{opacity:1}
+  50%{opacity:.35}
+}
+
+.sess-booked{
+  margin:12px 0 0; padding:12px 14px; border-radius:10px;
+  background:var(--green-soft); color:var(--green);
+  font-size:14.5px; font-weight:500; line-height:1.5;
+}
+.sess-booked p{margin:0}
+.sess-join{
+  display:inline-flex; align-items:center; justify-content:center;
+  min-height:44px; margin-top:10px; padding:0 14px; border-radius:8px;
+  background:var(--green); color:#fff;
+  font-family:var(--f); font-size:14.5px; font-weight:600; text-decoration:none;
+}
+.sess-lock{
+  margin:12px 0 0; font-size:14px; color:var(--muted); line-height:1.5;
+}
+
+.qa-actions .sess-primary{
+  flex:0 0 auto; margin-left:auto; align-self:center;
+}
+.sess-primary{
+  margin-left:auto; min-height:44px; padding:0 14px; border:0; border-radius:8px;
+  background:var(--gold); color:var(--navy-deep);
+  font-family:var(--f); font-size:14.5px; font-weight:600; cursor:pointer;
+}
+.sess-card :focus-visible:not(input):not(textarea):not(select),
+.sess-sheet :focus-visible:not(input):not(textarea):not(select),
+.qa-dialog.sess-box :focus-visible:not(input):not(textarea):not(select){
+  outline:2px solid var(--focus);
+  outline-offset:2px;
+}
+.sess-primary.have{
+  background:#fff; color:var(--green); border:1px solid var(--green);
+}
+.sess-primary:disabled{
+  opacity:1; cursor:default; background:#e4e7ea; color:var(--muted); border:0;
+}
+
+#sheet:has(.sess-sheet){max-width:680px; border-radius:14px}
+body.sess-sheet-open .scrim{background:rgba(6,20,32,.74)}
+#sheet:has(.sess-sheet) .sheet-title{
+  font-size:13.5px; font-weight:400; color:#64778a;
+}
+#sheet:has(.sess-sheet) .sheet-bar .icon-btn#sheet-close{
+  width:38px; height:38px; border-radius:50%;
+}
+.sess-sheet{padding:18px}
+.sess-sheet .sess-title{font-size:24px; line-height:1.28}
+.sess-progress{display:grid; grid-template-columns:1fr 1fr; gap:6px; margin:10px 0 16px}
+.sess-progress span{height:4px; background:var(--line-soft); border-radius:99px}
+.sess-progress span.on{background:var(--navy)}
+.sess-sheet .glance{margin:14px -18px 0; width:calc(100% + 36px)}
+.sess-facts{margin:18px 0 0}
+.sess-facts h3{margin:0 0 10px; font-size:15px; font-weight:600}
+.sess-facts dl{margin:0}
+.sess-facts .row{display:grid; grid-template-columns:92px minmax(0,1fr); gap:10px; padding:8px 0; border-top:1px solid var(--line-soft)}
+.sess-facts dt{margin:0; font-size:13px; color:var(--muted)}
+.sess-facts dd{margin:0; font-size:15px; font-weight:600; color:var(--ink)}
+@media (max-width:560px){
+  #sheet:has(.sess-sheet){border-radius:0; max-width:none}
+}
+
+.sess-host{
+  margin:18px 0 0; padding:14px; border:1px solid var(--line); border-radius:12px; background:#f7f9fa;
+}
+.sess-host h3, .sess-asks h3{
+  margin:0 0 10px; font-size:15px; font-weight:600;
+}
+.sess-host p, .sess-asks p{margin:0 0 8px; font-size:14.5px; line-height:1.5}
+.sess-asks{margin:18px 0 0}
+.sess-ask{
+  padding:10px 0; border-top:1px solid var(--line-soft);
+}
+.sess-ask strong{display:block; font-size:14.5px; font-weight:600}
+.sess-ask span{display:block; margin-top:4px; font-size:13.5px; color:var(--muted)}
+.sess-note{margin:10px 0 0; font-size:13px; color:var(--muted); line-height:1.45}
+
+.sess-fmt{display:flex; gap:8px; margin:8px 0 12px}
+.sess-fmt button{
+  min-height:44px; padding:0 14px; border:1px solid var(--line); border-radius:8px;
+  background:#fff; font-family:var(--f); font-size:14.5px; font-weight:600; cursor:pointer;
+}
+.sess-fmt button.on{border-color:var(--navy); background:var(--line-soft)}
+
+.qa-dialog.sess-box input:not([type="checkbox"]):not([type="radio"]),
+.qa-dialog.sess-box textarea,
+.qa-dialog.sess-box select{
+  font-size:16px;
+}
+.sess-url{
+  margin:8px 0 0; font-size:16.5px; font-weight:600; word-break:break-word;
+}
+.sess-lead-line{width:100%; margin:0; font-size:13.5px; font-weight:600; color:var(--red)}
+.sess-student-line{width:100%; margin:8px 0 0; font-size:13.5px; color:var(--muted); line-height:1.45}
+
+@media (prefers-reduced-motion: reduce){
+  .sess-card, .sess-sheet, .qa-dialog.sess-box, #toast{transition:none}
 }
 </style>
 </head>
@@ -4123,7 +4416,7 @@ var JOURNEYS = {
       { stage: 'subject', text: 'Locked Biology, Chemistry, Physics, Maths, English and Caribbean History.', lesson: 'If medicine is even a maybe, protect Biology and Chemistry at Form 3.' },
       { stage: 'csec', text: 'Sat CSEC with strong Biology and Chemistry. Used free past paper clinics after school.', lesson: 'Mocks are rehearsal, not judgment. Fix the weak paper early.' },
       { stage: 'fork', text: 'Stayed for CAPE Sciences instead of jumping straight to work.', lesson: 'The fork is real. CAPE, TVET or work. Name the gate each path needs.' },
-      { stage: 'special', text: 'Completed CAPE Biology, Chemistry and Caribbean Studies. Applied to UG Medicine.', lesson: 'Map CAPE units to the exact UG entry list, not a rumour from WhatsApp.' },
+      { stage: 'special', text: 'Completed CAPE Biology, Chemistry and Caribbean Studies. Applied to UG Medicine.', lesson: 'Map CAPE units to the exact UG entry list, not a rumour from a group chat.' },
       { stage: 'led', text: 'Entered UG medical training and began junior clinical work in Georgetown.', lesson: 'Health routes take years. Build patience and a support circle early.' }
     ],
     dive: {
@@ -4716,7 +5009,7 @@ var OPPS = {
     what: [
       'Blue Ocean is a virtual, global competition for high-school-aged students. Tens of thousands of students enter in a cycle. Guyana is explicitly listed among participating countries.',
       'Students pitch business concepts to real entrepreneurs, get feedback, and compete for cash prizes. The whole path is online, which matters if you cannot travel or your school will not organise entrepreneurship clubs.',
-      'Registration for the next cycle opens after each year\'s results. Treat the calendar as rolling and confirm on the organiser site rather than last year\'s WhatsApp flyer.'
+      'Registration for the next cycle opens after each year\'s results. Treat the calendar as rolling and confirm on the organiser site rather than last year\'s flyer.'
     ],
     season: 'Annual virtual cycle. Registration opens after results each year',
     cost: 'Confirm on the organiser site. Designed for direct student entry',
@@ -8671,7 +8964,11 @@ var S = {
     anon: true,
     editId: ''
   },
-  pw: null
+  pw: null,
+  topicTag: '',
+  topicMore: '',
+  kindKey: '',
+  kindMore: ''
 };
 
 function emptyPw() {
@@ -8838,6 +9135,59 @@ function daysUntil(iso) {
   return Math.max(0, Math.ceil(ms / 86400000));
 }
 
+function countDownUnits(ms) {
+  var mins;
+  var hours;
+  var days;
+  var weeks;
+  if (ms < 0) ms = 0;
+  if (ms < 60000) return { n: 1, unit: 'minute' };
+  mins = Math.round(ms / 60000);
+  if (mins < 60) return { n: mins, unit: mins === 1 ? 'minute' : 'minutes' };
+  hours = Math.round(ms / 3600000);
+  if (hours < 48) return { n: hours, unit: hours === 1 ? 'hour' : 'hours' };
+  days = Math.round(ms / 86400000);
+  if (days < 14) return { n: days, unit: days === 1 ? 'day' : 'days' };
+  weeks = Math.max(1, Math.round(ms / 604800000));
+  return { n: weeks, unit: weeks === 1 ? 'week' : 'weeks' };
+}
+
+function countDownWhen(ms) {
+  var d = new Date(ms);
+  var days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  var months = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December'
+  ];
+  var h = d.getHours();
+  var m = d.getMinutes();
+  var ap = h >= 12 ? 'PM' : 'AM';
+  var h12 = h % 12 || 12;
+  var mm = m < 10 ? '0' + m : String(m);
+  return days[d.getDay()] + ' ' + d.getDate() + ' ' + months[d.getMonth()] + ', ' + h12 + ':' + mm + ' ' + ap;
+}
+
+function countDownPhrase(targetMs, verb, nowMs) {
+  var left = targetMs - (nowMs || Date.now());
+  var u;
+  var text;
+  if (left <= 0) return '';
+  u = countDownUnits(left);
+  text = verb + ' in ' + u.n + ' ' + u.unit;
+  if (left >= 48 * 3600000) text += ' · ' + countDownWhen(targetMs);
+  return text;
+}
+
 function author(id) {
   return AUTHORS[id] || { name: id, init: '?', role: '', pending: false, verified: false, contactable: false, form: '', region: '', pos: '', system: true };
 }
@@ -8954,6 +9304,68 @@ function canFollowPerson(id) {
   return a.role === 'mentor' || a.role === 'contributor';
 }
 
+function canLinkAuthor(id) {
+  var a;
+  if (!id) return false;
+  a = author(id);
+  if (!a || a.system) return false;
+  return a.role === 'mentor' || a.role === 'contributor' || a.role === 'admin';
+}
+
+function authorLinkWrap(inner) {
+  return '<div class="author-link">' + inner + '</div>';
+}
+
+function authorHitBtn(inner, authorId, extraCls) {
+  var cls = extraCls ? 'author-hit ' + extraCls : 'author-hit';
+  if (!canLinkAuthor(authorId)) {
+    return '<div class="' + cls + '">' + inner + '</div>';
+  }
+  return (
+    '<button type="button" class="' +
+    cls +
+    '" data-open="person" data-id="' +
+    esc(authorId) +
+    '">' +
+    inner +
+    '</button>'
+  );
+}
+
+function kindOpenBtn(kind, label) {
+  return (
+    '<button type="button" class="k-word k-' +
+    esc(kind) +
+    '" data-open="kind" data-id="' +
+    esc(kind) +
+    '">' +
+    esc(label) +
+    '</button>'
+  );
+}
+
+function kindHitBtn(kind, inner, extraCls, label) {
+  var cls = extraCls ? 'kind-hit ' + extraCls : 'kind-hit';
+  return (
+    '<button type="button" class="' +
+    cls +
+    '" data-open="kind" data-id="' +
+    esc(kind) +
+    '"' +
+    (label ? ' aria-label="' + esc(label) + '"' : '') +
+    '>' +
+    inner +
+    '</button>'
+  );
+}
+
+function normalizeTopicTag(tag) {
+  var s = String(tag || '').trim();
+  if (!s) return '';
+  if (s.charAt(0) === '#') return s;
+  return hashTagLabel(s);
+}
+
 function MONTHS_SHORT() {
   return ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 }
@@ -8993,7 +9405,7 @@ function kindTimeHtml(kindLabel, iso, edited, kindKey) {
   var t = timeAgo(iso);
   var html;
   if (kindKey) {
-    html = '<span class="k-word k-' + esc(kindKey) + '">' + esc(kindLabel) + '</span>';
+    html = kindOpenBtn(kindKey, kindLabel);
   } else {
     html = esc(kindLabel);
   }
@@ -9356,15 +9768,6 @@ function isInspired(id) {
 function toggleInspired(id) {
   var item;
   var i;
-  if (
-    requirePathway({
-      type: 'inspire',
-      id: id,
-      reason: 'We need your form before we mark this as inspired.'
-    })
-  ) {
-    return;
-  }
   item = feedByEngageId(id);
   i = S.inspired.indexOf(id);
   if (i === -1) {
@@ -9509,6 +9912,7 @@ function hideSheetUi() {
   lockBody(false);
   document.body.classList.remove('qa-thread-open');
   document.body.classList.remove('opp-sheet-open');
+  document.body.classList.remove('sess-sheet-open');
 }
 
 function closeSheet() {
@@ -9770,8 +10174,15 @@ function filteredFeed() {
     if (ok && item.kind === 'story' && isHidden('story', item.id)) ok = false;
     if (ok && item.kind === 'opportunity' && isHidden('opp', item.opp)) ok = false;
     if (ok && item.kind === 'session' && isHidden('session', item.session)) ok = false;
+    if (ok && item.kind === 'session') {
+      sess = sessionById(item.session);
+      if (sess && sess.status === 'cancelled') ok = false;
+    }
     if (ok && item.kind === 'journey' && isHidden('journey', item.journey)) ok = false;
     if (ok) out.push(item);
+  }
+  if (S.filter === 'sessions' && typeof sessSortSoonest === 'function') {
+    return sessSortSoonest(out);
   }
   return out;
 }
@@ -9962,7 +10373,7 @@ function inspireEngageBtn(id) {
   return engageBtn(
     'data-inspire="' + esc(id) + '"',
     iconHeart(),
-    n ? 'Inspired · ' + n : 'Inspired',
+    n ? 'Inspired ' + n : 'Inspired',
     isInspired(id)
   );
 }
@@ -9974,7 +10385,7 @@ function replyEngageBtn(kind, id, n, focus) {
       ? 'data-focus-reply="1"'
       : 'data-open="' + esc(kind) + '" data-id="' + esc(id) + '"',
     iconReply(),
-    n === 1 ? '1 reply' : n + ' replies',
+    n === 0 ? 'Reply' : n === 1 ? '1 reply' : n + ' replies',
     false
   );
 }
@@ -10127,45 +10538,9 @@ function renderOppCard(item) {
   return html;
 }
 
-function renderSessionCard(item) {
-  var s = sessionById(item.session);
-  var left;
-  var lead;
-  var html;
-  if (!s) return '';
-  left = Math.max(0, s.seats - s.taken);
-  lead = author(s.hosted_by || s.lead);
-  html =
-    '<article class="card feed-card kind-sess sess-card clickable" ' +
-    cardClickAttrs('session', s.id) +
-    '>' +
-    '<div class="card-head">' +
-    '<div class="date-chip" aria-hidden="true"><span class="d">' +
-    esc(s.date) +
-    '</span><span class="w">' +
-    esc(s.day) +
-    '</span></div>' +
-    '<div class="meta">' +
-    nameWithBadge(lead.name, lead) +
-    '<div class="sub">' +
-    kindTimeHtml('Session', item.at, item.edited, 'session') +
-    '</div></div>' +
-    contactAffordance(s.hosted_by || s.lead, false) +
-    cardMoreHtml('session', s.id, false) +
-    '</div><div class="card-body">';
-  if (s.pod) html += '<div class="card-cats">' + catChip(s.pod, false) + '</div>';
-  html += '<h3>' + esc(s.title) + '</h3>';
-  html += '<p class="sess-when">' + esc(sessionWhen(s)) + '</p>';
-  html +=
-    '<div class="sess-meta"><span>' +
-    left +
-    (left === 1 ? ' place left' : ' places left') +
-    '</span></div>';
-  html +=
-    '</div>' +
-    postEngageBar(item, 'session', s.id, isOwnCard('session', s.id, false), false) +
-    '</article>';
-  return html;
+function renderSessionCard(item, opts) {
+  if (typeof sessRenderCard === 'function') return sessRenderCard(item, opts);
+  return '';
 }
 
 function renderJourneyCard(item) {
@@ -10178,17 +10553,23 @@ function renderJourneyCard(item) {
     cardClickAttrs('journey', item.journey) +
     '>' +
     '<div class="card-head">' +
-    avatarHtml(a, false, 'journey') +
-    '<div class="meta">' +
-    nameWithBadge(a.name, a) +
-    '<div class="sub">' +
-    kindTimeHtml('Journey', item.at, item.edited, 'journey') +
-    '</div></div>' +
+    authorLinkWrap(
+      authorHitBtn(
+        avatarHtml(a, false, 'journey'),
+        item.journey,
+        'av-hit'
+      ) +
+        '<div class="meta ident-name">' +
+        authorHitBtn(nameWithBadge(a.name, a), item.journey, 'name-hit') +
+        '<div class="sub">' +
+        kindTimeHtml('Journey', item.at, item.edited, 'journey') +
+        '</div></div>'
+    ) +
     contactAffordance(item.journey, item.mine) +
     cardMoreHtml('journey', item.journey, item.mine) +
     '</div><div class="card-body">';
   html += mineFlagsHtml(item);
-  if (j.field) html += '<div class="card-cats">' + catChip(j.field, false) + '</div>';
+  if (j.field) html += '<div class="card-cats">' + catChip(j.field) + '</div>';
   html += '<h3 class="hook">' + esc(j.hook) + '</h3>';
   if (j.place) html += '<p class="card-place">' + esc(j.place) + '</p>';
   html += journeyPathPreview(j);
@@ -11165,17 +11546,20 @@ function qaYouAv() {
 }
 
 function qaTileHtml() {
-  return '<span class="qa-tile" aria-hidden="true"><span class="qa-qmark">?</span><span class="qa-qlabel">Q&amp;A</span></span>';
+  return (
+    '<button type="button" class="qa-tile" data-open="kind" data-id="question" aria-label="All questions">' +
+    '<span class="qa-qmark" aria-hidden="true">?</span><span class="qa-qlabel" aria-hidden="true">Q&amp;A</span></button>'
+  );
 }
 
 function qaMetaLine(item) {
   var t = qaTimeAgo(item.at || item.createdAt);
-  var html = '';
+  var html = kindOpenBtn('question', 'Question');
   if (qaOwnsQuestion(item)) {
-    html += '<span class="qa-yours">Your question</span>';
+    html += ' · <span class="qa-yours">Your question</span>';
     if (t) html += ' ' + esc(t);
-  } else {
-    html += esc(t);
+  } else if (t) {
+    html += ' · ' + esc(t);
   }
   if (item.edited || item.editedAt) html += ' · edited';
   return html;
@@ -11266,9 +11650,9 @@ function qaIdentityHtml(item, withMenu) {
   return (
     '<div class="qa-id">' +
     qaTileHtml() +
-    '<div><div class="qa-ask-name">' +
+    '<div class="ident-name"><div class="qa-ask-name"><span class="ident-text">' +
     esc(qaAsker(item)) +
-    '</div><p class="qa-ask-meta">' +
+    '</span></div><p class="qa-ask-meta">' +
     qaMetaLine(item) +
     '</p></div>' +
     (withMenu ? qaQuestionMenu(item) : '') +
@@ -11304,22 +11688,28 @@ function qaTopicsHtml(item, clickable) {
 
 function qaReplyHeadHtml(n, item, withMenu, whenFallback) {
   var when = qaTimeAgo(n.createdAt || whenFallback);
-  var html =
-    '<div class="qa-reply">' +
+  var aid = n.authorRole === 'mentor' ? n.authorId : '';
+  var html = '<div class="qa-reply">';
+  html += authorHitBtn(
     '<span class="qa-av ' +
-    (n.authorRole === 'mentor' ? 'is-mentor' : 'is-student') +
-    '" aria-hidden="true">' +
-    esc(n.initials) +
-    '</span><div>' +
-    '<div class="qa-r-name">' +
-    esc(n.name) +
-    (n.verified
-      ? qaTickSvg() + '<span class="sr">Verified mentor</span>'
-      : '') +
-    '</div>';
-  if (n.authorRole === 'mentor' && n.role) {
-    html += '<p class="qa-r-role">' + esc(n.role) + '</p>';
-  }
+      (n.authorRole === 'mentor' ? 'is-mentor' : 'is-student') +
+      '" aria-hidden="true">' +
+      esc(n.initials) +
+      '</span>',
+    aid,
+    'av-hit'
+  );
+  html += '<div class="ident-name">';
+  html += authorHitBtn(
+    '<div class="qa-r-name"><span class="ident-text">' +
+      esc(n.name) +
+      '</span>' +
+      (n.verified ? qaTickSvg() + '<span class="sr">Verified mentor</span>' : '') +
+      '</div>' +
+      (n.authorRole === 'mentor' && n.role ? '<p class="qa-r-role">' + esc(n.role) + '</p>' : ''),
+    aid,
+    'name-hit'
+  );
   if (when) {
     html += '<p class="qa-r-when">' + esc(when) + (n.edited ? ' · edited' : '') + '</p>';
   }
@@ -11348,11 +11738,9 @@ function qaEngageHtml(item, inThread) {
   var n = item.replies ? item.replies.length : 0;
   var inspired = isInspired(item.id);
   var saved = isSaved(item.id);
-  var following = S.qFollow.indexOf(item.id) !== -1;
   var inspN = qaInspireCount(item);
   var replyLabel;
   var html;
-  var showUpdates = !inThread && n === 0 && qaIsStudent();
   if (n === 0) replyLabel = qaIsMentor() ? 'Answer' : 'Reply';
   else replyLabel = n === 1 ? '1 reply' : n + ' replies';
   html = '<div class="qa-actions">';
@@ -11386,17 +11774,13 @@ function qaEngageHtml(item, inThread) {
     '<span>' +
     (saved ? 'Saved' : 'Save') +
     '</span></button>';
-  if (showUpdates) {
+  if (!inThread) {
     html +=
-      '<button type="button" class="qa-act is-updates" data-qa-updates="' +
+      '<button type="button" class="opp-primary" data-open="thread" data-id="' +
       esc(item.id) +
-      '" aria-pressed="' +
-      (following ? 'true' : 'false') +
-      '" aria-label="Get updates when someone answers this question">' +
-      qaIconBell() +
-      '<span>' +
-      (following ? 'Updates on' : 'Get updates') +
-      '</span></button>';
+      '">' +
+      (n > 0 ? 'View answers' : qaIsMentor() ? 'Answer' : 'View answers') +
+      '</button>';
   }
   html += '</div>';
   return html;
@@ -11689,6 +12073,7 @@ function qaAfterPaint() {
   }
   qaPaintLayer();
   if (typeof oppAfterPaint === 'function') oppAfterPaint();
+  if (typeof sessAfterPaint === 'function') sessAfterPaint();
 }
 
 function qaOpenDialog(type, spec) {
@@ -11723,6 +12108,7 @@ function qaPaintLayer() {
   if (!layer) return;
   if (!q.dialog) {
     if (S.opp && S.opp.dialog) return;
+    if (S.sess && S.sess.dialog) return;
     layer.hidden = true;
     layer.innerHTML = '';
     return;
@@ -12235,22 +12621,33 @@ function qaHandleClick(e, t) {
   return false;
 }
 
+function qaSyncDialogFields() {
+  var q = ensureQa();
+  var count = document.querySelector('#qa-layer .qa-count');
+  var go = document.querySelector('#qa-layer .qa-go');
+  var left;
+  var item;
+  if (q.dialog === 'ask') {
+    left = 180 - (q.dialogText || '').length;
+    if (count) {
+      count.textContent = left + ' left';
+      if (left < 20) count.classList.add('is-low');
+      else count.classList.remove('is-low');
+    }
+    if (go) go.disabled = (q.dialogText || '').trim().length < 10;
+  } else if (q.dialog === 'edit-q') {
+    item = q.dialogId ? feedById(q.dialogId) : null;
+    if (go) go.disabled = !item || (q.dialogText || '') === (item.title || '');
+  }
+}
+
 function qaHandleInput(e) {
   var item;
   var top;
   var q = ensureQa();
   if (e.target && e.target.id === 'qa-dlg-text') {
     q.dialogText = e.target.value;
-    if (q.dialog === 'ask' || q.dialog === 'edit-q') qaPaintLayer();
-    if (q.dialog === 'ask') {
-      e.target = byId('qa-dlg-text');
-      if (e.target) {
-        e.target.focus();
-        try {
-          e.target.setSelectionRange(q.dialogText.length, q.dialogText.length);
-        } catch (err) {}
-      }
-    }
+    qaSyncDialogFields();
     return true;
   }
   if (e.target && e.target.id === 'qa-reply') {
@@ -12416,6 +12813,7 @@ function oppOverlayOpen() {
   var sug;
   if (NAV.length) return true;
   if (S.qa && S.qa.dialog) return true;
+  if (S.sess && S.sess.dialog) return true;
   if (S.opp && (S.opp.dialog || S.opp.lightUrl || (S.opp.lightPhotos && S.opp.lightPhotos.length))) return true;
   if (S.menu) return true;
   sug = byId('opp-sug');
@@ -12559,27 +12957,12 @@ function oppDateLabel(iso) {
 
 function oppCloseCopy(o) {
   var ms;
-  var hours;
-  var days;
+  var phrase;
   if (!o || o.rolling || !o.closesAt) return null;
   ms = oppMsLeft(o);
   if (ms <= 0) return { text: 'Closed on ' + oppDateLabel(o.closesAt), tone: 'shut' };
-  hours = Math.floor(ms / 3600000);
-  days = Math.floor(ms / 86400000);
-  if (hours < 1) return { text: 'Closes within the hour', tone: 'soon' };
-  if (hours < 48) {
-    return {
-      text: 'Closes in ' + hours + (hours === 1 ? ' hour' : ' hours'),
-      tone: 'soon'
-    };
-  }
-  if (days <= 14) {
-    return {
-      text: 'Closes in ' + days + (days === 1 ? ' day' : ' days') + ' · ' + oppDateLabel(o.closesAt),
-      tone: 'soon'
-    };
-  }
-  return { text: 'Closes ' + oppDateLabel(o.closesAt), tone: 'ok' };
+  phrase = countDownPhrase(new Date(o.closesAt).getTime(), 'Closes');
+  return { text: phrase || 'Closes in 1 minute', tone: 'soon' };
 }
 
 function oppWarnPhrase(o) {
@@ -12696,18 +13079,29 @@ function oppAvHtml(o, size) {
 function oppAuthorHtml(o, withMenu, hideMenu) {
   var role = o.author.role + (o.author.pos ? ' · ' + o.author.pos : '');
   var when = qaTimeAgo(o.createdAt);
-  return (
-    '<div class="opp-author">' +
-    oppAvHtml(o, 48) +
-    '<div><div class="opp-name">' +
-    esc(o.author.name) +
-    (o.author.verified ? qaTickSvg() + '<span class="sr">Verified</span>' : '') +
-    '</div><p class="opp-role">' +
-    esc(role) +
-    '</p><p class="opp-meta"><span class="k-word k-opportunity">Opportunity</span>' +
+  var aid = hideMenu ? '' : o.authorId || o.author.id || '';
+  var ident =
+    authorHitBtn(oppAvHtml(o, 48), aid, 'av-hit') +
+    '<div class="ident-name">' +
+    authorHitBtn(
+      '<div class="opp-name"><span class="ident-text">' +
+        esc(o.author.name) +
+        '</span>' +
+        (o.author.verified ? qaTickSvg() + '<span class="sr">Verified</span>' : '') +
+        '</div><p class="opp-role">' +
+        esc(role) +
+        '</p>',
+      aid,
+      'name-hit'
+    ) +
+    '<p class="opp-meta">' +
+    kindOpenBtn('opportunity', 'Opportunity') +
     (when ? ' · ' + esc(when) : '') +
     (o.editedAt ? ' · edited' : '') +
-    '</p></div>' +
+    '</p></div>';
+  return (
+    '<div class="opp-author">' +
+    authorLinkWrap(ident) +
     (hideMenu ? '' : withMenu ? oppMenuHtml(o) : '') +
     '</div>'
   );
@@ -12752,7 +13146,13 @@ function oppMenuHtml(o) {
 
 function oppTopicHtml(tag) {
   if (!tag) return '';
-  return '<div class="opp-topics"><span class="opp-chip">' + esc(tag) + '</span></div>';
+  return (
+    '<div class="opp-topics"><button type="button" class="opp-chip" data-topic="' +
+    esc(qaTopicRaw(tag) || tag) +
+    '">' +
+    esc(tag) +
+    '</button></div>'
+  );
 }
 
 function oppDeadlineHtml(o) {
@@ -12840,7 +13240,7 @@ function oppEngageHtml(o, opts) {
   var inspired = isInspired(o.id);
   var saved = isSaved(o.id);
   var closed = oppClosed(o);
-  var replyLabel = n === 0 ? 'Ask' : n === 1 ? '1 reply' : n + ' replies';
+  var replyLabel = n === 0 ? 'Reply' : n === 1 ? '1 reply' : n + ' replies';
   var inspN = o.inspiredCount || 0;
   var html = '<div class="qa-actions opp-actions">';
   html +=
@@ -13002,22 +13402,34 @@ function storyFollowHtml(item, preview) {
 function storyAuthorRow(item, opts) {
   var s = oppStoryAuthor(item);
   var when = qaTimeAgo(s.createdAt);
+  var ident;
   opts = opts || {};
-  return (
-    '<div class="story-author">' +
-    oppAvHtml(s, 48) +
-    '<div><div class="opp-name">' +
-    esc(s.author.name) +
-    (s.author.verified ? qaTickSvg() + '<span class="sr">Verified</span>' : '') +
-    '</div><p class="opp-role">' +
-    esc(s.author.role + (s.author.pos ? ' · ' + s.author.pos : '')) +
-    '</p><p class="opp-meta">Story' +
+  ident =
+    authorHitBtn(oppAvHtml(s, 48), opts.preview ? '' : item.author || s.authorId, 'av-hit') +
+    '<div class="ident-name">' +
+    authorHitBtn(
+      '<div class="opp-name"><span class="ident-text">' +
+        esc(s.author.name) +
+        '</span>' +
+        (s.author.verified ? qaTickSvg() + '<span class="sr">Verified</span>' : '') +
+        '</div><p class="opp-role">' +
+        esc(s.author.role + (s.author.pos ? ' · ' + s.author.pos : '')) +
+        '</p>',
+      opts.preview ? '' : item.author || s.authorId,
+      'name-hit'
+    ) +
+    '<p class="opp-meta">' +
+    kindOpenBtn('story', 'Story') +
     (when ? ' · ' + esc(when) : '') +
     (item.edited || item.editedAt ? ' · edited' : '') +
-    '</p></div>' +
+    '</p></div>';
+  return (
+    '<div class="story-author">' +
+    authorLinkWrap(ident) +
+    '<div class="story-tools">' +
     storyFollowHtml(item, !!opts.preview) +
     (opts.preview ? '' : oppStoryMenu(item)) +
-    '</div>'
+    '</div></div>'
   );
 }
 
@@ -13201,7 +13613,14 @@ function oppStoryEngage(item, inSheet) {
     qaIconSave(saved) +
     '<span>' +
     (saved ? 'Saved' : 'Save') +
-    '</span></button></div>';
+    '</span></button>';
+  if (!inSheet) {
+    html +=
+      '<button type="button" class="opp-primary" data-open="story" data-id="' +
+      esc(item.id) +
+      '">View more</button>';
+  }
+  html += '</div>';
   return html;
 }
 
@@ -13399,9 +13818,12 @@ function oppLeadHtml() {
   var av;
   if (oppIsAskOnly()) {
     return (
+      '<div class="qa-ask-block">' +
       '<div class="qa-ask-row">' +
       qaYouAv() +
-      '<button type="button" class="qa-ask-open" data-qa-ask="1">What do you want to ask?</button></div>'
+      '<button type="button" class="qa-ask-open" data-qa-ask="1">What do you want to ask?</button></div>' +
+      (typeof sessStudentLineHtml === 'function' ? sessStudentLineHtml() : '') +
+      '</div>'
     );
   }
   if (!oppCanAuthor()) return '';
@@ -13422,6 +13844,7 @@ function oppLeadHtml() {
       ? '<button type="button" class="opp-drafts-btn" data-opp-drafts="1">Drafts ' + drafts + '</button>'
       : '') +
     oppOwnClosingWarn() +
+    (typeof sessHostWarnHtml === 'function' ? sessHostWarnHtml() : '') +
     '</div>'
   );
 }
@@ -13455,7 +13878,7 @@ function oppWhoHtml() {
   return (
     '<div class="opp-pick">' +
     '<button type="button" data-opp-who="student"><i aria-hidden="true">S</i><div><strong>Student or parent</strong><span>What do you want to ask? One tap into a question.</span></div></button>' +
-    '<button type="button" data-opp-who="mentor"><i aria-hidden="true">M</i><div><strong>Mentor or collaborator</strong><span>Post a question, a story, or an opening.</span></div></button>' +
+    '<button type="button" data-opp-who="mentor"><i aria-hidden="true">M</i><div><strong>Mentor or collaborator</strong><span>Post a question, a story, an opening, or a session.</span></div></button>' +
     '</div>'
   );
 }
@@ -13828,6 +14251,7 @@ function oppPickerHtml() {
     '<button type="button" data-opp-type="question"><i aria-hidden="true">?</i><div><strong>Question</strong><span>Ask the community something.</span></div></button>' +
     '<button type="button" data-opp-type="story"><i aria-hidden="true">S</i><div><strong>Story</strong><span>Share an update, or something you learned.</span></div></button>' +
     '<button type="button" data-opp-type="opportunity"><i aria-hidden="true">O</i><div><strong>Opportunity</strong><span>Something students can apply to.</span></div></button>' +
+    '<button type="button" data-opp-type="session"><i aria-hidden="true">T</i><div><strong>Session</strong><span>Something you are hosting at a time.</span></div></button>' +
     '</div>'
   );
 }
@@ -14145,6 +14569,7 @@ function oppPaintLayer() {
   var focus;
   if (!layer) return;
   if (S.qa && S.qa.dialog) return;
+  if (S.sess && S.sess.dialog) return;
   if (!c.dialog) {
     if (!layer.hidden && layer.querySelector('.opp-box')) {
       layer.hidden = true;
@@ -14531,6 +14956,7 @@ function oppHandleClick(e, t) {
   var o;
   var item;
   var file;
+  var fromWho;
   btn = closestEl(t, '[data-opp-post]');
   if (btn) {
     e.stopPropagation();
@@ -14574,6 +15000,13 @@ function oppHandleClick(e, t) {
     if (id === 'question') {
       oppCloseDialog();
       qaOpenDialog('ask', { text: '' });
+      return true;
+    }
+    if (id === 'session') {
+      fromWho = !!c.fromWho;
+      oppCloseDialog();
+      ensureOpp().fromWho = fromWho;
+      if (typeof sessOpenCompose === 'function') sessOpenCompose();
       return true;
     }
     oppResetCompose(false);
@@ -15123,11 +15556,1892 @@ function oppInit() {
   }
   setInterval(function () {
     if (oppOverlayOpen()) return;
-    if (S.view !== 'feed') return;
+    if (typeof sessOverlayOpen === 'function' && sessOverlayOpen()) return;
+    if (S.view !== 'feed' && S.view !== 'kind') return;
     render();
-  }, 60000);
+  }, 30000);
 }
 
+
+/* Session card, sheet, booking, and two-step host composer.
+   Matches Q&A / Opportunity / Story type, tokens, clamp, menus, and toasts. */
+
+function ensureSess() {
+  if (!S.sess) {
+    S.sess = {
+      dialog: '',
+      dialogId: '',
+      step: 1,
+      title: '',
+      description: '',
+      topic: '',
+      tagQ: '',
+      tagIx: -1,
+      poster: null,
+      posterAlt: '',
+      linkUrl: '',
+      dateVal: '',
+      timeVal: '',
+      minutes: 60,
+      format: 'online',
+      where: '',
+      joinLink: '',
+      who: '',
+      signupUrl: '',
+      editId: '',
+      createdAt: '',
+      bookName: '',
+      bookEmail: '',
+      bookQ: '',
+      bookAlerts: false,
+      reportReason: '',
+      lastFocus: null
+    };
+  }
+  if (!S.sessBookings) S.sessBookings = [];
+  return S.sess;
+}
+
+function sessHydrateOne(s) {
+  var starts = {
+    's-sci': '2026-09-12T17:00:00-04:00',
+    's-clinic': '2026-09-16T18:30:00-04:00',
+    's-trades': '2026-09-18T18:00:00-04:00',
+    's-tech': '2026-09-20T16:00:00-04:00',
+    's-sport': '2026-09-21T17:30:00-04:00',
+    's-media': '2026-09-23T18:30:00-04:00',
+    's-fork': '2026-09-29T18:30:00-04:00'
+  };
+  var who = {
+    's-sci': 'Form 5 and CAPE considering medicine',
+    's-clinic': 'Students sitting Biology or Chemistry',
+    's-trades': 'Form 3 to 5 considering a trade',
+    's-tech': 'Anyone building a first portfolio',
+    's-sport': 'Students in community leagues',
+    's-media': 'Students making work for school or clients',
+    's-fork': 'Form 5 after CSEC'
+  };
+  var i;
+  if (!s) return s;
+  if (!s.status) s.status = 'published';
+  if (!s.authorId) s.authorId = s.hosted_by || s.lead || '';
+  if (!s.startsAt) s.startsAt = starts[s.id] || '';
+  if (!s.minutes) s.minutes = 60;
+  if (!s.format) s.format = 'online';
+  if (!s.where) s.where = s.platform || 'Google Meet';
+  if (!s.who) s.who = who[s.id] || s.pod || 'Students';
+  if (s.registrationOpen == null) s.registrationOpen = true;
+  if (!s.topic) s.topic = s.cat ? hashTagLabel(s.cat) : '';
+  if (!s.description) s.description = s.what || '';
+  if (!s.createdAt) s.createdAt = s.startsAt || nowIso();
+  if (!s.bookings) s.bookings = [];
+  if (!s.replies) {
+    s.replies = [];
+    if (s.qs && s.qs.length) {
+      for (i = 0; i < s.qs.length; i++) {
+        s.replies.push({
+          id: s.id + '-r' + i,
+          who: 'Form 5 student, Region 4',
+          text: s.qs[i],
+          createdAt: s.startsAt || nowIso(),
+          authorRole: 'student'
+        });
+      }
+    }
+  }
+  if (s.inspiredCount == null) s.inspiredCount = 0;
+  if (s.joinLink == null && s.format === 'online') {
+    s.joinLink = 'https://meet.google.com/nsg-' + String(s.id).replace(/^s-/, '');
+  }
+  return s;
+}
+
+function sessHydrateAll() {
+  var i;
+  for (i = 0; i < SESSIONS.length; i++) sessHydrateOne(SESSIONS[i]);
+}
+
+function sessOverlayOpen() {
+  if (S.sess && S.sess.dialog) return true;
+  if (NAV.length && NAV[NAV.length - 1].t === 'session') return true;
+  return false;
+}
+
+function sessFeedFor(sid) {
+  var i;
+  for (i = 0; i < FEED.length; i++) {
+    if (FEED[i].kind === 'session' && (FEED[i].session === sid || FEED[i].id === sid)) return FEED[i];
+  }
+  return null;
+}
+
+function sessModel(src) {
+  var s;
+  var item;
+  var a;
+  var aid;
+  var kind;
+  if (!src) return null;
+  if (src._card) return src;
+  if (typeof src === 'string') {
+    s = sessionById(src);
+    item = sessFeedFor(src);
+  } else if (src.kind === 'session') {
+    item = src;
+    s = sessionById(src.session || src.id);
+  } else {
+    s = src;
+    item = sessFeedFor(src.id);
+  }
+  if (!s || s.status === 'cancelled') return null;
+  sessHydrateOne(s);
+  aid = s.authorId || s.hosted_by || s.lead || '';
+  a = author(aid);
+  kind = oppAuthorKind(a);
+  return {
+    _card: true,
+    id: s.id,
+    status: s.status || 'published',
+    authorId: aid,
+    author: {
+      id: aid,
+      name: a.name,
+      initials: oppInitials(a),
+      kind: kind,
+      verified: !!(a && a.verified),
+      role: kind === 'collaborator' ? 'Collaborator' : 'Mentor',
+      pos: (a && a.pos) || ''
+    },
+    createdAt: (item && item.at) || s.createdAt || s.startsAt || '',
+    editedAt: (item && (item.editedAt || item.edited)) || s.editedAt || '',
+    title: s.title,
+    description: s.description || s.what || '',
+    topic: s.topic || (s.cat ? hashTagLabel(s.cat) : ''),
+    startsAt: s.startsAt,
+    minutes: s.minutes || 60,
+    format: s.format || 'online',
+    where: s.where || s.platform || '',
+    who: s.who || s.pod || '',
+    registrationOpen: s.registrationOpen !== false,
+    signupUrl: s.signupUrl || '',
+    poster: s.poster || null,
+    link: s.link || null,
+    bookings: s.bookings || [],
+    replies: s.replies || (item && item.replies) || [],
+    inspiredCount: s.inspiredCount || (item && (item.insp || item.inspiredCount)) || 0,
+    src: s,
+    item: item
+  };
+}
+
+function sessOwns(s) {
+  var viewer = currentPosterId();
+  if (!s || !viewer) return false;
+  return s.authorId === viewer;
+}
+
+function sessIsOver(s) {
+  return sessEndsAt(s) <= Date.now();
+}
+
+function sessIsLive(s) {
+  var start = sessStartsAt(s);
+  var end = sessEndsAt(s);
+  var now = Date.now();
+  return start <= now && now < end;
+}
+
+function sessStartsAt(s) {
+  if (!s || !s.startsAt) return 0;
+  return new Date(s.startsAt).getTime();
+}
+
+function sessEndsAt(s) {
+  return sessStartsAt(s) + (s.minutes || 60) * 60000;
+}
+
+function sessLengthLabel(mins) {
+  var h;
+  var m;
+  mins = parseInt(mins, 10) || 0;
+  if (mins === 60) return '1 hour';
+  if (mins < 60) return mins + (mins === 1 ? ' minute' : ' minutes');
+  h = Math.floor(mins / 60);
+  m = mins % 60;
+  if (!m) return h === 1 ? '1 hour' : h + ' hours';
+  return h + (h === 1 ? ' hour ' : ' hours ') + m + ' minutes';
+}
+
+function sessWhereLabel(s) {
+  if (s.format === 'inperson') return s.where || '';
+  return 'Online · ' + (s.where || 'Google Meet');
+}
+
+function sessHasPlace(id) {
+  var i;
+  var uid = qaViewerId() || currentPosterId() || 'me';
+  var any = false;
+  for (i = 0; i < (S.sessBookings || []).length; i++) {
+    if (S.sessBookings[i].sessionId !== id) continue;
+    any = true;
+    if (S.sessBookings[i].userId === uid) return true;
+  }
+  if (any) return false;
+  return !!(qaIsStudent() && S.booked && S.booked.indexOf(id) !== -1);
+}
+
+function sessMyBooking(id) {
+  var i;
+  var uid = qaViewerId ? qaViewerId() : currentPosterId() || 'me';
+  for (i = 0; i < (S.sessBookings || []).length; i++) {
+    if (S.sessBookings[i].sessionId === id && S.sessBookings[i].userId === uid) return S.sessBookings[i];
+  }
+  return null;
+}
+
+function sessCanSeeJoin(s) {
+  var left;
+  if (!s || s.format !== 'online') return false;
+  if (!sessHasPlace(s.id)) return false;
+  left = sessStartsAt(s) - Date.now();
+  return left <= 3600000;
+}
+
+function sessJoinUrl(s) {
+  if (!sessCanSeeJoin(s)) return '';
+  return (s.src && s.src.joinLink) || s.joinLink || '';
+}
+
+function sessClockTime(ms) {
+  var d = new Date(ms);
+  var h = d.getHours();
+  var m = d.getMinutes();
+  var ap = h >= 12 ? 'PM' : 'AM';
+  var h12 = h % 12 || 12;
+  var mm = m < 10 ? '0' + m : String(m);
+  return h12 + ':' + mm + ' ' + ap;
+}
+
+function sessFullWhen(ms) {
+  var d = new Date(ms);
+  var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  return days[d.getDay()] + ' ' + countDownWhen(ms);
+}
+
+function sessCountState(s) {
+  var start = sessStartsAt(s);
+  var left;
+  var u;
+  var text;
+  if (!start) return null;
+  if (sessIsOver(s)) {
+    return { tone: 'done', text: 'Finished · ' + oppDateLabel(s.startsAt) };
+  }
+  if (sessIsLive(s)) return { tone: 'now', text: 'Happening now' };
+  left = start - Date.now();
+  u = countDownUnits(left);
+  text = 'Starts in ' + u.n + ' ' + u.unit;
+  if (left >= 48 * 3600000) text += ' · ' + countDownWhen(start);
+  else if (left >= 3600000) text += ' · ' + sessClockTime(start);
+  return { tone: 'soon', text: text };
+}
+
+function sessIsUrgent(s) {
+  var left = sessStartsAt(s) - Date.now();
+  return left > 0 && left <= 14 * 86400000;
+}
+
+function sessCountHtml(s) {
+  var c = sessCountState(s);
+  if (!c) return '';
+  return (
+    '<div class="sess-count is-' +
+    c.tone +
+    '">' +
+    (c.tone === 'now' ? '<span class="sess-dot" aria-hidden="true"></span>' : oppIconClock()) +
+    '<span>' +
+    esc(c.text) +
+    '</span></div>'
+  );
+}
+
+function sessFollowHtml(s, preview) {
+  var on;
+  if (preview || sessOwns(s) || !s.authorId) return '';
+  on = isFollowing(s.authorId);
+  return (
+    '<button type="button" class="story-follow" data-story-follow="' +
+    esc(s.authorId) +
+    '" aria-pressed="' +
+    (on ? 'true' : 'false') +
+    '">' +
+    (on ? 'Following' : '+ Follow') +
+    '</button>'
+  );
+}
+
+function sessMenuHtml(s) {
+  var key = hideKey('session', s.id);
+  var open = S.menu === key;
+  var over = sessIsOver(s);
+  var booked = sessHasPlace(s.id);
+  var html =
+    '<div class="qa-more">' +
+    '<button type="button" class="qa-more-btn" data-menu="' +
+    esc(key) +
+    '" aria-label="More actions" aria-haspopup="true" aria-expanded="' +
+    (open ? 'true' : 'false') +
+    '">' +
+    qaIconMore(22) +
+    '</button>';
+  if (open) {
+    html += '<div class="qa-menu" role="menu">';
+    if (sessOwns(s)) {
+      html += qaMenuItem('data-sess-edit="' + esc(s.id) + '"', 'Edit this session', false);
+      if (!over) {
+        html += qaMenuItem(
+          'data-sess-reg="' + esc(s.id) + '"',
+          s.registrationOpen ? 'Close registration' : 'Open registration',
+          false
+        );
+      }
+      html += '<hr/>';
+      html += qaMenuItem('data-sess-cancel="' + esc(s.id) + '"', 'Cancel the session', true);
+    } else if (booked) {
+      html += qaMenuItem('data-sess-edit-q="' + esc(s.id) + '"', 'Change my question', false);
+      html += '<hr/>';
+      html += qaMenuItem('data-sess-giveup="' + esc(s.id) + '"', 'Give up my place', true);
+    } else {
+      html += qaMenuItem('data-sess-hide="' + esc(key) + '"', 'Not interested', false);
+      html += '<hr/>';
+      html += qaMenuItem('data-sess-report="' + esc(s.id) + '"', 'Report a problem', true);
+    }
+    html += '</div>';
+  }
+  html += '</div>';
+  return html;
+}
+
+function sessAuthorHtml(s, opts) {
+  var when = qaTimeAgo(s.createdAt);
+  var aid = opts && opts.preview ? '' : s.authorId || '';
+  var role = s.author.role + (s.author.pos ? ' · ' + s.author.pos : '');
+  var face =
+    oppAvHtml(s, 48) +
+    '<div class="ident-name"><div class="opp-name"><span class="ident-text">' +
+    esc(s.author.name) +
+    '</span>' +
+    (s.author.verified ? qaTickSvg() + '<span class="sr">Verified</span>' : '') +
+    '</div><p class="opp-role">' +
+    esc(role) +
+    '</p></div>';
+  return (
+    '<div class="sess-author"><div class="sess-main">' +
+    authorHitBtn(face, aid, 'sess-face') +
+    '<p class="sess-kind"><span>' +
+    kindOpenBtn('session', 'Session') +
+    (when ? ' · ' + esc(when) : '') +
+    (s.editedAt ? ' · edited' : '') +
+    '</span></p></div><div class="sess-tools">' +
+    sessFollowHtml(s, !!(opts && opts.preview)) +
+    (opts && opts.preview ? '' : sessMenuHtml(s)) +
+    '</div></div>'
+  );
+}
+
+function sessGlanceHtml(s) {
+  function item(icon, dt, val) {
+    return (
+      '<div class="g"><span class="gi" aria-hidden="true">' +
+      icon +
+      '</span><div><dt class="sr">' +
+      esc(dt) +
+      '</dt><dd>' +
+      esc(val || '') +
+      '</dd></div></div>'
+    );
+  }
+  return (
+    '<dl class="glance">' +
+    item(oppIconPerson(), 'Who it is for', s.who) +
+    item(oppIconPin(), 'Where', sessWhereLabel(s)) +
+    item(oppIconClock(), 'How long', sessLengthLabel(s.minutes)) +
+    '</dl>'
+  );
+}
+
+function sessPrimaryLabel(s) {
+  if (sessHasPlace(s.id)) return { label: 'You have a place', cls: 'have', disabled: false };
+  if (sessIsOver(s) || !s.registrationOpen) return { label: 'Registration closed', cls: '', disabled: true };
+  return { label: 'Book a place', cls: '', disabled: false };
+}
+
+function sessEngageHtml(s, opts) {
+  var n = s.replies ? s.replies.length : 0;
+  var inspired = isInspired(s.id);
+  var saved = isSaved(s.id);
+  var replyLabel = n === 0 ? 'Reply' : n === 1 ? '1 reply' : n + ' replies';
+  var inspN = s.inspiredCount || 0;
+  var prim = sessPrimaryLabel(s);
+  var html = '<div class="qa-actions opp-actions">';
+  html +=
+    '<button type="button" class="qa-act is-inspired" data-inspire="' +
+    esc(s.id) +
+    '" aria-pressed="' +
+    (inspired ? 'true' : 'false') +
+    '">' +
+    qaIconHeart(inspired) +
+    '<span>' +
+    (inspN ? 'Inspired ' + inspN : 'Inspired') +
+    '</span></button>';
+  if (!opts || !opts.inSheet) {
+    html +=
+      '<button type="button" class="qa-act" data-open="session" data-id="' +
+      esc(s.id) +
+      '">' +
+      qaIconReply() +
+      '<span>' +
+      esc(replyLabel) +
+      '</span></button>';
+  }
+  html +=
+    '<button type="button" class="qa-act is-save" data-save="' +
+    esc(s.id) +
+    '" aria-pressed="' +
+    (saved ? 'true' : 'false') +
+    '">' +
+    qaIconSave(saved) +
+    '<span>' +
+    (saved ? 'Saved' : 'Save') +
+    '</span></button>';
+  html +=
+    '<button type="button" class="sess-primary' +
+    (prim.cls ? ' ' + prim.cls : '') +
+    '" data-sess-book="' +
+    esc(s.id) +
+    '"' +
+    (prim.disabled ? ' disabled' : '') +
+    '>' +
+    esc(prim.label) +
+    '</button>';
+  html += '</div>';
+  return html;
+}
+
+function sessBookedNoteHtml(s) {
+  var venue;
+  if (!sessHasPlace(s.id)) return '';
+  if (s.format === 'inperson') {
+    venue = s.where || 'the venue';
+    return (
+      '<div class="sess-booked"><p>Your place is booked. We alert you in the app the day before. Come to ' +
+      esc(venue) +
+      '.</p></div>'
+    );
+  }
+  if (sessCanSeeJoin(s)) {
+    return '<div class="sess-booked"><p>Your place is booked and the session is about to start.</p></div>';
+  }
+  return (
+    '<div class="sess-booked"><p>Your place is booked. The joining link appears here an hour before, and we alert you in the app the day before.</p></div>'
+  );
+}
+
+function sessJoinHtml(s) {
+  var url;
+  if (s.format !== 'online') return '';
+  if (sessCanSeeJoin(s)) {
+    url = sessJoinUrl(s);
+    if (!url) return '<p class="sess-lock">The joining link is not set yet.</p>';
+    return (
+      '<a class="sess-join" href="' +
+      esc(url) +
+      '" target="_blank" rel="noopener">Join on Google Meet</a>'
+    );
+  }
+  if (sessHasPlace(s.id)) {
+    return '<p class="sess-lock">The joining link appears here an hour before the session starts. We alert you in the app at the same time.</p>';
+  }
+  return '<p class="sess-lock">Book a place and the joining link appears here an hour before.</p>';
+}
+
+function sessRenderCard(item, opts) {
+  var s = sessModel(item);
+  var html;
+  opts = opts || {};
+  if (!s) return '';
+  if (!opts.preview && isHidden('session', s.id)) return '';
+  html =
+    '<article class="card feed-card kind-sess sess-card' +
+    (sessIsOver(s) ? ' finished' : '') +
+    (opts.preview ? ' opp-preview' : ' clickable') +
+    '" ' +
+    (opts.preview ? '' : cardClickAttrs('session', s.id)) +
+    '><div class="sess-pad">';
+  html += sessAuthorHtml(s, opts);
+  html +=
+    '<h3 class="sess-title' +
+    (opts.preview ? '' : ' qa-clamp') +
+    '"' +
+    (opts.preview ? '' : ' data-qa-clamp="st-' + esc(s.id) + '"') +
+    '>' +
+    esc(s.title) +
+    '</h3>';
+  html +=
+    '<p class="sess-desc' +
+    (opts.preview ? '' : ' qa-clamp') +
+    '"' +
+    (opts.preview ? '' : ' data-qa-clamp="sd-' + esc(s.id) + '"') +
+    '>' +
+    esc(s.description) +
+    '</p>';
+  html += oppTopicHtml(s.topic);
+  html += oppPosterHtml(s.poster, 'feed');
+  html += oppLinkHtml(s.link);
+  html += sessCountHtml(s);
+  if (sessHasPlace(s.id) && !opts.preview) html += sessBookedNoteHtml(s);
+  html += '</div>';
+  html += sessGlanceHtml(s);
+  html += sessEngageHtml(s, { inSheet: false });
+  html += '</article>';
+  return html;
+}
+
+function sessFactsHtml(s) {
+  var html = '<div class="sess-facts"><h3>The details</h3><dl>';
+  html += '<div class="row"><dt>When</dt><dd>' + esc(sessFullWhen(sessStartsAt(s))) + '</dd></div>';
+  html += '<div class="row"><dt>How long</dt><dd>' + esc(sessLengthLabel(s.minutes)) + '</dd></div>';
+  html += '<div class="row"><dt>Where</dt><dd>' + esc(sessWhereLabel(s)) + '</dd></div>';
+  html += '<div class="row"><dt>Who</dt><dd>' + esc(s.who) + '</dd></div>';
+  html += '<div class="row"><dt>Host</dt><dd>' + esc(s.author.name) + '</dd></div>';
+  html += '</dl></div>';
+  return html;
+}
+
+function sessHostPanelHtml(s) {
+  var n = 0;
+  var i;
+  var html;
+  if (!sessOwns(s)) return '';
+  for (i = 0; i < (s.bookings || []).length; i++) {
+    if (s.bookings[i].question) n += 1;
+  }
+  html = '<div class="sess-host"><h3>Your session</h3>';
+  html += '<p>Registration ' + (s.registrationOpen ? 'open' : 'closed') + '</p>';
+  html += '<p>' + n + (n === 1 ? ' question in' : ' questions in') + '</p>';
+  if (s.signupUrl) html += '<p>Sign-up: on your own site</p>';
+  else if ((s.src && s.src.joinLink) || s.joinLink) html += '<p>Set — released an hour before</p>';
+  else html += '<p>Not set yet</p>';
+  html += '</div>';
+  return html;
+}
+
+function sessAsksHtml(s) {
+  var html;
+  var i;
+  var b;
+  var list;
+  if (!sessOwns(s)) return '';
+  list = [];
+  for (i = 0; i < (s.bookings || []).length; i++) {
+    if (s.bookings[i].question) list.push(s.bookings[i]);
+  }
+  html = '<div class="sess-asks"><h3>What students have asked</h3>';
+  if (!list.length) html += '<p>No questions in yet.</p>';
+  for (i = 0; i < list.length; i++) {
+    b = list[i];
+    html +=
+      '<div class="sess-ask"><strong>' +
+      esc((b.form || 'Student') + (b.region ? ', ' + b.region : '')) +
+      '</strong><span>' +
+      esc(b.question) +
+      '</span></div>';
+  }
+  html +=
+    '<p class="sess-note">Only the form and region is shown to you, never a name or an email.</p></div>';
+  return html;
+}
+
+function sessRepliesHtml(s) {
+  var list = s.replies || [];
+  var html = '';
+  var i;
+  var n;
+  var fake = { id: s.id, replies: list };
+  var host = sessOwns(s);
+  html +=
+    '<p class="opp-replies-h">' +
+    (list.length
+      ? list.length + (list.length === 1 ? ' reply, oldest first' : ' replies, oldest first')
+      : 'No replies yet') +
+    '</p>';
+  for (i = 0; i < list.length; i++) {
+    n = qaNormReply(list[i]);
+    html += '<div class="qa-thread-item">';
+    html += qaReplyHeadHtml(n, fake, true, n.createdAt);
+    html += qaBodyHtml(n.text);
+    html += '</div>';
+  }
+  html +=
+    '<div class="qa-compose"><p class="qa-compose-label">' +
+    (host ? 'Answer here' : 'Ask about this session') +
+    '</p><div class="qa-compose-grid">' +
+    qaYouAv() +
+    '<div class="qa-compose-field"><textarea id="sess-reply" rows="1" placeholder="Add a question or something you know…"></textarea>' +
+    '<div class="qa-compose-foot"><p class="qa-note">' +
+    (qaIsStudent() || oppIsParent() ? 'Please be respectful.' : '') +
+    '</p><button type="button" class="qa-post" id="sess-post" data-sess-reply="' +
+    esc(s.id) +
+    '" disabled>Reply</button></div></div></div></div>';
+  return html;
+}
+
+function sessSheetHtml(s) {
+  var html = '<div class="sess-sheet" tabindex="-1">';
+  html += sessAuthorHtml(s, {});
+  html += '<h3 class="sess-title">' + esc(s.title) + '</h3>';
+  html += oppTopicHtml(s.topic);
+  html += sessCountHtml(s);
+  html += '<p class="sess-desc" style="white-space:pre-wrap">' + esc(s.description) + '</p>';
+  html += oppPosterHtml(s.poster, 'sheet');
+  html += oppLinkHtml(s.link);
+  html += sessFactsHtml(s);
+  html += sessJoinHtml(s);
+  html += sessBookedNoteHtml(s);
+  if (sessCanSeeJoin(s) && s.format === 'online') {
+    /* join button already in sessJoinHtml */
+  }
+  html += sessEngageHtml(s, { inSheet: true });
+  html += sessHostPanelHtml(s);
+  html += sessAsksHtml(s);
+  html += sessRepliesHtml(s);
+  html += '</div>';
+  return html;
+}
+
+function sessSortSoonest(list) {
+  return list.slice().sort(function (a, b) {
+    var sa = sessModel(a);
+    var sb = sessModel(b);
+    var overA = sa ? (sessIsOver(sa) ? 1 : 0) : 0;
+    var overB = sb ? (sessIsOver(sb) ? 1 : 0) : 0;
+    if (overA !== overB) return overA - overB;
+    return (sa ? sessStartsAt(sa) : 0) - (sb ? sessStartsAt(sb) : 0);
+  });
+}
+
+function sessBookedCount() {
+  var n = 0;
+  var seen = {};
+  var i;
+  var s;
+  var id;
+  var uid = qaViewerId() || currentPosterId() || 'me';
+  for (i = 0; i < (S.sessBookings || []).length; i++) {
+    if (S.sessBookings[i].userId !== uid) continue;
+    id = S.sessBookings[i].sessionId;
+    s = sessModel(id);
+    if (!s || sessIsOver(s) || seen[id]) continue;
+    seen[id] = true;
+    n += 1;
+  }
+  if (n) return n;
+  if (!qaIsStudent()) return 0;
+  for (i = 0; i < (S.booked || []).length; i++) {
+    id = S.booked[i];
+    s = sessModel(id);
+    if (!s || sessIsOver(s) || seen[id]) continue;
+    seen[id] = true;
+    n += 1;
+  }
+  return n;
+}
+
+function sessStudentLineHtml() {
+  var n = sessBookedCount();
+  if (n) {
+    return (
+      '<p class="sess-student-line">' +
+      n +
+      (n === 1 ? ' session booked' : ' sessions booked') +
+      ' — we alert you in the app the day before</p>'
+    );
+  }
+  return '<p class="sess-student-line">No sessions booked yet — book a place and we will alert you before it starts</p>';
+}
+
+function sessHostWarnHtml() {
+  var viewer = currentPosterId();
+  var i;
+  var s;
+  var left;
+  var best = null;
+  var bestLeft = Infinity;
+  var u;
+  if (!viewer) return '';
+  for (i = 0; i < SESSIONS.length; i++) {
+    s = sessModel(SESSIONS[i]);
+    if (!s || s.authorId !== viewer || sessIsOver(s)) continue;
+    left = sessStartsAt(s) - Date.now();
+    if (left <= 0 || left > 14 * 86400000) continue;
+    if (left < bestLeft) {
+      bestLeft = left;
+      best = s;
+    }
+  }
+  if (!best) return '';
+  u = countDownUnits(bestLeft);
+  return (
+    '<p class="sess-lead-line">Your "' +
+    esc(best.title) +
+    '" starts in ' +
+    u.n +
+    ' ' +
+    u.unit +
+    '</p>'
+  );
+}
+
+function sessToday() {
+  var d = new Date();
+  var m = d.getMonth() + 1;
+  var day = d.getDate();
+  return d.getFullYear() + '-' + (m < 10 ? '0' + m : m) + '-' + (day < 10 ? '0' + day : day);
+}
+
+function sessEmailOk(v) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(v || '').trim());
+}
+
+function sessStep1Ok(c) {
+  var title = (c.title || '').trim();
+  var desc = (c.description || '').trim();
+  if (title.length < 6 || title.length > 80) return false;
+  if (desc.length < 20) return false;
+  if (!c.topic) return false;
+  if (c.poster && (c.posterAlt || '').trim().length < 10) return false;
+  return true;
+}
+
+function sessStep2Ok(c) {
+  var mins = parseInt(c.minutes, 10);
+  if (!(c.dateVal || '').trim()) return false;
+  if (!(c.timeVal || '').trim()) return false;
+  if (isNaN(mins) || mins < 15 || mins > 240 || mins % 15 !== 0) return false;
+  if ((c.where || '').trim().length < 2) return false;
+  if ((c.who || '').trim().length < 3 || (c.who || '').trim().length > 90) return false;
+  if ((c.signupUrl || '').trim() && !oppParseLink(c.signupUrl)) return false;
+  return true;
+}
+
+function sessResetCompose() {
+  var c = ensureSess();
+  c.step = 1;
+  c.title = '';
+  c.description = '';
+  c.topic = '';
+  c.tagQ = '';
+  c.tagIx = -1;
+  c.poster = null;
+  c.posterAlt = '';
+  c.linkUrl = '';
+  c.dateVal = '';
+  c.timeVal = '';
+  c.minutes = 60;
+  c.format = 'online';
+  c.where = '';
+  c.joinLink = '';
+  c.who = '';
+  c.signupUrl = '';
+  c.editId = '';
+  c.createdAt = '';
+}
+
+function sessOpenCompose() {
+  ensureSess();
+  sessResetCompose();
+  S.sess.dialog = 'compose';
+  S.sess.step = 1;
+  sessPaintLayer();
+}
+
+function sessLoadEdit(id) {
+  var s = sessModel(id);
+  var c = ensureSess();
+  var d;
+  if (!s || !sessOwns(s)) return;
+  sessResetCompose();
+  c.editId = s.id;
+  c.createdAt = s.createdAt;
+  c.title = s.title;
+  c.description = s.description;
+  c.topic = s.topic;
+  c.poster = s.poster;
+  c.posterAlt = s.poster ? s.poster.alt || '' : '';
+  c.linkUrl = s.link ? s.link.url : '';
+  d = new Date(s.startsAt);
+  c.dateVal =
+    d.getFullYear() +
+    '-' +
+    (d.getMonth() + 1 < 10 ? '0' : '') +
+    (d.getMonth() + 1) +
+    '-' +
+    (d.getDate() < 10 ? '0' : '') +
+    d.getDate();
+  c.timeVal =
+    (d.getHours() < 10 ? '0' : '') + d.getHours() + ':' + (d.getMinutes() < 10 ? '0' : '') + d.getMinutes();
+  c.minutes = s.minutes;
+  c.format = s.format;
+  c.where = s.where;
+  c.joinLink = (s.src && s.src.joinLink) || s.joinLink || '';
+  c.who = s.who;
+  c.signupUrl = s.signupUrl || '';
+  c.dialog = 'compose';
+  c.step = 1;
+  sessPaintLayer();
+}
+
+function sessMatchTopics(term) {
+  var q = String(term || '')
+    .replace(/^#/, '')
+    .toLowerCase()
+    .replace(/\s+/g, '');
+  var all = qaTopicCatalog();
+  var prefix = [];
+  var sub = [];
+  var i;
+  var key;
+  var hit;
+  if (!q) return [];
+  for (i = 0; i < all.length; i++) {
+    key = all[i].tag.replace(/^#/, '').toLowerCase();
+    if (ensureSess().topic === all[i].tag) continue;
+    if (key.indexOf(q) === 0) prefix.push(all[i]);
+    else if (key.indexOf(q) !== -1) sub.push(all[i]);
+  }
+  hit = prefix.concat(sub);
+  if (hit.length > 5) hit.length = 5;
+  return hit;
+}
+
+function sessTopicFieldHtml() {
+  var c = ensureSess();
+  var html = '<div class="qa-tags" id="sess-tag-wrap"><label class="qa-tags-label" for="sess-tag-q">Topic</label>';
+  if (c.topic) {
+    html +=
+      '<div class="qa-chosen"><span class="opp-chip">' +
+      esc(c.topic) +
+      '<span class="qa-chip-x" role="button" tabindex="0" data-sess-untag="1" aria-label="Remove ' +
+      esc(c.topic) +
+      '">×</span></span></div>';
+    html += '<p class="opp-hint">Remove it to choose a different one.</p>';
+  } else {
+    html +=
+      '<input id="sess-tag-q" class="qa-tag-input" role="combobox" aria-expanded="false" aria-controls="sess-sug" aria-autocomplete="list" placeholder="Start typing a topic" value="' +
+      esc(c.tagQ || '') +
+      '"/>';
+    html += '<div class="qa-sug" id="sess-sug" role="listbox" hidden></div>';
+  }
+  html += '</div>';
+  return html;
+}
+
+function sessAttachFieldsHtml() {
+  var c = ensureSess();
+  var link = oppParseLink(c.linkUrl);
+  var html = '<label>Poster</label><div class="opp-file"><input id="sess-poster" type="file" accept="image/*"/></div>';
+  if (c.poster) {
+    html += oppPosterHtml(
+      { url: c.poster.url, alt: c.posterAlt || c.poster.alt || '', width: c.poster.width, height: c.poster.height },
+      'feed'
+    );
+    html +=
+      '<label for="sess-alt">Alt text</label><textarea id="sess-alt" minlength="10">' +
+      esc(c.posterAlt || '') +
+      '</textarea>';
+    html +=
+      '<p class="opp-hint' +
+      ((c.posterAlt || '').trim().length < 10 ? ' is-bad' : '') +
+      '">Required. This is all a screen reader gets, and all anyone sees if images do not load.</p>';
+  }
+  html +=
+    '<label for="sess-link">Link</label><input id="sess-link" type="url" placeholder="https://" value="' +
+    esc(c.linkUrl || '') +
+    '"/>';
+  html += '<div id="sess-link-prev">' + (link ? oppLinkHtml(link) : '') + '</div>';
+  return html;
+}
+
+function sessComposePreview() {
+  var c = ensureSess();
+  var a = currentPosterId() ? author(currentPosterId()) : { name: 'You', init: 'YO', role: 'mentor', pos: '' };
+  var kind = oppAuthorKind(a);
+  var starts = c.dateVal && c.timeVal ? c.dateVal + 'T' + c.timeVal + ':00-04:00' : '';
+  return {
+    _card: true,
+    id: c.editId || 'preview',
+    status: 'published',
+    authorId: currentPosterId() || '',
+    author: {
+      id: currentPosterId() || '',
+      name: a.name,
+      initials: oppInitials(a),
+      kind: kind,
+      verified: !!(a && a.verified),
+      role: kind === 'collaborator' ? 'Collaborator' : 'Mentor',
+      pos: a.pos || ''
+    },
+    createdAt: c.createdAt || nowIso(),
+    editedAt: c.editId ? nowIso() : '',
+    title: c.title,
+    description: c.description,
+    topic: c.topic,
+    startsAt: starts,
+    minutes: parseInt(c.minutes, 10) || 60,
+    format: c.format,
+    where: c.where,
+    who: c.who,
+    registrationOpen: true,
+    signupUrl: c.signupUrl,
+    poster: c.poster
+      ? { url: c.poster.url, alt: c.posterAlt || c.poster.alt || '', width: c.poster.width, height: c.poster.height }
+      : null,
+    link: c.poster ? null : oppParseLink(c.linkUrl),
+    bookings: [],
+    replies: [],
+    inspiredCount: 0,
+    joinLink: c.joinLink
+  };
+}
+
+function sessComposeStepHtml() {
+  var c = ensureSess();
+  var html = '';
+  html += '<p class="opp-step">Step ' + c.step + ' of 2</p>';
+  html +=
+    '<div class="sess-progress" aria-hidden="true"><span' +
+    (c.step >= 1 ? ' class="on"' : '') +
+    '></span><span' +
+    (c.step >= 2 ? ' class="on"' : '') +
+    '></span></div>';
+  if (c.step === 1) {
+    html +=
+      '<label for="sess-title">Title</label><input id="sess-title" maxlength="80" value="' +
+      esc(c.title) +
+      '"/>';
+    html +=
+      '<label for="sess-desc">What you will cover</label><textarea id="sess-desc">' +
+      esc(c.description) +
+      '</textarea>';
+    html += sessAttachFieldsHtml();
+    html += sessTopicFieldHtml();
+  } else {
+    html +=
+      '<label for="sess-date">Date</label><input id="sess-date" type="date" min="' +
+      sessToday() +
+      '" value="' +
+      esc(c.dateVal) +
+      '"/>';
+    html +=
+      '<label for="sess-time">Start time</label><input id="sess-time" type="time" value="' +
+      esc(c.timeVal) +
+      '"/>';
+    html +=
+      '<label for="sess-mins">How long, in minutes</label><input id="sess-mins" type="number" min="15" max="240" step="15" value="' +
+      esc(String(c.minutes || 60)) +
+      '"/>';
+    html +=
+      '<p class="opp-hint">Where</p><div class="sess-fmt"><button type="button" data-sess-fmt="online"' +
+      (c.format === 'online' ? ' class="on"' : '') +
+      '>Online</button><button type="button" data-sess-fmt="inperson"' +
+      (c.format === 'inperson' ? ' class="on"' : '') +
+      '>In person</button></div>';
+    html +=
+      '<label for="sess-where">' +
+      (c.format === 'inperson' ? 'Venue' : 'Platform') +
+      '</label><input id="sess-where" value="' +
+      esc(c.where) +
+      '" placeholder="' +
+      (c.format === 'inperson' ? 'The venue, and how to find it' : 'Google Meet, or the platform name') +
+      '"/>';
+    if (c.format === 'online') {
+      html +=
+        '<label for="sess-join">Joining link</label><input id="sess-join" type="url" placeholder="https://" value="' +
+        esc(c.joinLink) +
+        '"/>';
+      html +=
+        '<p class="opp-hint">Students see this an hour before, never on the public post. You can add it later.</p>';
+    }
+    html +=
+      '<label for="sess-who">Who it is for</label><input id="sess-who" maxlength="90" value="' +
+      esc(c.who) +
+      '"/>';
+    html +=
+      '<label for="sess-signup">Sign-up link</label><input id="sess-signup" type="url" placeholder="https://" value="' +
+      esc(c.signupUrl) +
+      '"/>';
+    html +=
+      '<p class="opp-hint">Leave this empty and students book here. Add a link and they register on your own site instead.</p>';
+  }
+  html += '<div class="opp-foot">';
+  html +=
+    '<button type="button" class="qa-keep" data-sess-back="1">' +
+    (c.step === 1 ? 'Back' : 'Back') +
+    '</button>';
+  html +=
+    '<button type="button" class="qa-go" id="sess-continue" data-sess-next="1"' +
+    ((c.step === 1 ? sessStep1Ok(c) : sessStep2Ok(c)) ? '' : ' disabled') +
+    '>' +
+    (c.step === 2 ? 'Preview' : 'Continue') +
+    '</button>';
+  html += '</div>';
+  return html;
+}
+
+function sessPreviewHtml() {
+  var html = '<p class="qa-sub">This is exactly how it will look</p>';
+  html += sessRenderCard(sessComposePreview(), { preview: true });
+  html += '<div class="opp-foot">';
+  html += '<button type="button" class="qa-keep" data-sess-edit-back="1">Back to edit</button>';
+  html += '<button type="button" class="qa-go" data-sess-publish="1">Post the session</button>';
+  html += '</div>';
+  return html;
+}
+
+function sessBookValid(c) {
+  return (c.bookName || '').trim().length >= 2 && sessEmailOk(c.bookEmail);
+}
+
+function sessBookFormHtml(s) {
+  var c = ensureSess();
+  var host = s.author.name;
+  var html = '<h2 id="qa-dlg-title">Book a place</h2>';
+  html += '<p class="qa-sub">' + esc(s.title) + '</p>';
+  html +=
+    '<label for="sess-book-name">Your name</label><input id="sess-book-name" value="' +
+    esc(c.bookName) +
+    '" autocomplete="name"/>';
+  html +=
+    '<label for="sess-book-email">Email</label><input id="sess-book-email" type="email" value="' +
+    esc(c.bookEmail) +
+    '" autocomplete="email"/>';
+  html +=
+    '<p class="opp-hint">Your name and email stay with Next Step. ' +
+    esc(host) +
+    ' only ever sees your form and region.</p>';
+  html +=
+    '<label for="sess-book-q">Anything you want covered?</label><textarea id="sess-book-q" maxlength="200">' +
+    esc(c.bookQ) +
+    '</textarea>';
+  html +=
+    '<label class="opp-check"><input id="sess-book-alert" type="checkbox"' +
+    (c.bookAlerts ? ' checked' : '') +
+    '/> <span>Alert me before it starts — in the app, the day before and again an hour before with the joining link.</span></label>';
+  html +=
+    '<div class="qa-dlg-actions"><button type="button" class="qa-keep" data-sess-dlg-close="1">Cancel</button><button type="button" class="qa-go" id="sess-book-go" data-sess-confirm-book="1"' +
+    (sessBookValid(c) ? '' : ' disabled') +
+    '>Confirm place</button></div>';
+  return html;
+}
+
+function sessSignupHtml(s) {
+  return (
+    '<h2 id="qa-dlg-title">Book a place</h2><p class="qa-sub">' +
+    esc(s.title) +
+    '</p><p class="sess-url">' +
+    esc(s.signupUrl) +
+    '</p><p class="opp-hint">Registering happens with ' +
+    esc(s.author.name) +
+    ', not on Next Step</p><div class="qa-dlg-actions"><button type="button" class="qa-keep" data-sess-dlg-close="1">Cancel</button><a class="qa-go sess-primary" href="' +
+    esc(s.signupUrl) +
+    '" target="_blank" rel="noopener">Open the sign-up page</a></div>'
+  );
+}
+
+function sessBookedHtml(s) {
+  var b = sessMyBooking(s.id);
+  var html = '<h2 id="qa-dlg-title">You have a place</h2>';
+  html += '<p class="qa-sub">' + esc(s.title) + '</p>';
+  html += '<p>It is in My Sessions now.</p>';
+  if (b && b.alerts) html += '<p>We alert you in the app the day before, and an hour before.</p>';
+  else html += '<p>Alerts are off. You can turn them on from My Sessions.</p>';
+  if (s.format === 'online') html += '<p>The joining link appears an hour before the session starts.</p>';
+  if (b && b.question) html += '<p>What you asked for has gone to ' + esc(s.author.name) + '.</p>';
+  html += '<div class="qa-dlg-actions"><button type="button" class="qa-go" data-sess-dlg-close="1">Done</button></div>';
+  return html;
+}
+
+function sessReportHtml() {
+  var c = ensureSess();
+  var html = '<h2 id="qa-dlg-title">Report a problem</h2>';
+  html += '<p class="qa-sub">Tell us what is wrong. A person reviews every report.</p>';
+  html +=
+    '<label class="opp-check"><input type="radio" name="sess-rep" value="wrong"' +
+    (c.reportReason === 'wrong' ? ' checked' : '') +
+    '/> <span>The details look wrong</span></label>';
+  html +=
+    '<label class="opp-check"><input type="radio" name="sess-rep" value="unsafe"' +
+    (c.reportReason === 'unsafe' ? ' checked' : '') +
+    '/> <span>It does not look safe for students</span></label>';
+  html +=
+    '<label class="opp-check"><input type="radio" name="sess-rep" value="other"' +
+    (c.reportReason === 'other' ? ' checked' : '') +
+    '/> <span>Something else</span></label>';
+  html +=
+    '<div class="qa-dlg-actions"><button type="button" class="qa-keep" data-sess-dlg-close="1">Cancel</button><button type="button" class="qa-go" data-sess-send-report="1"' +
+    (c.reportReason ? '' : ' disabled') +
+    '>Send report</button></div>';
+  return html;
+}
+
+function sessPaintLayer() {
+  var layer = byId('qa-layer');
+  var c = ensureSess();
+  var html;
+  var s;
+  var focus;
+  if (!layer) return;
+  if (S.qa && S.qa.dialog) return;
+  if (S.opp && S.opp.dialog) return;
+  if (!c.dialog) {
+    if (!layer.hidden && layer.querySelector('.sess-box')) {
+      layer.hidden = true;
+      layer.innerHTML = '';
+    }
+    return;
+  }
+  html = '<div class="qa-dialog opp-box opp-compose sess-box" role="dialog" aria-modal="true" aria-labelledby="qa-dlg-title">';
+  if (c.dialog === 'compose') {
+    html += '<h2 id="qa-dlg-title">Host a session</h2>' + sessComposeStepHtml();
+  } else if (c.dialog === 'preview') {
+    html += '<h2 id="qa-dlg-title">Preview</h2>' + sessPreviewHtml();
+  } else if (c.dialog === 'book') {
+    s = sessModel(c.dialogId);
+    html += s ? sessBookFormHtml(s) : '<p>Missing.</p>';
+  } else if (c.dialog === 'signup') {
+    s = sessModel(c.dialogId);
+    html += s ? sessSignupHtml(s) : '<p>Missing.</p>';
+  } else if (c.dialog === 'booked') {
+    s = sessModel(c.dialogId);
+    html += s ? sessBookedHtml(s) : '<p>Missing.</p>';
+  } else if (c.dialog === 'giveup') {
+    html +=
+      '<h2 id="qa-dlg-title">Give up your place?</h2><p class="qa-sub">Your booking and your question are removed.</p><div class="qa-dlg-actions"><button type="button" class="qa-keep" data-sess-dlg-close="1">Keep my place</button><button type="button" class="qa-kill" data-sess-confirm-giveup="1">Give up my place</button></div>';
+  } else if (c.dialog === 'editq') {
+    html +=
+      '<h2 id="qa-dlg-title">Change my question</h2><textarea id="sess-edit-q" maxlength="200">' +
+      esc(c.bookQ) +
+      '</textarea><div class="qa-dlg-actions"><button type="button" class="qa-keep" data-sess-dlg-close="1">Cancel</button><button type="button" class="qa-go" data-sess-save-q="1">Save</button></div>';
+  } else if (c.dialog === 'cancel') {
+    html +=
+      '<h2 id="qa-dlg-title">Cancel this session?</h2><p class="qa-sub">Everyone with a place is told, and it leaves the feed.</p><div class="qa-dlg-actions"><button type="button" class="qa-keep" data-sess-dlg-close="1">Keep it</button><button type="button" class="qa-kill" data-sess-confirm-cancel="1">Cancel the session</button></div>';
+  } else if (c.dialog === 'report') {
+    html += sessReportHtml();
+  }
+  html += '</div>';
+  layer.innerHTML = html;
+  layer.hidden = false;
+  focus =
+    byId('sess-title') ||
+    byId('sess-date') ||
+    byId('sess-book-name') ||
+    byId('sess-edit-q') ||
+    layer.querySelector('button, input, textarea');
+  if (focus && focus.focus) focus.focus();
+}
+
+function sessCloseDialog() {
+  var c = ensureSess();
+  var layer = byId('qa-layer');
+  c.dialog = '';
+  c.dialogId = '';
+  c.reportReason = '';
+  if (layer && !(S.qa && S.qa.dialog) && !(S.opp && S.opp.dialog)) {
+    layer.hidden = true;
+    layer.innerHTML = '';
+  }
+}
+
+function sessReadFields() {
+  var c = ensureSess();
+  var el;
+  el = byId('sess-title');
+  if (el) c.title = el.value;
+  el = byId('sess-desc');
+  if (el) c.description = el.value;
+  el = byId('sess-alt');
+  if (el) c.posterAlt = el.value;
+  el = byId('sess-link');
+  if (el) c.linkUrl = el.value;
+  el = byId('sess-date');
+  if (el) c.dateVal = el.value;
+  el = byId('sess-time');
+  if (el) c.timeVal = el.value;
+  el = byId('sess-mins');
+  if (el) c.minutes = parseInt(el.value, 10) || c.minutes;
+  el = byId('sess-where');
+  if (el) c.where = el.value;
+  el = byId('sess-join');
+  if (el) c.joinLink = el.value;
+  el = byId('sess-who');
+  if (el) c.who = el.value;
+  el = byId('sess-signup');
+  if (el) c.signupUrl = el.value;
+  el = byId('sess-tag-q');
+  if (el) c.tagQ = el.value;
+  el = byId('sess-book-name');
+  if (el) c.bookName = el.value;
+  el = byId('sess-book-email');
+  if (el) c.bookEmail = el.value;
+  el = byId('sess-book-q');
+  if (el) c.bookQ = el.value;
+  el = byId('sess-book-alert');
+  if (el) c.bookAlerts = !!el.checked;
+  el = byId('sess-edit-q');
+  if (el) c.bookQ = el.value;
+}
+
+function sessSyncCompose() {
+  var btn = byId('sess-continue');
+  var go = byId('sess-book-go');
+  var c = ensureSess();
+  var hint;
+  if (btn) {
+    btn.disabled = c.step === 1 ? !sessStep1Ok(c) : !sessStep2Ok(c);
+  }
+  if (go) go.disabled = !sessBookValid(c);
+  if (byId('sess-alt')) {
+    hint = byId('sess-alt').nextElementSibling;
+    if (hint && hint.className.indexOf('opp-hint') !== -1) {
+      hint.className = (c.posterAlt || '').trim().length < 10 ? 'opp-hint is-bad' : 'opp-hint';
+    }
+  }
+}
+
+function sessSyncTopicUi() {
+  var c = ensureSess();
+  var sug = byId('sess-sug');
+  var input = byId('sess-tag-q');
+  var hits;
+  var html = '';
+  var i;
+  if (!sug || !input) return;
+  if (!input.value || !input.value.replace(/\s/g, '')) {
+    sug.hidden = true;
+    sug.innerHTML = '';
+    input.setAttribute('aria-expanded', 'false');
+    return;
+  }
+  hits = sessMatchTopics(input.value);
+  if (!hits.length) {
+    html =
+      '<p class="qa-sug-empty">No topic matches "' +
+      esc(input.value.trim()) +
+      '". Topics are set by the Next Step team.</p>';
+  } else {
+    for (i = 0; i < hits.length; i++) {
+      html +=
+        '<button type="button" role="option" data-sess-pick="' +
+        esc(hits[i].tag) +
+        '" aria-selected="' +
+        (c.tagIx === i ? 'true' : 'false') +
+        '"><span class="qa-sug-name">' +
+        esc(hits[i].tag) +
+        '</span><span class="qa-sug-n">used ' +
+        hits[i].useCount +
+        (hits[i].useCount === 1 ? ' time' : ' times') +
+        '</span></button>';
+    }
+  }
+  sug.innerHTML = html;
+  sug.hidden = false;
+  input.setAttribute('aria-expanded', 'true');
+}
+
+function sessPublish() {
+  var c = ensureSess();
+  var preview = sessComposePreview();
+  var raw;
+  var item;
+  var starts;
+  if (!sessStep1Ok(c) || !sessStep2Ok(c)) return;
+  starts = c.dateVal + 'T' + c.timeVal + ':00-04:00';
+  if (c.editId) {
+    raw = sessionById(c.editId);
+    if (!raw || !sessOwns(sessModel(raw))) return;
+    raw.title = c.title.trim();
+    raw.description = c.description.trim();
+    raw.what = c.description.trim();
+    raw.topic = c.topic;
+    raw.cat = qaTopicRaw(c.topic) || raw.cat;
+    raw.startsAt = starts;
+    raw.minutes = parseInt(c.minutes, 10) || 60;
+    raw.format = c.format;
+    raw.where = c.where.trim();
+    raw.platform = c.where.trim();
+    raw.who = c.who.trim();
+    raw.signupUrl = (c.signupUrl || '').trim();
+    raw.joinLink = c.format === 'online' ? (c.joinLink || '').trim() : '';
+    raw.poster = preview.poster;
+    raw.link = preview.link;
+    raw.editedAt = nowIso();
+    item = sessFeedFor(c.editId);
+    if (item) {
+      item.edited = true;
+      item.editedAt = raw.editedAt;
+      item.cat = raw.cat;
+    }
+    sessCloseDialog();
+    toast('Session updated.');
+    render();
+    return;
+  }
+  raw = {
+    id: 's-' + Date.now(),
+    status: 'published',
+    title: c.title.trim(),
+    description: c.description.trim(),
+    what: c.description.trim(),
+    topic: c.topic,
+    cat: qaTopicRaw(c.topic) || '',
+    startsAt: starts,
+    minutes: parseInt(c.minutes, 10) || 60,
+    format: c.format,
+    where: c.where.trim(),
+    platform: c.where.trim(),
+    who: c.who.trim(),
+    signupUrl: (c.signupUrl || '').trim(),
+    joinLink: c.format === 'online' ? (c.joinLink || '').trim() : '',
+    poster: preview.poster,
+    link: preview.link,
+    authorId: currentPosterId() || '',
+    hosted_by: currentPosterId() || '',
+    lead: currentPosterId() || '',
+    createdAt: nowIso(),
+    registrationOpen: true,
+    bookings: [],
+    replies: [],
+    inspiredCount: 0,
+    seats: 30,
+    taken: 0,
+    qs: []
+  };
+  sessHydrateOne(raw);
+  SESSIONS.unshift(raw);
+  FEED.unshift({
+    id: 'f-' + raw.id,
+    kind: 'session',
+    session: raw.id,
+    at: raw.createdAt,
+    cat: raw.cat,
+    replies: []
+  });
+  sessCloseDialog();
+  toast('Session posted.');
+  render();
+}
+
+function sessOpenBook(id) {
+  var s = sessModel(id);
+  var c = ensureSess();
+  if (!s) return;
+  if (oppIsParent()) {
+    toast('Parents cannot book a place. Ask a question on the session instead.');
+    return;
+  }
+  if (sessOwns(s)) {
+    toast('You are hosting this session.');
+    return;
+  }
+  if (sessHasPlace(s.id)) {
+    toast('You already have a place.');
+    return;
+  }
+  if (sessIsOver(s) || !s.registrationOpen) {
+    toast('Registration is closed.');
+    return;
+  }
+  if (
+    requirePathway({
+      type: 'book',
+      id: id,
+      reason: 'We need your form to hold you a place.'
+    })
+  ) {
+    return;
+  }
+  c.dialogId = s.id;
+  c.bookName = (S.me && S.me.name) || youName() || '';
+  c.bookEmail = (S.me && S.me.email) || '';
+  c.bookQ = '';
+  c.bookAlerts = false;
+  if (s.signupUrl) c.dialog = 'signup';
+  else c.dialog = 'book';
+  sessPaintLayer();
+}
+
+function sessConfirmBook() {
+  var c = ensureSess();
+  var s = sessModel(c.dialogId);
+  var raw;
+  var rec;
+  sessReadFields();
+  if (!s || !sessBookValid(c)) return;
+  raw = sessionById(s.id);
+  rec = {
+    id: 'bk-' + Date.now(),
+    sessionId: s.id,
+    userId: qaViewerId ? qaViewerId() : currentPosterId() || 'me',
+    name: c.bookName.trim(),
+    email: c.bookEmail.trim(),
+    question: (c.bookQ || '').trim().slice(0, 200),
+    alerts: !!c.bookAlerts,
+    createdAt: nowIso(),
+    form: (S.me && S.me.form) || S.form || 'Student',
+    region: (S.me && S.me.region) || S.region || ''
+  };
+  if (!raw.bookings) raw.bookings = [];
+  raw.bookings.push(rec);
+  S.sessBookings.push(rec);
+  if (S.booked.indexOf(s.id) === -1) S.booked.push(s.id);
+  c.dialog = 'booked';
+  sessPaintLayer();
+  render();
+}
+
+function sessGiveUp(id) {
+  var raw = sessionById(id);
+  var uid = qaViewerId ? qaViewerId() : currentPosterId() || 'me';
+  if (!raw) return;
+  raw.bookings = (raw.bookings || []).filter(function (b) {
+    return b.userId !== uid;
+  });
+  S.sessBookings = (S.sessBookings || []).filter(function (b) {
+    return !(b.sessionId === id && b.userId === uid);
+  });
+  S.booked = (S.booked || []).filter(function (x) {
+    return x !== id;
+  });
+  sessCloseDialog();
+  toast('Your place was given up.');
+  render();
+}
+
+function sessSaveQuestion(id) {
+  var c = ensureSess();
+  var raw = sessionById(id);
+  var uid = qaViewerId ? qaViewerId() : currentPosterId() || 'me';
+  var i;
+  sessReadFields();
+  if (!raw) return;
+  for (i = 0; i < (raw.bookings || []).length; i++) {
+    if (raw.bookings[i].userId === uid) raw.bookings[i].question = (c.bookQ || '').trim().slice(0, 200);
+  }
+  for (i = 0; i < (S.sessBookings || []).length; i++) {
+    if (S.sessBookings[i].sessionId === id && S.sessBookings[i].userId === uid) {
+      S.sessBookings[i].question = (c.bookQ || '').trim().slice(0, 200);
+    }
+  }
+  sessCloseDialog();
+  toast('Question updated.');
+  render();
+}
+
+function sessCancelSession(id) {
+  var raw = sessionById(id);
+  var item;
+  var n;
+  if (!raw || !sessOwns(sessModel(raw))) return;
+  n = (raw.bookings || []).length;
+  raw.status = 'cancelled';
+  item = sessFeedFor(id);
+  if (item) {
+    FEED = FEED.filter(function (x) {
+      return x !== item;
+    });
+  }
+  sessCloseDialog();
+  toast(
+    n
+      ? 'Session cancelled. ' + n + (n === 1 ? ' student with a place was told.' : ' students with a place were told.')
+      : 'Session cancelled.'
+  );
+  if (NAV.length) closeSheet();
+  else render();
+}
+
+function sessToggleReg(id) {
+  var raw = sessionById(id);
+  var s = sessModel(raw);
+  if (!raw || !s || !sessOwns(s) || sessIsOver(s)) return;
+  raw.registrationOpen = !raw.registrationOpen;
+  S.menu = '';
+  if (raw.registrationOpen) toast('Registration is open again.');
+  else toast('Registration closed. Students can still see the session.');
+  if (NAV.length) paint();
+  else render();
+}
+
+function sessPostReply(id) {
+  var box = byId('sess-reply');
+  var raw = sessionById(id);
+  var text = box && box.value ? box.value.trim() : '';
+  var rec;
+  if (!raw || !text) return;
+  rec = {
+    id: 'sr-' + Date.now(),
+    text: text,
+    createdAt: nowIso(),
+    mine: true,
+    authorId: currentPosterId() || qaViewerId(),
+    authorRole: qaIsMentor() ? 'mentor' : postingRole() === 'parent' ? 'parent' : 'student',
+    who: qaIsMentor() ? (author(currentPosterId()) || {}).name : studentLabel(),
+    name: qaIsMentor() ? (author(currentPosterId()) || {}).name : studentLabel()
+  };
+  if (!raw.replies) raw.replies = [];
+  raw.replies.push(rec);
+  toast('Reply posted.');
+  paint();
+}
+
+function sessOpenBookGate(id) {
+  sessOpenBook(id);
+}
+
+function sessHandleClick(e, t) {
+  var btn;
+  var c = ensureSess();
+  var id;
+  var sug;
+  btn = closestEl(t, '[data-sess-book]');
+  if (btn) {
+    e.stopPropagation();
+    if (btn.disabled) return true;
+    sessOpenBook(btn.getAttribute('data-sess-book'));
+    return true;
+  }
+  btn = closestEl(t, '[data-sess-edit]');
+  if (btn) {
+    e.stopPropagation();
+    S.menu = '';
+    sessLoadEdit(btn.getAttribute('data-sess-edit'));
+    return true;
+  }
+  btn = closestEl(t, '[data-sess-reg]');
+  if (btn) {
+    e.stopPropagation();
+    sessToggleReg(btn.getAttribute('data-sess-reg'));
+    return true;
+  }
+  btn = closestEl(t, '[data-sess-cancel]');
+  if (btn) {
+    e.stopPropagation();
+    S.menu = '';
+    c.dialog = 'cancel';
+    c.dialogId = btn.getAttribute('data-sess-cancel');
+    sessPaintLayer();
+    return true;
+  }
+  btn = closestEl(t, '[data-sess-giveup]');
+  if (btn) {
+    e.stopPropagation();
+    S.menu = '';
+    c.dialog = 'giveup';
+    c.dialogId = btn.getAttribute('data-sess-giveup');
+    sessPaintLayer();
+    return true;
+  }
+  btn = closestEl(t, '[data-sess-edit-q]');
+  if (btn) {
+    e.stopPropagation();
+    S.menu = '';
+    id = btn.getAttribute('data-sess-edit-q');
+    c.dialogId = id;
+    c.bookQ = (sessMyBooking(id) && sessMyBooking(id).question) || '';
+    c.dialog = 'editq';
+    sessPaintLayer();
+    return true;
+  }
+  btn = closestEl(t, '[data-sess-hide]');
+  if (btn) {
+    e.stopPropagation();
+    hidePost(btn.getAttribute('data-sess-hide'));
+    return true;
+  }
+  btn = closestEl(t, '[data-sess-report]');
+  if (btn) {
+    e.stopPropagation();
+    S.menu = '';
+    c.dialog = 'report';
+    c.dialogId = btn.getAttribute('data-sess-report');
+    c.reportReason = '';
+    sessPaintLayer();
+    return true;
+  }
+  btn = closestEl(t, '[data-sess-dlg-close]');
+  if (btn) {
+    sessCloseDialog();
+    return true;
+  }
+  btn = closestEl(t, '[data-sess-back]');
+  if (btn) {
+    sessReadFields();
+    if (c.step === 1) {
+      if (c.editId) {
+        sessCloseDialog();
+        return true;
+      }
+      sessCloseDialog();
+      ensureOpp();
+      S.opp.dialog = 'picker';
+      S.opp.mode = '';
+      oppPaintLayer();
+      return true;
+    }
+    c.step = 1;
+    sessPaintLayer();
+    return true;
+  }
+  btn = closestEl(t, '[data-sess-next]');
+  if (btn) {
+    sessReadFields();
+    if (c.step === 1) {
+      if (!sessStep1Ok(c)) return true;
+      c.step = 2;
+    } else {
+      if (!sessStep2Ok(c)) return true;
+      c.dialog = 'preview';
+    }
+    sessPaintLayer();
+    return true;
+  }
+  btn = closestEl(t, '[data-sess-edit-back]');
+  if (btn) {
+    c.dialog = 'compose';
+    c.step = 2;
+    sessPaintLayer();
+    return true;
+  }
+  btn = closestEl(t, '[data-sess-publish]');
+  if (btn) {
+    sessPublish();
+    return true;
+  }
+  btn = closestEl(t, '[data-sess-fmt]');
+  if (btn) {
+    sessReadFields();
+    c.format = btn.getAttribute('data-sess-fmt');
+    sessPaintLayer();
+    return true;
+  }
+  btn = closestEl(t, '[data-sess-untag]');
+  if (btn) {
+    c.topic = '';
+    c.tagQ = '';
+    sessPaintLayer();
+    return true;
+  }
+  btn = closestEl(t, '[data-sess-pick]');
+  if (btn) {
+    c.topic = btn.getAttribute('data-sess-pick');
+    c.tagQ = '';
+    sessPaintLayer();
+    return true;
+  }
+  btn = closestEl(t, '[data-sess-confirm-book]');
+  if (btn) {
+    sessConfirmBook();
+    return true;
+  }
+  btn = closestEl(t, '[data-sess-confirm-giveup]');
+  if (btn) {
+    sessGiveUp(c.dialogId);
+    return true;
+  }
+  btn = closestEl(t, '[data-sess-save-q]');
+  if (btn) {
+    sessSaveQuestion(c.dialogId);
+    return true;
+  }
+  btn = closestEl(t, '[data-sess-confirm-cancel]');
+  if (btn) {
+    sessCancelSession(c.dialogId);
+    return true;
+  }
+  btn = closestEl(t, '[data-sess-send-report]');
+  if (btn) {
+    toast('Report sent. A person will look at it.');
+    sessCloseDialog();
+    return true;
+  }
+  btn = closestEl(t, '[data-sess-reply]');
+  if (btn) {
+    sessPostReply(btn.getAttribute('data-sess-reply'));
+    return true;
+  }
+  if (t && t.name === 'sess-rep') {
+    c.reportReason = t.value;
+    sessPaintLayer();
+    return true;
+  }
+  sug = byId('sess-sug');
+  if (sug && !sug.hidden && !closestEl(t, '#sess-tag-wrap')) {
+    sug.hidden = true;
+    return true;
+  }
+  if (byId('qa-layer') && !byId('qa-layer').hidden && byId('qa-layer').querySelector('.sess-box') && !closestEl(t, '.sess-box')) {
+    if (sug && !sug.hidden) {
+      sug.hidden = true;
+      return true;
+    }
+    sessCloseDialog();
+    return true;
+  }
+  return false;
+}
+
+function sessHandleInput(e) {
+  var c;
+  var file;
+  var reader;
+  var img;
+  var slot;
+  var parsed;
+  var postBtn;
+  if (!e.target) return false;
+  if (e.target.id === 'sess-poster' && e.target.files && e.target.files[0]) {
+    c = ensureSess();
+    file = e.target.files[0];
+    reader = new FileReader();
+    img = new Image();
+    reader.onload = function () {
+      img.onload = function () {
+        c.poster = { url: reader.result, width: img.naturalWidth, height: img.naturalHeight, alt: '' };
+        sessPaintLayer();
+      };
+      img.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+    return true;
+  }
+  if (
+    e.target.id === 'sess-title' ||
+    e.target.id === 'sess-desc' ||
+    e.target.id === 'sess-alt' ||
+    e.target.id === 'sess-link' ||
+    e.target.id === 'sess-date' ||
+    e.target.id === 'sess-time' ||
+    e.target.id === 'sess-mins' ||
+    e.target.id === 'sess-where' ||
+    e.target.id === 'sess-join' ||
+    e.target.id === 'sess-who' ||
+    e.target.id === 'sess-signup' ||
+    e.target.id === 'sess-book-name' ||
+    e.target.id === 'sess-book-email' ||
+    e.target.id === 'sess-book-q' ||
+    e.target.id === 'sess-book-alert' ||
+    e.target.id === 'sess-edit-q'
+  ) {
+    sessReadFields();
+    sessSyncCompose();
+    if (e.target.id === 'sess-link') {
+      slot = byId('sess-link-prev');
+      parsed = oppParseLink(e.target.value);
+      if (slot) slot.innerHTML = parsed ? oppLinkHtml(parsed) : '';
+    }
+    return true;
+  }
+  if (e.target.id === 'sess-tag-q') {
+    ensureSess().tagQ = e.target.value;
+    ensureSess().tagIx = -1;
+    sessSyncTopicUi();
+    return true;
+  }
+  if (e.target.id === 'sess-reply') {
+    e.target.style.height = 'auto';
+    e.target.style.height = Math.min(220, Math.max(44, e.target.scrollHeight)) + 'px';
+    postBtn = byId('sess-post');
+    if (postBtn) postBtn.disabled = !e.target.value.trim();
+    return true;
+  }
+  return false;
+}
+
+function sessHandleKey(e) {
+  var c = ensureSess();
+  var sug = byId('sess-sug');
+  var opts;
+  var n;
+  if (e.target && e.target.id === 'sess-tag-q') {
+    opts = sug && !sug.hidden ? sug.querySelectorAll('[data-sess-pick]') : [];
+    n = opts.length;
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      e.stopPropagation();
+      if (sug) sug.hidden = true;
+      return true;
+    }
+    if (e.key === 'ArrowDown' && n) {
+      e.preventDefault();
+      c.tagIx = c.tagIx + 1 >= n ? 0 : c.tagIx + 1;
+      sessSyncTopicUi();
+      return true;
+    }
+    if (e.key === 'ArrowUp' && n) {
+      e.preventDefault();
+      c.tagIx = c.tagIx <= 0 ? n - 1 : c.tagIx - 1;
+      sessSyncTopicUi();
+      return true;
+    }
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      if (c.tagIx >= 0 && opts[c.tagIx]) opts[c.tagIx].click();
+      else if (opts[0]) opts[0].click();
+      return true;
+    }
+    if (e.key === 'Backspace' && !e.target.value && c.topic) {
+      c.topic = '';
+      sessPaintLayer();
+      return true;
+    }
+  }
+  if (e.key === 'Escape' && c.dialog) {
+    if (sug && !sug.hidden) {
+      sug.hidden = true;
+      return true;
+    }
+    if (c.dialog === 'preview') {
+      c.dialog = 'compose';
+      c.step = 2;
+      sessPaintLayer();
+      return true;
+    }
+    sessCloseDialog();
+    return true;
+  }
+  return false;
+}
+
+function sessAfterPaint() {
+  document.body.classList.toggle(
+    'sess-sheet-open',
+    !!(NAV.length && NAV[NAV.length - 1].t === 'session')
+  );
+  if (NAV.length && NAV[NAV.length - 1].t === 'session') {
+    var root = document.querySelector('.sess-sheet');
+    if (root && root.focus && document.activeElement === document.body) {
+      root.setAttribute('tabindex', '-1');
+      root.focus();
+    }
+  }
+  if (!(S.qa && S.qa.dialog) && !(S.opp && S.opp.dialog)) sessPaintLayer();
+}
+
+function sessInit() {
+  if (sessInit._ready) return;
+  sessInit._ready = true;
+  sessHydrateAll();
+}
 
 /* Views, pathway, wiring. Depends on app-core.js + data. ES5. No em/en dashes. */
 
@@ -17430,11 +19744,25 @@ function viewOpp(v) {
 
 function viewSession(v) {
   var s = sessionById(v.id);
-  var p;
+  var card;
   if (!s) return { crumb: 'Session', title: 'Missing', html: '<p>Not found.</p>' };
   pushRecent('session', s.id, s.title);
-  p = loadDetail('session', v.id);
-  return { crumb: 'Session', title: 'Session', html: renderSimpleDetail(p) };
+  if (typeof sessSheetHtml === 'function' && typeof sessModel === 'function') {
+    card = sessModel(s.id);
+    return {
+      crumb: '',
+      title: 'Session',
+      html: card ? sessSheetHtml(card) : '<p>Not found.</p>',
+      after: function () {
+        var root = document.querySelector('.sess-sheet');
+        if (root && root.focus) {
+          root.setAttribute('tabindex', '-1');
+          root.focus();
+        }
+      }
+    };
+  }
+  return { crumb: 'Session', title: 'Session', html: renderSimpleDetail(loadDetail('session', v.id)) };
 }
 
 function viewJourney(v) {
@@ -18225,56 +20553,13 @@ function viewAlerts() {
 }
 
 function viewBook(v) {
+  if (typeof sessOpenBook === 'function') {
+    sessOpenBook(v.id);
+    return { crumb: '', title: '', html: '' };
+  }
   var s = sessionById(v.id);
   if (!s) return { crumb: 'Book', title: 'Missing', html: '<p>Not found.</p>' };
-  var lead = author(s.lead);
-  var left = Math.max(0, s.seats - s.taken);
-  var booked = S.booked.indexOf(s.id) !== -1;
-  var waiting = S.waitlist.indexOf(s.id) !== -1;
-  var html =
-    '<div class="detail"><p class="eyebrow">' +
-    esc(s.pod) +
-    '</p><h2>' +
-    esc(s.title) +
-    '</h2><p class="muted">' +
-    esc(sessionWhen(s)) +
-    ' · ' +
-    esc(lead.name) +
-    '</p>';
-  if (booked) {
-    html +=
-      '<div class="callout green"><p>You have a place.</p>' +
-      '<button type="button" class="btn g" data-cancel-book="' +
-      esc(s.id) +
-      '">Cancel place</button></div>';
-  } else if (left === 0) {
-    if (waiting) {
-      html +=
-        '<div class="callout gold"><p>You are on the waitlist. You move up if someone cancels.</p>' +
-        '<button type="button" class="btn g" data-leave-waitlist="' +
-        esc(s.id) +
-        '">Leave waitlist</button></div>';
-    } else {
-      html +=
-        '<div class="callout gold"><p>This session is full. Join the waitlist and you move up if someone cancels.</p>' +
-        '<button type="button" class="btn" data-waitlist="' +
-        esc(s.id) +
-        '">Join waitlist</button></div>';
-    }
-  } else {
-    html += '<p>' + left + ' places remaining</p>';
-    html +=
-      '<label class="field-label" for="book-q">What do you want to leave knowing?</label>' +
-      '<input type="text" id="book-q" placeholder="One sentence is enough"/>';
-    html +=
-      '<label class="check"><input type="checkbox" id="book-wa" checked/> Send my reminders on WhatsApp. Confirmation, a reminder the day before, and the link an hour before. Your number is never shown to mentors or other students. <span class="muted">Prototype note: no number is collected here. The tick confirms you want reminders.</span></label>';
-    html +=
-      '<div class="card-actions"><button type="button" class="btn" data-confirm-book="' +
-      esc(s.id) +
-      '">Confirm place</button></div>';
-  }
-  html += '</div>';
-  return { crumb: 'Booking', title: s.title, html: html };
+  return { crumb: 'Booking', title: s.title, html: '<p>Booking is unavailable.</p>' };
 }
 
 function commChip(label, on, attrs) {
@@ -18687,6 +20972,7 @@ function renderChrome() {
     var navKey = navs[i].getAttribute('data-nav');
     var on =
       navKey === S.view ||
+      (navKey === 'feed' && (S.view === 'topic' || S.view === 'kind')) ||
       (navKey === 'community' && (sheetTop === 'person' || sheetTop === 'mentor')) ||
       (navKey === 'alerts' && (S.view === 'sessions' || sheetTop === 'session' || sheetTop === 'book' || sheetTop === 'opp'));
     if (on) {
@@ -18780,23 +21066,241 @@ function restorePwSearch() {
   S.pw.focusQ = false;
 }
 
+function itemHasTopic(item, tag) {
+  var want = String(tag || '')
+    .replace(/^#/, '')
+    .toLowerCase();
+  var tags;
+  var i;
+  var o;
+  if (!want) return false;
+  if (item.topic && String(item.topic).replace(/^#/, '').toLowerCase() === want) return true;
+  if (typeof qaTopics === 'function') {
+    tags = qaTopics(item);
+    for (i = 0; i < tags.length; i++) {
+      if (String(tags[i]).replace(/^#/, '').toLowerCase() === want) return true;
+    }
+  }
+  if (item.cat && hashTagLabel(item.cat).replace(/^#/, '').toLowerCase() === want) return true;
+  if (item.kind === 'opportunity' && item.opp && OPPS[item.opp]) {
+    o = OPPS[item.opp];
+    if (o.topic && String(o.topic).replace(/^#/, '').toLowerCase() === want) return true;
+    if (o.cat && hashTagLabel(o.cat).replace(/^#/, '').toLowerCase() === want) return true;
+  }
+  return false;
+}
+
+function topicPosts(tag) {
+  var out = [];
+  var i;
+  for (i = 0; i < FEED.length; i++) {
+    if (itemHasTopic(FEED[i], tag)) out.push(FEED[i]);
+  }
+  return out;
+}
+
+function topicEngagement(item) {
+  return (item.insp || item.inspiredCount || 0) + 2 * ((item.replies && item.replies.length) || 0);
+}
+
+function topicTrending(list) {
+  return list.slice().sort(function (a, b) {
+    return topicEngagement(b) - topicEngagement(a);
+  });
+}
+
+function topicLatest(list) {
+  return list.slice().sort(function (a, b) {
+    return new Date(b.at || b.createdAt || 0).getTime() - new Date(a.at || a.createdAt || 0).getTime();
+  });
+}
+
+function pageSectionHtml(title, key, moreKey, list, shown) {
+  var html;
+  var rows;
+  var i;
+  var more;
+  if (!list.length) return '';
+  more = moreKey === key;
+  rows = more ? list : list.slice(0, 3);
+  html = '<section class="page-sec"><h2>' + esc(title);
+  if (!more && list.length > 3) {
+    html +=
+      '<button type="button" data-list-more="' + esc(key) + '">View more</button>';
+  }
+  html += '</h2>';
+  for (i = 0; i < rows.length; i++) {
+    shown[rows[i].id] = true;
+    html += renderFeedCard(rows[i]);
+  }
+  html += '</section>';
+  return html;
+}
+
+function renderTopicPage() {
+  var tag = normalizeTopicTag(S.topicTag || '');
+  var list = topicPosts(tag);
+  var trend = topicTrending(list);
+  var latest = topicLatest(list);
+  var shown = {};
+  var rest = [];
+  var i;
+  var html =
+    '<div class="page-list"><h1>' +
+    esc(tag || 'Topic') +
+    '</h1><p class="page-kicker">' +
+    list.length +
+    (list.length === 1 ? ' post' : ' posts') +
+    '</p>';
+  if (!list.length) {
+    html +=
+      '<p class="page-empty">No posts tagged ' +
+      esc(tag) +
+      ' yet.</p></div>';
+    return html;
+  }
+  html += pageSectionHtml('Trending', 'trending', S.topicMore, trend, shown);
+  html += pageSectionHtml('Latest', 'latest', S.topicMore, latest, shown);
+  if (S.topicMore === 'all') {
+    for (i = 0; i < list.length; i++) {
+      if (!shown[list[i].id]) rest.push(list[i]);
+    }
+    if (rest.length) html += pageSectionHtml('All posts', 'all', 'all', rest, shown);
+  } else if (list.length > 6) {
+    html +=
+      '<section class="page-sec"><h2><button type="button" data-list-more="all">View more</button></h2></section>';
+  }
+  html += '</div>';
+  return html;
+}
+
+function kindFeedItems(kind) {
+  var want = kind === 'question' ? 'question' : kind;
+  var out = [];
+  var i;
+  var sess;
+  for (i = 0; i < FEED.length; i++) {
+    if (FEED[i].kind !== want) continue;
+    if (want === 'session') {
+      sess = sessionById(FEED[i].session);
+      if (sess && sess.status === 'cancelled') continue;
+    }
+    out.push(FEED[i]);
+  }
+  return out;
+}
+
+function kindOppSoonest(list) {
+  return list.slice().sort(function (a, b) {
+    var oa = a.opp && OPPS[a.opp] ? OPPS[a.opp] : null;
+    var ob = b.opp && OPPS[b.opp] ? OPPS[b.opp] : null;
+    var ca;
+    var cb;
+    var closedA = oa && typeof oppClosed === 'function' && oppOpening(oa) ? oppClosed(oppOpening(oa)) : false;
+    var closedB = ob && typeof oppClosed === 'function' && oppOpening(ob) ? oppClosed(oppOpening(ob)) : false;
+    if (closedA !== closedB) return closedA ? 1 : -1;
+    ca = oa && oa.closesAt && !oa.rolling ? new Date(oa.closesAt).getTime() : Number.MAX_VALUE;
+    cb = ob && ob.closesAt && !ob.rolling ? new Date(ob.closesAt).getTime() : Number.MAX_VALUE;
+    return ca - cb;
+  });
+}
+
+function kindTitle(kind) {
+  if (kind === 'question') return 'Questions';
+  if (kind === 'story') return 'Stories';
+  if (kind === 'opportunity') return 'Opportunities';
+  if (kind === 'session') return 'Sessions';
+  if (kind === 'journey') return 'Journeys';
+  return 'Posts';
+}
+
+function renderKindPage() {
+  var kind = S.kindKey || 'story';
+  var list = kindFeedItems(kind);
+  var html =
+    '<div class="page-list"><h1>' +
+    esc(kindTitle(kind)) +
+    '</h1><p class="page-kicker">' +
+    list.length +
+    (list.length === 1 ? ' post' : ' posts') +
+    '</p>';
+  var trend;
+  var latest;
+  var shown = {};
+  var rest;
+  var i;
+  if (!list.length) {
+    html += '<p class="page-empty">Nothing here yet.</p></div>';
+    return html;
+  }
+  if (kind === 'opportunity') {
+    html += pageSectionHtml('Coming up soonest', 'soonest', S.kindMore, kindOppSoonest(list), shown);
+  } else if (kind === 'session' && typeof sessSortSoonest === 'function') {
+    html += pageSectionHtml('Coming up soonest', 'soonest', S.kindMore, sessSortSoonest(list), shown);
+  } else {
+    trend = topicTrending(list);
+    latest = topicLatest(list);
+    html += pageSectionHtml('Trending', 'trending', S.kindMore, trend, shown);
+    html += pageSectionHtml('Latest', 'latest', S.kindMore, latest, shown);
+    if (S.kindMore === 'all') {
+      rest = [];
+      for (i = 0; i < list.length; i++) {
+        if (!shown[list[i].id]) rest.push(list[i]);
+      }
+      if (rest.length) html += pageSectionHtml('All posts', 'all', 'all', rest, shown);
+    } else if (list.length > 6) {
+      html +=
+        '<section class="page-sec"><h2><button type="button" data-list-more="all">View more</button></h2></section>';
+    }
+  }
+  html += '</div>';
+  return html;
+}
+
+function openTopicPage(tag) {
+  hideSheetUi();
+  S.view = 'topic';
+  S.topicTag = normalizeTopicTag(tag);
+  S.topicMore = '';
+  render();
+}
+
+function openKindPage(kind) {
+  hideSheetUi();
+  S.view = 'kind';
+  S.kindKey = kind === 'question' || kind === 'thread' ? 'question' : kind;
+  S.kindMore = '';
+  render();
+}
+
 function render() {
   var main = byId('main');
   if (S.view === 'pathway') main.innerHTML = renderPathway();
   else if (S.view === 'alerts' || S.view === 'sessions') main.innerHTML = renderAlertsPage();
   else if (S.view === 'community') main.innerHTML = renderCommunity();
+  else if (S.view === 'topic') main.innerHTML = renderTopicPage();
+  else if (S.view === 'kind') main.innerHTML = renderKindPage();
   else main.innerHTML = renderFeed();
   renderChrome();
   restorePwSearch();
   if (typeof qaAfterPaint === 'function') qaAfterPaint();
   if (typeof qaInit === 'function') qaInit();
   if (typeof oppInit === 'function') oppInit();
+  if (typeof sessInit === 'function') sessInit();
 }
 
 function openKind(kind, id) {
   if (kind === 'sessions') {
     S.sessionStage = id || '';
     setView('alerts');
+    return;
+  }
+  if (kind === 'kind') {
+    openKindPage(id);
+    return;
+  }
+  if (kind === 'topic') {
+    openTopicPage(id);
     return;
   }
   var map = {
@@ -18830,6 +21334,10 @@ function openKind(kind, id) {
     }
   }
   if (kind === 'book') {
+    if (typeof sessOpenBook === 'function') {
+      sessOpenBook(id);
+      return;
+    }
     if (
       requirePathway({
         type: 'book',
@@ -19235,6 +21743,7 @@ function wire() {
     var btn;
     var innerBtn = closestEl(t, 'button');
     var card = closestEl(t, '.clickable[data-open]');
+    if (typeof sessHandleClick === 'function' && sessHandleClick(e, t)) return;
     if (typeof oppHandleClick === 'function' && oppHandleClick(e, t)) return;
     if (typeof qaHandleClick === 'function' && qaHandleClick(e, t)) return;
     if (S.menu && !closestEl(t, '.more-wrap') && !closestEl(t, '.qa-more')) {
@@ -19450,7 +21959,15 @@ function wire() {
     btn = closestEl(t, '[data-topic]');
     if (btn) {
       e.stopPropagation();
-      go({ t: 'topic', id: btn.getAttribute('data-topic') });
+      openTopicPage(btn.getAttribute('data-topic'));
+      return;
+    }
+    btn = closestEl(t, '[data-list-more]');
+    if (btn) {
+      e.stopPropagation();
+      if (S.view === 'topic') S.topicMore = btn.getAttribute('data-list-more');
+      else S.kindMore = btn.getAttribute('data-list-more');
+      render();
       return;
     }
 
@@ -19818,6 +22335,7 @@ function wire() {
   });
 
   document.addEventListener('input', function (e) {
+    if (typeof sessHandleInput === 'function' && sessHandleInput(e)) return;
     if (typeof oppHandleInput === 'function' && oppHandleInput(e)) return;
     if (typeof qaHandleInput === 'function' && qaHandleInput(e)) return;
     if (e.target && e.target.id === 'q') {
@@ -19842,12 +22360,13 @@ function wire() {
       return;
     }
     if (e.target && e.target.id === 'feed-q') {
+      var fpos = e.target.selectionStart;
       S.query = e.target.value;
       render();
       var fq = byId('feed-q');
       if (fq) {
         fq.focus();
-        if (fq.setSelectionRange) fq.setSelectionRange(fq.value.length, fq.value.length);
+        if (fq.setSelectionRange) fq.setSelectionRange(fpos, fpos);
       }
       return;
     }
@@ -19878,8 +22397,9 @@ function wire() {
     }
     if (e.target && e.target.id === 'comp-cat') S.draftCat = e.target.value;
     if (e.target && e.target.id === 'comp-anon') S.anon = e.target.checked;
-    if (e.target && (e.target.id === 'opp-poster' || e.target.id === 'opp-photos')) {
-      if (typeof oppHandleInput === 'function') oppHandleInput(e);
+    if (e.target && (e.target.id === 'opp-poster' || e.target.id === 'opp-photos' || e.target.id === 'sess-poster')) {
+      if (e.target.id === 'sess-poster' && typeof sessHandleInput === 'function') sessHandleInput(e);
+      else if (typeof oppHandleInput === 'function') oppHandleInput(e);
       return;
     }
     if (e.target && e.target.id === 'comp-img') {
@@ -19908,6 +22428,7 @@ function wire() {
   document.addEventListener('keydown', function (e) {
     var bar;
     var btn;
+    if (typeof sessHandleKey === 'function' && sessHandleKey(e)) return;
     if (typeof oppHandleKey === 'function' && oppHandleKey(e)) return;
     if (typeof qaHandleKey === 'function' && qaHandleKey(e)) return;
     if (e.target && e.target.id === 'thread-reply' && e.key === 'Enter' && !e.shiftKey) {

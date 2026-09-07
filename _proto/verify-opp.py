@@ -98,7 +98,7 @@ def main():
 
         page.locator("[data-opp-post]").click()
         page.wait_for_timeout(200)
-        assert page.locator("[data-opp-type]").count() == 3
+        assert page.locator("[data-opp-type]").count() == 4
         page.screenshot(path=str(SHOT / "1440-opp-picker.png"), full_page=False)
         page.locator('[data-opp-type="opportunity"]').click()
         page.wait_for_timeout(200)

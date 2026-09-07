@@ -206,17 +206,20 @@ function qaYouAv() {
 }
 
 function qaTileHtml() {
-  return '<span class="qa-tile" aria-hidden="true"><span class="qa-qmark">?</span><span class="qa-qlabel">Q&amp;A</span></span>';
+  return (
+    '<button type="button" class="qa-tile" data-open="kind" data-id="question" aria-label="All questions">' +
+    '<span class="qa-qmark" aria-hidden="true">?</span><span class="qa-qlabel" aria-hidden="true">Q&amp;A</span></button>'
+  );
 }
 
 function qaMetaLine(item) {
   var t = qaTimeAgo(item.at || item.createdAt);
-  var html = '';
+  var html = kindOpenBtn('question', 'Question');
   if (qaOwnsQuestion(item)) {
-    html += '<span class="qa-yours">Your question</span>';
+    html += ' · <span class="qa-yours">Your question</span>';
     if (t) html += ' ' + esc(t);
-  } else {
-    html += esc(t);
+  } else if (t) {
+    html += ' · ' + esc(t);
   }
   if (item.edited || item.editedAt) html += ' · edited';
   return html;
@@ -307,9 +310,9 @@ function qaIdentityHtml(item, withMenu) {
   return (
     '<div class="qa-id">' +
     qaTileHtml() +
-    '<div><div class="qa-ask-name">' +
+    '<div class="ident-name"><div class="qa-ask-name"><span class="ident-text">' +
     esc(qaAsker(item)) +
-    '</div><p class="qa-ask-meta">' +
+    '</span></div><p class="qa-ask-meta">' +
     qaMetaLine(item) +
     '</p></div>' +
     (withMenu ? qaQuestionMenu(item) : '') +
@@ -345,22 +348,28 @@ function qaTopicsHtml(item, clickable) {
 
 function qaReplyHeadHtml(n, item, withMenu, whenFallback) {
   var when = qaTimeAgo(n.createdAt || whenFallback);
-  var html =
-    '<div class="qa-reply">' +
+  var aid = n.authorRole === 'mentor' ? n.authorId : '';
+  var html = '<div class="qa-reply">';
+  html += authorHitBtn(
     '<span class="qa-av ' +
-    (n.authorRole === 'mentor' ? 'is-mentor' : 'is-student') +
-    '" aria-hidden="true">' +
-    esc(n.initials) +
-    '</span><div>' +
-    '<div class="qa-r-name">' +
-    esc(n.name) +
-    (n.verified
-      ? qaTickSvg() + '<span class="sr">Verified mentor</span>'
-      : '') +
-    '</div>';
-  if (n.authorRole === 'mentor' && n.role) {
-    html += '<p class="qa-r-role">' + esc(n.role) + '</p>';
-  }
+      (n.authorRole === 'mentor' ? 'is-mentor' : 'is-student') +
+      '" aria-hidden="true">' +
+      esc(n.initials) +
+      '</span>',
+    aid,
+    'av-hit'
+  );
+  html += '<div class="ident-name">';
+  html += authorHitBtn(
+    '<div class="qa-r-name"><span class="ident-text">' +
+      esc(n.name) +
+      '</span>' +
+      (n.verified ? qaTickSvg() + '<span class="sr">Verified mentor</span>' : '') +
+      '</div>' +
+      (n.authorRole === 'mentor' && n.role ? '<p class="qa-r-role">' + esc(n.role) + '</p>' : ''),
+    aid,
+    'name-hit'
+  );
   if (when) {
     html += '<p class="qa-r-when">' + esc(when) + (n.edited ? ' · edited' : '') + '</p>';
   }
@@ -389,11 +398,9 @@ function qaEngageHtml(item, inThread) {
   var n = item.replies ? item.replies.length : 0;
   var inspired = isInspired(item.id);
   var saved = isSaved(item.id);
-  var following = S.qFollow.indexOf(item.id) !== -1;
   var inspN = qaInspireCount(item);
   var replyLabel;
   var html;
-  var showUpdates = !inThread && n === 0 && qaIsStudent();
   if (n === 0) replyLabel = qaIsMentor() ? 'Answer' : 'Reply';
   else replyLabel = n === 1 ? '1 reply' : n + ' replies';
   html = '<div class="qa-actions">';
@@ -427,17 +434,13 @@ function qaEngageHtml(item, inThread) {
     '<span>' +
     (saved ? 'Saved' : 'Save') +
     '</span></button>';
-  if (showUpdates) {
+  if (!inThread) {
     html +=
-      '<button type="button" class="qa-act is-updates" data-qa-updates="' +
+      '<button type="button" class="opp-primary" data-open="thread" data-id="' +
       esc(item.id) +
-      '" aria-pressed="' +
-      (following ? 'true' : 'false') +
-      '" aria-label="Get updates when someone answers this question">' +
-      qaIconBell() +
-      '<span>' +
-      (following ? 'Updates on' : 'Get updates') +
-      '</span></button>';
+      '">' +
+      (n > 0 ? 'View answers' : qaIsMentor() ? 'Answer' : 'View answers') +
+      '</button>';
   }
   html += '</div>';
   return html;
@@ -730,6 +733,7 @@ function qaAfterPaint() {
   }
   qaPaintLayer();
   if (typeof oppAfterPaint === 'function') oppAfterPaint();
+  if (typeof sessAfterPaint === 'function') sessAfterPaint();
 }
 
 function qaOpenDialog(type, spec) {
@@ -764,6 +768,7 @@ function qaPaintLayer() {
   if (!layer) return;
   if (!q.dialog) {
     if (S.opp && S.opp.dialog) return;
+    if (S.sess && S.sess.dialog) return;
     layer.hidden = true;
     layer.innerHTML = '';
     return;
@@ -1276,22 +1281,33 @@ function qaHandleClick(e, t) {
   return false;
 }
 
+function qaSyncDialogFields() {
+  var q = ensureQa();
+  var count = document.querySelector('#qa-layer .qa-count');
+  var go = document.querySelector('#qa-layer .qa-go');
+  var left;
+  var item;
+  if (q.dialog === 'ask') {
+    left = 180 - (q.dialogText || '').length;
+    if (count) {
+      count.textContent = left + ' left';
+      if (left < 20) count.classList.add('is-low');
+      else count.classList.remove('is-low');
+    }
+    if (go) go.disabled = (q.dialogText || '').trim().length < 10;
+  } else if (q.dialog === 'edit-q') {
+    item = q.dialogId ? feedById(q.dialogId) : null;
+    if (go) go.disabled = !item || (q.dialogText || '') === (item.title || '');
+  }
+}
+
 function qaHandleInput(e) {
   var item;
   var top;
   var q = ensureQa();
   if (e.target && e.target.id === 'qa-dlg-text') {
     q.dialogText = e.target.value;
-    if (q.dialog === 'ask' || q.dialog === 'edit-q') qaPaintLayer();
-    if (q.dialog === 'ask') {
-      e.target = byId('qa-dlg-text');
-      if (e.target) {
-        e.target.focus();
-        try {
-          e.target.setSelectionRange(q.dialogText.length, q.dialogText.length);
-        } catch (err) {}
-      }
-    }
+    qaSyncDialogFields();
     return true;
   }
   if (e.target && e.target.id === 'qa-reply') {

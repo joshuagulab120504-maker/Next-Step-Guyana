@@ -1,0 +1,185 @@
+/* Session card, sheet, booking, and host composer. Tokens match Q&A / Opportunity / Story. */
+.sess-card, .sess-sheet, .qa-dialog.sess-box {
+  --navy:#0d2b45; --navy-deep:#061a2d; --ink:#152739;
+  --muted:#64778a; --muted-2:#8a9aa8;
+  --paper:#eceff1; --line:#dfe4e8; --line-soft:#e9edf0;
+  --red:#c4392f; --red-soft:#fdf1f0;
+  --green:#07864d; --green-soft:#eef8f2;
+  --gold:#ffcf27; --gold-ink:#8a6612;
+  --chip:#edf1f5; --chip-ink:#20456a;
+  --focus:#1d7fd4;
+  --f:"Source Sans 3","Source Sans Pro",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  font-family:var(--f); font-weight:400; letter-spacing:0; color:var(--ink);
+}
+
+.sess-card{
+  background:#fff; border:1px solid var(--line); border-radius:12px;
+  box-shadow:0 1px 2px rgba(11,38,56,.045); overflow:hidden;
+}
+.sess-card.finished .sess-title,
+.sess-card.finished .sess-desc,
+.sess-card.finished .glance dd{color:var(--muted)}
+.sess-card.finished .glance{background:#f3f5f6}
+.sess-pad{padding:16px 16px 14px}
+.sess-author{
+  display:grid; grid-template-columns:minmax(0,1fr) auto;
+  gap:8px 12px; align-items:start;
+}
+.sess-main{min-width:0}
+.sess-tools{display:flex; align-items:center; gap:6px; flex:0 0 auto}
+.sess-face{
+  display:grid; grid-template-columns:48px minmax(0,1fr);
+  gap:12px; align-items:start; width:100%; min-width:0;
+  padding:0; border:0; background:transparent;
+  color:inherit; font:inherit; text-align:left;
+  -webkit-appearance:none; appearance:none;
+}
+button.sess-face{cursor:pointer}
+div.sess-face{cursor:default}
+.sess-kind{
+  margin:2px 0 0 60px;
+  font-size:13px; font-weight:400; color:var(--muted);
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.sess-card .k-word.k-session,
+.sess-sheet .k-word.k-session{
+  color:var(--gold-ink); font-weight:600;
+}
+.qa-ask-block{margin:0 0 12px}
+.qa-dialog.sess-box a.qa-go{
+  display:inline-flex; align-items:center; justify-content:center;
+  text-decoration:none;
+}
+.sess-title{
+  margin:14px 0 0; max-width:34em;
+  font-size:19px; font-weight:600; line-height:1.42; color:var(--ink);
+}
+.sess-desc{
+  margin:10px 0 0; max-width:34em;
+  font-size:15.5px; font-weight:400; line-height:1.62; color:#28394a;
+}
+@media (max-width:560px){
+  .sess-title{font-size:18px}
+  .sess-sheet .sess-title{font-size:21px}
+}
+
+.sess-count{
+  display:inline-flex; align-items:center; gap:8px;
+  margin:12px 0 0; padding:8px 13px; border-radius:999px;
+  font-size:14px; font-weight:600;
+}
+.sess-count svg{width:16px;height:16px;flex:0 0 16px}
+.sess-count.is-soon{background:var(--red-soft); color:var(--red)}
+.sess-count.is-now{background:var(--green-soft); color:var(--green)}
+.sess-count.is-done{background:#f0f2f3; color:var(--muted)}
+.sess-dot{
+  width:8px;height:8px;border-radius:50%;background:var(--green);flex:0 0 8px;
+}
+@media (prefers-reduced-motion: reduce){
+  .sess-dot{animation:none}
+}
+@media (prefers-reduced-motion: no-preference){
+  .sess-dot{animation:sessPulse 1.6s ease-in-out infinite}
+}
+@keyframes sessPulse{
+  0%,100%{opacity:1}
+  50%{opacity:.35}
+}
+
+.sess-booked{
+  margin:12px 0 0; padding:12px 14px; border-radius:10px;
+  background:var(--green-soft); color:var(--green);
+  font-size:14.5px; font-weight:500; line-height:1.5;
+}
+.sess-booked p{margin:0}
+.sess-join{
+  display:inline-flex; align-items:center; justify-content:center;
+  min-height:44px; margin-top:10px; padding:0 14px; border-radius:8px;
+  background:var(--green); color:#fff;
+  font-family:var(--f); font-size:14.5px; font-weight:600; text-decoration:none;
+}
+.sess-lock{
+  margin:12px 0 0; font-size:14px; color:var(--muted); line-height:1.5;
+}
+
+.qa-actions .sess-primary{
+  flex:0 0 auto; margin-left:auto; align-self:center;
+}
+.sess-primary{
+  margin-left:auto; min-height:44px; padding:0 14px; border:0; border-radius:8px;
+  background:var(--gold); color:var(--navy-deep);
+  font-family:var(--f); font-size:14.5px; font-weight:600; cursor:pointer;
+}
+.sess-card :focus-visible:not(input):not(textarea):not(select),
+.sess-sheet :focus-visible:not(input):not(textarea):not(select),
+.qa-dialog.sess-box :focus-visible:not(input):not(textarea):not(select){
+  outline:2px solid var(--focus);
+  outline-offset:2px;
+}
+.sess-primary.have{
+  background:#fff; color:var(--green); border:1px solid var(--green);
+}
+.sess-primary:disabled{
+  opacity:1; cursor:default; background:#e4e7ea; color:var(--muted); border:0;
+}
+
+#sheet:has(.sess-sheet){max-width:680px; border-radius:14px}
+body.sess-sheet-open .scrim{background:rgba(6,20,32,.74)}
+#sheet:has(.sess-sheet) .sheet-title{
+  font-size:13.5px; font-weight:400; color:#64778a;
+}
+#sheet:has(.sess-sheet) .sheet-bar .icon-btn#sheet-close{
+  width:38px; height:38px; border-radius:50%;
+}
+.sess-sheet{padding:18px}
+.sess-sheet .sess-title{font-size:24px; line-height:1.28}
+.sess-progress{display:grid; grid-template-columns:1fr 1fr; gap:6px; margin:10px 0 16px}
+.sess-progress span{height:4px; background:var(--line-soft); border-radius:99px}
+.sess-progress span.on{background:var(--navy)}
+.sess-sheet .glance{margin:14px -18px 0; width:calc(100% + 36px)}
+.sess-facts{margin:18px 0 0}
+.sess-facts h3{margin:0 0 10px; font-size:15px; font-weight:600}
+.sess-facts dl{margin:0}
+.sess-facts .row{display:grid; grid-template-columns:92px minmax(0,1fr); gap:10px; padding:8px 0; border-top:1px solid var(--line-soft)}
+.sess-facts dt{margin:0; font-size:13px; color:var(--muted)}
+.sess-facts dd{margin:0; font-size:15px; font-weight:600; color:var(--ink)}
+@media (max-width:560px){
+  #sheet:has(.sess-sheet){border-radius:0; max-width:none}
+}
+
+.sess-host{
+  margin:18px 0 0; padding:14px; border:1px solid var(--line); border-radius:12px; background:#f7f9fa;
+}
+.sess-host h3, .sess-asks h3{
+  margin:0 0 10px; font-size:15px; font-weight:600;
+}
+.sess-host p, .sess-asks p{margin:0 0 8px; font-size:14.5px; line-height:1.5}
+.sess-asks{margin:18px 0 0}
+.sess-ask{
+  padding:10px 0; border-top:1px solid var(--line-soft);
+}
+.sess-ask strong{display:block; font-size:14.5px; font-weight:600}
+.sess-ask span{display:block; margin-top:4px; font-size:13.5px; color:var(--muted)}
+.sess-note{margin:10px 0 0; font-size:13px; color:var(--muted); line-height:1.45}
+
+.sess-fmt{display:flex; gap:8px; margin:8px 0 12px}
+.sess-fmt button{
+  min-height:44px; padding:0 14px; border:1px solid var(--line); border-radius:8px;
+  background:#fff; font-family:var(--f); font-size:14.5px; font-weight:600; cursor:pointer;
+}
+.sess-fmt button.on{border-color:var(--navy); background:var(--line-soft)}
+
+.qa-dialog.sess-box input:not([type="checkbox"]):not([type="radio"]),
+.qa-dialog.sess-box textarea,
+.qa-dialog.sess-box select{
+  font-size:16px;
+}
+.sess-url{
+  margin:8px 0 0; font-size:16.5px; font-weight:600; word-break:break-word;
+}
+.sess-lead-line{width:100%; margin:0; font-size:13.5px; font-weight:600; color:var(--red)}
+.sess-student-line{width:100%; margin:8px 0 0; font-size:13.5px; color:var(--muted); line-height:1.45}
+
+@media (prefers-reduced-motion: reduce){
+  .sess-card, .sess-sheet, .qa-dialog.sess-box, #toast{transition:none}
+}

@@ -7,11 +7,13 @@ CSS="$ROOT/_proto/shell.css"
 QACSS="$ROOT/_proto/qa.css"
 OPPCSS="$ROOT/_proto/opp.css"
 STORYCSS="$ROOT/_proto/story.css"
+SESSCSS="$ROOT/_proto/sess.css"
 HTML="$ROOT/_proto/shell.html"
 DATA="$ROOT/_proto/data.js"
 CORE="$ROOT/_proto/app-core.js"
 QA="$ROOT/_proto/qa.js"
 OPP="$ROOT/_proto/opp.js"
+SESS="$ROOT/_proto/sess.js"
 VIEWS="$ROOT/_proto/app-views.js"
 
 {
@@ -40,6 +42,8 @@ EOF
   cat "$OPPCSS"
   echo
   cat "$STORYCSS"
+  echo
+  cat "$SESSCSS"
   cat <<'EOF'
 </style>
 </head>
@@ -57,6 +61,8 @@ EOF
   cat "$QA"
   echo
   cat "$OPP"
+  echo
+  cat "$SESS"
   echo
   cat "$VIEWS"
   cat <<'EOF'

@@ -209,7 +209,7 @@ var JOURNEYS = {
       { stage: 'subject', text: 'Locked Biology, Chemistry, Physics, Maths, English and Caribbean History.', lesson: 'If medicine is even a maybe, protect Biology and Chemistry at Form 3.' },
       { stage: 'csec', text: 'Sat CSEC with strong Biology and Chemistry. Used free past paper clinics after school.', lesson: 'Mocks are rehearsal, not judgment. Fix the weak paper early.' },
       { stage: 'fork', text: 'Stayed for CAPE Sciences instead of jumping straight to work.', lesson: 'The fork is real. CAPE, TVET or work. Name the gate each path needs.' },
-      { stage: 'special', text: 'Completed CAPE Biology, Chemistry and Caribbean Studies. Applied to UG Medicine.', lesson: 'Map CAPE units to the exact UG entry list, not a rumour from WhatsApp.' },
+      { stage: 'special', text: 'Completed CAPE Biology, Chemistry and Caribbean Studies. Applied to UG Medicine.', lesson: 'Map CAPE units to the exact UG entry list, not a rumour from a group chat.' },
       { stage: 'led', text: 'Entered UG medical training and began junior clinical work in Georgetown.', lesson: 'Health routes take years. Build patience and a support circle early.' }
     ],
     dive: {
@@ -802,7 +802,7 @@ var OPPS = {
     what: [
       'Blue Ocean is a virtual, global competition for high-school-aged students. Tens of thousands of students enter in a cycle. Guyana is explicitly listed among participating countries.',
       'Students pitch business concepts to real entrepreneurs, get feedback, and compete for cash prizes. The whole path is online, which matters if you cannot travel or your school will not organise entrepreneurship clubs.',
-      'Registration for the next cycle opens after each year\'s results. Treat the calendar as rolling and confirm on the organiser site rather than last year\'s WhatsApp flyer.'
+      'Registration for the next cycle opens after each year\'s results. Treat the calendar as rolling and confirm on the organiser site rather than last year\'s flyer.'
     ],
     season: 'Annual virtual cycle. Registration opens after results each year',
     cost: 'Confirm on the organiser site. Designed for direct student entry',

@@ -2299,11 +2299,25 @@ function viewOpp(v) {
 
 function viewSession(v) {
   var s = sessionById(v.id);
-  var p;
+  var card;
   if (!s) return { crumb: 'Session', title: 'Missing', html: '<p>Not found.</p>' };
   pushRecent('session', s.id, s.title);
-  p = loadDetail('session', v.id);
-  return { crumb: 'Session', title: 'Session', html: renderSimpleDetail(p) };
+  if (typeof sessSheetHtml === 'function' && typeof sessModel === 'function') {
+    card = sessModel(s.id);
+    return {
+      crumb: '',
+      title: 'Session',
+      html: card ? sessSheetHtml(card) : '<p>Not found.</p>',
+      after: function () {
+        var root = document.querySelector('.sess-sheet');
+        if (root && root.focus) {
+          root.setAttribute('tabindex', '-1');
+          root.focus();
+        }
+      }
+    };
+  }
+  return { crumb: 'Session', title: 'Session', html: renderSimpleDetail(loadDetail('session', v.id)) };
 }
 
 function viewJourney(v) {
@@ -3094,56 +3108,13 @@ function viewAlerts() {
 }
 
 function viewBook(v) {
+  if (typeof sessOpenBook === 'function') {
+    sessOpenBook(v.id);
+    return { crumb: '', title: '', html: '' };
+  }
   var s = sessionById(v.id);
   if (!s) return { crumb: 'Book', title: 'Missing', html: '<p>Not found.</p>' };
-  var lead = author(s.lead);
-  var left = Math.max(0, s.seats - s.taken);
-  var booked = S.booked.indexOf(s.id) !== -1;
-  var waiting = S.waitlist.indexOf(s.id) !== -1;
-  var html =
-    '<div class="detail"><p class="eyebrow">' +
-    esc(s.pod) +
-    '</p><h2>' +
-    esc(s.title) +
-    '</h2><p class="muted">' +
-    esc(sessionWhen(s)) +
-    ' · ' +
-    esc(lead.name) +
-    '</p>';
-  if (booked) {
-    html +=
-      '<div class="callout green"><p>You have a place.</p>' +
-      '<button type="button" class="btn g" data-cancel-book="' +
-      esc(s.id) +
-      '">Cancel place</button></div>';
-  } else if (left === 0) {
-    if (waiting) {
-      html +=
-        '<div class="callout gold"><p>You are on the waitlist. You move up if someone cancels.</p>' +
-        '<button type="button" class="btn g" data-leave-waitlist="' +
-        esc(s.id) +
-        '">Leave waitlist</button></div>';
-    } else {
-      html +=
-        '<div class="callout gold"><p>This session is full. Join the waitlist and you move up if someone cancels.</p>' +
-        '<button type="button" class="btn" data-waitlist="' +
-        esc(s.id) +
-        '">Join waitlist</button></div>';
-    }
-  } else {
-    html += '<p>' + left + ' places remaining</p>';
-    html +=
-      '<label class="field-label" for="book-q">What do you want to leave knowing?</label>' +
-      '<input type="text" id="book-q" placeholder="One sentence is enough"/>';
-    html +=
-      '<label class="check"><input type="checkbox" id="book-wa" checked/> Send my reminders on WhatsApp. Confirmation, a reminder the day before, and the link an hour before. Your number is never shown to mentors or other students. <span class="muted">Prototype note: no number is collected here. The tick confirms you want reminders.</span></label>';
-    html +=
-      '<div class="card-actions"><button type="button" class="btn" data-confirm-book="' +
-      esc(s.id) +
-      '">Confirm place</button></div>';
-  }
-  html += '</div>';
-  return { crumb: 'Booking', title: s.title, html: html };
+  return { crumb: 'Booking', title: s.title, html: '<p>Booking is unavailable.</p>' };
 }
 
 function commChip(label, on, attrs) {
@@ -3556,6 +3527,7 @@ function renderChrome() {
     var navKey = navs[i].getAttribute('data-nav');
     var on =
       navKey === S.view ||
+      (navKey === 'feed' && (S.view === 'topic' || S.view === 'kind')) ||
       (navKey === 'community' && (sheetTop === 'person' || sheetTop === 'mentor')) ||
       (navKey === 'alerts' && (S.view === 'sessions' || sheetTop === 'session' || sheetTop === 'book' || sheetTop === 'opp'));
     if (on) {
@@ -3649,23 +3621,241 @@ function restorePwSearch() {
   S.pw.focusQ = false;
 }
 
+function itemHasTopic(item, tag) {
+  var want = String(tag || '')
+    .replace(/^#/, '')
+    .toLowerCase();
+  var tags;
+  var i;
+  var o;
+  if (!want) return false;
+  if (item.topic && String(item.topic).replace(/^#/, '').toLowerCase() === want) return true;
+  if (typeof qaTopics === 'function') {
+    tags = qaTopics(item);
+    for (i = 0; i < tags.length; i++) {
+      if (String(tags[i]).replace(/^#/, '').toLowerCase() === want) return true;
+    }
+  }
+  if (item.cat && hashTagLabel(item.cat).replace(/^#/, '').toLowerCase() === want) return true;
+  if (item.kind === 'opportunity' && item.opp && OPPS[item.opp]) {
+    o = OPPS[item.opp];
+    if (o.topic && String(o.topic).replace(/^#/, '').toLowerCase() === want) return true;
+    if (o.cat && hashTagLabel(o.cat).replace(/^#/, '').toLowerCase() === want) return true;
+  }
+  return false;
+}
+
+function topicPosts(tag) {
+  var out = [];
+  var i;
+  for (i = 0; i < FEED.length; i++) {
+    if (itemHasTopic(FEED[i], tag)) out.push(FEED[i]);
+  }
+  return out;
+}
+
+function topicEngagement(item) {
+  return (item.insp || item.inspiredCount || 0) + 2 * ((item.replies && item.replies.length) || 0);
+}
+
+function topicTrending(list) {
+  return list.slice().sort(function (a, b) {
+    return topicEngagement(b) - topicEngagement(a);
+  });
+}
+
+function topicLatest(list) {
+  return list.slice().sort(function (a, b) {
+    return new Date(b.at || b.createdAt || 0).getTime() - new Date(a.at || a.createdAt || 0).getTime();
+  });
+}
+
+function pageSectionHtml(title, key, moreKey, list, shown) {
+  var html;
+  var rows;
+  var i;
+  var more;
+  if (!list.length) return '';
+  more = moreKey === key;
+  rows = more ? list : list.slice(0, 3);
+  html = '<section class="page-sec"><h2>' + esc(title);
+  if (!more && list.length > 3) {
+    html +=
+      '<button type="button" data-list-more="' + esc(key) + '">View more</button>';
+  }
+  html += '</h2>';
+  for (i = 0; i < rows.length; i++) {
+    shown[rows[i].id] = true;
+    html += renderFeedCard(rows[i]);
+  }
+  html += '</section>';
+  return html;
+}
+
+function renderTopicPage() {
+  var tag = normalizeTopicTag(S.topicTag || '');
+  var list = topicPosts(tag);
+  var trend = topicTrending(list);
+  var latest = topicLatest(list);
+  var shown = {};
+  var rest = [];
+  var i;
+  var html =
+    '<div class="page-list"><h1>' +
+    esc(tag || 'Topic') +
+    '</h1><p class="page-kicker">' +
+    list.length +
+    (list.length === 1 ? ' post' : ' posts') +
+    '</p>';
+  if (!list.length) {
+    html +=
+      '<p class="page-empty">No posts tagged ' +
+      esc(tag) +
+      ' yet.</p></div>';
+    return html;
+  }
+  html += pageSectionHtml('Trending', 'trending', S.topicMore, trend, shown);
+  html += pageSectionHtml('Latest', 'latest', S.topicMore, latest, shown);
+  if (S.topicMore === 'all') {
+    for (i = 0; i < list.length; i++) {
+      if (!shown[list[i].id]) rest.push(list[i]);
+    }
+    if (rest.length) html += pageSectionHtml('All posts', 'all', 'all', rest, shown);
+  } else if (list.length > 6) {
+    html +=
+      '<section class="page-sec"><h2><button type="button" data-list-more="all">View more</button></h2></section>';
+  }
+  html += '</div>';
+  return html;
+}
+
+function kindFeedItems(kind) {
+  var want = kind === 'question' ? 'question' : kind;
+  var out = [];
+  var i;
+  var sess;
+  for (i = 0; i < FEED.length; i++) {
+    if (FEED[i].kind !== want) continue;
+    if (want === 'session') {
+      sess = sessionById(FEED[i].session);
+      if (sess && sess.status === 'cancelled') continue;
+    }
+    out.push(FEED[i]);
+  }
+  return out;
+}
+
+function kindOppSoonest(list) {
+  return list.slice().sort(function (a, b) {
+    var oa = a.opp && OPPS[a.opp] ? OPPS[a.opp] : null;
+    var ob = b.opp && OPPS[b.opp] ? OPPS[b.opp] : null;
+    var ca;
+    var cb;
+    var closedA = oa && typeof oppClosed === 'function' && oppOpening(oa) ? oppClosed(oppOpening(oa)) : false;
+    var closedB = ob && typeof oppClosed === 'function' && oppOpening(ob) ? oppClosed(oppOpening(ob)) : false;
+    if (closedA !== closedB) return closedA ? 1 : -1;
+    ca = oa && oa.closesAt && !oa.rolling ? new Date(oa.closesAt).getTime() : Number.MAX_VALUE;
+    cb = ob && ob.closesAt && !ob.rolling ? new Date(ob.closesAt).getTime() : Number.MAX_VALUE;
+    return ca - cb;
+  });
+}
+
+function kindTitle(kind) {
+  if (kind === 'question') return 'Questions';
+  if (kind === 'story') return 'Stories';
+  if (kind === 'opportunity') return 'Opportunities';
+  if (kind === 'session') return 'Sessions';
+  if (kind === 'journey') return 'Journeys';
+  return 'Posts';
+}
+
+function renderKindPage() {
+  var kind = S.kindKey || 'story';
+  var list = kindFeedItems(kind);
+  var html =
+    '<div class="page-list"><h1>' +
+    esc(kindTitle(kind)) +
+    '</h1><p class="page-kicker">' +
+    list.length +
+    (list.length === 1 ? ' post' : ' posts') +
+    '</p>';
+  var trend;
+  var latest;
+  var shown = {};
+  var rest;
+  var i;
+  if (!list.length) {
+    html += '<p class="page-empty">Nothing here yet.</p></div>';
+    return html;
+  }
+  if (kind === 'opportunity') {
+    html += pageSectionHtml('Coming up soonest', 'soonest', S.kindMore, kindOppSoonest(list), shown);
+  } else if (kind === 'session' && typeof sessSortSoonest === 'function') {
+    html += pageSectionHtml('Coming up soonest', 'soonest', S.kindMore, sessSortSoonest(list), shown);
+  } else {
+    trend = topicTrending(list);
+    latest = topicLatest(list);
+    html += pageSectionHtml('Trending', 'trending', S.kindMore, trend, shown);
+    html += pageSectionHtml('Latest', 'latest', S.kindMore, latest, shown);
+    if (S.kindMore === 'all') {
+      rest = [];
+      for (i = 0; i < list.length; i++) {
+        if (!shown[list[i].id]) rest.push(list[i]);
+      }
+      if (rest.length) html += pageSectionHtml('All posts', 'all', 'all', rest, shown);
+    } else if (list.length > 6) {
+      html +=
+        '<section class="page-sec"><h2><button type="button" data-list-more="all">View more</button></h2></section>';
+    }
+  }
+  html += '</div>';
+  return html;
+}
+
+function openTopicPage(tag) {
+  hideSheetUi();
+  S.view = 'topic';
+  S.topicTag = normalizeTopicTag(tag);
+  S.topicMore = '';
+  render();
+}
+
+function openKindPage(kind) {
+  hideSheetUi();
+  S.view = 'kind';
+  S.kindKey = kind === 'question' || kind === 'thread' ? 'question' : kind;
+  S.kindMore = '';
+  render();
+}
+
 function render() {
   var main = byId('main');
   if (S.view === 'pathway') main.innerHTML = renderPathway();
   else if (S.view === 'alerts' || S.view === 'sessions') main.innerHTML = renderAlertsPage();
   else if (S.view === 'community') main.innerHTML = renderCommunity();
+  else if (S.view === 'topic') main.innerHTML = renderTopicPage();
+  else if (S.view === 'kind') main.innerHTML = renderKindPage();
   else main.innerHTML = renderFeed();
   renderChrome();
   restorePwSearch();
   if (typeof qaAfterPaint === 'function') qaAfterPaint();
   if (typeof qaInit === 'function') qaInit();
   if (typeof oppInit === 'function') oppInit();
+  if (typeof sessInit === 'function') sessInit();
 }
 
 function openKind(kind, id) {
   if (kind === 'sessions') {
     S.sessionStage = id || '';
     setView('alerts');
+    return;
+  }
+  if (kind === 'kind') {
+    openKindPage(id);
+    return;
+  }
+  if (kind === 'topic') {
+    openTopicPage(id);
     return;
   }
   var map = {
@@ -3699,6 +3889,10 @@ function openKind(kind, id) {
     }
   }
   if (kind === 'book') {
+    if (typeof sessOpenBook === 'function') {
+      sessOpenBook(id);
+      return;
+    }
     if (
       requirePathway({
         type: 'book',
@@ -4104,6 +4298,7 @@ function wire() {
     var btn;
     var innerBtn = closestEl(t, 'button');
     var card = closestEl(t, '.clickable[data-open]');
+    if (typeof sessHandleClick === 'function' && sessHandleClick(e, t)) return;
     if (typeof oppHandleClick === 'function' && oppHandleClick(e, t)) return;
     if (typeof qaHandleClick === 'function' && qaHandleClick(e, t)) return;
     if (S.menu && !closestEl(t, '.more-wrap') && !closestEl(t, '.qa-more')) {
@@ -4319,7 +4514,15 @@ function wire() {
     btn = closestEl(t, '[data-topic]');
     if (btn) {
       e.stopPropagation();
-      go({ t: 'topic', id: btn.getAttribute('data-topic') });
+      openTopicPage(btn.getAttribute('data-topic'));
+      return;
+    }
+    btn = closestEl(t, '[data-list-more]');
+    if (btn) {
+      e.stopPropagation();
+      if (S.view === 'topic') S.topicMore = btn.getAttribute('data-list-more');
+      else S.kindMore = btn.getAttribute('data-list-more');
+      render();
       return;
     }
 
@@ -4687,6 +4890,7 @@ function wire() {
   });
 
   document.addEventListener('input', function (e) {
+    if (typeof sessHandleInput === 'function' && sessHandleInput(e)) return;
     if (typeof oppHandleInput === 'function' && oppHandleInput(e)) return;
     if (typeof qaHandleInput === 'function' && qaHandleInput(e)) return;
     if (e.target && e.target.id === 'q') {
@@ -4711,12 +4915,13 @@ function wire() {
       return;
     }
     if (e.target && e.target.id === 'feed-q') {
+      var fpos = e.target.selectionStart;
       S.query = e.target.value;
       render();
       var fq = byId('feed-q');
       if (fq) {
         fq.focus();
-        if (fq.setSelectionRange) fq.setSelectionRange(fq.value.length, fq.value.length);
+        if (fq.setSelectionRange) fq.setSelectionRange(fpos, fpos);
       }
       return;
     }
@@ -4747,8 +4952,9 @@ function wire() {
     }
     if (e.target && e.target.id === 'comp-cat') S.draftCat = e.target.value;
     if (e.target && e.target.id === 'comp-anon') S.anon = e.target.checked;
-    if (e.target && (e.target.id === 'opp-poster' || e.target.id === 'opp-photos')) {
-      if (typeof oppHandleInput === 'function') oppHandleInput(e);
+    if (e.target && (e.target.id === 'opp-poster' || e.target.id === 'opp-photos' || e.target.id === 'sess-poster')) {
+      if (e.target.id === 'sess-poster' && typeof sessHandleInput === 'function') sessHandleInput(e);
+      else if (typeof oppHandleInput === 'function') oppHandleInput(e);
       return;
     }
     if (e.target && e.target.id === 'comp-img') {
@@ -4777,6 +4983,7 @@ function wire() {
   document.addEventListener('keydown', function (e) {
     var bar;
     var btn;
+    if (typeof sessHandleKey === 'function' && sessHandleKey(e)) return;
     if (typeof oppHandleKey === 'function' && oppHandleKey(e)) return;
     if (typeof qaHandleKey === 'function' && qaHandleKey(e)) return;
     if (e.target && e.target.id === 'thread-reply' && e.key === 'Enter' && !e.shiftKey) {

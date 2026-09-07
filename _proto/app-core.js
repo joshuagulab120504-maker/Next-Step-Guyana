@@ -77,7 +77,11 @@ var S = {
     anon: true,
     editId: ''
   },
-  pw: null
+  pw: null,
+  topicTag: '',
+  topicMore: '',
+  kindKey: '',
+  kindMore: ''
 };
 
 function emptyPw() {
@@ -244,6 +248,59 @@ function daysUntil(iso) {
   return Math.max(0, Math.ceil(ms / 86400000));
 }
 
+function countDownUnits(ms) {
+  var mins;
+  var hours;
+  var days;
+  var weeks;
+  if (ms < 0) ms = 0;
+  if (ms < 60000) return { n: 1, unit: 'minute' };
+  mins = Math.round(ms / 60000);
+  if (mins < 60) return { n: mins, unit: mins === 1 ? 'minute' : 'minutes' };
+  hours = Math.round(ms / 3600000);
+  if (hours < 48) return { n: hours, unit: hours === 1 ? 'hour' : 'hours' };
+  days = Math.round(ms / 86400000);
+  if (days < 14) return { n: days, unit: days === 1 ? 'day' : 'days' };
+  weeks = Math.max(1, Math.round(ms / 604800000));
+  return { n: weeks, unit: weeks === 1 ? 'week' : 'weeks' };
+}
+
+function countDownWhen(ms) {
+  var d = new Date(ms);
+  var days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  var months = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December'
+  ];
+  var h = d.getHours();
+  var m = d.getMinutes();
+  var ap = h >= 12 ? 'PM' : 'AM';
+  var h12 = h % 12 || 12;
+  var mm = m < 10 ? '0' + m : String(m);
+  return days[d.getDay()] + ' ' + d.getDate() + ' ' + months[d.getMonth()] + ', ' + h12 + ':' + mm + ' ' + ap;
+}
+
+function countDownPhrase(targetMs, verb, nowMs) {
+  var left = targetMs - (nowMs || Date.now());
+  var u;
+  var text;
+  if (left <= 0) return '';
+  u = countDownUnits(left);
+  text = verb + ' in ' + u.n + ' ' + u.unit;
+  if (left >= 48 * 3600000) text += ' · ' + countDownWhen(targetMs);
+  return text;
+}
+
 function author(id) {
   return AUTHORS[id] || { name: id, init: '?', role: '', pending: false, verified: false, contactable: false, form: '', region: '', pos: '', system: true };
 }
@@ -360,6 +417,68 @@ function canFollowPerson(id) {
   return a.role === 'mentor' || a.role === 'contributor';
 }
 
+function canLinkAuthor(id) {
+  var a;
+  if (!id) return false;
+  a = author(id);
+  if (!a || a.system) return false;
+  return a.role === 'mentor' || a.role === 'contributor' || a.role === 'admin';
+}
+
+function authorLinkWrap(inner) {
+  return '<div class="author-link">' + inner + '</div>';
+}
+
+function authorHitBtn(inner, authorId, extraCls) {
+  var cls = extraCls ? 'author-hit ' + extraCls : 'author-hit';
+  if (!canLinkAuthor(authorId)) {
+    return '<div class="' + cls + '">' + inner + '</div>';
+  }
+  return (
+    '<button type="button" class="' +
+    cls +
+    '" data-open="person" data-id="' +
+    esc(authorId) +
+    '">' +
+    inner +
+    '</button>'
+  );
+}
+
+function kindOpenBtn(kind, label) {
+  return (
+    '<button type="button" class="k-word k-' +
+    esc(kind) +
+    '" data-open="kind" data-id="' +
+    esc(kind) +
+    '">' +
+    esc(label) +
+    '</button>'
+  );
+}
+
+function kindHitBtn(kind, inner, extraCls, label) {
+  var cls = extraCls ? 'kind-hit ' + extraCls : 'kind-hit';
+  return (
+    '<button type="button" class="' +
+    cls +
+    '" data-open="kind" data-id="' +
+    esc(kind) +
+    '"' +
+    (label ? ' aria-label="' + esc(label) + '"' : '') +
+    '>' +
+    inner +
+    '</button>'
+  );
+}
+
+function normalizeTopicTag(tag) {
+  var s = String(tag || '').trim();
+  if (!s) return '';
+  if (s.charAt(0) === '#') return s;
+  return hashTagLabel(s);
+}
+
 function MONTHS_SHORT() {
   return ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 }
@@ -399,7 +518,7 @@ function kindTimeHtml(kindLabel, iso, edited, kindKey) {
   var t = timeAgo(iso);
   var html;
   if (kindKey) {
-    html = '<span class="k-word k-' + esc(kindKey) + '">' + esc(kindLabel) + '</span>';
+    html = kindOpenBtn(kindKey, kindLabel);
   } else {
     html = esc(kindLabel);
   }
@@ -762,15 +881,6 @@ function isInspired(id) {
 function toggleInspired(id) {
   var item;
   var i;
-  if (
-    requirePathway({
-      type: 'inspire',
-      id: id,
-      reason: 'We need your form before we mark this as inspired.'
-    })
-  ) {
-    return;
-  }
   item = feedByEngageId(id);
   i = S.inspired.indexOf(id);
   if (i === -1) {
@@ -915,6 +1025,7 @@ function hideSheetUi() {
   lockBody(false);
   document.body.classList.remove('qa-thread-open');
   document.body.classList.remove('opp-sheet-open');
+  document.body.classList.remove('sess-sheet-open');
 }
 
 function closeSheet() {
@@ -1176,8 +1287,15 @@ function filteredFeed() {
     if (ok && item.kind === 'story' && isHidden('story', item.id)) ok = false;
     if (ok && item.kind === 'opportunity' && isHidden('opp', item.opp)) ok = false;
     if (ok && item.kind === 'session' && isHidden('session', item.session)) ok = false;
+    if (ok && item.kind === 'session') {
+      sess = sessionById(item.session);
+      if (sess && sess.status === 'cancelled') ok = false;
+    }
     if (ok && item.kind === 'journey' && isHidden('journey', item.journey)) ok = false;
     if (ok) out.push(item);
+  }
+  if (S.filter === 'sessions' && typeof sessSortSoonest === 'function') {
+    return sessSortSoonest(out);
   }
   return out;
 }
@@ -1368,7 +1486,7 @@ function inspireEngageBtn(id) {
   return engageBtn(
     'data-inspire="' + esc(id) + '"',
     iconHeart(),
-    n ? 'Inspired · ' + n : 'Inspired',
+    n ? 'Inspired ' + n : 'Inspired',
     isInspired(id)
   );
 }
@@ -1380,7 +1498,7 @@ function replyEngageBtn(kind, id, n, focus) {
       ? 'data-focus-reply="1"'
       : 'data-open="' + esc(kind) + '" data-id="' + esc(id) + '"',
     iconReply(),
-    n === 1 ? '1 reply' : n + ' replies',
+    n === 0 ? 'Reply' : n === 1 ? '1 reply' : n + ' replies',
     false
   );
 }
@@ -1533,45 +1651,9 @@ function renderOppCard(item) {
   return html;
 }
 
-function renderSessionCard(item) {
-  var s = sessionById(item.session);
-  var left;
-  var lead;
-  var html;
-  if (!s) return '';
-  left = Math.max(0, s.seats - s.taken);
-  lead = author(s.hosted_by || s.lead);
-  html =
-    '<article class="card feed-card kind-sess sess-card clickable" ' +
-    cardClickAttrs('session', s.id) +
-    '>' +
-    '<div class="card-head">' +
-    '<div class="date-chip" aria-hidden="true"><span class="d">' +
-    esc(s.date) +
-    '</span><span class="w">' +
-    esc(s.day) +
-    '</span></div>' +
-    '<div class="meta">' +
-    nameWithBadge(lead.name, lead) +
-    '<div class="sub">' +
-    kindTimeHtml('Session', item.at, item.edited, 'session') +
-    '</div></div>' +
-    contactAffordance(s.hosted_by || s.lead, false) +
-    cardMoreHtml('session', s.id, false) +
-    '</div><div class="card-body">';
-  if (s.pod) html += '<div class="card-cats">' + catChip(s.pod, false) + '</div>';
-  html += '<h3>' + esc(s.title) + '</h3>';
-  html += '<p class="sess-when">' + esc(sessionWhen(s)) + '</p>';
-  html +=
-    '<div class="sess-meta"><span>' +
-    left +
-    (left === 1 ? ' place left' : ' places left') +
-    '</span></div>';
-  html +=
-    '</div>' +
-    postEngageBar(item, 'session', s.id, isOwnCard('session', s.id, false), false) +
-    '</article>';
-  return html;
+function renderSessionCard(item, opts) {
+  if (typeof sessRenderCard === 'function') return sessRenderCard(item, opts);
+  return '';
 }
 
 function renderJourneyCard(item) {
@@ -1584,17 +1666,23 @@ function renderJourneyCard(item) {
     cardClickAttrs('journey', item.journey) +
     '>' +
     '<div class="card-head">' +
-    avatarHtml(a, false, 'journey') +
-    '<div class="meta">' +
-    nameWithBadge(a.name, a) +
-    '<div class="sub">' +
-    kindTimeHtml('Journey', item.at, item.edited, 'journey') +
-    '</div></div>' +
+    authorLinkWrap(
+      authorHitBtn(
+        avatarHtml(a, false, 'journey'),
+        item.journey,
+        'av-hit'
+      ) +
+        '<div class="meta ident-name">' +
+        authorHitBtn(nameWithBadge(a.name, a), item.journey, 'name-hit') +
+        '<div class="sub">' +
+        kindTimeHtml('Journey', item.at, item.edited, 'journey') +
+        '</div></div>'
+    ) +
     contactAffordance(item.journey, item.mine) +
     cardMoreHtml('journey', item.journey, item.mine) +
     '</div><div class="card-body">';
   html += mineFlagsHtml(item);
-  if (j.field) html += '<div class="card-cats">' + catChip(j.field, false) + '</div>';
+  if (j.field) html += '<div class="card-cats">' + catChip(j.field) + '</div>';
   html += '<h3 class="hook">' + esc(j.hook) + '</h3>';
   if (j.place) html += '<p class="card-place">' + esc(j.place) + '</p>';
   html += journeyPathPreview(j);
