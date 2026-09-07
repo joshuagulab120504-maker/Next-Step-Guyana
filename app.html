@@ -11,7 +11,7 @@
 <link rel="apple-touch-icon" href="logo.png"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet"/>
 <style>
 /* Next Step Guyana shell. LinkedIn density, our brand. */
 
@@ -3007,6 +3007,798 @@ button.d-row:hover{border-color:var(--line-2);background:#f7fafc}
   }
 }
 
+
+/* Q&A card and thread only. Do not leak these tokens onto other feed cards. */
+.qa-card, .qa-sheet, .qa-dialog, .qa-ask-row, .qa-queue, #qa-layer {
+  --navy:#0d2b45;
+  --navy-deep:#061a2d;
+  --ink:#152739;
+  --muted:#64778a;
+  --muted-2:#8a9aa8;
+  --line:#dfe4e8;
+  --line-soft:#e9edf0;
+  --red:#c4392f;
+  --red-soft:#fdf1f0;
+  --green:#07864d;
+  --gold:#ffcf27;
+  --chip:#edf1f5;
+  --chip-ink:#20456a;
+  --focus:#1d7fd4;
+  --f:"Source Sans 3","Source Sans Pro",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  font-family:var(--f);
+  font-weight:400;
+  letter-spacing:0;
+}
+
+.qa-card, .qa-sheet, .qa-dialog, .qa-ask-row, .qa-queue {
+  color:var(--ink);
+}
+
+.qa-card{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:12px;
+  box-shadow:0 1px 2px rgba(11,38,56,.045);
+  overflow:visible;
+  padding:0;
+}
+.qa-card.clickable{cursor:pointer}
+.qa-card .qa-pad{padding:16px 16px 14px}
+
+.qa-id{
+  display:grid;
+  grid-template-columns:auto 1fr auto;
+  gap:12px;
+  align-items:start;
+}
+.qa-tile{
+  width:48px;height:48px;flex:0 0 48px;
+  border-radius:10px;
+  background:#fff;
+  border:2px solid var(--red);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:1px;
+  box-sizing:border-box;
+}
+.qa-tile .qa-qmark{
+  color:var(--red);
+  font-size:19px;font-weight:600;line-height:1;
+}
+.qa-tile .qa-qlabel{
+  color:var(--navy-deep);
+  font-size:8.5px;font-weight:600;line-height:1;
+  letter-spacing:.05em;
+}
+.qa-ask-name{
+  font-size:15px;font-weight:600;color:var(--ink);line-height:1.3;
+}
+.qa-ask-meta{
+  margin:2px 0 0;
+  font-size:13px;font-weight:400;color:var(--muted);line-height:1.35;
+}
+.qa-ask-meta .qa-yours{color:var(--navy);font-weight:600}
+
+.qa-more{
+  position:relative;
+}
+.qa-more-btn{
+  width:40px;height:40px;
+  display:grid;place-items:center;
+  border:0;background:transparent;color:var(--ink);
+  border-radius:50%;
+  padding:0;cursor:pointer;
+}
+.qa-more-btn svg{width:22px;height:22px}
+.qa-more-btn:hover,
+.qa-more-btn[aria-expanded="true"]{background:var(--line-soft)}
+.qa-more-btn.is-sm{width:34px;height:34px}
+.qa-more-btn.is-sm svg{width:20px;height:20px}
+.qa-menu{
+  position:absolute;right:0;top:100%;
+  min-width:250px;
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:11px;
+  box-shadow:0 14px 34px rgba(9,32,50,.18);
+  z-index:var(--z-top);
+  padding:6px 0;
+}
+.qa-menu button{
+  display:flex;align-items:center;gap:10px;
+  width:100%;min-height:44px;
+  padding:0 16px;
+  border:0;background:transparent;
+  font-family:var(--f);font-size:15px;font-weight:500;color:var(--ink);
+  text-align:left;cursor:pointer;
+}
+.qa-menu button:hover{background:var(--line-soft)}
+.qa-menu button.is-danger{color:var(--red)}
+.qa-menu hr{
+  border:0;border-top:1px solid var(--line-soft);margin:6px 0;
+}
+
+.qa-q{
+  margin:14px 0 0;
+  max-width:34em;
+  font-size:19px;font-weight:600;line-height:1.42;color:var(--ink);
+}
+.qa-topics{
+  display:flex;flex-wrap:wrap;gap:8px;
+  margin:12px 0 0;
+}
+.qa-chip{
+  display:inline-flex;align-items:center;gap:6px;
+  background:var(--chip);color:var(--chip-ink);
+  border:0;border-radius:999px;
+  padding:7px 13px;
+  font-family:var(--f);font-size:13.5px;font-weight:600;line-height:1.25;
+  cursor:pointer;
+}
+.qa-chip[disabled]{cursor:default}
+.qa-chip-x{
+  width:20px;height:20px;border-radius:50%;
+  display:grid;place-items:center;
+  border:0;background:transparent;color:var(--chip-ink);
+  font-size:14px;line-height:1;cursor:pointer;padding:0;
+}
+
+.qa-preview{
+  margin:14px 0 0;
+  padding:0 0 0 15px;
+  border-left:3px solid var(--navy);
+  background:transparent;
+}
+.qa-reply{
+  display:grid;
+  grid-template-columns:38px minmax(0,1fr) auto;
+  gap:10px;
+  align-items:start;
+}
+.qa-av{
+  width:38px;height:38px;border-radius:50%;
+  display:grid;place-items:center;
+  font-weight:600;line-height:1;
+}
+.qa-av.is-mentor{background:var(--navy);color:#fff;font-size:13px}
+.qa-av.is-student{background:#e4e9ed;color:#5f7284;font-size:15.5px}
+.qa-r-name{
+  font-size:15px;font-weight:600;color:var(--ink);line-height:1.3;
+  display:flex;align-items:center;gap:6px;
+}
+.qa-tick{width:14px;height:14px;flex:0 0 14px;color:var(--green)}
+.qa-tick circle{fill:var(--green)}
+.qa-tick path{fill:none;stroke:#fff;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.qa-r-role{
+  margin:2px 0 0;
+  font-size:13px;font-weight:400;color:var(--muted);line-height:1.35;
+}
+.qa-r-when{
+  margin:2px 0 0;
+  font-size:12.5px;font-weight:400;color:var(--muted-2);line-height:1.35;
+}
+.qa-r-body{
+  margin:10px 0 0;
+  font-size:15.5px;font-weight:400;line-height:1.62;color:#28394a;
+}
+.qa-clamp{
+  display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;
+}
+.qa-see{
+  display:inline;margin:0;padding:0;border:0;background:transparent;
+  font-family:var(--f);font-size:14.5px;font-weight:600;color:var(--muted);
+  cursor:pointer;
+}
+.qa-more-replies{
+  display:block;margin:10px 0 0 18px;padding:0;border:0;background:transparent;
+  font-family:var(--f);font-size:14px;font-weight:600;color:var(--navy);
+  cursor:pointer;text-align:left;
+}
+
+.qa-actions{
+  display:flex;align-items:center;flex-wrap:wrap;
+  border-top:1px solid var(--line-soft);
+  padding:5px 8px;
+}
+.qa-act{
+  display:inline-flex;align-items:center;gap:8px;
+  min-height:44px;padding:0 13px;
+  border:0;background:transparent;border-radius:8px;
+  font-family:var(--f);font-size:14.5px;font-weight:600;color:var(--muted);
+  cursor:pointer;
+}
+.qa-act svg{width:18px;height:18px;flex:0 0 18px}
+.qa-act:hover{background:var(--line-soft)}
+.qa-act.is-inspired[aria-pressed="true"]{color:var(--red)}
+.qa-act.is-save[aria-pressed="true"],
+.qa-act.is-updates[aria-pressed="true"]{color:var(--green)}
+.qa-act.is-updates{margin-left:auto;font-weight:500}
+
+.qa-ask-row{
+  display:flex;align-items:center;gap:12px;
+  margin:0 0 12px;
+  padding:10px 12px;
+  background:#fff;border:1px solid var(--line);border-radius:12px;
+}
+.qa-ask-row .qa-you{
+  width:40px;height:40px;border-radius:50%;
+  background:var(--gold);color:var(--navy-deep);
+  display:grid;place-items:center;
+  font-size:12px;font-weight:600;
+}
+.qa-ask-open{
+  flex:1;min-height:44px;
+  border:1px solid var(--line);background:var(--chip);
+  border-radius:999px;
+  padding:0 16px;
+  font-family:var(--f);font-size:15px;font-weight:500;color:var(--muted);
+  text-align:left;cursor:pointer;
+}
+.qa-queue{
+  margin:0 0 12px;
+  font-size:14px;font-weight:500;color:var(--navy);
+}
+
+#sheet:has(.qa-sheet){
+  max-width:680px;
+  border-radius:14px;
+}
+body.qa-thread-open .scrim{
+  background:rgba(6,20,32,.74);
+}
+.qa-sheet{padding:18px 18px 24px}
+.qa-caption{
+  margin:18px 0 12px;
+  font-size:13.5px;font-weight:400;color:var(--muted);
+}
+.qa-thread-list{display:flex;flex-direction:column;gap:18px}
+.qa-thread-item{
+  padding:0 0 0 15px;
+  border-left:3px solid var(--navy);
+  background:transparent;
+}
+
+.qa-compose{margin-top:20px}
+.qa-compose-label{
+  margin:0 0 8px;
+  font-size:14px;font-weight:600;color:var(--ink);
+}
+.qa-compose-grid{
+  display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:start;
+}
+.qa-compose-field{
+  border:1px solid var(--line);
+  border-radius:12px;
+  background:#fff;
+  padding:10px 12px 8px;
+}
+.qa-compose-field:focus-within{
+  border-color:var(--focus);
+  box-shadow:0 0 0 3px rgba(29,127,212,.14);
+}
+.qa-compose-field textarea{
+  width:100%;min-height:44px;max-height:220px;
+  border:0;padding:6px 0;resize:none;
+  font-family:var(--f);font-size:15.5px;line-height:1.5;color:var(--ink);
+  background:transparent;
+}
+.qa-compose-field textarea::placeholder{color:var(--muted-2)}
+.qa-compose-foot{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  margin-top:8px;
+}
+.qa-note{margin:0;font-size:13px;color:var(--muted)}
+.qa-post{
+  min-height:40px;padding:0 14px;border:0;border-radius:8px;
+  background:var(--navy);color:#fff;
+  font-family:var(--f);font-size:14.5px;font-weight:600;cursor:pointer;
+}
+.qa-post:disabled{opacity:.4;cursor:default}
+
+.qa-tags{
+  margin-top:10px;padding-top:10px;
+  border-top:1px solid var(--line-soft);
+  position:relative;
+}
+.qa-tags-label{display:block;margin:0 0 8px;font-size:14px;font-weight:600;color:var(--ink)}
+.qa-chosen{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 8px}
+.qa-chosen[hidden]{display:none}
+.qa-tag-input{
+  width:100%;min-height:44px;
+  border:1px solid var(--line);border-radius:9px;
+  padding:0 12px;
+  font-family:var(--f);font-size:15px;color:var(--ink);background:#fff;
+}
+.qa-tag-foot{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  margin-top:8px;min-height:20px;
+}
+.qa-tag-hint{font-size:12.5px;color:var(--muted-2)}
+.qa-tagged{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:13px;font-weight:500;color:var(--green);
+}
+.qa-sug{
+  position:absolute;left:0;right:0;top:100%;
+  max-height:246px;overflow:auto;
+  background:#fff;border:1px solid var(--line);border-radius:11px;
+  box-shadow:0 14px 34px rgba(9,32,50,.18);
+  z-index:4;padding:6px 0;
+}
+.qa-sug button{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  width:100%;min-height:44px;padding:0 14px;
+  border:0;background:transparent;
+  font-family:var(--f);text-align:left;cursor:pointer;
+}
+.qa-sug button[aria-selected="true"],
+.qa-sug button:hover{background:var(--line-soft)}
+.qa-sug-name{font-size:15px;font-weight:600;color:var(--chip-ink)}
+.qa-sug-n{font-size:12.5px;font-weight:400;color:var(--muted-2)}
+.qa-sug-empty{padding:12px 14px;font-size:13.5px;color:var(--muted);line-height:1.45}
+
+#qa-layer{
+  position:fixed;inset:0;z-index:72;
+  display:grid;place-items:center;
+  background:rgba(6,20,32,.46);
+  padding:20px;
+}
+#qa-layer[hidden]{display:none}
+.qa-dialog{
+  width:min(460px,100%);
+  background:#fff;border-radius:14px;
+  border:1px solid var(--line);
+  padding:18px 18px 16px;
+  box-shadow:0 14px 34px rgba(9,32,50,.18);
+}
+.qa-dialog h2{
+  margin:0;font-size:18px;font-weight:600;color:var(--ink);
+}
+.qa-dialog .qa-sub{
+  margin:8px 0 14px;font-size:14px;font-weight:400;color:var(--muted);line-height:1.5;
+}
+.qa-dialog textarea{
+  width:100%;min-height:110px;border:1px solid var(--line);border-radius:10px;
+  padding:10px 12px;font-family:var(--f);font-size:15.5px;line-height:1.5;color:var(--ink);
+}
+.qa-count{margin:8px 0 0;font-size:13px;color:var(--muted-2)}
+.qa-count.is-low{color:var(--red)}
+.qa-dlg-actions{
+  display:flex;justify-content:flex-end;gap:8px;margin-top:14px;
+}
+.qa-dlg-actions button{
+  min-height:44px;padding:0 14px;border-radius:8px;border:0;
+  font-family:var(--f);font-size:14.5px;font-weight:600;cursor:pointer;
+}
+.qa-keep{background:var(--line-soft);color:var(--ink)}
+.qa-go{background:var(--navy);color:#fff}
+.qa-go:disabled{opacity:.4;cursor:default}
+.qa-kill{background:var(--red);color:#fff}
+
+.qa-reasons{display:flex;flex-direction:column;gap:8px}
+.qa-reason{
+  min-height:48px;padding:10px 12px;
+  border:1px solid var(--line);border-radius:10px;background:#fff;
+  font-family:var(--f);font-size:15px;font-weight:500;color:var(--ink);
+  text-align:left;cursor:pointer;
+}
+.qa-reason[aria-pressed="true"]{border-color:var(--navy);background:var(--line-soft)}
+.qa-reason.is-safe[aria-pressed="true"]{
+  border-color:var(--red);background:var(--red-soft);
+}
+.qa-safe-note{
+  margin:10px 0 0;padding:12px;
+  background:var(--red-soft);border-radius:10px;
+  font-size:14px;line-height:1.5;color:var(--ink);
+}
+
+#toast{
+  left:50%;right:auto;transform:translateX(-50%);
+  background:#061a2d;color:#fff;
+  border-radius:11px;font-size:14.5px;
+}
+#toast .toast-undo{
+  margin-left:12px;border:0;background:transparent;
+  color:#fff;font:inherit;font-weight:600;text-decoration:underline;cursor:pointer;
+}
+@media (prefers-reduced-motion: reduce){
+  #toast,#qa-layer,.qa-dialog{transition:none}
+}
+
+.qa-card :focus-visible,
+.qa-sheet :focus-visible,
+.qa-dialog :focus-visible,
+.qa-ask-row :focus-visible,
+.qa-menu button:focus-visible,
+#qa-layer :focus-visible{
+  outline:2px solid #1d7fd4;
+  outline-offset:2px;
+}
+
+@media (max-width:560px){
+  .qa-q{font-size:18px}
+  .qa-menu{min-width:216px}
+  .qa-act.is-updates span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+}
+
+/* Opportunity card, story card, and role-gated composer. Tokens match Q&A. */
+.opp-card, .opp-sheet, .opp-story, .opp-lead, .opp-compose, .opp-light {
+  --navy:#0d2b45; --navy-deep:#061a2d; --ink:#152739;
+  --muted:#64778a; --muted-2:#8a9aa8;
+  --paper:#eceff1; --line:#dfe4e8; --line-soft:#e9edf0;
+  --red:#c4392f; --red-soft:#fdf1f0;
+  --green:#07864d; --green-soft:#eef8f2;
+  --gold:#ffcf27;
+  --chip:#edf1f5; --chip-ink:#20456a;
+  --focus:#1d7fd4;
+  --f:"Source Sans 3","Source Sans Pro",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  font-family:var(--f); font-weight:400; letter-spacing:0; color:var(--ink);
+}
+
+.opp-card, .opp-story{
+  background:#fff; border:1px solid var(--line); border-radius:12px;
+  box-shadow:0 1px 2px rgba(11,38,56,.045); overflow:hidden;
+}
+.opp-card.closed .opp-title,
+.opp-card.closed .opp-desc,
+.opp-card.closed .glance dd{color:var(--muted)}
+.opp-card.closed .glance{background:#f3f5f6}
+.opp-pad{padding:16px 16px 14px}
+.opp-author{
+  display:grid; grid-template-columns:48px minmax(0,1fr) auto;
+  gap:12px; align-items:start;
+}
+.opp-av{
+  width:48px;height:48px; display:grid; place-items:center;
+  background:var(--navy); color:#fff;
+  font-size:14px; font-weight:600;
+}
+.opp-av.is-person{border-radius:50%}
+.opp-av.is-org{border-radius:10px}
+.opp-name{
+  font-size:15px; font-weight:600; color:var(--ink);
+  display:flex; align-items:center; gap:6px; line-height:1.3;
+}
+.opp-role{margin:2px 0 0; font-size:13px; font-weight:400; color:var(--muted)}
+.opp-meta{margin:2px 0 0; font-size:13px; font-weight:400; color:var(--muted)}
+.opp-meta .k-word.k-opportunity{
+  font-weight:600;
+  color:var(--blue);
+}
+.opp-title{
+  margin:14px 0 0; max-width:34em;
+  font-size:19px; font-weight:600; line-height:1.42; color:var(--ink);
+}
+.opp-desc{
+  margin:10px 0 0; max-width:34em;
+  font-size:15.5px; font-weight:400; line-height:1.62; color:#28394a;
+}
+.opp-topics{display:flex; flex-wrap:wrap; gap:8px; margin:12px 0 0}
+.opp-chip{
+  display:inline-flex; align-items:center; gap:6px;
+  background:var(--chip); color:var(--chip-ink);
+  border:0; border-radius:999px; padding:7px 13px;
+  font-family:var(--f); font-size:13.5px; font-weight:600; line-height:1.25;
+}
+.opp-deadline{
+  display:inline-flex; align-items:center; gap:8px;
+  margin:12px 0 0; padding:8px 13px; border-radius:999px;
+  font-size:14px; font-weight:600;
+}
+.opp-deadline.is-ok{background:var(--chip); color:var(--chip-ink)}
+.opp-deadline.is-soon{background:var(--red-soft); color:var(--red)}
+.opp-deadline.is-shut{background:#f0f2f3; color:var(--muted)}
+.opp-deadline svg{width:16px;height:16px}
+
+.opp-poster{
+  margin:14px -16px 0; background:#0e1f2e; max-height:340px;
+  display:flex; align-items:center; justify-content:center; overflow:hidden;
+  width:calc(100% + 32px); border:0; padding:0; cursor:pointer;
+}
+.opp-poster img{width:100%; max-height:340px; object-fit:contain; display:block}
+.opp-sheet .opp-poster{margin:14px 0 0; max-height:520px}
+.opp-sheet .opp-poster img{max-height:520px}
+.opp-link{
+  display:block; margin:14px 0 0; border:1px solid var(--line); border-radius:12px;
+  overflow:hidden; color:inherit; text-decoration:none;
+}
+.opp-link:hover{border-color:var(--muted-2)}
+.opp-link-img{aspect-ratio:1.91/1; background:#0e1f2e; overflow:hidden}
+.opp-link-img img{width:100%; height:100%; object-fit:cover; display:block}
+.opp-link-meta{padding:10px 12px}
+.opp-link-host{display:flex; align-items:center; gap:6px; font-size:12.5px; color:var(--muted)}
+.opp-link-title{margin:4px 0 0; font-size:15.5px; font-weight:600; color:var(--ink)}
+.opp-link-desc{
+  margin:4px 0 0; font-size:13.5px; color:var(--muted);
+  display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
+}
+
+.glance{
+  display:grid; grid-template-columns:repeat(3, minmax(0, 1fr));
+  gap:14px 18px; padding:14px 16px; margin:0; background:#f5f8f9;
+}
+.glance .g{display:grid; grid-template-columns:auto minmax(0,1fr); gap:10px; align-items:start; min-width:0}
+.glance .gi{
+  width:28px; height:28px; display:grid; place-items:center;
+  background:#fff; border:1px solid var(--line); border-radius:9px; color:var(--muted);
+}
+.glance .gi svg{width:14px; height:14px}
+.glance dd{
+  margin:0; font-size:14px; line-height:1.45; font-weight:600; color:var(--ink);
+  display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
+}
+
+.opp-primary{
+  margin-left:auto; min-height:44px; padding:0 14px; border:0; border-radius:8px;
+  background:var(--gold); color:var(--navy-deep);
+  font-family:var(--f); font-size:14.5px; font-weight:600; cursor:pointer;
+}
+.opp-primary:disabled{opacity:.45; cursor:default; background:#e4e7ea; color:var(--muted)}
+
+.opp-lead{
+  display:flex; flex-wrap:wrap; align-items:center; gap:10px 12px;
+  margin:0 0 12px; padding:10px 12px;
+  background:#fff; border:1px solid var(--line); border-radius:12px;
+}
+.opp-lead .opp-av{width:42px; height:42px; font-size:13px}
+.opp-post-btn{
+  min-height:44px; padding:0 16px; border:0; border-radius:8px;
+  background:var(--gold); color:var(--navy-deep);
+  font-family:var(--f); font-size:14.5px; font-weight:600; cursor:pointer;
+}
+.opp-drafts-btn{
+  min-height:40px; padding:0 12px; border:1px solid var(--line); border-radius:8px;
+  background:#fff; color:var(--navy); font-family:var(--f); font-size:13.5px; font-weight:600; cursor:pointer;
+}
+.opp-warn{width:100%; margin:0; font-size:13.5px; font-weight:600; color:var(--red)}
+
+.opp-pick{display:flex; flex-direction:column; gap:8px}
+.opp-pick button{
+  display:grid; grid-template-columns:40px 1fr; gap:12px; align-items:center;
+  width:100%; min-height:72px; padding:12px 14px; text-align:left;
+  border:1px solid var(--line); border-radius:12px; background:#fff;
+  font-family:var(--f); cursor:pointer;
+}
+.opp-pick button:hover{background:var(--line-soft)}
+.opp-pick strong{display:block; font-size:16px; font-weight:600; color:var(--ink)}
+.opp-pick span{display:block; font-size:13.5px; color:var(--muted); margin-top:2px}
+.opp-pick i{
+  width:40px; height:40px; border-radius:10px; background:var(--chip);
+  display:grid; place-items:center; color:var(--navy); font-style:normal;
+}
+
+.opp-compose label{display:block; margin:12px 0 6px; font-size:14px; font-weight:600}
+.opp-compose input, .opp-compose textarea, .opp-compose select{
+  width:100%; min-height:44px; box-sizing:border-box;
+  border:1px solid var(--line); border-radius:9px; padding:10px 12px;
+  font-family:var(--f); font-size:15px; color:var(--ink);
+}
+.opp-compose textarea{min-height:96px; resize:vertical; line-height:1.5}
+.opp-hint{margin:6px 0 0; font-size:13px; color:var(--muted); line-height:1.45}
+.opp-hint.is-bad{color:var(--red)}
+.opp-progress{display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px; margin:10px 0 16px}
+.opp-progress span{height:4px; background:var(--line-soft); border-radius:99px}
+.opp-progress span.on{background:var(--navy)}
+.opp-step{margin:0 0 8px; font-size:13px; color:var(--muted)}
+.opp-apply-prev{
+  margin-top:12px; padding:12px; border:1px solid var(--line-soft); border-radius:10px; background:#f7f9fa;
+}
+.opp-remind{
+  display:flex; flex-direction:column; align-items:flex-start; gap:4px;
+  width:100%; min-height:52px; margin:14px 0 0; padding:12px 14px;
+  border:1px solid var(--line); border-radius:10px; background:#fff;
+  font-family:var(--f); text-align:left; cursor:pointer;
+}
+.opp-remind strong{font-size:14.5px; font-weight:600; color:var(--ink)}
+.opp-remind span{font-size:13px; color:var(--muted)}
+.opp-remind.on{background:var(--green-soft); border-color:#b7ddc8}
+.opp-remind.on strong{color:var(--green)}
+.opp-cal{display:inline-block; margin-top:10px; font-size:14.5px; font-weight:600; color:var(--navy)}
+.opp-facts{margin:16px 0 0}
+.opp-facts h3{margin:0 0 10px; font-size:15px; font-weight:600}
+.opp-facts dl{margin:0}
+.opp-facts .row{
+  display:grid; grid-template-columns:7rem minmax(0,1fr);
+  gap:12px; padding:8px 0; border-top:1px solid var(--line-soft);
+}
+.opp-facts dt{color:var(--muted); font-size:13px; padding-top:2px}
+.opp-facts dd{margin:0; font-size:15px; font-weight:600; color:var(--ink)}
+
+.opp-light{
+  position:fixed; inset:0; z-index:100;
+  background:rgba(4,14,22,.92);
+  display:grid; place-items:center; padding:24px;
+}
+.opp-light[hidden]{display:none}
+.opp-light img{max-height:82vh; max-width:100%; object-fit:contain}
+.opp-light-cap{margin:12px 0 0; color:#fff; font-size:14.5px; text-align:center; max-width:40em}
+.opp-light-x{
+  position:absolute; top:16px; right:16px; width:38px; height:38px; border-radius:50%;
+  border:0; background:rgba(255,255,255,.12); color:#fff; cursor:pointer;
+}
+
+#sheet:has(.opp-sheet){max-width:680px; border-radius:14px}
+body.opp-sheet-open .scrim{background:rgba(6,20,32,.74)}
+.opp-sheet{padding:18px}
+.opp-sheet .opp-title{font-size:24px; line-height:1.28}
+.opp-sheet-h{font-size:13.5px; color:var(--muted); font-weight:400}
+
+.qa-draft-row{
+  display:flex; align-items:center; justify-content:space-between; gap:10px;
+  padding:12px 0; border-top:1px solid var(--line-soft);
+}
+
+@media (max-width:620px){
+  .glance{grid-template-columns:1fr; gap:11px}
+}
+.opp-card .qa-menu, .opp-sheet .qa-menu, .opp-story .qa-menu{min-width:250px}
+.qa-dialog.opp-box{width:min(560px,100%); max-height:88vh; overflow:auto}
+.opp-check{display:flex; align-items:flex-start; gap:10px; margin:12px 0 0; font-size:14.5px}
+.opp-check input{width:20px; height:20px; margin-top:2px; flex:0 0 20px}
+.opp-file{margin-top:8px}
+.opp-file input{border:0; padding:0; min-height:0}
+.opp-apply-val{margin:0; font-size:16.5px; font-weight:600; word-break:break-word}
+.opp-apply-note{margin:10px 0 0; font-size:13px; color:var(--muted); line-height:1.45}
+.opp-foot{
+  display:flex; flex-wrap:wrap; justify-content:flex-end; gap:8px; margin-top:16px;
+}
+.opp-foot .qa-keep, .opp-foot .qa-go, .opp-foot .qa-kill{min-height:44px}
+.opp-foot .is-left{margin-right:auto}
+.opp-story-body{
+  margin:14px 0 0; max-width:34em;
+  font-size:15.5px; font-weight:400; line-height:1.62; color:#28394a;
+  white-space:pre-wrap;
+}
+.opp-replies-h{margin:22px 0 12px; font-size:15px; font-weight:600}
+#sheet:has(.opp-sheet) .sheet-title,
+#sheet:has(.story-sheet) .sheet-title{
+  font-size:13.5px; font-weight:400; color:#64778a;
+}
+#sheet:has(.opp-sheet) .sheet-bar .icon-btn#sheet-close,
+#sheet:has(.story-sheet) .sheet-bar .icon-btn#sheet-close{
+  width:38px; height:38px; border-radius:50%;
+}
+.opp-card :focus-visible,
+.opp-sheet :focus-visible,
+.opp-story :focus-visible,
+.opp-lead :focus-visible,
+.opp-compose :focus-visible,
+.opp-light :focus-visible,
+.qa-dialog.opp-box :focus-visible{
+  outline:2px solid var(--focus);
+  outline-offset:2px;
+}
+@media (prefers-reduced-motion: reduce){
+  .opp-card, .opp-sheet, .opp-light, .qa-dialog.opp-box{transition:none}
+}
+
+@media (max-width:560px){
+  .opp-title{font-size:18px}
+  .opp-sheet .opp-title{font-size:21px}
+  .opp-poster, .opp-poster img{max-height:300px}
+  .opp-card .qa-menu, .opp-sheet .qa-menu, .opp-story .qa-menu{min-width:216px}
+  #sheet:has(.opp-sheet){border-radius:0; max-width:none}
+}
+
+/* Story card, sheet, mosaic, Follow, and composer. Tokens match Q&A and Opportunity. */
+.opp-story, .story-sheet, .story-comp-h, .story-mosaic, .story-follow, .story-mention, .opp-light {
+  --navy:#0d2b45; --navy-deep:#061a2d; --ink:#152739;
+  --muted:#64778a; --muted-2:#8a9aa8;
+  --paper:#eceff1; --line:#dfe4e8; --line-soft:#e9edf0;
+  --red:#c4392f; --red-soft:#fdf1f0;
+  --green:#07864d; --green-soft:#eef8f2;
+  --gold:#ffcf27;
+  --chip:#edf1f5; --chip-ink:#20456a;
+  --focus:#1d7fd4;
+  --f:"Source Sans 3","Source Sans Pro",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  font-family:var(--f); font-weight:400; letter-spacing:0;
+}
+
+.story-author{
+  display:grid; grid-template-columns:48px minmax(0,1fr) auto auto;
+  gap:12px; align-items:start;
+}
+.story-follow{
+  align-self:center; min-height:38px; padding:0 15px; border:1px solid var(--navy); border-radius:999px;
+  background:#fff; color:var(--navy); white-space:nowrap;
+  font-family:var(--f); font-size:14px; font-weight:600; cursor:pointer;
+}
+.story-follow[aria-pressed="true"]{
+  border-color:var(--line); color:var(--muted); font-weight:500;
+}
+
+.story-body{
+  margin:13px 0 0; max-width:38em;
+  font-size:15.5px; font-weight:400; line-height:1.62; color:#28394a;
+  white-space:pre-line;
+}
+
+.story-mosaic{
+  display:grid; gap:3px; margin:14px -16px 0; width:calc(100% + 32px);
+  background:#0e1f2e;
+}
+.story-sheet .story-mosaic{margin:14px -18px 0; width:calc(100% + 36px)}
+.story-mosaic button{
+  position:relative; display:block; padding:0; border:0; background:#0e1f2e; cursor:pointer; min-width:0; overflow:hidden;
+}
+.story-mosaic img{width:100%; height:100%; display:block}
+.story-mosaic.n1{grid-template-columns:1fr}
+.story-mosaic.n1 img{width:100%; height:auto; max-height:440px; object-fit:contain}
+.story-mosaic.n2{grid-template-columns:1fr 1fr}
+.story-mosaic.n2 button{aspect-ratio:1/1}
+.story-mosaic.n2 img{object-fit:cover}
+.story-mosaic.n3{grid-template-columns:1.35fr 1fr; grid-template-rows:1fr 1fr; aspect-ratio:4/3}
+.story-mosaic.n3 button{min-height:0; height:100%}
+.story-mosaic.n3 button:first-child{grid-row:1 / span 2}
+.story-mosaic.n3 img{width:100%; height:100%; object-fit:cover}
+.story-mosaic.n4,.story-mosaic.n5{grid-template-columns:1fr 1fr}
+.story-mosaic.n4 button,.story-mosaic.n5 button{aspect-ratio:1/1}
+.story-mosaic.n4 img,.story-mosaic.n5 img{object-fit:cover}
+.story-more{
+  position:absolute; inset:0; display:grid; place-items:center;
+  background:rgba(6,20,32,.62); color:#fff; font-size:26px; font-weight:600;
+}
+
+.story-mention-h{margin:18px 0 10px; font-size:15px; font-weight:600; color:var(--ink)}
+.story-mention{
+  display:grid; grid-template-columns:46px minmax(0,1fr) auto; gap:12px; align-items:center;
+  min-height:64px; margin:0 0 8px; padding:8px 12px 8px 8px;
+  border:1px solid var(--line); border-radius:11px; background:#fff;
+  color:inherit; text-decoration:none; width:100%; text-align:left;
+  font-family:var(--f); cursor:pointer;
+}
+.story-date{
+  width:46px; height:46px; border-radius:10px; background:var(--navy); color:#fff;
+  display:grid; place-items:center; text-align:center; line-height:1.05;
+}
+.story-date b{display:block; font-size:17px; font-weight:600}
+.story-date small{display:block; font-size:10px; font-weight:600}
+.story-case{
+  width:46px; height:46px; border-radius:10px; background:var(--chip); color:var(--chip-ink);
+  display:grid; place-items:center;
+}
+.story-case svg{width:20px; height:20px}
+.story-mention strong{display:block; font-size:15px; font-weight:600; color:var(--ink)}
+.story-mention span{display:block; font-size:13px; color:var(--muted); margin-top:2px}
+.story-kind{font-size:12px; font-weight:600; color:var(--muted); margin-bottom:2px}
+.story-chev{color:var(--muted-2)}
+
+.story-comp-h{display:flex; align-items:baseline; justify-content:space-between; gap:12px}
+.story-comp-h h2{margin:0; font-size:18px; font-weight:600; color:var(--ink)}
+.story-comp-h span{font-size:13.5px; color:var(--muted)}
+#opp-story{min-height:96px; max-height:320px; resize:none}
+.story-alt-row{
+  display:grid; grid-template-columns:66px minmax(0,1fr) auto; gap:10px; align-items:start;
+  margin:10px 0 0;
+}
+.story-alt-row img{width:66px; height:66px; object-fit:cover; border-radius:8px; background:#0e1f2e}
+.story-alt-row input{min-height:44px}
+
+.opp-light{
+  z-index:100;
+}
+.opp-light-bar{
+  position:absolute; top:16px; left:0; right:0;
+  display:flex; justify-content:center; align-items:center; pointer-events:none;
+}
+.opp-light-n{color:#fff; font-size:14px; font-weight:600}
+.opp-light-nav{
+  position:absolute; top:50%; transform:translateY(-50%);
+  width:46px; height:46px; border:0; border-radius:50%;
+  background:rgba(255,255,255,.14); color:#fff; cursor:pointer;
+  display:grid; place-items:center;
+}
+.opp-light-nav.prev{left:16px}
+.opp-light-nav.next{right:16px}
+.opp-light-cap{max-width:640px; margin:12px auto 0; color:#cfdae1; font-size:14px; text-align:center}
+
+@media (max-width:560px){
+  .story-mosaic.n1 img{max-height:360px}
+  .story-mosaic.n3{grid-template-columns:1fr 1fr; grid-template-rows:auto auto; aspect-ratio:auto}
+  .story-mosaic.n3 button:first-child{grid-column:1 / -1; grid-row:auto; aspect-ratio:16/10; height:auto}
+  .opp-story .qa-act span{
+    position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0,0,0,0);
+  }
+}
 </style>
 </head>
 <body>
@@ -3115,6 +3907,8 @@ button.d-row:hover{border-color:var(--line-2);background:#f7fafc}
   </div>
 
   <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+  <div id="qa-layer" hidden></div>
+  <div id="opp-light" class="opp-light" hidden></div>
 </div>
 <script src="nsg-cms.js"></script>
 <script>
@@ -3556,7 +4350,10 @@ var OPPS = {
     sess: ['s-tech', 's-clinic'],
     independent: false,
     state: 'live',
-    author: 'desk',
+    author: 'jerome',
+    rolling: true,
+    closesAt: null,
+    apply: 'Ask STEMGuyana or your school which learning pod or clubhouse serves your area.',
     checkedAt: '',
     checkedBy: '',
     source: '',
@@ -3578,7 +4375,8 @@ var OPPS = {
     ],
     season: 'Rolling intake. Levels take 6, 12 or 18 months',
     cost: 'Programme fees vary by award centre. Ask your Award Leader for the current figure',
-    who: 'Ages 14 to 25, open across neighbourhoods and abilities',
+    who: 'Ages 14 to 25, any school',
+    regions: 'Nationwide through schools',
     entry: [
       { b: 'Find an Award Leader', s: 'Ask your school, youth group or PYARG contacts who assesses in your area.' },
       { b: 'Pick Bronze first', s: 'Set challenges you can actually finish in six months across the four sections.' },
@@ -3604,10 +4402,19 @@ var OPPS = {
     sess: ['s-sport', 's-fork'],
     independent: true,
     state: 'live',
-    author: 'desk',
+    author: 'keisha',
+    rolling: false,
+    closesAt: '2026-09-12T17:00:00-04:00',
+    apply: 'Ask your Award Leader, or visit https://pyarg.org.gy',
+    link: {
+      url: 'https://pyarg.org.gy',
+      host: 'pyarg.org.gy',
+      title: "President's Youth Award Republic of Guyana",
+      description: 'Non-competitive award for ages 14 to 25 across service, skill, sport and adventure.'
+    },
     checkedAt: '',
     checkedBy: '',
-    source: '',
+    source: 'https://pyarg.org.gy',
     returnReason: '',
     images: []
   },
@@ -3652,7 +4459,10 @@ var OPPS = {
     sess: ['s-tech'],
     independent: true,
     state: 'live',
-    author: 'desk',
+    author: 'jerome',
+    rolling: false,
+    closesAt: '2026-10-12T17:00:00-04:00',
+    apply: 'Register as an independent competitor at https://caribbeanscience.org',
     checkedAt: '',
     checkedBy: '',
     source: '',
@@ -3935,7 +4745,10 @@ var OPPS = {
     sess: ['s-biz', 's-fork'],
     independent: true,
     state: 'live',
-    author: 'desk',
+    author: 'omar',
+    rolling: false,
+    closesAt: '2026-09-04T17:00:00-04:00',
+    apply: 'Register directly on the Blue Ocean site. No school sponsor required.',
     checkedAt: '',
     checkedBy: '',
     source: '',
@@ -4264,12 +5077,24 @@ var FEED = [
     kind: 'opportunity',
     at: '2026-09-03T10:00:00-04:00',
     cat: 'Technology',
-    author: 'desk',
+    author: 'jerome',
     opp: 'stem',
     stage: 'explore',
     res: ['sess-s-tech', 'sess-s-clinic', 'note-pod'],
     similar: ['cso', 'scratch'],
     text: 'STEMGuyana holiday pods are open for ages 8 to 18 in several regions. Coding, robotics and AI taster weeks, and there is no fee to join.'
+  },
+  {
+    id: 'f-pyarg',
+    kind: 'opportunity',
+    at: '2026-09-05T09:00:00-04:00',
+    cat: 'Sport and coaching',
+    author: 'keisha',
+    opp: 'pyarg',
+    stage: 'explore',
+    res: ['sess-s-sport', 'note-travel'],
+    similar: ['track', 'clinic'],
+    text: "President's Youth Award is open from age 14. Bronze, Silver and Gold over months of service, skill, sport and adventure."
   },
   {
     id: 'f3',
@@ -4290,7 +5115,16 @@ var FEED = [
     insp: 18,
     rel: ['q-bio', 'f5'],
     opp: 'clinic',
-    sess: 's-clinic'
+    sess: 's-clinic',
+    photos: [
+      { url: 'assets/hero-crop-520.jpg', alt: 'Students at desks with past papers open during a clinic.', width: 520, height: 347 },
+      { url: 'assets/hero-crop-760.jpg', alt: 'A mentor pointing at a worked Biology question on a page.', width: 760, height: 507 },
+      { url: 'assets/hero-wide-1100.jpg', alt: 'A classroom in Georgetown with students rewriting a mock paper.', width: 1100, height: 619 }
+    ],
+    replies: [
+      { a: 'keisha', text: 'Start the rebuild that week. I tell students the same thing after a bad PE assessment.' },
+      { a: null, who: 'Form 5 student, Region 4', text: 'I waited until Christmas and the paper did not move.' }
+    ]
   },
   {
     id: 'f4',
@@ -4354,7 +5188,13 @@ var FEED = [
     insp: 27,
     rel: ['q-cape', 'f9'],
     opp: 'sbb',
-    sess: 's-fork'
+    sess: 's-fork',
+    link: {
+      url: 'https://www.gtti.edu.gy',
+      host: 'gtti.edu.gy',
+      title: 'Government Technical Institute',
+      description: 'Electrical and technical programmes after CSEC, with named certificates and workshop hours.'
+    }
   },
   {
     id: 'q-cape',
@@ -4394,7 +5234,7 @@ var FEED = [
     kind: 'opportunity',
     at: '2026-09-02T10:00:00-04:00',
     cat: 'Technology',
-    author: 'desk',
+    author: 'jerome',
     opp: 'cso',
     stage: 'csec',
     res: ['sess-s-tech', 'note-self'],
@@ -4442,7 +5282,10 @@ var FEED = [
     insp: 31,
     rel: ['q-lethem', 'f15'],
     opp: 'track',
-    sess: 's-sport'
+    sess: 's-sport',
+    photos: [
+      { url: 'assets/hero-wide-1600.jpg', alt: 'A community sports field in the late afternoon, with students still training.', width: 1600, height: 900 }
+    ]
   },
   {
     id: 'f13',
@@ -4459,7 +5302,7 @@ var FEED = [
     kind: 'opportunity',
     at: '2026-08-30T10:00:00-04:00',
     cat: 'Business',
-    author: 'desk',
+    author: 'omar',
     opp: 'blue',
     stage: 'subject',
     res: ['sess-s-fork', 'opp-sbb'],
@@ -7951,14 +8794,28 @@ function byId(id) {
   return document.getElementById(id);
 }
 
-function toast(msg) {
+function toast(msg, opts) {
   var el = byId('toast');
-  el.textContent = msg;
+  var btn;
+  opts = opts || {};
+  el.textContent = '';
+  el.appendChild(document.createTextNode(msg));
+  if (opts.undo) {
+    btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'toast-undo';
+    btn.textContent = 'Undo';
+    btn.onclick = function () {
+      el.hidden = true;
+      opts.undo();
+    };
+    el.appendChild(btn);
+  }
   el.hidden = false;
   clearTimeout(toast._t);
   toast._t = setTimeout(function () {
     el.hidden = true;
-  }, 3200);
+  }, opts.undo ? 6000 : 3200);
 }
 
 function stageIndex(key) {
@@ -8076,6 +8933,11 @@ function applyPrototypeRole(key) {
     S.me.verified = false;
     S.me.contactable = false;
     S.pw.name = 'Desk';
+  } else if (role === 'parent') {
+    S.me.id = '';
+    S.me.verified = false;
+    S.me.contactable = false;
+    S.pw.name = 'You';
   }
 }
 
@@ -8475,12 +9337,13 @@ function toggleSave(id) {
     return;
   }
   var i = S.saved.indexOf(id);
+  var item = feedById(id);
   if (i === -1) {
     S.saved.push(id);
-    toast('Saved for later.');
+    toast(item && item.kind === 'question' ? 'Saved. Find it under Saved questions.' : 'Saved for later.');
   } else {
     S.saved.splice(i, 1);
-    toast('Removed from saved.');
+    toast(item && item.kind === 'question' ? 'Removed from your saved questions.' : 'Removed from saved.');
   }
   paint();
   render();
@@ -8541,6 +9404,7 @@ function ensureReplyIds(item) {
 }
 
 function studentLabel() {
+  if (postingRole() === 'parent') return 'Parent, ' + (S.region || 'Region 4');
   if (S.onboarded && S.form) return S.form + ' student, ' + (S.region || 'Guyana');
   return 'Student';
 }
@@ -8643,6 +9507,8 @@ function hideSheetUi() {
   var scrim = byId('scrim');
   if (scrim) scrim.hidden = true;
   lockBody(false);
+  document.body.classList.remove('qa-thread-open');
+  document.body.classList.remove('opp-sheet-open');
 }
 
 function closeSheet() {
@@ -8682,6 +9548,7 @@ function paint() {
   byId('sheet-body').scrollTop = 0;
   if (out.after) out.after();
   renderChrome();
+  if (typeof qaAfterPaint === 'function') qaAfterPaint();
 }
 
 /* Feed avatars take the post kind colour so kinds are readable at a glance.
@@ -9167,48 +10034,11 @@ function mineFlagsHtml(item) {
 }
 
 function renderQuestionCard(item) {
-  var anon = !!item.anon || !item.author;
-  var a = item.author ? author(item.author) : null;
-  var name = anon ? item.who || studentLabel() : a && a.name ? a.name : youName();
-  var first = item.replies && item.replies[0] ? item.replies[0] : null;
-  var ra;
-  var nReplies = item.replies ? item.replies.length : 0;
-  var html =
-    '<article class="card feed-card kind-q clickable" ' +
-    cardClickAttrs('thread', item.id) +
-    '>' +
-    '<div class="card-head">' +
-    avatarHtml(a, anon, 'question') +
-    '<div class="meta">' +
-    nameWithBadge(name, anon ? null : a) +
-    '<div class="sub">' +
-    kindTimeHtml('Student Question', item.at, item.edited, 'question') +
-    '</div></div>' +
-    contactAffordance(anon ? null : item.author, item.mine) +
-    cardMoreHtml('thread', item.id, item.mine) +
-    '</div><div class="card-body">';
-  html += mineFlagsHtml(item);
-  if (item.cat) html += '<div class="card-cats">' + catChip(item.cat) + '</div>';
-  html += '<h3>' + esc(item.title) + '</h3>';
-  if (first) {
-    ra = first.a ? author(first.a) : null;
-    html +=
-      '<div class="reply-preview">' +
-      replyIdentityHtml(ra, first.who || 'Student', true, first.at || item.at) +
-      '<p class="clamp3">' +
-      esc(first.text) +
-      '</p></div>';
-  } else {
-    html += '<p class="reply-empty">No replies yet</p>';
-  }
-  html +=
-    '</div>' +
-    postEngageBar(item, 'thread', item.id, !!item.mine, false, nReplies) +
-    '</article>';
-  return html;
+  return qaRenderCard(item);
 }
 
 function renderStoryCard(item) {
+  if (typeof oppRenderStoryCard === 'function') return oppRenderStoryCard(item);
   var mine = !!item.mine;
   var anon = !!item.anon;
   var a = item.author ? author(item.author) : null;
@@ -9243,6 +10073,7 @@ function renderStoryCard(item) {
 }
 
 function renderOppCard(item) {
+  if (typeof oppRenderCard === 'function') return oppRenderCard(item);
   var o = OPPS[item.opp];
   var a;
   var html;
@@ -9552,6 +10383,7 @@ function renderFeed() {
       '</button>';
   }
   html += '</div>';
+  html += typeof qaFeedLeadHtml === 'function' ? qaFeedLeadHtml() : '';
   html += '<div class="stream">';
   for (i = 0; i < list.length; i++) {
     html += renderFeedCard(list[i]);
@@ -10124,6 +10956,4178 @@ function personPosts(id) {
 }
 
 /* Pathway helpers and render continue in app-views.js / assembled file */
+
+/* Q&A card and thread. Extends the existing question object. Does not reshape the feed.
+   Open decisions left unpicked: tag-only pass, student initial glyph, report routing review,
+   and whether tick plus role line is enough to tell mentors from students. */
+
+function ensureQa() {
+  if (!S.qa) {
+    S.qa = {
+      dialog: '',
+      dialogId: '',
+      dialogRid: '',
+      dialogText: '',
+      reportReason: '',
+      reportKind: 'question',
+      tags: [],
+      tagQ: '',
+      tagIx: -1,
+      draft: '',
+      lastFocus: null
+    };
+  }
+  if (!S.safeguardCases) S.safeguardCases = [];
+  return S.qa;
+}
+
+function qaViewerId() {
+  return currentPosterId() || (qaIsStudent() ? 'you-student' : '');
+}
+
+function qaIsMentor() {
+  var r = postingRole();
+  return r === 'mentor' || r === 'contributor' || r === 'admin';
+}
+
+function qaIsStudent() {
+  return postingRole() === 'student';
+}
+
+function qaTimeAgo(iso) {
+  if (!iso) return '';
+  var then = new Date(iso);
+  if (isNaN(then.getTime())) return '';
+  var now = new Date();
+  var diff = now.getTime() - then.getTime();
+  if (diff < 0) diff = 0;
+  var mins = Math.floor(diff / 60000);
+  if (mins < 1) return 'Just now';
+  if (mins === 1) return '1 minute ago';
+  if (mins < 60) return String(mins) + ' minutes ago';
+  var hrs = Math.floor(mins / 60);
+  if (hrs === 1) return '1 hour ago';
+  if (hrs < 24) return String(hrs) + ' hours ago';
+  var days = Math.floor(hrs / 24);
+  if (days === 1) return '1 day ago';
+  return String(days) + ' days ago';
+}
+
+function qaAsker(item) {
+  return item.asker || item.who || studentLabel();
+}
+
+function qaOwnsQuestion(item) {
+  if (!item || qaIsMentor()) return false;
+  if (item.authorId && item.authorId === qaViewerId()) return true;
+  return !!(item.mine && qaIsStudent());
+}
+
+function qaTopics(item) {
+  var out = [];
+  var i;
+  var t;
+  if (item.topics && item.topics.length) {
+    for (i = 0; i < item.topics.length; i++) {
+      t = item.topics[i];
+      if (t && out.indexOf(t) === -1) out.push(t);
+    }
+    return out;
+  }
+  if (item.cat) return [hashTagLabel(item.cat)];
+  return [];
+}
+
+function qaTopicCatalog() {
+  var counts = {};
+  var i;
+  var j;
+  var tags;
+  var list = [];
+  for (i = 0; i < CATS.length; i++) counts[hashTagLabel(CATS[i])] = 0;
+  for (i = 0; i < FEED.length; i++) {
+    if (FEED[i].kind !== 'question') continue;
+    tags = qaTopics(FEED[i]);
+    for (j = 0; j < tags.length; j++) {
+      counts[tags[j]] = (counts[tags[j]] || 0) + 1;
+    }
+  }
+  for (i = 0; i < CATS.length; i++) {
+    list.push({ tag: hashTagLabel(CATS[i]), raw: CATS[i], useCount: counts[hashTagLabel(CATS[i])] || 0 });
+  }
+  return list;
+}
+
+function qaNormReply(r) {
+  var a = r && r.a ? author(r.a) : null;
+  var mentor = !!(a && (a.role === 'mentor' || a.role === 'contributor' || a.role === 'admin'));
+  var name;
+  var initials;
+  var role;
+  if (r.authorRole === 'mentor' || mentor) {
+    name = r.name || (a && a.name) || 'Mentor';
+    initials = r.initials || (a && a.init) || name.replace(/[^A-Za-z]/g, '').slice(0, 2).toUpperCase();
+    if (initials.length < 2) initials = (initials + 'M').slice(0, 2);
+    role = r.role || ('Mentor · ' + ((a && a.pos) || 'Mentor'));
+    return {
+      id: r.id,
+      authorId: r.authorId || r.a || '',
+      authorRole: 'mentor',
+      name: name,
+      initials: initials,
+      verified: r.verified != null ? !!r.verified : !!(a && a.verified && a.role === 'mentor'),
+      role: role,
+      createdAt: r.createdAt || r.at || '',
+      editedAt: r.editedAt,
+      edited: !!(r.edited || r.editedAt),
+      text: r.text || '',
+      mine: !!r.mine,
+      src: r
+    };
+  }
+  name = r.name || r.who || studentLabel();
+  initials = r.initials || (name.charAt(0) || 'S').toUpperCase();
+  return {
+    id: r.id,
+    authorId: r.authorId || (r.mine ? qaViewerId() : ''),
+    authorRole: r.authorRole === 'parent' ? 'parent' : 'student',
+    name: name,
+    initials: initials.slice(0, 1),
+    verified: false,
+    role: '',
+    createdAt: r.createdAt || r.at || '',
+    editedAt: r.editedAt,
+    edited: !!(r.edited || r.editedAt),
+    text: r.text || '',
+    mine: !!r.mine,
+    src: r
+  };
+}
+
+function qaOwnsReply(r) {
+  var n = qaNormReply(r);
+  var viewer = postingRole();
+  if (n.authorRole === 'mentor') {
+    if (!qaIsMentor()) return false;
+    if (n.authorId && n.authorId === currentPosterId()) return true;
+    return !!(n.mine && qaIsMentor());
+  }
+  if (viewer !== 'student') return false;
+  if (n.authorId && n.authorId === qaViewerId()) return true;
+  return !!n.mine;
+}
+
+function qaIconHeart(fill) {
+  if (fill) {
+    return '<svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 21s-7.2-4.6-9.6-8.6C.6 9.4 2 6 5.4 6c1.9 0 3.2 1.1 3.9 2.2C10 7.1 11.3 6 13.2 6 16.6 6 18 9.4 16.2 12.4 13.8 16.4 12 21 12 21z"/></svg>';
+  }
+  return '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>';
+}
+
+function qaIconReply() {
+  return '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-8 8H7l-4 3V12a8 8 0 0 1 8-8h2a8 8 0 0 1 8 8z"/></svg>';
+}
+
+function qaIconSave(fill) {
+  if (fill) {
+    return '<svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M6 3h12a1 1 0 0 1 1 1v17l-7-3.8L5 21V4a1 1 0 0 1 1-1z"/></svg>';
+  }
+  return '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 4h12v17l-6-3.4L6 21V4z"/></svg>';
+}
+
+function qaIconBell() {
+  return '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9a6 6 0 1 1 12 0c0 7 2 7 2 7H4s2 0 2-7"/><path d="M10 19a2 2 0 0 0 4 0"/></svg>';
+}
+
+function qaIconMore(size) {
+  size = size || 22;
+  return (
+    '<svg width="' +
+    size +
+    '" height="' +
+    size +
+    '" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="5" r="2.2"/><circle cx="12" cy="12" r="2.2"/><circle cx="12" cy="19" r="2.2"/></svg>'
+  );
+}
+
+function qaTickSvg() {
+  return (
+    '<svg class="qa-tick" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7"></circle><path d="M4.8 8.2l2.1 2.1 4.4-4.8"></path></svg>'
+  );
+}
+
+function qaYouAv() {
+  if (qaIsMentor()) {
+    var a = currentPosterId() ? author(currentPosterId()) : null;
+    return '<span class="qa-av is-mentor" aria-hidden="true">' + esc((a && a.init) || 'ME') + '</span>';
+  }
+  return '<span class="qa-av is-student qa-you-gold" aria-hidden="true" style="background:#ffcf27;color:#061a2d">You</span>';
+}
+
+function qaTileHtml() {
+  return '<span class="qa-tile" aria-hidden="true"><span class="qa-qmark">?</span><span class="qa-qlabel">Q&amp;A</span></span>';
+}
+
+function qaMetaLine(item) {
+  var t = qaTimeAgo(item.at || item.createdAt);
+  var html = '';
+  if (qaOwnsQuestion(item)) {
+    html += '<span class="qa-yours">Your question</span>';
+    if (t) html += ' ' + esc(t);
+  } else {
+    html += esc(t);
+  }
+  if (item.edited || item.editedAt) html += ' · edited';
+  return html;
+}
+
+function qaMenuItem(attrs, label, danger) {
+  return (
+    '<button type="button" role="menuitem" class="' +
+    (danger ? 'is-danger' : '') +
+    '" ' +
+    attrs +
+    '>' +
+    esc(label) +
+    '</button>'
+  );
+}
+
+function qaQuestionMenu(item) {
+  var own = qaOwnsQuestion(item);
+  var key = hideKey('thread', item.id);
+  var open = S.menu === key;
+  var html =
+    '<div class="qa-more">' +
+    '<button type="button" class="qa-more-btn" data-menu="' +
+    esc(key) +
+    '" aria-label="More actions" aria-haspopup="true" aria-expanded="' +
+    (open ? 'true' : 'false') +
+    '">' +
+    qaIconMore(22) +
+    '</button>';
+  if (open) {
+    html += '<div class="qa-menu" role="menu">';
+    if (own) {
+      html += qaMenuItem('data-qa-del-q="' + esc(item.id) + '"', 'Delete question', true);
+      html += qaMenuItem('data-qa-edit-q="' + esc(item.id) + '"', 'Edit question', false);
+    } else if (qaIsMentor()) {
+      html += qaMenuItem('data-qa-report="question" data-id="' + esc(item.id) + '"', 'Report question', true);
+    } else {
+      html += qaMenuItem('data-hide="' + esc(key) + '"', 'Not interested', false);
+      html += '<hr/>';
+      html += qaMenuItem('data-qa-report="question" data-id="' + esc(item.id) + '"', 'Report question', true);
+    }
+    html += '</div>';
+  }
+  html += '</div>';
+  return html;
+}
+
+function qaReplyMenu(item, r) {
+  var key = 'reply:' + item.id + ':' + r.id;
+  var open = S.menu === key;
+  var html =
+    '<div class="qa-more">' +
+    '<button type="button" class="qa-more-btn is-sm" data-menu="' +
+    esc(key) +
+    '" aria-label="Reply actions" aria-haspopup="true" aria-expanded="' +
+    (open ? 'true' : 'false') +
+    '">' +
+    qaIconMore(20) +
+    '</button>';
+  if (open) {
+    html += '<div class="qa-menu" role="menu">';
+    if (qaOwnsReply(r.src || r)) {
+      html += qaMenuItem(
+        'data-qa-edit-r="' + esc(item.id) + '" data-rid="' + esc(r.id) + '"',
+        'Edit reply',
+        false
+      );
+      html += qaMenuItem(
+        'data-qa-del-r="' + esc(item.id) + '" data-rid="' + esc(r.id) + '"',
+        'Delete reply',
+        true
+      );
+    } else {
+      html += qaMenuItem(
+        'data-qa-report="reply" data-id="' + esc(item.id) + '" data-rid="' + esc(r.id) + '"',
+        'Report reply',
+        true
+      );
+    }
+    html += '</div>';
+  }
+  html += '</div>';
+  return html;
+}
+
+function qaIdentityHtml(item, withMenu) {
+  return (
+    '<div class="qa-id">' +
+    qaTileHtml() +
+    '<div><div class="qa-ask-name">' +
+    esc(qaAsker(item)) +
+    '</div><p class="qa-ask-meta">' +
+    qaMetaLine(item) +
+    '</p></div>' +
+    (withMenu ? qaQuestionMenu(item) : '') +
+    '</div>'
+  );
+}
+
+function qaTopicRaw(tag) {
+  var i;
+  for (i = 0; i < CATS.length; i++) {
+    if (hashTagLabel(CATS[i]) === tag) return CATS[i];
+  }
+  return String(tag || '').replace(/^#/, '');
+}
+
+function qaTopicsHtml(item, clickable) {
+  var tags = qaTopics(item);
+  var i;
+  var html;
+  if (!tags.length) return '';
+  html = '<div class="qa-topics">';
+  for (i = 0; i < tags.length; i++) {
+    html +=
+      '<button type="button" class="qa-chip"' +
+      (clickable === false ? ' disabled' : ' data-topic="' + esc(qaTopicRaw(tags[i])) + '"') +
+      '>' +
+      esc(tags[i]) +
+      '</button>';
+  }
+  html += '</div>';
+  return html;
+}
+
+function qaReplyHeadHtml(n, item, withMenu, whenFallback) {
+  var when = qaTimeAgo(n.createdAt || whenFallback);
+  var html =
+    '<div class="qa-reply">' +
+    '<span class="qa-av ' +
+    (n.authorRole === 'mentor' ? 'is-mentor' : 'is-student') +
+    '" aria-hidden="true">' +
+    esc(n.initials) +
+    '</span><div>' +
+    '<div class="qa-r-name">' +
+    esc(n.name) +
+    (n.verified
+      ? qaTickSvg() + '<span class="sr">Verified mentor</span>'
+      : '') +
+    '</div>';
+  if (n.authorRole === 'mentor' && n.role) {
+    html += '<p class="qa-r-role">' + esc(n.role) + '</p>';
+  }
+  if (when) {
+    html += '<p class="qa-r-when">' + esc(when) + (n.edited ? ' · edited' : '') + '</p>';
+  }
+  html += '</div>';
+  if (withMenu) html += qaReplyMenu(item, n);
+  html += '</div>';
+  return html;
+}
+
+function qaBodyHtml(text, clampId) {
+  return (
+    '<p class="qa-r-body' +
+    (clampId ? ' qa-clamp" data-qa-clamp="' + esc(clampId) : '') +
+    '">' +
+    esc(text) +
+    '</p>'
+  );
+}
+
+function qaInspireCount(item) {
+  var n = item.insp || item.inspiredCount || 0;
+  return n;
+}
+
+function qaEngageHtml(item, inThread) {
+  var n = item.replies ? item.replies.length : 0;
+  var inspired = isInspired(item.id);
+  var saved = isSaved(item.id);
+  var following = S.qFollow.indexOf(item.id) !== -1;
+  var inspN = qaInspireCount(item);
+  var replyLabel;
+  var html;
+  var showUpdates = !inThread && n === 0 && qaIsStudent();
+  if (n === 0) replyLabel = qaIsMentor() ? 'Answer' : 'Reply';
+  else replyLabel = n === 1 ? '1 reply' : n + ' replies';
+  html = '<div class="qa-actions">';
+  html +=
+    '<button type="button" class="qa-act is-inspired" data-inspire="' +
+    esc(item.id) +
+    '" aria-pressed="' +
+    (inspired ? 'true' : 'false') +
+    '">' +
+    qaIconHeart(inspired) +
+    '<span>' +
+    (inspN ? 'Inspired ' + inspN : 'Inspired') +
+    '</span></button>';
+  if (!inThread) {
+    html +=
+      '<button type="button" class="qa-act" data-open="thread" data-id="' +
+      esc(item.id) +
+      '">' +
+      qaIconReply() +
+      '<span>' +
+      esc(replyLabel) +
+      '</span></button>';
+  }
+  html +=
+    '<button type="button" class="qa-act is-save" data-save="' +
+    esc(item.id) +
+    '" aria-pressed="' +
+    (saved ? 'true' : 'false') +
+    '">' +
+    qaIconSave(saved) +
+    '<span>' +
+    (saved ? 'Saved' : 'Save') +
+    '</span></button>';
+  if (showUpdates) {
+    html +=
+      '<button type="button" class="qa-act is-updates" data-qa-updates="' +
+      esc(item.id) +
+      '" aria-pressed="' +
+      (following ? 'true' : 'false') +
+      '" aria-label="Get updates when someone answers this question">' +
+      qaIconBell() +
+      '<span>' +
+      (following ? 'Updates on' : 'Get updates') +
+      '</span></button>';
+  }
+  html += '</div>';
+  return html;
+}
+
+function qaRenderCard(item) {
+  var replies = item.replies || [];
+  var first = replies[0] ? qaNormReply(replies[0]) : null;
+  var more = replies.length > 1 ? replies.length - 1 : 0;
+  var html =
+    '<article class="card feed-card kind-q qa-card clickable" ' +
+    cardClickAttrs('thread', item.id) +
+    '><div class="qa-pad">';
+  html += qaIdentityHtml(item, true);
+  html +=
+    '<h3 class="qa-q qa-clamp" data-qa-clamp="q-' +
+    esc(item.id) +
+    '">' +
+    esc(item.title || item.question || '') +
+    '</h3>';
+  html += qaTopicsHtml(item, true);
+  if (first) {
+    html += '<div class="qa-preview">';
+    html += qaReplyHeadHtml(first, item, false, item.at);
+    html += qaBodyHtml(first.text, 'r-' + item.id + '-' + first.id);
+    html += '</div>';
+    if (more) {
+      html +=
+        '<button type="button" class="qa-more-replies" data-open="thread" data-id="' +
+        esc(item.id) +
+        '">Read ' +
+        more +
+        (more === 1 ? ' more reply' : ' more replies') +
+        '</button>';
+    }
+  }
+  html += '</div>' + qaEngageHtml(item, false) + '</article>';
+  return html;
+}
+
+function qaUnansweredCount() {
+  var i;
+  var n = 0;
+  for (i = 0; i < FEED.length; i++) {
+    if (FEED[i].kind === 'question' && !(FEED[i].replies && FEED[i].replies.length)) n += 1;
+  }
+  return n;
+}
+
+function qaFeedLeadHtml() {
+  var n;
+  if (typeof oppLeadHtml === 'function') return oppLeadHtml();
+  if (qaIsStudent()) {
+    return (
+      '<div class="qa-ask-row">' +
+      qaYouAv() +
+      '<button type="button" class="qa-ask-open" data-qa-ask="1">What do you want to ask?</button></div>'
+    );
+  }
+  if (qaIsMentor()) {
+    n = qaUnansweredCount();
+    if (!n) return '';
+    return (
+      '<p class="qa-queue">' +
+      n +
+      (n === 1 ? ' question with no answer' : ' questions with no answer') +
+      '</p>'
+    );
+  }
+  return '';
+}
+
+function qaTagPickerHtml(item) {
+  var q = ensureQa();
+  var chosen = q.tags || [];
+  var already = qaTopics(item).length > 0;
+  var html = '<div class="qa-tags" id="qa-tag-wrap">';
+  var i;
+  html += '<label class="qa-tags-label" for="qa-tag-q">Tag this question</label>';
+  html += '<div class="qa-chosen" id="qa-chosen"' + (chosen.length ? '' : ' hidden') + '>';
+  for (i = 0; i < chosen.length; i++) {
+    html +=
+      '<span class="qa-chip">' +
+      esc(chosen[i]) +
+      '<span class="qa-chip-x" role="button" tabindex="0" data-qa-untag="' +
+      esc(chosen[i]) +
+      '" aria-label="Remove ' +
+      esc(chosen[i]) +
+      '">×</span></span>';
+  }
+  html += '</div>';
+  html +=
+    '<input id="qa-tag-q" class="qa-tag-input" role="combobox" aria-expanded="false" aria-controls="qa-sug" aria-autocomplete="list" placeholder="For example #Science, #Law…" value="' +
+    esc(q.tagQ || '') +
+    '"/>';
+  html += '<div class="qa-sug" id="qa-sug" role="listbox" hidden></div>';
+  html += '<div class="qa-tag-foot"><span class="qa-tag-hint" id="qa-tag-hint"></span>';
+  if (already) {
+    html += '<span class="qa-tagged">' + qaTickSvg() + 'Already tagged</span>';
+  }
+  html += '</div></div>';
+  return html;
+}
+
+function qaComposerHtml(item) {
+  var mentor = qaIsMentor();
+  var q = ensureQa();
+  var html = '<div class="qa-compose">';
+  html +=
+    '<p class="qa-compose-label">' +
+    (mentor ? "Answer student's question" : 'Reply to this question') +
+    '</p>';
+  html += '<div class="qa-compose-grid">' + qaYouAv();
+  html += '<div class="qa-compose-field">';
+  html +=
+    '<textarea id="qa-reply" rows="1" placeholder="' +
+    (mentor ? 'What would you tell this student?' : 'Add your experience or ask a follow-up…') +
+    '">' +
+    esc(q.draft || '') +
+    '</textarea>';
+  if (mentor) html += qaTagPickerHtml(item);
+  html +=
+    '<div class="qa-compose-foot"><p class="qa-note">' +
+    (mentor ? '' : 'Please be respectful.') +
+    '</p><button type="button" class="qa-post" id="qa-post" data-qa-post="' +
+    esc(item.id) +
+    '" disabled>' +
+    (mentor ? 'Post answer' : 'Reply') +
+    '</button></div>';
+  html += '</div></div></div>';
+  return html;
+}
+
+function qaThreadHtml(item) {
+  var replies = item.replies || [];
+  var i;
+  var n;
+  var html = '<div class="qa-sheet">';
+  html += qaIdentityHtml(item, true);
+  html += '<h2 class="qa-q">' + esc(item.title || item.question || '') + '</h2>';
+  html += qaTopicsHtml(item, true);
+  html += qaEngageHtml(item, true);
+  if (!replies.length) html += '<p class="qa-caption">No replies yet</p>';
+  else {
+    html +=
+      '<p class="qa-caption">' +
+      replies.length +
+      (replies.length === 1 ? ' reply' : ' replies') +
+      ', oldest first</p>';
+  }
+  html += '<div class="qa-thread-list">';
+  for (i = 0; i < replies.length; i++) {
+    n = qaNormReply(replies[i]);
+    html += '<div class="qa-thread-item">';
+    html += qaReplyHeadHtml(n, item, true, item.at);
+    html += qaBodyHtml(n.text);
+    html += '</div>';
+  }
+  html += '</div>';
+  html += qaComposerHtml(item);
+  html += '</div>';
+  return html;
+}
+
+function qaMatchTopics(term, item) {
+  var q = term.replace(/^#/, '').toLowerCase().replace(/\s+/g, '');
+  var chosen = ensureQa().tags || [];
+  var have = qaTopics(item);
+  var all = qaTopicCatalog();
+  var prefix = [];
+  var sub = [];
+  var i;
+  var key;
+  var hit;
+  if (!q) return [];
+  for (i = 0; i < all.length; i++) {
+    key = all[i].tag.replace(/^#/, '').toLowerCase();
+    if (chosen.indexOf(all[i].tag) !== -1 || have.indexOf(all[i].tag) !== -1) continue;
+    if (key.indexOf(q) === 0) prefix.push(all[i]);
+    else if (key.indexOf(q) !== -1) sub.push(all[i]);
+  }
+  hit = prefix.concat(sub);
+  if (hit.length > 6) hit.length = 6;
+  return hit;
+}
+
+function qaSyncPostBtn(item) {
+  var btn = byId('qa-post');
+  var box = byId('qa-reply');
+  var text = box && box.value ? box.value.trim() : '';
+  var needTag = qaIsMentor() && qaTopics(item).length === 0 && !(ensureQa().tags && ensureQa().tags.length);
+  if (!btn) return;
+  btn.disabled = !text || needTag;
+}
+
+function qaSyncTagUi(item) {
+  var q = ensureQa();
+  var hint = byId('qa-tag-hint');
+  var n = (q.tags || []).length;
+  var sug = byId('qa-sug');
+  var input = byId('qa-tag-q');
+  var hits;
+  var i;
+  var html = '';
+  if (hint) {
+    if (!n) hint.textContent = '';
+    else if (n >= 3) hint.textContent = '3 of 3 chosen. Remove one to change it.';
+    else hint.textContent = n + ' of 3 chosen.';
+  }
+  if (!sug || !input) {
+    qaSyncPostBtn(item);
+    return;
+  }
+  if (!input.value || !input.value.replace(/\s/g, '')) {
+    sug.hidden = true;
+    sug.innerHTML = '';
+    input.setAttribute('aria-expanded', 'false');
+    qaSyncPostBtn(item);
+    return;
+  }
+  hits = qaMatchTopics(input.value, item);
+  if (!hits.length) {
+    html =
+      '<p class="qa-sug-empty">No topic matches "' +
+      esc(input.value.trim()) +
+      '". Topics are set by the Next Step team, ask an admin to add one.</p>';
+  } else {
+    for (i = 0; i < hits.length; i++) {
+      html +=
+        '<button type="button" role="option" data-qa-pick="' +
+        esc(hits[i].tag) +
+        '" aria-selected="' +
+        (q.tagIx === i ? 'true' : 'false') +
+        '"><span class="qa-sug-name">' +
+        esc(hits[i].tag) +
+        '</span><span class="qa-sug-n">used ' +
+        hits[i].useCount +
+        (hits[i].useCount === 1 ? ' time' : ' times') +
+        '</span></button>';
+    }
+  }
+  sug.innerHTML = html;
+  sug.hidden = false;
+  input.setAttribute('aria-expanded', 'true');
+  qaSyncPostBtn(item);
+}
+
+function qaBindClamps() {
+  var nodes = document.querySelectorAll('[data-qa-clamp]');
+  var i;
+  var el;
+  var id;
+  var btn;
+  var overflow;
+  for (i = 0; i < nodes.length; i++) {
+    el = nodes[i];
+    id = el.getAttribute('data-qa-clamp');
+    btn = el.parentNode ? el.parentNode.querySelector('[data-qa-see="' + id + '"]') : null;
+    overflow = el.scrollHeight > el.clientHeight + 2;
+    if (overflow) {
+      el.classList.add('qa-clamp');
+      if (!btn) {
+        btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'qa-see';
+        btn.setAttribute('data-qa-see', id);
+        btn.textContent = '…see more';
+        el.parentNode.insertBefore(btn, el.nextSibling);
+      }
+    } else {
+      if (btn && btn.parentNode) btn.parentNode.removeChild(btn);
+    }
+  }
+}
+
+function qaAfterPaint() {
+  var item;
+  var top;
+  qaBindClamps();
+  if (NAV.length && NAV[NAV.length - 1].t === 'thread') {
+    document.body.classList.add('qa-thread-open');
+    top = NAV[NAV.length - 1];
+    item = feedById(top.id);
+    if (item) {
+      qaSyncPostBtn(item);
+      qaSyncTagUi(item);
+    }
+  } else {
+    document.body.classList.remove('qa-thread-open');
+  }
+  qaPaintLayer();
+  if (typeof oppAfterPaint === 'function') oppAfterPaint();
+}
+
+function qaOpenDialog(type, spec) {
+  var q = ensureQa();
+  spec = spec || {};
+  q.dialog = type;
+  q.dialogId = spec.id || '';
+  q.dialogRid = spec.rid || '';
+  q.dialogText = spec.text || '';
+  q.reportReason = '';
+  q.reportKind = spec.kind || 'question';
+  qaPaintLayer();
+}
+
+function qaCloseDialog() {
+  var q = ensureQa();
+  q.dialog = '';
+  q.dialogId = '';
+  q.dialogRid = '';
+  q.dialogText = '';
+  q.reportReason = '';
+  qaPaintLayer();
+}
+
+function qaPaintLayer() {
+  var layer = byId('qa-layer');
+  var q = ensureQa();
+  var item;
+  var r;
+  var html;
+  var left;
+  if (!layer) return;
+  if (!q.dialog) {
+    if (S.opp && S.opp.dialog) return;
+    layer.hidden = true;
+    layer.innerHTML = '';
+    return;
+  }
+  item = q.dialogId ? feedById(q.dialogId) : null;
+  html = '<div class="qa-dialog" role="dialog" aria-modal="true" aria-labelledby="qa-dlg-title">';
+  if (q.dialog === 'ask') {
+    left = 180 - (q.dialogText || '').length;
+    html += '<h2 id="qa-dlg-title">Ask a question</h2>';
+    html +=
+      '<p class="qa-sub">It is posted as "' +
+      esc(studentLabel()) +
+      '". Your name is never shown.</p>';
+    html +=
+      '<textarea id="qa-dlg-text" maxlength="180" placeholder="Ask one clear question, for example: do I need Chemistry for nursing?">' +
+      esc(q.dialogText || '') +
+      '</textarea>';
+    html +=
+      '<p class="qa-count' +
+      (left < 20 ? ' is-low' : '') +
+      '">' +
+      left +
+      ' left</p>';
+    html +=
+      '<div class="qa-dlg-actions"><button type="button" class="qa-keep" data-qa-cancel="1">Cancel</button><button type="button" class="qa-go" data-qa-ask-post="1"' +
+      ((q.dialogText || '').trim().length < 10 ? ' disabled' : '') +
+      '>Post</button></div>';
+  } else if (q.dialog === 'edit-q' && item) {
+    html += '<h2 id="qa-dlg-title">Edit your question</h2>';
+    html += '<p class="qa-sub">Students who already replied will see that you edited it.</p>';
+    html +=
+      '<textarea id="qa-dlg-text" maxlength="180">' +
+      esc(q.dialogText) +
+      '</textarea>';
+    html +=
+      '<div class="qa-dlg-actions"><button type="button" class="qa-keep" data-qa-cancel="1">Cancel</button><button type="button" class="qa-go" data-qa-save-q="1"' +
+      ((q.dialogText || '') === (item.title || '') ? ' disabled' : '') +
+      '>Save</button></div>';
+  } else if (q.dialog === 'del-q') {
+    html += '<h2 id="qa-dlg-title">Delete this question?</h2>';
+    html += '<p class="qa-sub">Any replies to it are deleted too. This cannot be undone.</p>';
+    html +=
+      '<div class="qa-dlg-actions"><button type="button" class="qa-keep" data-qa-cancel="1">Keep it</button><button type="button" class="qa-kill" data-qa-confirm-del-q="1">Delete</button></div>';
+  } else if (q.dialog === 'edit-r') {
+    html += '<h2 id="qa-dlg-title">Edit reply</h2>';
+    html +=
+      '<textarea id="qa-dlg-text">' +
+      esc(q.dialogText) +
+      '</textarea>';
+    html +=
+      '<div class="qa-dlg-actions"><button type="button" class="qa-keep" data-qa-cancel="1">Cancel</button><button type="button" class="qa-go" data-qa-save-r="1">Save</button></div>';
+  } else if (q.dialog === 'del-r') {
+    html += '<h2 id="qa-dlg-title">Delete your reply?</h2>';
+    html += '<p class="qa-sub">It is removed from this question. This cannot be undone.</p>';
+    html +=
+      '<div class="qa-dlg-actions"><button type="button" class="qa-keep" data-qa-cancel="1">Keep it</button><button type="button" class="qa-kill" data-qa-confirm-del-r="1">Delete</button></div>';
+  } else if (q.dialog === 'report') {
+    html +=
+      '<h2 id="qa-dlg-title">' +
+      (q.reportKind === 'reply' ? 'Report this reply' : 'Report this question') +
+      '</h2>';
+    html += '<p class="qa-sub">Tell us what is wrong. A person reviews every report.</p>';
+    html += qaReportReasonsHtml(q);
+    if (q.reportReason === 'worry') {
+      html +=
+        '<p class="qa-safe-note">This goes straight to the Next Step safeguarding team, not to an automated queue. If a young person is in immediate danger, contact someone who can help right now as well.</p>';
+    }
+    html +=
+      '<div class="qa-dlg-actions"><button type="button" class="qa-keep" data-qa-cancel="1">Cancel</button><button type="button" class="qa-go" data-qa-send-report="1"' +
+      (q.reportReason ? '' : ' disabled') +
+      '>Send</button></div>';
+  }
+  html += '</div>';
+  layer.innerHTML = html;
+  layer.hidden = false;
+  r = byId('qa-dlg-text');
+  if (r) r.focus();
+}
+
+function qaReportReasonsHtml(q) {
+  var reasons = [
+    ['wrong', 'Wrong or misleading information', false],
+    ['unkind', 'Rude or unkind', false],
+    ['spam', 'Spam, or not a real question', false],
+    ['personal', "Shares someone's personal details", false],
+    ['worry', 'I am worried about this student', true]
+  ];
+  var html = '<div class="qa-reasons">';
+  var i;
+  for (i = 0; i < reasons.length; i++) {
+    html +=
+      '<button type="button" class="qa-reason' +
+      (reasons[i][2] ? ' is-safe' : '') +
+      '" data-qa-reason="' +
+      reasons[i][0] +
+      '" aria-pressed="' +
+      (q.reportReason === reasons[i][0] ? 'true' : 'false') +
+      '">' +
+      esc(reasons[i][1]) +
+      '</button>';
+  }
+  html += '</div>';
+  return html;
+}
+
+function qaPostQuestion() {
+  var q = ensureQa();
+  var text = (q.dialogText || '').trim();
+  var nid;
+  var el;
+  if (text.length < 10) return;
+  if (
+    requirePathway({
+      type: 'compose',
+      reason: 'Answer four questions first. This is the same quiz as My Pathway.'
+    })
+  ) {
+    return;
+  }
+  nid = 'mine-' + Date.now();
+  FEED.unshift({
+    id: nid,
+    kind: 'question',
+    at: nowIso(),
+    who: studentLabel(),
+    asker: studentLabel(),
+    authorId: qaViewerId(),
+    title: text,
+    body: text,
+    question: text,
+    topics: [],
+    replies: [],
+    mine: true,
+    anon: true,
+    insp: 0,
+    inspiredCount: 0
+  });
+  if (S.qFollow.indexOf(nid) === -1) S.qFollow.push(nid);
+  qaCloseDialog();
+  toast('Question posted. We will tell you when someone answers.');
+  render();
+  el = document.querySelector('[data-open="thread"][data-id="' + nid + '"]');
+  if (el && el.scrollIntoView) el.scrollIntoView({ block: 'center' });
+}
+
+function qaSaveQuestion() {
+  var q = ensureQa();
+  var item = feedById(q.dialogId);
+  var text = (q.dialogText || '').trim();
+  if (!item || text.length < 10 || text === item.title) return;
+  item.title = text;
+  item.body = text;
+  item.question = text;
+  item.edited = true;
+  item.editedAt = nowIso();
+  qaCloseDialog();
+  toast('Question updated.');
+  refreshUi();
+}
+
+function qaDeleteQuestion() {
+  var q = ensureQa();
+  var id = q.dialogId;
+  FEED = FEED.filter(function (x) {
+    return x.id !== id;
+  });
+  qaCloseDialog();
+  if (NAV.length && NAV[NAV.length - 1].t === 'thread' && NAV[NAV.length - 1].id === id) {
+    closeSheet();
+  }
+  toast('Question deleted.');
+  render();
+}
+
+function qaFindReply(item, rid) {
+  var i;
+  if (!item || !item.replies) return null;
+  for (i = 0; i < item.replies.length; i++) {
+    if (item.replies[i].id === rid) return item.replies[i];
+  }
+  return null;
+}
+
+function qaSaveReply() {
+  var q = ensureQa();
+  var item = feedById(q.dialogId);
+  var r = qaFindReply(item, q.dialogRid);
+  var text = (q.dialogText || '').trim();
+  if (!r || !text || text === r.text) return;
+  r.text = text;
+  r.edited = true;
+  r.editedAt = nowIso();
+  qaCloseDialog();
+  toast('Reply updated.');
+  refreshUi();
+}
+
+function qaDeleteReply() {
+  var q = ensureQa();
+  var item = feedById(q.dialogId);
+  if (!item) return;
+  item.replies = (item.replies || []).filter(function (r) {
+    return r.id !== q.dialogRid;
+  });
+  qaCloseDialog();
+  toast('Reply deleted.');
+  refreshUi();
+}
+
+function qaSendReport() {
+  var q = ensureQa();
+  var key = (q.reportKind === 'reply' ? 'reply:' : 'thread:') + q.dialogId + (q.dialogRid ? ':' + q.dialogRid : '');
+  if (!q.reportReason) return;
+  if (
+    requirePathway({
+      type: 'report',
+      id: key,
+      reason: 'We need your form before we send a report.'
+    })
+  ) {
+    return;
+  }
+  if (q.reportReason === 'worry') {
+    S.safeguardCases.push({
+      key: key,
+      reason: q.reportReason,
+      at: nowIso(),
+      queue: 'safeguarding'
+    });
+    toast('Sent to the safeguarding team. Someone will review it today.');
+  } else {
+    S.reported.push({ key: key, reason: q.reportReason, at: nowIso(), queue: 'desk' });
+    toast('Report sent. Thank you for telling us.');
+  }
+  qaCloseDialog();
+}
+
+function qaToggleUpdates(id) {
+  var i;
+  if (
+    requirePathway({
+      type: 'follow',
+      id: id,
+      reason: 'We need your form to hold you a place.'
+    })
+  ) {
+    return;
+  }
+  i = S.qFollow.indexOf(id);
+  if (i === -1) {
+    S.qFollow.push(id);
+    toast('We will tell you when someone answers.');
+  } else {
+    S.qFollow.splice(i, 1);
+    toast('Updates turned off.');
+  }
+  refreshUi();
+}
+
+function qaHideWithUndo(key) {
+  if (!key) return;
+  if (S.hidden.indexOf(key) === -1) S.hidden.push(key);
+  S.menu = '';
+  toast('You will see fewer questions like this.', {
+    undo: function () {
+      S.hidden = S.hidden.filter(function (k) {
+        return k !== key;
+      });
+      render();
+    }
+  });
+  render();
+}
+
+function qaAddTag(tag) {
+  var q = ensureQa();
+  if (!tag) return;
+  if (!q.tags) q.tags = [];
+  if (q.tags.indexOf(tag) !== -1) return;
+  if (q.tags.length >= 3) return;
+  q.tags.push(tag);
+  q.tagQ = '';
+  q.tagIx = -1;
+}
+
+function qaRemoveTag(tag) {
+  var q = ensureQa();
+  q.tags = (q.tags || []).filter(function (t) {
+    return t !== tag;
+  });
+}
+
+function qaPostReply(id) {
+  var item = feedById(id);
+  var box = byId('qa-reply');
+  var text = box && box.value ? box.value.trim() : '';
+  var mentor = qaIsMentor();
+  var q = ensureQa();
+  var rec;
+  var a;
+  if (!item || !text) return;
+  if (mentor && qaTopics(item).length === 0 && !(q.tags && q.tags.length)) return;
+  if (
+    requirePathway({
+      type: 'reply',
+      id: id,
+      text: text,
+      reason: 'We need your form to hold you a place.'
+    })
+  ) {
+    return;
+  }
+  ensureReplyIds(item);
+  item.replies = item.replies || [];
+  if (mentor) {
+    a = currentPosterId() ? author(currentPosterId()) : null;
+    rec = {
+      id: id + '-r' + Date.now(),
+      a: currentPosterId(),
+      authorId: currentPosterId(),
+      authorRole: 'mentor',
+      name: a ? a.name : 'Mentor',
+      initials: a ? a.init : 'ME',
+      verified: !!(a && a.verified && a.role === 'mentor'),
+      role: 'Mentor · ' + ((a && a.pos) || ''),
+      text: text,
+      at: nowIso(),
+      createdAt: nowIso()
+    };
+    if (q.tags && q.tags.length) {
+      item.topics = qaTopics(item).concat(q.tags);
+      if (!item.cat && q.tags[0]) item.cat = q.tags[0].replace(/^#/, '').replace(/([a-z])([A-Z])/g, '$1 $2');
+    }
+    q.tags = [];
+    q.draft = '';
+    item.replies.push(rec);
+    toast('Answer posted.');
+  } else {
+    item.replies.push({
+      id: id + '-r' + Date.now(),
+      a: null,
+      authorId: qaViewerId(),
+      authorRole: postingRole() === 'parent' ? 'parent' : 'student',
+      who: studentLabel(),
+      name: studentLabel(),
+      initials: (studentLabel().charAt(0) || 'S').toUpperCase(),
+      text: text,
+      mine: true,
+      at: nowIso(),
+      createdAt: nowIso()
+    });
+    q.draft = '';
+    toast('Reply posted.');
+  }
+  S.qFollow = S.qFollow.filter(function (x) {
+    return x !== id;
+  });
+  paint();
+  render();
+}
+
+function qaHandleClick(e, t) {
+  var btn;
+  var item;
+  var r;
+  var q = ensureQa();
+  var top;
+  btn = closestEl(t, '[data-qa-ask]');
+  if (btn) {
+    e.stopPropagation();
+    if (
+      requirePathway({
+        type: 'compose',
+        reason: 'Answer four questions first. This is the same quiz as My Pathway.'
+      })
+    ) {
+      return true;
+    }
+    qaOpenDialog('ask', { text: '' });
+    return true;
+  }
+  btn = closestEl(t, '[data-qa-cancel]');
+  if (btn) {
+    qaCloseDialog();
+    return true;
+  }
+  btn = closestEl(t, '[data-qa-ask-post]');
+  if (btn) {
+    qaPostQuestion();
+    return true;
+  }
+  btn = closestEl(t, '[data-qa-save-q]');
+  if (btn) {
+    qaSaveQuestion();
+    return true;
+  }
+  btn = closestEl(t, '[data-qa-confirm-del-q]');
+  if (btn) {
+    qaDeleteQuestion();
+    return true;
+  }
+  btn = closestEl(t, '[data-qa-save-r]');
+  if (btn) {
+    qaSaveReply();
+    return true;
+  }
+  btn = closestEl(t, '[data-qa-confirm-del-r]');
+  if (btn) {
+    qaDeleteReply();
+    return true;
+  }
+  btn = closestEl(t, '[data-qa-reason]');
+  if (btn) {
+    q.reportReason = btn.getAttribute('data-qa-reason');
+    qaPaintLayer();
+    return true;
+  }
+  btn = closestEl(t, '[data-qa-send-report]');
+  if (btn) {
+    qaSendReport();
+    return true;
+  }
+  btn = closestEl(t, '[data-qa-edit-q]');
+  if (btn) {
+    e.stopPropagation();
+    item = feedById(btn.getAttribute('data-qa-edit-q'));
+    if (item && qaOwnsQuestion(item)) {
+      qaOpenDialog('edit-q', { id: item.id, text: item.title || '' });
+    }
+    S.menu = '';
+    return true;
+  }
+  btn = closestEl(t, '[data-qa-del-q]');
+  if (btn) {
+    e.stopPropagation();
+    item = feedById(btn.getAttribute('data-qa-del-q'));
+    if (item && qaOwnsQuestion(item)) qaOpenDialog('del-q', { id: item.id });
+    S.menu = '';
+    return true;
+  }
+  btn = closestEl(t, '[data-qa-edit-r]');
+  if (btn) {
+    e.stopPropagation();
+    item = feedById(btn.getAttribute('data-qa-edit-r'));
+    r = qaFindReply(item, btn.getAttribute('data-rid'));
+    if (r && qaOwnsReply(r)) qaOpenDialog('edit-r', { id: item.id, rid: r.id, text: r.text || '' });
+    S.menu = '';
+    return true;
+  }
+  btn = closestEl(t, '[data-qa-del-r]');
+  if (btn) {
+    e.stopPropagation();
+    item = feedById(btn.getAttribute('data-qa-del-r'));
+    r = qaFindReply(item, btn.getAttribute('data-rid'));
+    if (r && qaOwnsReply(r)) qaOpenDialog('del-r', { id: item.id, rid: r.id });
+    S.menu = '';
+    return true;
+  }
+  btn = closestEl(t, '[data-qa-report]');
+  if (btn) {
+    e.stopPropagation();
+    qaOpenDialog('report', {
+      id: btn.getAttribute('data-id'),
+      rid: btn.getAttribute('data-rid') || '',
+      kind: btn.getAttribute('data-qa-report')
+    });
+    S.menu = '';
+    return true;
+  }
+  btn = closestEl(t, '[data-qa-updates]');
+  if (btn) {
+    e.stopPropagation();
+    qaToggleUpdates(btn.getAttribute('data-qa-updates'));
+    return true;
+  }
+  btn = closestEl(t, '[data-qa-see]');
+  if (btn) {
+    e.stopPropagation();
+    item = closestEl(btn, '[data-open]');
+    if (item) openKind(item.getAttribute('data-open'), item.getAttribute('data-id'));
+    return true;
+  }
+  btn = closestEl(t, '[data-qa-post]');
+  if (btn) {
+    e.stopPropagation();
+    qaPostReply(btn.getAttribute('data-qa-post'));
+    return true;
+  }
+  btn = closestEl(t, '[data-qa-pick]');
+  if (btn) {
+    e.stopPropagation();
+    qaAddTag(btn.getAttribute('data-qa-pick'));
+    refreshUi();
+    return true;
+  }
+  btn = closestEl(t, '[data-qa-untag]');
+  if (btn) {
+    e.stopPropagation();
+    qaRemoveTag(btn.getAttribute('data-qa-untag'));
+    top = NAV.length ? NAV[NAV.length - 1] : null;
+    item = top && top.t === 'thread' ? feedById(top.id) : null;
+    refreshUi();
+    if (item) qaSyncTagUi(item);
+    return true;
+  }
+  if (byId('qa-layer') && !byId('qa-layer').hidden && !closestEl(t, '.qa-dialog') && !(S.opp && S.opp.dialog)) {
+    qaCloseDialog();
+    return true;
+  }
+  return false;
+}
+
+function qaHandleInput(e) {
+  var item;
+  var top;
+  var q = ensureQa();
+  if (e.target && e.target.id === 'qa-dlg-text') {
+    q.dialogText = e.target.value;
+    if (q.dialog === 'ask' || q.dialog === 'edit-q') qaPaintLayer();
+    if (q.dialog === 'ask') {
+      e.target = byId('qa-dlg-text');
+      if (e.target) {
+        e.target.focus();
+        try {
+          e.target.setSelectionRange(q.dialogText.length, q.dialogText.length);
+        } catch (err) {}
+      }
+    }
+    return true;
+  }
+  if (e.target && e.target.id === 'qa-reply') {
+    q.draft = e.target.value;
+    e.target.style.height = 'auto';
+    e.target.style.height = Math.min(220, Math.max(44, e.target.scrollHeight)) + 'px';
+    top = NAV.length ? NAV[NAV.length - 1] : null;
+    item = top && top.t === 'thread' ? feedById(top.id) : null;
+    if (item) qaSyncPostBtn(item);
+    return true;
+  }
+  if (e.target && e.target.id === 'qa-tag-q') {
+    q.tagQ = e.target.value;
+    q.tagIx = -1;
+    top = NAV.length ? NAV[NAV.length - 1] : null;
+    item = top && top.t === 'thread' ? feedById(top.id) : null;
+    if (item) qaSyncTagUi(item);
+    return true;
+  }
+  return false;
+}
+
+function qaHandleKey(e) {
+  var q = ensureQa();
+  var sug = byId('qa-sug');
+  var opts;
+  var item;
+  var top;
+  var n;
+  if (e.target && e.target.id === 'qa-tag-q') {
+    top = NAV.length ? NAV[NAV.length - 1] : null;
+    item = top && top.t === 'thread' ? feedById(top.id) : null;
+    opts = sug && !sug.hidden ? sug.querySelectorAll('[data-qa-pick]') : [];
+    n = opts.length;
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      e.stopPropagation();
+      if (sug) sug.hidden = true;
+      return true;
+    }
+    if (e.key === 'ArrowDown' && n) {
+      e.preventDefault();
+      q.tagIx = q.tagIx + 1 >= n ? 0 : q.tagIx + 1;
+      if (item) qaSyncTagUi(item);
+      if (opts[q.tagIx] && opts[q.tagIx].scrollIntoView) opts[q.tagIx].scrollIntoView({ block: 'nearest' });
+      return true;
+    }
+    if (e.key === 'ArrowUp' && n) {
+      e.preventDefault();
+      q.tagIx = q.tagIx <= 0 ? n - 1 : q.tagIx - 1;
+      if (item) qaSyncTagUi(item);
+      return true;
+    }
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      if (n) qaAddTag((opts[q.tagIx >= 0 ? q.tagIx : 0] || opts[0]).getAttribute('data-qa-pick'));
+      refreshUi();
+      return true;
+    }
+    if (e.key === 'Backspace' && !e.target.value && q.tags && q.tags.length) {
+      qaRemoveTag(q.tags[q.tags.length - 1]);
+      refreshUi();
+      return true;
+    }
+  }
+  if (e.key === 'Escape') {
+    if (q.dialog) {
+      e.preventDefault();
+      qaCloseDialog();
+      return true;
+    }
+    if (S.menu) {
+      S.menu = '';
+      refreshUi();
+      return true;
+    }
+  }
+  return false;
+}
+
+function qaInit() {
+  var t;
+  if (qaInit._ready) return;
+  qaInit._ready = true;
+  window.addEventListener('resize', function () {
+    clearTimeout(qaInit._r);
+    qaInit._r = setTimeout(qaBindClamps, 150);
+  });
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(function () {
+      qaBindClamps();
+    });
+  }
+  t = setInterval(function () {
+    if (NAV.length && NAV[NAV.length - 1].t === 'thread') return;
+    if (S.view !== 'feed') return;
+    if (S.qa && S.qa.dialog) return;
+  }, 60000);
+  if (!t) return;
+}
+
+/* Opportunity card, story card, and role-gated Post entry.
+   Matches Q&A type, tokens, clamp, menus, and toasts.
+   Story fields are the spec's proposal: body, one topic, optional poster or link. No title. */
+
+function ensureOpp() {
+  if (!S.opp) {
+    S.opp = {
+      dialog: '',
+      dialogId: '',
+      mode: '',
+      step: 1,
+      title: '',
+      description: '',
+      topic: '',
+      tagQ: '',
+      tagIx: -1,
+      poster: null,
+      posterAlt: '',
+      linkUrl: '',
+      who: '',
+      where: '',
+      when: '',
+      closesAt: '',
+      rolling: false,
+      apply: '',
+      storyBody: '',
+      photos: [],
+      draftId: '',
+      editId: '',
+      reportReason: '',
+      reportKind: '',
+      dateVal: '',
+      lightUrl: '',
+      lightAlt: '',
+      lightPhotos: null,
+      lightIx: 0,
+      lastFocus: null,
+      fromWho: false
+    };
+  }
+  if (!S.opp.photos) S.opp.photos = [];
+  if (!S.oppDrafts) S.oppDrafts = [];
+  if (!S.oppRemind) S.oppRemind = [];
+  if (!S.safeguardCases) S.safeguardCases = [];
+  return S.opp;
+}
+
+function oppIsAskOnly() {
+  var r = postingRole();
+  return r === 'student' || r === 'parent';
+}
+
+function oppCanAuthor() {
+  return qaIsMentor();
+}
+
+function oppIsParent() {
+  return postingRole() === 'parent';
+}
+
+function oppOverlayOpen() {
+  var sug;
+  if (NAV.length) return true;
+  if (S.qa && S.qa.dialog) return true;
+  if (S.opp && (S.opp.dialog || S.opp.lightUrl || (S.opp.lightPhotos && S.opp.lightPhotos.length))) return true;
+  if (S.menu) return true;
+  sug = byId('opp-sug');
+  if (sug && !sug.hidden) return true;
+  return false;
+}
+
+function oppFeedFor(oid) {
+  var i;
+  for (i = 0; i < FEED.length; i++) {
+    if (FEED[i].kind === 'opportunity' && (FEED[i].opp === oid || FEED[i].id === oid)) return FEED[i];
+  }
+  return null;
+}
+
+function oppAuthorId(o, item) {
+  var aid = (o && o.author) || (item && item.author) || '';
+  if (aid && aid !== 'desk') return aid;
+  if (o && o.mentors && o.mentors.length) return o.mentors[0];
+  return 'keisha';
+}
+
+function oppAuthorKind(a) {
+  if (!a) return 'mentor';
+  if (a.role === 'contributor' || a.role === 'admin') return 'collaborator';
+  return 'mentor';
+}
+
+function oppInitials(a) {
+  var s;
+  if (a && a.init) return String(a.init).slice(0, 2).toUpperCase();
+  s = ((a && a.name) || 'NS').replace(/[^A-Za-z]/g, '');
+  return (s.slice(0, 2) || 'NS').toUpperCase();
+}
+
+function oppDescText(o) {
+  if (o.description) return o.description;
+  if (o.what && o.what.length) return o.what.join('\n\n');
+  return o.one || '';
+}
+
+function oppOpening(src) {
+  var o;
+  var item;
+  var a;
+  var aid;
+  var kind;
+  var topic;
+  var rolling;
+  if (!src) return null;
+  if (src._card) return src;
+  if (typeof src === 'string') {
+    o = OPPS[src] || null;
+    item = oppFeedFor(src);
+  } else if (src.kind === 'opportunity') {
+    item = src;
+    o = OPPS[src.opp] || src.opening || null;
+  } else {
+    o = src;
+    item = oppFeedFor(src.id);
+  }
+  if (!o) return null;
+  aid = oppAuthorId(o, item);
+  a = author(aid);
+  kind = oppAuthorKind(a);
+  topic = o.topic || (o.cat ? hashTagLabel(o.cat) : '');
+  rolling = !!o.rolling;
+  if (!o.closesAt && !rolling && o.season && /year-round|all year|rolling intake/i.test(o.season)) {
+    rolling = true;
+  }
+  return {
+    id: o.id,
+    status: o.status || ((o.state || 'live') === 'live' ? 'published' : o.state),
+    authorId: aid,
+    author: {
+      name: a.name,
+      initials: oppInitials(a),
+      kind: kind,
+      verified: true,
+      role: kind === 'collaborator' ? 'Collaborator' : 'Mentor',
+      pos: a.pos || ''
+    },
+    createdAt: (item && item.at) || o.createdAt || '',
+    editedAt: (item && (item.editedAt || (item.edited && item.at))) || o.editedAt || '',
+    title: o.title || o.name || '',
+    description: oppDescText(o),
+    topic: topic,
+    who: o.who || '',
+    where: o.where || o.regions || 'Nationwide',
+    when: o.when || o.season || '',
+    closesAt: rolling ? null : o.closesAt || null,
+    rolling: rolling,
+    apply: o.apply || (o.entry && o.entry[0] ? o.entry[0].b + '. ' + o.entry[0].s : o.source || ''),
+    poster: o.poster || null,
+    link: o.link || null,
+    replies: (item && item.replies) || o.replies || [],
+    inspiredCount: (item && item.insp != null) ? item.insp : o.inspiredCount || 0,
+    src: o,
+    item: item
+  };
+}
+
+function oppOwns(o) {
+  var viewer = currentPosterId();
+  if (!o || !viewer) return false;
+  return o.authorId === viewer;
+}
+
+function oppClosed(o) {
+  if (!o || !o.closesAt || o.rolling) return false;
+  return new Date(o.closesAt).getTime() <= Date.now();
+}
+
+function oppMsLeft(o) {
+  if (!o || !o.closesAt || o.rolling) return null;
+  return new Date(o.closesAt).getTime() - Date.now();
+}
+
+function oppDateLabel(iso) {
+  var d;
+  var months;
+  if (!iso) return '';
+  d = new Date(iso);
+  if (isNaN(d.getTime())) return '';
+  months = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December'
+  ];
+  return String(d.getDate()) + ' ' + months[d.getMonth()];
+}
+
+function oppCloseCopy(o) {
+  var ms;
+  var hours;
+  var days;
+  if (!o || o.rolling || !o.closesAt) return null;
+  ms = oppMsLeft(o);
+  if (ms <= 0) return { text: 'Closed on ' + oppDateLabel(o.closesAt), tone: 'shut' };
+  hours = Math.floor(ms / 3600000);
+  days = Math.floor(ms / 86400000);
+  if (hours < 1) return { text: 'Closes within the hour', tone: 'soon' };
+  if (hours < 48) {
+    return {
+      text: 'Closes in ' + hours + (hours === 1 ? ' hour' : ' hours'),
+      tone: 'soon'
+    };
+  }
+  if (days <= 14) {
+    return {
+      text: 'Closes in ' + days + (days === 1 ? ' day' : ' days') + ' · ' + oppDateLabel(o.closesAt),
+      tone: 'soon'
+    };
+  }
+  return { text: 'Closes ' + oppDateLabel(o.closesAt), tone: 'ok' };
+}
+
+function oppWarnPhrase(o) {
+  var c = oppCloseCopy(o);
+  if (!c || c.tone === 'shut') return '';
+  return c.text.replace(/^Closes /, 'closes ');
+}
+
+function oppParseLink(raw) {
+  var v = (raw || '').trim();
+  var url;
+  var host;
+  if (!v) return null;
+  if (!/^https?:\/\//i.test(v) && /^www\./i.test(v)) v = 'https://' + v;
+  try {
+    url = new URL(v);
+  } catch (err) {
+    return null;
+  }
+  if (url.protocol !== 'http:' && url.protocol !== 'https:') return null;
+  host = url.hostname.replace(/^www\./i, '');
+  return { url: url.href, host: host };
+}
+
+function oppDetectApply(v) {
+  var t = (v || '').trim();
+  if (!t) return { kind: 'text', href: '', label: '' };
+  if (/^https?:\/\//i.test(t) || /^www\./i.test(t)) {
+    return {
+      kind: 'link',
+      href: /^https?:\/\//i.test(t) ? t : 'https://' + t,
+      label: 'Open this link'
+    };
+  }
+  if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(t)) {
+    return { kind: 'email', href: 'mailto:' + t, label: 'Send an email' };
+  }
+  if (/^[\d\s+().-]{7,}$/.test(t) && /\d{7,}/.test(t.replace(/\D/g, ''))) {
+    return { kind: 'tel', href: 'tel:' + t.replace(/[^\d+]/g, ''), label: 'Call this number' };
+  }
+  return { kind: 'text', href: '', label: '' };
+}
+
+function oppSlug(title) {
+  var s = String(title || 'opening')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '');
+  return s || 'opening';
+}
+
+function oppIcsHref(o) {
+  function stamp(dt) {
+    return dt.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+  }
+  var d;
+  var lines;
+  if (!o || !o.closesAt) return '';
+  d = new Date(o.closesAt);
+  if (isNaN(d.getTime())) return '';
+  lines = [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//Next Step Guyana//Opportunity//EN',
+    'BEGIN:VEVENT',
+    'UID:' + o.id + '@nextstepguyana',
+    'DTSTAMP:' + stamp(new Date()),
+    'DTSTART:' + stamp(d),
+    'SUMMARY:' + String(o.title || 'Opening').replace(/[\r\n]/g, ' ') + ' closes',
+    'DESCRIPTION:Closing date for ' + String(o.title || 'this opening').replace(/[\r\n]/g, ' '),
+    'BEGIN:VALARM',
+    'TRIGGER:-P7D',
+    'ACTION:DISPLAY',
+    'DESCRIPTION:This opening closes in one week',
+    'END:VALARM',
+    'END:VEVENT',
+    'END:VCALENDAR'
+  ];
+  return 'data:text/calendar;charset=utf-8,' + encodeURIComponent(lines.join('\r\n'));
+}
+
+function oppIconClock() {
+  return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l2.5 1.5"/></svg>';
+}
+
+function oppIconPerson() {
+  return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.2"/><path d="M5.5 19c.8-3.2 3.2-5 6.5-5s5.7 1.8 6.5 5"/></svg>';
+}
+
+function oppIconPin() {
+  return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s6-5.4 6-10a6 6 0 1 0-12 0c0 4.6 6 10 6 10z"/><circle cx="12" cy="11" r="1.8"/></svg>';
+}
+
+function oppIconExt() {
+  return '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 5h5v5"/><path d="M10 14L19 5"/><path d="M19 13v5a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h5"/></svg>';
+}
+
+function oppAvHtml(o, size) {
+  var cls = o.author.kind === 'collaborator' ? 'is-org' : 'is-person';
+  var px = size || 48;
+  return (
+    '<span class="opp-av ' +
+    cls +
+    '" style="width:' +
+    px +
+    'px;height:' +
+    px +
+    'px" aria-hidden="true">' +
+    esc(o.author.initials) +
+    '</span>'
+  );
+}
+
+function oppAuthorHtml(o, withMenu, hideMenu) {
+  var role = o.author.role + (o.author.pos ? ' · ' + o.author.pos : '');
+  var when = qaTimeAgo(o.createdAt);
+  return (
+    '<div class="opp-author">' +
+    oppAvHtml(o, 48) +
+    '<div><div class="opp-name">' +
+    esc(o.author.name) +
+    (o.author.verified ? qaTickSvg() + '<span class="sr">Verified</span>' : '') +
+    '</div><p class="opp-role">' +
+    esc(role) +
+    '</p><p class="opp-meta"><span class="k-word k-opportunity">Opportunity</span>' +
+    (when ? ' · ' + esc(when) : '') +
+    (o.editedAt ? ' · edited' : '') +
+    '</p></div>' +
+    (hideMenu ? '' : withMenu ? oppMenuHtml(o) : '') +
+    '</div>'
+  );
+}
+
+function oppMenuHtml(o) {
+  var key = hideKey('opp', o.id);
+  var open = S.menu === key;
+  var closed = oppClosed(o);
+  var dated = !!(o.closesAt && !o.rolling);
+  var html =
+    '<div class="qa-more">' +
+    '<button type="button" class="qa-more-btn" data-menu="' +
+    esc(key) +
+    '" aria-label="More actions" aria-haspopup="true" aria-expanded="' +
+    (open ? 'true' : 'false') +
+    '">' +
+    qaIconMore(22) +
+    '</button>';
+  if (open) {
+    html += '<div class="qa-menu" role="menu">';
+    if (oppOwns(o)) {
+      html += qaMenuItem('data-opp-edit="' + esc(o.id) + '"', 'Edit this opening', false);
+      if (closed) {
+        html += qaMenuItem('data-opp-reopen="' + esc(o.id) + '"', 'Set a new closing date', false);
+      }
+      html += '<hr/>';
+      html += qaMenuItem('data-opp-del="' + esc(o.id) + '"', 'Delete opening', true);
+    } else {
+      if (dated && !closed) {
+        html += qaMenuItem('data-opp-remind="' + esc(o.id) + '"', 'Remind me before it closes', false);
+      }
+      html += qaMenuItem('data-opp-hide="' + esc(key) + '"', 'Not interested', false);
+      html += '<hr/>';
+      html += qaMenuItem('data-opp-report="' + esc(o.id) + '"', 'Report a problem', true);
+    }
+    html += '</div>';
+  }
+  html += '</div>';
+  return html;
+}
+
+function oppTopicHtml(tag) {
+  if (!tag) return '';
+  return '<div class="opp-topics"><span class="opp-chip">' + esc(tag) + '</span></div>';
+}
+
+function oppDeadlineHtml(o) {
+  var c = oppCloseCopy(o);
+  if (!c) return '';
+  return (
+    '<div class="opp-deadline is-' +
+    c.tone +
+    '">' +
+    oppIconClock() +
+    '<span>' +
+    esc(c.text) +
+    '</span></div>'
+  );
+}
+
+function oppPosterHtml(poster, where) {
+  var max = where === 'sheet' ? 520 : 340;
+  var ratio;
+  if (!poster || !poster.url) return '';
+  ratio = poster.width && poster.height ? poster.width + ' / ' + poster.height : '3 / 4';
+  return (
+    '<button type="button" class="opp-poster" data-opp-light="1" data-url="' +
+    esc(poster.url) +
+    '" data-alt="' +
+    esc(poster.alt || '') +
+    '" style="aspect-ratio:' +
+    ratio +
+    ';max-height:' +
+    max +
+    'px">' +
+    '<img src="' +
+    esc(poster.url) +
+    '" alt="' +
+    esc(poster.alt || '') +
+    '" loading="lazy" decoding="async"/>' +
+    '</button>'
+  );
+}
+
+function oppLinkHtml(link) {
+  if (!link || !link.url || !link.host) return '';
+  return (
+    '<a class="opp-link" href="' +
+    esc(link.url) +
+    '" target="_blank" rel="noopener">' +
+    (link.image
+      ? '<div class="opp-link-img"><img src="' + esc(link.image) + '" alt=""/></div>'
+      : '') +
+    '<div class="opp-link-meta"><div class="opp-link-host">' +
+    oppIconExt() +
+    esc(link.host) +
+    '</div>' +
+    (link.title ? '<div class="opp-link-title">' + esc(link.title) + '</div>' : '') +
+    (link.description ? '<p class="opp-link-desc">' + esc(link.description) + '</p>' : '') +
+    '</div></a>'
+  );
+}
+
+function oppGlanceHtml(o) {
+  function item(icon, dt, val) {
+    return (
+      '<div class="g">' +
+      '<span class="gi" aria-hidden="true">' +
+      icon +
+      '</span>' +
+      '<div><dt class="sr">' +
+      esc(dt) +
+      '</dt><dd>' +
+      esc(val || '') +
+      '</dd></div></div>'
+    );
+  }
+  return (
+    '<dl class="glance">' +
+    item(oppIconPerson(), 'Who it is for', o.who) +
+    item(oppIconPin(), 'Where', o.where) +
+    item(oppIconClock(), 'When', o.when) +
+    '</dl>'
+  );
+}
+
+function oppEngageHtml(o, opts) {
+  var n = o.replies ? o.replies.length : 0;
+  var inspired = isInspired(o.id);
+  var saved = isSaved(o.id);
+  var closed = oppClosed(o);
+  var replyLabel = n === 0 ? 'Ask' : n === 1 ? '1 reply' : n + ' replies';
+  var inspN = o.inspiredCount || 0;
+  var html = '<div class="qa-actions opp-actions">';
+  html +=
+    '<button type="button" class="qa-act is-inspired" data-inspire="' +
+    esc(o.id) +
+    '" aria-pressed="' +
+    (inspired ? 'true' : 'false') +
+    '">' +
+    qaIconHeart(inspired) +
+    '<span>' +
+    (inspN ? 'Inspired ' + inspN : 'Inspired') +
+    '</span></button>';
+  if (!opts || !opts.inSheet) {
+    html +=
+      '<button type="button" class="qa-act" data-open="opp" data-id="' +
+      esc(o.id) +
+      '">' +
+      qaIconReply() +
+      '<span>' +
+      esc(replyLabel) +
+      '</span></button>';
+  }
+  html +=
+    '<button type="button" class="qa-act is-save" data-save="' +
+    esc(o.id) +
+    '" aria-pressed="' +
+    (saved ? 'true' : 'false') +
+    '">' +
+    qaIconSave(saved) +
+    '<span>' +
+    (saved ? 'Saved' : 'Save') +
+    '</span></button>';
+  html +=
+    '<button type="button" class="opp-primary" data-opp-apply="' +
+    esc(o.id) +
+    '"' +
+    (closed ? ' disabled' : '') +
+    '>' +
+    (closed ? 'Closed' : 'How to apply') +
+    '</button>';
+  html += '</div>';
+  return html;
+}
+
+function oppRenderCard(item, opts) {
+  var o = oppOpening(item);
+  var html;
+  opts = opts || {};
+  if (!o || (o.status !== 'published' && o.status !== 'live' && !opts.preview)) return '';
+  if (!opts.preview && o.src && !openingVisible(o.src)) return '';
+  html =
+    '<article class="card feed-card kind-opp opp-card' +
+    (oppClosed(o) ? ' closed' : '') +
+    (opts.preview ? ' opp-preview' : ' clickable') +
+    '" ' +
+    (opts.preview ? '' : cardClickAttrs('opp', o.id)) +
+    '><div class="opp-pad">';
+  html += oppAuthorHtml(o, true, !!opts.preview);
+  html +=
+    '<h3 class="opp-title' +
+    (opts.preview ? '' : ' qa-clamp') +
+    '"' +
+    (opts.preview ? '' : ' data-qa-clamp="ot-' + esc(o.id) + '"') +
+    '>' +
+    esc(o.title) +
+    '</h3>';
+  html +=
+    '<p class="opp-desc' +
+    (opts.preview ? '' : ' qa-clamp') +
+    '"' +
+    (opts.preview ? '' : ' data-qa-clamp="od-' + esc(o.id) + '"') +
+    '>' +
+    esc(o.description) +
+    '</p>';
+  html += oppTopicHtml(o.topic);
+  html += oppPosterHtml(o.poster, 'feed');
+  html += oppLinkHtml(o.link);
+  html += oppDeadlineHtml(o);
+  html += '</div>';
+  html += oppGlanceHtml(o);
+  html += oppEngageHtml(o, { inSheet: false });
+  html += '</article>';
+  return html;
+}
+
+function oppStoryBody(item) {
+  var text = '';
+  if (item.bodyText) text = item.bodyText;
+  else if (typeof item.body === 'string') text = item.body;
+  else if (item.body && item.body.length) text = item.body.join('\n\n');
+  if (item.title && text.indexOf(item.title) !== 0) {
+    text = item.title + (text ? '\n\n' + text : '');
+  }
+  return text;
+}
+
+function oppStoryAuthor(item) {
+  var a = item.author ? author(item.author) : currentPosterId() ? author(currentPosterId()) : null;
+  var kind = oppAuthorKind(a);
+  return {
+    id: item.id,
+    authorId: item.author || currentPosterId() || '',
+    author: {
+      name: a ? a.name : youName(),
+      initials: oppInitials(a || { name: youName(), init: 'YO' }),
+      kind: kind,
+      verified: !!(a && a.verified),
+      role: kind === 'collaborator' ? 'Collaborator' : 'Mentor',
+      pos: (a && a.pos) || ''
+    },
+    createdAt: item.at || item.createdAt || '',
+    editedAt: item.editedAt || '',
+    topic: item.topic || (item.cat ? hashTagLabel(item.cat) : ''),
+    poster: item.poster || null,
+    link: item.link || null,
+    replies: item.replies || [],
+    inspiredCount: item.insp || item.inspiredCount || 0
+  };
+}
+
+function storyPhotos(item) {
+  if (item.photos && item.photos.length) return item.photos;
+  if (item.poster && item.poster.url) return [item.poster];
+  if (item.images && item.images.length) {
+    return item.images.map(function (im) {
+      if (typeof im === 'string') return { url: im, alt: '', width: 0, height: 0 };
+      return {
+        url: im.src || im.url,
+        alt: im.alt || '',
+        width: im.width || 0,
+        height: im.height || 0
+      };
+    });
+  }
+  return [];
+}
+
+function storyOwns(item) {
+  if (!item) return false;
+  if (item.author && item.author === currentPosterId()) return true;
+  return !!(item.mine && currentPosterId());
+}
+
+function storyFollowHtml(item, preview) {
+  var on;
+  if (preview || storyOwns(item) || !item.author) return '';
+  on = isFollowing(item.author);
+  return (
+    '<button type="button" class="story-follow" data-story-follow="' +
+    esc(item.author) +
+    '" aria-pressed="' +
+    (on ? 'true' : 'false') +
+    '">' +
+    (on ? 'Following' : '+ Follow') +
+    '</button>'
+  );
+}
+
+function storyAuthorRow(item, opts) {
+  var s = oppStoryAuthor(item);
+  var when = qaTimeAgo(s.createdAt);
+  opts = opts || {};
+  return (
+    '<div class="story-author">' +
+    oppAvHtml(s, 48) +
+    '<div><div class="opp-name">' +
+    esc(s.author.name) +
+    (s.author.verified ? qaTickSvg() + '<span class="sr">Verified</span>' : '') +
+    '</div><p class="opp-role">' +
+    esc(s.author.role + (s.author.pos ? ' · ' + s.author.pos : '')) +
+    '</p><p class="opp-meta">Story' +
+    (when ? ' · ' + esc(when) : '') +
+    (item.edited || item.editedAt ? ' · edited' : '') +
+    '</p></div>' +
+    storyFollowHtml(item, !!opts.preview) +
+    (opts.preview ? '' : oppStoryMenu(item)) +
+    '</div>'
+  );
+}
+
+function storyMosaicHtml(photos, where, id) {
+  var n;
+  var show;
+  var extra;
+  var html;
+  var i;
+  var ph;
+  var cls;
+  var wh;
+  if (!photos || !photos.length) return '';
+  n = photos.length;
+  show = n > 4 ? 4 : n;
+  extra = n > 4 ? n - 4 : 0;
+  cls = 'story-mosaic n' + (n >= 5 ? '5' : String(show));
+  html = '<div class="' + cls + '">';
+  for (i = 0; i < show; i++) {
+    ph = photos[i];
+    wh = '';
+    if (ph.width && ph.height) {
+      wh = ' width="' + ph.width + '" height="' + ph.height + '"';
+    }
+    html +=
+      '<button type="button" data-story-photo="' +
+      i +
+      '" data-story-id="' +
+      esc(id || '') +
+      '" aria-label="Open photo ' +
+      (i + 1) +
+      ' of ' +
+      n +
+      '">';
+    html +=
+      '<img src="' +
+      esc(ph.url) +
+      '" alt="' +
+      esc(ph.alt || '') +
+      '" loading="lazy" decoding="async"' +
+      wh +
+      '/>';
+    if (extra && i === show - 1) {
+      html += '<span class="story-more" aria-hidden="true">+' + extra + '</span>';
+    }
+    html += '</button>';
+  }
+  html += '</div>';
+  return html;
+}
+
+function storyMentions(item) {
+  var out = [];
+  var s;
+  var o;
+  if (item.mentions && item.mentions.length) return item.mentions;
+  if (item.sess) {
+    s = sessionById(item.sess);
+    if (s) {
+      out.push({
+        kind: 'Session',
+        refId: s.id,
+        day: s.date,
+        weekday: s.day,
+        title: s.title,
+        sub: s.dateText || s.when || ''
+      });
+    }
+  }
+  if (item.opp && OPPS[item.opp]) {
+    o = OPPS[item.opp];
+    out.push({
+      kind: 'Opportunity',
+      refId: o.id,
+      title: o.name,
+      sub: o.one || ''
+    });
+  }
+  return out;
+}
+
+function storyMentionsHtml(item) {
+  var list = storyMentions(item);
+  var html = '';
+  var i;
+  var m;
+  if (!list.length) return '';
+  html = '<h3 class="story-mention-h">Also mentioned</h3>';
+  for (i = 0; i < list.length; i++) {
+    m = list[i];
+    if (m.kind === 'Session') {
+      html +=
+        '<button type="button" class="story-mention" data-open="session" data-id="' +
+        esc(m.refId) +
+        '"><span class="story-date" aria-hidden="true"><b>' +
+        esc(m.day || '') +
+        '</b><small>' +
+        esc(m.weekday || '') +
+        '</small></span><div><strong>' +
+        esc(m.title) +
+        '</strong><span>' +
+        esc(m.sub) +
+        '</span></div><span class="story-chev" aria-hidden="true">›</span></button>';
+    } else {
+      html +=
+        '<button type="button" class="story-mention" data-open="opp" data-id="' +
+        esc(m.refId) +
+        '"><span class="story-case" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></span><div><div class="story-kind">Opportunity</div><strong>' +
+        esc(m.title) +
+        '</strong><span>' +
+        esc(m.sub) +
+        '</span></div><span class="story-chev" aria-hidden="true">›</span></button>';
+    }
+  }
+  return html;
+}
+
+function oppStoryMenu(item) {
+  var key = hideKey('story', item.id);
+  var open = S.menu === key;
+  var own = storyOwns(item);
+  var html =
+    '<div class="qa-more">' +
+    '<button type="button" class="qa-more-btn" data-menu="' +
+    esc(key) +
+    '" aria-label="More actions" aria-haspopup="true" aria-expanded="' +
+    (open ? 'true' : 'false') +
+    '">' +
+    qaIconMore(22) +
+    '</button>';
+  if (open) {
+    html += '<div class="qa-menu" role="menu">';
+    if (own) {
+      html += qaMenuItem('data-opp-story-edit="' + esc(item.id) + '"', 'Edit this story', false);
+      html += '<hr/>';
+      html += qaMenuItem('data-opp-story-del="' + esc(item.id) + '"', 'Delete story', true);
+    } else {
+      html += qaMenuItem('data-opp-hide="' + esc(key) + '"', 'Not interested', false);
+      html += '<hr/>';
+      html += qaMenuItem('data-opp-story-report="' + esc(item.id) + '"', 'Report this story', true);
+    }
+    html += '</div>';
+  }
+  html += '</div>';
+  return html;
+}
+
+function oppStoryEngage(item, inSheet) {
+  var n = item.replies ? item.replies.length : 0;
+  var inspired = isInspired(item.id);
+  var saved = isSaved(item.id);
+  var inspN = item.insp || item.inspiredCount || 0;
+  var replyLabel = n === 0 ? 'Reply' : n === 1 ? '1 reply' : n + ' replies';
+  var html = '<div class="qa-actions opp-actions">';
+  html +=
+    '<button type="button" class="qa-act is-inspired" data-inspire="' +
+    esc(item.id) +
+    '" aria-pressed="' +
+    (inspired ? 'true' : 'false') +
+    '">' +
+    qaIconHeart(inspired) +
+    '<span>' +
+    (inspN ? 'Inspired ' + inspN : 'Inspired') +
+    '</span></button>';
+  if (!inSheet) {
+    html +=
+      '<button type="button" class="qa-act" data-open="story" data-id="' +
+      esc(item.id) +
+      '">' +
+      qaIconReply() +
+      '<span>' +
+      esc(replyLabel) +
+      '</span></button>';
+  }
+  html +=
+    '<button type="button" class="qa-act is-save" data-save="' +
+    esc(item.id) +
+    '" aria-pressed="' +
+    (saved ? 'true' : 'false') +
+    '">' +
+    qaIconSave(saved) +
+    '<span>' +
+    (saved ? 'Saved' : 'Save') +
+    '</span></button></div>';
+  return html;
+}
+
+function oppRenderStoryCard(item, opts) {
+  var s = oppStoryAuthor(item);
+  var body = oppStoryBody(item);
+  var photos = storyPhotos(item);
+  var html;
+  opts = opts || {};
+  html =
+    '<article class="card feed-card kind-story opp-story' +
+    (opts.preview ? ' opp-preview' : ' clickable') +
+    '" ' +
+    (opts.preview ? '' : cardClickAttrs('story', item.id)) +
+    '><div class="opp-pad">';
+  html += storyAuthorRow(item, opts);
+  html +=
+    '<p class="story-body' +
+    (opts.preview ? '' : ' qa-clamp') +
+    '"' +
+    (opts.preview ? '' : ' data-qa-clamp="st-' + esc(item.id) + '"') +
+    '>' +
+    esc(body) +
+    '</p>';
+  html += oppTopicHtml(s.topic);
+  if (photos.length) html += storyMosaicHtml(photos, 'feed', item.id);
+  else html += oppLinkHtml(s.link);
+  html += '</div>';
+  html += oppStoryEngage(item, false);
+  html += '</article>';
+  return html;
+}
+
+function oppFactsHtml(o) {
+  var html = '<div class="opp-facts"><h3>The details</h3><dl>';
+  html +=
+    '<div class="row"><dt>Closes</dt><dd>' +
+    esc(o.rolling || !o.closesAt ? 'Runs all year' : oppDateLabel(o.closesAt)) +
+    '</dd></div>';
+  html += '<div class="row"><dt>Runs</dt><dd>' + esc(o.when) + '</dd></div>';
+  html += '<div class="row"><dt>Who</dt><dd>' + esc(o.who) + '</dd></div>';
+  html += '<div class="row"><dt>Where</dt><dd>' + esc(o.where) + '</dd></div>';
+  html += '</dl>';
+  if (o.closesAt && !o.rolling) {
+    html +=
+      '<a class="opp-cal" download="' +
+      esc(oppSlug(o.title)) +
+      '.ics" href="' +
+      oppIcsHref(o) +
+      '">Add the closing date to my calendar</a>';
+  }
+  html += '</div>';
+  return html;
+}
+
+function oppRemindOn(id) {
+  return S.oppRemind && S.oppRemind.indexOf(id) !== -1;
+}
+
+function oppRemindHtml(o) {
+  var on;
+  if (!qaIsStudent() || !o.closesAt || o.rolling || oppClosed(o)) return '';
+  on = oppRemindOn(o.id);
+  return (
+    '<button type="button" class="opp-remind' +
+    (on ? ' on' : '') +
+    '" data-opp-remind="' +
+    esc(o.id) +
+    '" aria-pressed="' +
+    (on ? 'true' : 'false') +
+    '"><strong>' +
+    (on ? 'Reminder set' : 'Remind me before it closes') +
+    '</strong><span>A week before, and again the day before.</span></button>'
+  );
+}
+
+function oppReplyHostId(kind, id) {
+  var item;
+  if (kind === 'story') return id;
+  item = oppFeedFor(id);
+  return item ? item.id : id;
+}
+
+function oppRepliesHtml(list, kind, id) {
+  var html = '';
+  var i;
+  var host = oppReplyHostId(kind, id);
+  var fake = { id: host, replies: list };
+  var n;
+  html +=
+    '<p class="opp-replies-h">' +
+    (list.length
+      ? list.length + (list.length === 1 ? ' reply, oldest first' : ' replies, oldest first')
+      : 'No replies yet') +
+    '</p>';
+  for (i = 0; i < list.length; i++) {
+    n = qaNormReply(list[i]);
+    html += '<div class="qa-thread-item">';
+    html += qaReplyHeadHtml(n, fake, true, n.createdAt);
+    html += qaBodyHtml(n.text);
+    html += '</div>';
+  }
+  html +=
+    '<div class="qa-compose"><p class="qa-compose-label">Reply to this ' +
+    (kind === 'story' ? 'story' : 'opening') +
+    '</p><div class="qa-compose-grid">' +
+    qaYouAv() +
+    '<div class="qa-compose-field"><textarea id="opp-reply" rows="1" placeholder="Add a question or something you know…"></textarea>' +
+    '<div class="qa-compose-foot"><p class="qa-note">' +
+    (qaIsStudent() || oppIsParent() ? 'Please be respectful.' : '') +
+    '</p><button type="button" class="qa-post" id="opp-post" data-opp-reply="' +
+    esc(host) +
+    '" data-kind="' +
+    esc(kind) +
+    '" disabled>Reply</button></div></div></div></div>';
+  return html;
+}
+
+function oppSheetHtml(o) {
+  var html = '<div class="opp-sheet" tabindex="-1">';
+  html += oppAuthorHtml(o, true, false);
+  html += '<h3 class="opp-title">' + esc(o.title) + '</h3>';
+  html += oppTopicHtml(o.topic);
+  html += oppDeadlineHtml(o);
+  html += '<p class="opp-desc" style="white-space:pre-wrap">' + esc(o.description) + '</p>';
+  html += oppPosterHtml(o.poster, 'sheet');
+  html += oppLinkHtml(o.link);
+  html += oppFactsHtml(o);
+  html += oppEngageHtml(o, { inSheet: true });
+  html += oppRemindHtml(o);
+  html += oppRepliesHtml(o.replies || [], 'opp', o.id);
+  html += '</div>';
+  return html;
+}
+
+function oppStorySheetHtml(item) {
+  var s = oppStoryAuthor(item);
+  var photos = storyPhotos(item);
+  var html = '<div class="opp-sheet story-sheet" tabindex="-1">';
+  html += storyAuthorRow(item, {});
+  html += '<p class="story-body">' + esc(oppStoryBody(item)) + '</p>';
+  html += oppTopicHtml(s.topic);
+  if (photos.length) html += storyMosaicHtml(photos, 'sheet', item.id);
+  else html += oppLinkHtml(s.link);
+  html += oppStoryEngage(item, true);
+  html += storyMentionsHtml(item);
+  html += oppRepliesHtml(item.replies || [], 'story', item.id);
+  html += '</div>';
+  return html;
+}
+
+function oppOwnClosingWarn() {
+  var viewer = currentPosterId();
+  var k;
+  var o;
+  var n;
+  var ms;
+  var best = null;
+  var bestMs = Infinity;
+  if (!viewer) return '';
+  for (k in OPPS) {
+    if (!OPPS.hasOwnProperty(k)) continue;
+    o = oppOpening(OPPS[k]);
+    if (!o || o.authorId !== viewer) continue;
+    if (o.status !== 'published' && o.status !== 'live') continue;
+    if (!o.closesAt || o.rolling || oppClosed(o)) continue;
+    ms = oppMsLeft(o);
+    if (ms == null || ms > 14 * 86400000) continue;
+    if (ms < bestMs) {
+      bestMs = ms;
+      best = o;
+    }
+  }
+  if (!best) return '';
+  n = oppWarnPhrase(best);
+  if (!n) return '';
+  return '<p class="opp-warn">Your "' + esc(best.title) + '" ' + esc(n) + '</p>';
+}
+
+function oppDraftCount() {
+  var viewer = currentPosterId();
+  var n = 0;
+  var i;
+  if (!viewer || !S.oppDrafts) return 0;
+  for (i = 0; i < S.oppDrafts.length; i++) {
+    if (S.oppDrafts[i].authorId === viewer) n += 1;
+  }
+  return n;
+}
+
+function oppLeadHtml() {
+  var drafts;
+  var a;
+  var kind;
+  var av;
+  if (oppIsAskOnly()) {
+    return (
+      '<div class="qa-ask-row">' +
+      qaYouAv() +
+      '<button type="button" class="qa-ask-open" data-qa-ask="1">What do you want to ask?</button></div>'
+    );
+  }
+  if (!oppCanAuthor()) return '';
+  drafts = oppDraftCount();
+  a = currentPosterId() ? author(currentPosterId()) : null;
+  kind = oppAuthorKind(a);
+  av =
+    '<span class="opp-av ' +
+    (kind === 'collaborator' ? 'is-org' : 'is-person') +
+    '" aria-hidden="true">' +
+    esc(oppInitials(a || { init: 'ME' })) +
+    '</span>';
+  return (
+    '<div class="opp-lead">' +
+    av +
+    '<button type="button" class="opp-post-btn" data-opp-post="1">Post</button>' +
+    (drafts
+      ? '<button type="button" class="opp-drafts-btn" data-opp-drafts="1">Drafts ' + drafts + '</button>'
+      : '') +
+    oppOwnClosingWarn() +
+    '</div>'
+  );
+}
+
+function oppResetCompose(keepMode) {
+  var o = ensureOpp();
+  var mode = keepMode ? o.mode : '';
+  o.step = 1;
+  o.title = '';
+  o.description = '';
+  o.topic = '';
+  o.tagQ = '';
+  o.tagIx = -1;
+  o.poster = null;
+  o.posterAlt = '';
+  o.linkUrl = '';
+  o.who = '';
+  o.where = '';
+  o.when = '';
+  o.closesAt = '';
+  o.rolling = false;
+  o.apply = '';
+  o.storyBody = '';
+  o.photos = [];
+  o.draftId = '';
+  o.editId = '';
+  o.mode = mode;
+}
+
+function oppWhoHtml() {
+  return (
+    '<div class="opp-pick">' +
+    '<button type="button" data-opp-who="student"><i aria-hidden="true">S</i><div><strong>Student or parent</strong><span>What do you want to ask? One tap into a question.</span></div></button>' +
+    '<button type="button" data-opp-who="mentor"><i aria-hidden="true">M</i><div><strong>Mentor or collaborator</strong><span>Post a question, a story, or an opening.</span></div></button>' +
+    '</div>'
+  );
+}
+
+function oppOpenPost(seed, cat) {
+  if (isVisitor() && !seed) {
+    ensureOpp();
+    S.opp.dialog = 'who';
+    S.opp.mode = '';
+    S.opp.fromWho = true;
+    oppPaintLayer();
+    return;
+  }
+  if (oppIsAskOnly() || seed) {
+    qaOpenDialog('ask', { text: seed || '' });
+    return;
+  }
+  if (!oppCanAuthor()) {
+    go({ t: 'postgate', id: '0' });
+    return;
+  }
+  ensureOpp();
+  S.opp.dialog = 'picker';
+  S.opp.mode = '';
+  if (cat) S.opp.topic = hashTagLabel(cat);
+  oppPaintLayer();
+}
+
+function oppStep1Ok(c) {
+  var title = (c.title || '').trim();
+  var desc = (c.description || '').trim();
+  if (title.length < 6 || title.length > 80) return false;
+  if (desc.length < 20) return false;
+  if (!c.topic) return false;
+  if (c.poster && (c.posterAlt || '').trim().length < 10) return false;
+  return true;
+}
+
+function oppStep2Ok(c) {
+  if ((c.who || '').trim().length < 3 || (c.who || '').trim().length > 90) return false;
+  if ((c.where || '').trim().length < 3 || (c.where || '').trim().length > 90) return false;
+  if ((c.when || '').trim().length < 3 || (c.when || '').trim().length > 90) return false;
+  if (c.rolling) return true;
+  return !!(c.closesAt || '').trim();
+}
+
+function oppStep3Ok(c) {
+  return (c.apply || '').trim().length >= 5;
+}
+
+function oppStepOk(step) {
+  var c = ensureOpp();
+  if (step === 1) return oppStep1Ok(c);
+  if (step === 2) return oppStep2Ok(c);
+  if (step === 3) return oppStep3Ok(c);
+  return true;
+}
+
+function oppStoryOk() {
+  var c = ensureOpp();
+  var i;
+  if ((c.storyBody || '').trim().length < 40) return false;
+  if (!c.topic) return false;
+  if (c.photos && c.photos.length) {
+    for (i = 0; i < c.photos.length; i++) {
+      if (!c.photos[i].alt || String(c.photos[i].alt).trim().length < 10) return false;
+    }
+  }
+  return true;
+}
+
+function oppMatchTopics(term) {
+  var q = String(term || '')
+    .replace(/^#/, '')
+    .toLowerCase()
+    .replace(/\s+/g, '');
+  var all = qaTopicCatalog();
+  var prefix = [];
+  var sub = [];
+  var i;
+  var key;
+  var hit;
+  if (!q) return [];
+  for (i = 0; i < all.length; i++) {
+    key = all[i].tag.replace(/^#/, '').toLowerCase();
+    if (ensureOpp().topic === all[i].tag) continue;
+    if (key.indexOf(q) === 0) prefix.push(all[i]);
+    else if (key.indexOf(q) !== -1) sub.push(all[i]);
+  }
+  hit = prefix.concat(sub);
+  var cap = ensureOpp().mode === 'story' || ensureOpp().dialog === 'story' ? 5 : 6;
+  if (hit.length > cap) hit.length = cap;
+  return hit;
+}
+
+function oppTopicFieldHtml() {
+  var c = ensureOpp();
+  var html = '<div class="qa-tags" id="opp-tag-wrap"><label class="qa-tags-label" for="opp-tag-q">Topic</label>';
+  if (c.topic) {
+    html +=
+      '<div class="qa-chosen"><span class="opp-chip">' +
+      esc(c.topic) +
+      '<span class="qa-chip-x" role="button" tabindex="0" data-opp-untag="1" aria-label="Remove ' +
+      esc(c.topic) +
+      '">×</span></span></div>';
+    html += '<p class="opp-hint">Remove it to choose a different one.</p>';
+  } else {
+    html +=
+      '<input id="opp-tag-q" class="qa-tag-input" role="combobox" aria-expanded="false" aria-controls="opp-sug" aria-autocomplete="list" placeholder="Start typing a topic" value="' +
+      esc(c.tagQ || '') +
+      '"/>';
+    html += '<div class="qa-sug" id="opp-sug" role="listbox" hidden></div>';
+  }
+  html += '</div>';
+  return html;
+}
+
+function oppAttachFieldsHtml() {
+  var c = ensureOpp();
+  var link = oppParseLink(c.linkUrl);
+  var html = '<label>Poster</label><div class="opp-file"><input id="opp-poster" type="file" accept="image/*"/></div>';
+  if (c.poster) {
+    html += oppPosterHtml(
+      { url: c.poster.url, alt: c.posterAlt || c.poster.alt || '', width: c.poster.width, height: c.poster.height },
+      'feed'
+    );
+    html +=
+      '<label for="opp-alt">Alt text</label><textarea id="opp-alt" minlength="10">' +
+      esc(c.posterAlt || '') +
+      '</textarea>';
+    html +=
+      '<p class="opp-hint' +
+      ((c.posterAlt || '').trim().length < 10 ? ' is-bad' : '') +
+      '">Required. This is all a screen reader gets, and all anyone sees if images do not load.</p>';
+  }
+  html +=
+    '<label for="opp-link">Link</label><input id="opp-link" type="url" placeholder="https://" value="' +
+    esc(c.linkUrl || '') +
+    '"/>';
+  html += '<div id="opp-link-prev">' + (link ? oppLinkHtml(link) : '') + '</div>';
+  return html;
+}
+
+function oppComposePreviewOpening() {
+  var c = ensureOpp();
+  var a = currentPosterId() ? author(currentPosterId()) : { name: 'You', init: 'YO', role: 'mentor', pos: '' };
+  var kind = oppAuthorKind(a);
+  return {
+    _card: true,
+    id: c.editId || c.draftId || 'preview',
+    status: 'published',
+    authorId: currentPosterId() || '',
+    author: {
+      name: a.name,
+      initials: oppInitials(a),
+      kind: kind,
+      verified: !!(a && a.verified),
+      role: kind === 'collaborator' ? 'Collaborator' : 'Mentor',
+      pos: a.pos || ''
+    },
+    createdAt: nowIso(),
+    editedAt: '',
+    title: c.title,
+    description: c.description,
+    topic: c.topic,
+    who: c.who,
+    where: c.where,
+    when: c.when,
+    closesAt: c.rolling ? null : c.closesAt,
+    rolling: !!c.rolling,
+    apply: c.apply,
+    poster: c.poster
+      ? {
+          url: c.poster.url,
+          alt: c.posterAlt || c.poster.alt || '',
+          width: c.poster.width,
+          height: c.poster.height
+        }
+      : null,
+    link: oppParseLink(c.linkUrl),
+    replies: [],
+    inspiredCount: 0,
+    src: { state: 'live' },
+    item: null
+  };
+}
+
+function oppDraftFromState() {
+  var c = ensureOpp();
+  return {
+    id: c.draftId || 'd-' + Date.now(),
+    kind: c.mode,
+    authorId: currentPosterId(),
+    savedAt: nowIso(),
+    title: c.title,
+    description: c.description,
+    topic: c.topic,
+    poster: c.poster,
+    posterAlt: c.posterAlt,
+    linkUrl: c.linkUrl,
+    who: c.who,
+    where: c.where,
+    when: c.when,
+    closesAt: c.closesAt,
+    rolling: c.rolling,
+    apply: c.apply,
+    storyBody: c.storyBody,
+    photos: c.photos ? c.photos.slice() : [],
+    step: c.step
+  };
+}
+
+function oppLoadDraft(d) {
+  var c = ensureOpp();
+  var k;
+  for (k in d) {
+    if (d.hasOwnProperty(k) && k !== 'id' && k !== 'kind' && k !== 'authorId' && k !== 'savedAt') {
+      c[k] = d[k];
+    }
+  }
+  c.draftId = d.id;
+  c.mode = d.kind;
+  c.dialog = d.kind === 'story' ? 'story' : d.step === 'preview' ? 'preview' : 'opportunity';
+  if (d.kind !== 'story') c.step = d.step || 1;
+}
+
+function oppSaveDraft() {
+  var d = oppDraftFromState();
+  var i;
+  for (i = 0; i < S.oppDrafts.length; i++) {
+    if (S.oppDrafts[i].id === d.id) {
+      S.oppDrafts[i] = d;
+      toast('Draft saved.');
+      return d;
+    }
+  }
+  S.oppDrafts.push(d);
+  ensureOpp().draftId = d.id;
+  toast('Draft saved.');
+  if (typeof refreshUi === 'function' && !NAV.length) render();
+  return d;
+}
+
+function oppPublishOpening() {
+  var c = ensureOpp();
+  var id = c.editId || 'opp-' + Date.now();
+  var poster = currentPosterId();
+  var link = oppParseLink(c.linkUrl);
+  var o;
+  if (!oppStep1Ok(c) || !oppStep2Ok(c) || !oppStep3Ok(c)) return;
+  o = OPPS[id] || { id: id, entry: [], tips: [], truth: { b: '', p: '' }, proof: { b: '', p: '' }, leads: '', mentors: [], rel: [], sess: [], images: [] };
+  o.id = id;
+  o.name = c.title.trim();
+  o.title = c.title.trim();
+  o.one = c.description.trim();
+  o.description = c.description.trim();
+  o.what = [c.description.trim()];
+  o.topic = c.topic;
+  o.cat = qaTopicRaw(c.topic);
+  o.who = c.who.trim();
+  o.where = c.where.trim();
+  o.regions = c.where.trim();
+  o.when = c.when.trim();
+  o.season = c.when.trim();
+  o.closesAt = c.rolling ? null : c.closesAt;
+  o.rolling = !!c.rolling;
+  o.apply = c.apply.trim();
+  o.poster = c.poster
+    ? {
+        url: c.poster.url,
+        alt: c.posterAlt.trim(),
+        width: c.poster.width,
+        height: c.poster.height
+      }
+    : null;
+  o.link = link;
+  o.author = poster || '';
+  o.state = 'live';
+  o.status = 'published';
+  o.inspiredCount = o.inspiredCount || 0;
+  if (c.editId) o.editedAt = nowIso();
+  else o.createdAt = nowIso();
+  OPPS[id] = o;
+  if (!c.editId) {
+    FEED.unshift({
+      id: 'f-' + id,
+      kind: 'opportunity',
+      at: nowIso(),
+      cat: o.cat,
+      author: poster || '',
+      opp: id,
+      stage: o.stage || '',
+      replies: [],
+      insp: 0,
+      text: o.one
+    });
+  } else if (oppFeedFor(id)) {
+    oppFeedFor(id).edited = true;
+    oppFeedFor(id).editedAt = nowIso();
+  }
+  if (c.draftId) {
+    S.oppDrafts = S.oppDrafts.filter(function (x) {
+      return x.id !== c.draftId;
+    });
+  }
+  oppCloseDialog();
+  toast(c.editId ? 'Opening updated.' : 'Opening posted.');
+  render();
+}
+
+function oppPublishStory() {
+  var c = ensureOpp();
+  var id = c.editId || 'st-' + Date.now();
+  var poster = currentPosterId();
+  var item;
+  var link;
+  if (!oppStoryOk()) return;
+  link = c.photos && c.photos.length ? null : oppParseLink(c.linkUrl);
+  if (c.editId) {
+    item = feedById(c.editId);
+    if (!item) return;
+    item.body = c.storyBody.trim();
+    item.bodyText = c.storyBody.trim();
+    item.title = '';
+    item.topic = c.topic;
+    item.cat = qaTopicRaw(c.topic);
+    item.photos = c.photos && c.photos.length ? c.photos.slice() : [];
+    item.poster = null;
+    item.link = link;
+    item.edited = true;
+    item.editedAt = nowIso();
+  } else {
+    FEED.unshift({
+      id: id,
+      kind: 'story',
+      at: nowIso(),
+      cat: qaTopicRaw(c.topic),
+      topic: c.topic,
+      author: poster || '',
+      title: '',
+      body: c.storyBody.trim(),
+      bodyText: c.storyBody.trim(),
+      photos: c.photos && c.photos.length ? c.photos.slice() : [],
+      poster: null,
+      link: link,
+      replies: [],
+      insp: 0,
+      mine: true
+    });
+  }
+  if (c.draftId) {
+    S.oppDrafts = S.oppDrafts.filter(function (x) {
+      return x.id !== c.draftId;
+    });
+  }
+  oppCloseDialog();
+  toast(c.editId ? 'Story updated.' : 'Story posted.');
+  render();
+}
+
+function oppTomorrow() {
+  var d = new Date();
+  d.setDate(d.getDate() + 1);
+  return d.toISOString().slice(0, 10);
+}
+
+function oppPickerHtml() {
+  return (
+    '<div class="opp-pick">' +
+    '<button type="button" data-opp-type="question"><i aria-hidden="true">?</i><div><strong>Question</strong><span>Ask the community something.</span></div></button>' +
+    '<button type="button" data-opp-type="story"><i aria-hidden="true">S</i><div><strong>Story</strong><span>Share an update, or something you learned.</span></div></button>' +
+    '<button type="button" data-opp-type="opportunity"><i aria-hidden="true">O</i><div><strong>Opportunity</strong><span>Something students can apply to.</span></div></button>' +
+    '</div>'
+  );
+}
+
+function oppComposeStepHtml() {
+  var c = ensureOpp();
+  var html = '';
+  html += '<p class="opp-step">Step ' + c.step + ' of 3</p>';
+  html +=
+    '<div class="opp-progress" aria-hidden="true"><span' +
+    (c.step >= 1 ? ' class="on"' : '') +
+    '></span><span' +
+    (c.step >= 2 ? ' class="on"' : '') +
+    '></span><span' +
+    (c.step >= 3 ? ' class="on"' : '') +
+    '></span></div>';
+  if (c.step === 1) {
+    html +=
+      '<label for="opp-title">Title</label><input id="opp-title" maxlength="80" value="' +
+      esc(c.title) +
+      '"/>';
+    html +=
+      '<label for="opp-desc">Description</label><textarea id="opp-desc">' +
+      esc(c.description) +
+      '</textarea>';
+    html += oppTopicFieldHtml();
+    html += oppAttachFieldsHtml();
+  } else if (c.step === 2) {
+    html +=
+      '<label for="opp-who">Who it is for</label><input id="opp-who" maxlength="90" value="' +
+      esc(c.who) +
+      '" placeholder="ages 14 to 25, any school or none"/>';
+    html +=
+      '<label for="opp-where">Where</label><input id="opp-where" maxlength="90" value="' +
+      esc(c.where) +
+      '" placeholder="clubhouse in Georgetown, or online"/>';
+    html +=
+      '<label for="opp-when">When it runs</label><input id="opp-when" maxlength="90" value="' +
+      esc(c.when) +
+      '" placeholder="two weeks in the August holidays"/>';
+    html +=
+      '<label for="opp-closes">Closing date</label><input id="opp-closes" type="date" min="' +
+      oppTomorrow() +
+      '" value="' +
+      esc(c.closesAt ? String(c.closesAt).slice(0, 10) : '') +
+      '"' +
+      (c.rolling ? ' disabled' : '') +
+      '/>';
+    html +=
+      '<p class="opp-hint">The countdown, reminders, and calendar file need a real date. When it runs is the human description.</p>';
+    html +=
+      '<label class="opp-check"><input id="opp-rolling" type="checkbox"' +
+      (c.rolling ? ' checked' : '') +
+      '/> <span>No closing date, it runs all year</span></label>';
+  } else {
+    html +=
+      '<label for="opp-apply">How to apply</label><textarea id="opp-apply" placeholder="A link, an email, a number, or where to turn up">' +
+      esc(c.apply) +
+      '</textarea>';
+    html +=
+      '<p class="opp-hint">Whatever you put here is what the student sees. Applying happens with you, not on Next Step.</p>';
+    html += oppApplyPreviewHtml(c.apply);
+  }
+  html += '<div class="opp-foot">';
+  html += '<button type="button" class="qa-keep is-left" data-opp-save-draft="1">Save as draft</button>';
+  html +=
+    '<button type="button" class="qa-keep" data-opp-back="1">' +
+    (c.step === 1 ? 'Cancel' : 'Back') +
+    '</button>';
+  html +=
+    '<button type="button" class="qa-go" id="opp-continue" data-opp-next="1"' +
+    (oppStepOk(c.step) ? '' : ' disabled') +
+    '>' +
+    (c.step === 3 ? 'Preview' : 'Continue') +
+    '</button>';
+  html += '</div>';
+  return html;
+}
+
+function oppApplyPreviewHtml(val) {
+  var d = oppDetectApply(val);
+  var html = '<div class="opp-apply-prev" id="opp-apply-prev">';
+  if (!val || !String(val).trim()) {
+    html += '<p class="opp-hint">Students will see this as you type.</p>';
+  } else if (d.label) {
+    html += '<p class="opp-hint">Students will get a button.</p><button type="button" class="opp-primary" disabled>' + esc(d.label) + '</button>';
+  } else {
+    html += '<p class="opp-apply-val">' + esc(val) + '</p>';
+  }
+  html += '</div>';
+  return html;
+}
+
+function storyNeedChars() {
+  return Math.max(0, 40 - (ensureOpp().storyBody || '').trim().length);
+}
+
+function storyAttachHtml() {
+  var c = ensureOpp();
+  var hasPhotos = !!(c.photos && c.photos.length);
+  var link = !hasPhotos ? oppParseLink(c.linkUrl) : null;
+  var html = '';
+  var i;
+  var ph;
+  html +=
+    '<p class="opp-hint">Photos or a link, not both. The same as LinkedIn. Whichever you add, the other is put away.</p>';
+  html += '<label>Photos</label><div class="opp-file">';
+  html +=
+    '<input id="opp-photos" type="file" accept="image/*" multiple' +
+    (c.linkUrl && oppParseLink(c.linkUrl) ? ' disabled' : '') +
+    '/>';
+  html += '</div>';
+  if (hasPhotos && c.photos.length >= 4) {
+    html += '<p class="opp-hint">Four photos lay out cleanly. Any more show behind a count.</p>';
+  }
+  for (i = 0; i < (c.photos || []).length; i++) {
+    ph = c.photos[i];
+    html +=
+      '<div class="story-alt-row"><img src="' +
+      esc(ph.url) +
+      '" alt=""/><div><input data-story-alt="' +
+      i +
+      '" maxlength="180" placeholder="Describe this photo" value="' +
+      esc(ph.alt || '') +
+      '"/><p class="opp-hint' +
+      ((ph.alt || '').trim().length < 10 ? ' is-bad' : '') +
+      '">Required. This is all a screen reader gets.</p></div><button type="button" class="qa-keep" data-story-rm-photo="' +
+      i +
+      '">Remove</button></div>';
+  }
+  html +=
+    '<label for="opp-link">Link</label><input id="opp-link" type="url" placeholder="https://" value="' +
+    esc(hasPhotos ? '' : c.linkUrl || '') +
+    '"' +
+    (hasPhotos ? ' disabled' : '') +
+    '/>';
+  html += '<div id="opp-link-prev">' + (link ? oppLinkHtml(link) : '') + '</div>';
+  return html;
+}
+
+function oppStoryFormHtml() {
+  var c = ensureOpp();
+  var a = currentPosterId() ? author(currentPosterId()) : null;
+  var need = storyNeedChars();
+  var html =
+    '<div class="story-comp-h"><h2 id="qa-dlg-title">Write a story</h2><span>' +
+    esc((a && a.name) || 'You') +
+    '</span></div>';
+  html +=
+    '<label for="opp-story">Your story</label><textarea id="opp-story" minlength="40" placeholder="What do you want to share? Start with the line that would make a student stop scrolling.">' +
+    esc(c.storyBody) +
+    '</textarea>';
+  if (need) html += '<p class="opp-hint" id="story-need">' + need + ' more characters needed</p>';
+  else html += '<p class="opp-hint" id="story-need" hidden></p>';
+  html += oppTopicFieldHtml();
+  html += storyAttachHtml();
+  html += '<div class="opp-foot">';
+  html += '<button type="button" class="qa-keep is-left" data-opp-save-draft="1">Save as draft</button>';
+  html += '<button type="button" class="qa-keep" data-opp-back="1">Cancel</button>';
+  html +=
+    '<button type="button" class="qa-go" id="opp-continue" data-opp-story-preview="1"' +
+    (oppStoryOk() ? '' : ' disabled') +
+    '>Preview</button>';
+  html += '</div>';
+  return html;
+}
+
+function oppPreviewHtml() {
+  var c = ensureOpp();
+  var html = '<p class="qa-sub">This is exactly how it will look</p>';
+  if (c.mode === 'story') {
+    html += oppRenderStoryCard(
+      {
+        id: 'preview',
+        kind: 'story',
+        at: nowIso(),
+        author: currentPosterId(),
+        topic: c.topic,
+        cat: qaTopicRaw(c.topic),
+        bodyText: c.storyBody,
+        photos: c.photos && c.photos.length ? c.photos.slice() : [],
+        poster: null,
+        link: c.photos && c.photos.length ? null : oppParseLink(c.linkUrl),
+        replies: [],
+        insp: 0
+      },
+      { preview: true }
+    );
+  } else {
+    html += oppRenderCard(oppComposePreviewOpening(), { preview: true });
+  }
+  html += '<div class="opp-foot">';
+  html += '<button type="button" class="qa-keep is-left" data-opp-save-draft="1">Save as draft</button>';
+  html += '<button type="button" class="qa-keep" data-opp-edit-back="1">Back to edit</button>';
+  html +=
+    '<button type="button" class="qa-go" data-opp-publish="1">' +
+    (c.mode === 'story' ? 'Post story' : 'Post opening') +
+    '</button>';
+  html += '</div>';
+  return html;
+}
+
+function oppDraftsHtml() {
+  var viewer = currentPosterId();
+  var rows = (S.oppDrafts || []).filter(function (d) {
+    return d.authorId === viewer;
+  });
+  var html = '';
+  var i;
+  var d;
+  if (!rows.length) return '<p class="qa-sub">No drafts.</p>';
+  for (i = 0; i < rows.length; i++) {
+    d = rows[i];
+    html +=
+      '<div class="qa-draft-row"><div><strong>' +
+      esc(
+        d.kind === 'story'
+          ? ((d.storyBody || '').split('\n')[0].trim() || 'Untitled story')
+          : d.title || 'Untitled opening'
+      ) +
+      '</strong><p class="opp-hint">Saved ' +
+      esc(qaTimeAgo(d.savedAt)) +
+      (d.topic ? ' · ' + esc(d.topic) : '') +
+      '</p></div><div><button type="button" class="qa-go" data-opp-resume="' +
+      esc(d.id) +
+      '">Continue</button> <button type="button" class="qa-kill" data-opp-del-draft="' +
+      esc(d.id) +
+      '">Delete</button></div></div>';
+  }
+  return html;
+}
+
+function oppApplyDialogHtml(o) {
+  var d = oppDetectApply(o.apply);
+  var close = oppCloseCopy(o);
+  var html = '<h2 id="qa-dlg-title">How to apply</h2>';
+  html +=
+    '<p class="qa-sub">' +
+    esc(o.title) +
+    (close && close.tone === 'soon' ? ' · ' + esc(close.text) : '') +
+    '</p>';
+  html += '<p class="opp-apply-val">' + esc(o.apply) + '</p>';
+  html +=
+    '<p class="opp-apply-note">Applying happens with ' +
+    esc(o.author.name) +
+    ', not on Next Step.</p>';
+  html += '<div class="qa-dlg-actions">';
+  html += '<button type="button" class="qa-keep" data-opp-cancel="1">Close</button>';
+  html +=
+    '<button type="button" class="qa-go" data-save="' +
+    esc(o.id) +
+    '">Save to my pathway</button>';
+  if (d.href) {
+    html +=
+      '<a class="opp-primary" style="display:inline-flex;align-items:center;text-decoration:none" href="' +
+      esc(d.href) +
+      '" target="_blank" rel="noopener">' +
+      esc(d.label) +
+      '</a>';
+  }
+  html += '</div>';
+  return html;
+}
+
+function oppReportHtml() {
+  var c = ensureOpp();
+  var reasons =
+    c.reportKind === 'story'
+      ? [
+          ['wrong', 'The information is wrong or misleading'],
+          ['unkind', 'Rude or unkind'],
+          ['spam', 'Spam, or an advertisement'],
+          ['personal', "Shares someone's personal details"],
+          ['safety', 'This does not look safe for students']
+        ]
+      : [
+          ['closed', 'This closed, or the date is wrong'],
+          ['details', 'The details are wrong or misleading'],
+          ['apply', 'The way to apply does not work'],
+          ['cost', 'It costs money and does not say so'],
+          ['safety', 'This does not look safe for students']
+        ];
+  var html = '<h2 id="qa-dlg-title">' + (c.reportKind === 'story' ? 'Report this story' : 'Report a problem') + '</h2>';
+  html += '<p class="qa-sub">Tell us what is wrong. A person reviews every report.</p><div class="qa-reasons">';
+  var i;
+  for (i = 0; i < reasons.length; i++) {
+    html +=
+      '<button type="button" class="qa-reason' +
+      (reasons[i][0] === 'safety' ? ' is-safe' : '') +
+      '" data-opp-reason="' +
+      reasons[i][0] +
+      '" aria-pressed="' +
+      (c.reportReason === reasons[i][0] ? 'true' : 'false') +
+      '">' +
+      esc(reasons[i][1]) +
+      '</button>';
+  }
+  html += '</div>';
+  if (c.reportReason === 'safety') {
+    html +=
+      '<p class="qa-safe-note">This goes to the safeguarding team, not the same inbox as a wrong date. If someone is in immediate danger, contact a person who can help right now as well.</p>';
+  }
+  html +=
+    '<div class="qa-dlg-actions"><button type="button" class="qa-keep" data-opp-cancel="1">Cancel</button><button type="button" class="qa-go" data-opp-send-report="1"' +
+    (c.reportReason ? '' : ' disabled') +
+    '>Send</button></div>';
+  return html;
+}
+
+function oppPaintLayer() {
+  var layer = byId('qa-layer');
+  var c = ensureOpp();
+  var html;
+  var o;
+  var focus;
+  if (!layer) return;
+  if (S.qa && S.qa.dialog) return;
+  if (!c.dialog) {
+    if (!layer.hidden && layer.querySelector('.opp-box')) {
+      layer.hidden = true;
+      layer.innerHTML = '';
+    }
+    return;
+  }
+  html = '<div class="qa-dialog opp-box opp-compose" role="dialog" aria-modal="true" aria-labelledby="qa-dlg-title">';
+  if (c.dialog === 'who') {
+    html += '<h2 id="qa-dlg-title">Post</h2>';
+    html +=
+      '<p class="qa-sub">Look at posting as a student or parent, or as a mentor or collaborator. You do not need to finish the four questions first.</p>';
+    html += oppWhoHtml();
+    html += '<div class="qa-dlg-actions"><button type="button" class="qa-keep" data-opp-cancel="1">Cancel</button></div>';
+  } else if (c.dialog === 'picker') {
+    html +=
+      '<h2 id="qa-dlg-title">What are you posting?</h2><p class="qa-sub">Each one asks for different things, so pick first.</p>' +
+      oppPickerHtml();
+    html +=
+      '<div class="qa-dlg-actions"><button type="button" class="qa-keep" data-opp-cancel="1">' +
+      (c.fromWho ? 'Back' : 'Cancel') +
+      '</button></div>';
+  } else if (c.dialog === 'opportunity') {
+    html += '<h2 id="qa-dlg-title">Share an opportunity</h2>' + oppComposeStepHtml();
+  } else if (c.dialog === 'story') {
+    html += oppStoryFormHtml();
+  } else if (c.dialog === 'preview') {
+    html += '<h2 id="qa-dlg-title">Preview</h2>' + oppPreviewHtml();
+  } else if (c.dialog === 'drafts') {
+    html += '<h2 id="qa-dlg-title">Drafts</h2>' + oppDraftsHtml();
+    html += '<div class="qa-dlg-actions"><button type="button" class="qa-keep" data-opp-cancel="1">Close</button></div>';
+  } else if (c.dialog === 'apply') {
+    o = oppOpening(c.dialogId);
+    html += o ? oppApplyDialogHtml(o) : '<p>Missing.</p>';
+  } else if (c.dialog === 'report') {
+    html += oppReportHtml();
+  } else if (c.dialog === 'del') {
+    html +=
+      '<h2 id="qa-dlg-title">Delete this opening?</h2><p class="qa-sub">It is removed from the feed. This cannot be undone.</p><div class="qa-dlg-actions"><button type="button" class="qa-keep" data-opp-cancel="1">Keep it</button><button type="button" class="qa-kill" data-opp-confirm-del="1">Delete</button></div>';
+  } else if (c.dialog === 'del-story') {
+    html +=
+      '<h2 id="qa-dlg-title">Delete this story?</h2><p class="qa-sub">It disappears from every feed, including anyone who saved it.</p><div class="qa-dlg-actions"><button type="button" class="qa-keep" data-opp-cancel="1">Keep it</button><button type="button" class="qa-kill" data-opp-confirm-del-story="1">Delete</button></div>';
+  } else if (c.dialog === 'date') {
+    html +=
+      '<h2 id="qa-dlg-title">Set a new closing date</h2><p class="qa-sub">This brings the opening back into the feed.</p><input id="opp-new-date" type="date" min="' +
+      oppTomorrow() +
+      '" value="' +
+      esc(c.dateVal || '') +
+      '"/><div class="qa-dlg-actions"><button type="button" class="qa-keep" data-opp-cancel="1">Cancel</button><button type="button" class="qa-go" data-opp-save-date="1"' +
+      (c.dateVal ? '' : ' disabled') +
+      '>Save date</button></div>';
+  }
+  html += '</div>';
+  layer.innerHTML = html;
+  layer.hidden = false;
+  focus = byId('opp-title') || byId('opp-story') || byId('opp-tag-q') || byId('opp-new-date') || layer.querySelector('button, input, textarea');
+  if (focus && focus.focus) focus.focus();
+}
+
+function oppCloseDialog() {
+  var c = ensureOpp();
+  var layer = byId('qa-layer');
+  c.dialog = '';
+  c.dialogId = '';
+  c.reportReason = '';
+  c.fromWho = false;
+  if (layer && !(S.qa && S.qa.dialog)) {
+    layer.hidden = true;
+    layer.innerHTML = '';
+  }
+  if (typeof refreshUi === 'function') refreshUi();
+}
+
+function storyPaintLight() {
+  var el = byId('opp-light');
+  var c = ensureOpp();
+  var photos = c.lightPhotos || [];
+  var ix = c.lightIx || 0;
+  var ph;
+  var html;
+  var many;
+  if (!el || !photos.length) return;
+  if (ix < 0) ix = photos.length - 1;
+  if (ix >= photos.length) ix = 0;
+  c.lightIx = ix;
+  ph = photos[ix];
+  c.lightUrl = ph.url;
+  c.lightAlt = ph.alt || '';
+  many = photos.length > 1;
+  html = '<button type="button" class="opp-light-x" data-opp-light-x="1" aria-label="Close">×</button>';
+  if (many) {
+    html += '<div class="opp-light-bar"><span class="opp-light-n">' + (ix + 1) + ' of ' + photos.length + '</span></div>';
+    html +=
+      '<button type="button" class="opp-light-nav prev" data-story-light-step="-1" aria-label="Previous photo"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button>';
+    html +=
+      '<button type="button" class="opp-light-nav next" data-story-light-step="1" aria-label="Next photo"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>';
+  }
+  html +=
+    '<div><img src="' +
+    esc(ph.url) +
+    '" alt="' +
+    esc(ph.alt || '') +
+    '"/><p class="opp-light-cap">' +
+    esc(ph.alt || '') +
+    '</p></div>';
+  el.innerHTML = html;
+  el.hidden = false;
+  el.setAttribute('role', 'dialog');
+  el.setAttribute('aria-modal', 'true');
+  el.setAttribute('aria-label', ph.alt || 'Photo');
+  if (el.querySelector('.opp-light-x')) el.querySelector('.opp-light-x').focus();
+}
+
+function oppOpenLightbox(url, alt) {
+  var c = ensureOpp();
+  c.lightPhotos = [{ url: url, alt: alt || '' }];
+  c.lightIx = 0;
+  storyPaintLight();
+}
+
+function storyOpenLight(photos, ix) {
+  var c = ensureOpp();
+  c.lastFocus = document.activeElement;
+  c.lightPhotos = photos;
+  c.lightIx = ix || 0;
+  storyPaintLight();
+}
+
+function oppCloseLightbox() {
+  var el = byId('opp-light');
+  var c = ensureOpp();
+  var focus = c.lastFocus;
+  c.lightUrl = '';
+  c.lightAlt = '';
+  c.lightPhotos = null;
+  c.lightIx = 0;
+  c.lastFocus = null;
+  if (el) {
+    el.hidden = true;
+    el.innerHTML = '';
+  }
+  if (focus && focus.focus) focus.focus();
+}
+
+function oppReadFields() {
+  var c = ensureOpp();
+  var el = byId('opp-title');
+  if (el) c.title = el.value;
+  el = byId('opp-desc');
+  if (el) c.description = el.value;
+  el = byId('opp-alt');
+  if (el) c.posterAlt = el.value;
+  el = byId('opp-link');
+  if (el) c.linkUrl = el.value;
+  el = byId('opp-who');
+  if (el) c.who = el.value;
+  el = byId('opp-where');
+  if (el) c.where = el.value;
+  el = byId('opp-when');
+  if (el) c.when = el.value;
+  el = byId('opp-closes');
+  if (el && !c.rolling) c.closesAt = el.value ? el.value + 'T17:00:00-04:00' : '';
+  el = byId('opp-rolling');
+  if (el) {
+    c.rolling = !!el.checked;
+    if (c.rolling) c.closesAt = '';
+  }
+  el = byId('opp-apply');
+  if (el) c.apply = el.value;
+  el = byId('opp-story');
+  if (el) c.storyBody = el.value;
+  el = byId('opp-tag-q');
+  if (el) c.tagQ = el.value;
+  el = byId('opp-new-date');
+  if (el) c.dateVal = el.value;
+}
+
+function oppSyncCompose() {
+  var btn = byId('opp-continue');
+  var c = ensureOpp();
+  var box;
+  var prev;
+  var hint;
+  if (btn) {
+    if (c.mode === 'story' && c.dialog === 'story') btn.disabled = !oppStoryOk();
+    else if (c.dialog === 'opportunity') btn.disabled = !oppStepOk(c.step);
+    else if (c.dialog === 'date') btn.disabled = !c.dateVal;
+  }
+  box = byId('opp-apply');
+  prev = byId('opp-apply-prev');
+  if (box && prev) {
+    prev.outerHTML = oppApplyPreviewHtml(box.value);
+  }
+  hint = document.querySelector('#opp-alt + .opp-hint, .opp-hint.is-bad, .opp-hint');
+  if (byId('opp-alt')) {
+    hint = byId('opp-alt').nextElementSibling;
+    if (hint && hint.className.indexOf('opp-hint') !== -1) {
+      if ((c.posterAlt || '').trim().length < 10) hint.className = 'opp-hint is-bad';
+      else hint.className = 'opp-hint';
+    }
+  }
+}
+
+function oppSyncTopicUi() {
+  var c = ensureOpp();
+  var sug = byId('opp-sug');
+  var input = byId('opp-tag-q');
+  var hits;
+  var html = '';
+  var i;
+  if (!sug || !input) return;
+  if (!input.value || !input.value.replace(/\s/g, '')) {
+    sug.hidden = true;
+    sug.innerHTML = '';
+    input.setAttribute('aria-expanded', 'false');
+    return;
+  }
+  hits = oppMatchTopics(input.value);
+  if (!hits.length) {
+    html =
+      '<p class="qa-sug-empty">No topic matches "' +
+      esc(input.value.trim()) +
+      '". Topics are set by the Next Step team.</p>';
+  } else {
+    for (i = 0; i < hits.length; i++) {
+      html +=
+        '<button type="button" role="option" data-opp-pick="' +
+        esc(hits[i].tag) +
+        '" aria-selected="' +
+        (c.tagIx === i ? 'true' : 'false') +
+        '"><span class="qa-sug-name">' +
+        esc(hits[i].tag) +
+        '</span><span class="qa-sug-n">used ' +
+        hits[i].useCount +
+        (hits[i].useCount === 1 ? ' time' : ' times') +
+        '</span></button>';
+    }
+  }
+  sug.innerHTML = html;
+  sug.hidden = false;
+  input.setAttribute('aria-expanded', 'true');
+}
+
+function oppToggleRemind(id) {
+  var i;
+  ensureOpp();
+  if (
+    requirePathway({
+      type: 'remind',
+      id: id,
+      reason: 'Answer four questions first. This is the same quiz as My Pathway.'
+    })
+  ) {
+    return;
+  }
+  i = S.oppRemind.indexOf(id);
+  if (i === -1) {
+    S.oppRemind.push(id);
+    toast('Reminder set.');
+  } else {
+    S.oppRemind.splice(i, 1);
+    toast('Reminder removed.');
+  }
+  S.menu = '';
+  refreshUi();
+  if (ensureOpp().dialog === 'apply') oppPaintLayer();
+}
+
+function oppSendReport() {
+  var c = ensureOpp();
+  var id = c.dialogId;
+  if (!c.reportReason || !id) return;
+  if (c.reportReason === 'safety') {
+    S.safeguardCases.push({
+      id: id,
+      kind: c.reportKind === 'story' ? 'story' : 'opening',
+      reason: 'safety',
+      at: nowIso()
+    });
+    toast('Report sent. The team will check it.');
+  } else if (c.reportReason === 'closed') {
+    S.reported.push({ key: hideKey('opp', id), reason: c.reportReason, at: nowIso() });
+    toast('Thank you. The team will re-check the closing date.');
+  } else {
+    S.reported.push({
+      key: hideKey(c.reportKind === 'story' ? 'story' : 'opp', id),
+      reason: c.reportReason,
+      at: nowIso()
+    });
+    toast('Report sent. The team will check it.');
+  }
+  oppCloseDialog();
+}
+
+function oppDeleteOpening(id) {
+  delete OPPS[id];
+  FEED = FEED.filter(function (x) {
+    return !(x.kind === 'opportunity' && (x.opp === id || x.id === id));
+  });
+  oppCloseDialog();
+  if (NAV.length && NAV[NAV.length - 1].t === 'opp' && NAV[NAV.length - 1].id === id) closeSheet();
+  else render();
+  toast('Opening deleted.');
+}
+
+function oppLoadEdit(id) {
+  var o = oppOpening(id);
+  var c = ensureOpp();
+  if (!o || !oppOwns(o)) return;
+  oppResetCompose(false);
+  c.mode = 'opportunity';
+  c.editId = id;
+  c.title = o.title;
+  c.description = o.description;
+  c.topic = o.topic;
+  c.who = o.who;
+  c.where = o.where;
+  c.when = o.when;
+  c.closesAt = o.closesAt || '';
+  c.rolling = !!o.rolling;
+  c.apply = o.apply;
+  c.poster = o.poster;
+  c.posterAlt = o.poster && o.poster.alt ? o.poster.alt : '';
+  c.linkUrl = o.link && o.link.url ? o.link.url : '';
+  c.step = 1;
+  c.dialog = 'opportunity';
+  S.menu = '';
+  oppPaintLayer();
+}
+
+function oppPostReply(id, kind) {
+  var box = byId('opp-reply');
+  var text = box && box.value ? box.value.trim() : '';
+  var item;
+  var o;
+  var rec;
+  if (!text) return;
+  if (
+    requirePathway({
+      type: 'reply',
+      id: id,
+      reason: 'Answer four questions first. This is the same quiz as My Pathway.'
+    })
+  ) {
+    return;
+  }
+  rec = {
+    id: id + '-r' + Date.now(),
+    a: qaIsMentor() ? currentPosterId() : null,
+    authorId: qaIsMentor() ? currentPosterId() : qaViewerId(),
+    authorRole: qaIsMentor() ? 'mentor' : oppIsParent() ? 'parent' : 'student',
+    who: qaIsMentor() ? '' : studentLabel(),
+    name: qaIsMentor() ? author(currentPosterId()).name : studentLabel(),
+    text: text,
+    mine: true,
+    at: nowIso(),
+    createdAt: nowIso()
+  };
+  item = feedById(id) || oppFeedFor(id);
+  o = OPPS[id];
+  if (kind === 'story') {
+    if (!item) return;
+    if (!item.replies) item.replies = [];
+    item.replies.push(rec);
+  } else {
+    if (item) {
+      if (!item.replies) item.replies = [];
+      item.replies.push(rec);
+    } else if (o) {
+      if (!o.replies) o.replies = [];
+      o.replies.push(rec);
+    }
+  }
+  toast('Reply posted.');
+  paint();
+}
+
+function oppHandleClick(e, t) {
+  var btn;
+  var c = ensureOpp();
+  var id;
+  var d;
+  var i;
+  var o;
+  var item;
+  var file;
+  btn = closestEl(t, '[data-opp-post]');
+  if (btn) {
+    e.stopPropagation();
+    oppOpenPost();
+    return true;
+  }
+  btn = closestEl(t, '[data-opp-drafts]');
+  if (btn) {
+    e.stopPropagation();
+    c.dialog = 'drafts';
+    oppPaintLayer();
+    return true;
+  }
+  btn = closestEl(t, '[data-opp-cancel]');
+  if (btn) {
+    if (c.dialog === 'picker' && c.fromWho) {
+      c.dialog = 'who';
+      oppPaintLayer();
+      return true;
+    }
+    oppCloseDialog();
+    return true;
+  }
+  btn = closestEl(t, '[data-opp-who]');
+  if (btn) {
+    id = btn.getAttribute('data-opp-who');
+    if (id === 'student') {
+      oppCloseDialog();
+      qaOpenDialog('ask', { text: '' });
+    } else {
+      c.dialog = 'picker';
+      c.fromWho = true;
+      c.mode = '';
+      oppPaintLayer();
+    }
+    return true;
+  }
+  btn = closestEl(t, '[data-opp-type]');
+  if (btn) {
+    id = btn.getAttribute('data-opp-type');
+    if (id === 'question') {
+      oppCloseDialog();
+      qaOpenDialog('ask', { text: '' });
+      return true;
+    }
+    oppResetCompose(false);
+    c.mode = id;
+    c.dialog = id;
+    c.step = 1;
+    oppPaintLayer();
+    return true;
+  }
+  btn = closestEl(t, '[data-opp-back]');
+  if (btn) {
+    oppReadFields();
+    if (c.dialog === 'story' || (c.dialog === 'opportunity' && c.step === 1)) {
+      c.dialog = 'picker';
+      oppPaintLayer();
+      return true;
+    }
+    if (c.step > 1) c.step -= 1;
+    oppPaintLayer();
+    return true;
+  }
+  btn = closestEl(t, '[data-opp-next]');
+  if (btn) {
+    oppReadFields();
+    if (!oppStepOk(c.step)) return true;
+    if (c.step < 3) c.step += 1;
+    else {
+      c.dialog = 'preview';
+    }
+    oppPaintLayer();
+    return true;
+  }
+  btn = closestEl(t, '[data-opp-story-preview]');
+  if (btn) {
+    oppReadFields();
+    if (!oppStoryOk()) return true;
+    c.dialog = 'preview';
+    oppPaintLayer();
+    return true;
+  }
+  btn = closestEl(t, '[data-opp-edit-back]');
+  if (btn) {
+    c.dialog = c.mode === 'story' ? 'story' : 'opportunity';
+    oppPaintLayer();
+    return true;
+  }
+  btn = closestEl(t, '[data-opp-save-draft]');
+  if (btn) {
+    oppReadFields();
+    oppSaveDraft();
+    return true;
+  }
+  btn = closestEl(t, '[data-opp-publish]');
+  if (btn) {
+    if (c.mode === 'story') oppPublishStory();
+    else oppPublishOpening();
+    return true;
+  }
+  btn = closestEl(t, '[data-opp-resume]');
+  if (btn) {
+    for (i = 0; i < S.oppDrafts.length; i++) {
+      if (S.oppDrafts[i].id === btn.getAttribute('data-opp-resume')) {
+        oppLoadDraft(S.oppDrafts[i]);
+        oppPaintLayer();
+        return true;
+      }
+    }
+    return true;
+  }
+  btn = closestEl(t, '[data-opp-del-draft]');
+  if (btn) {
+    id = btn.getAttribute('data-opp-del-draft');
+    S.oppDrafts = S.oppDrafts.filter(function (x) {
+      return x.id !== id;
+    });
+    toast('Draft deleted.');
+    if (!oppDraftCount()) oppCloseDialog();
+    else oppPaintLayer();
+    return true;
+  }
+  btn = closestEl(t, '[data-opp-apply]');
+  if (btn) {
+    e.stopPropagation();
+    if (btn.disabled) return true;
+    c.dialog = 'apply';
+    c.dialogId = btn.getAttribute('data-opp-apply');
+    S.menu = '';
+    oppPaintLayer();
+    return true;
+  }
+  btn = closestEl(t, '[data-opp-edit]');
+  if (btn) {
+    e.stopPropagation();
+    oppLoadEdit(btn.getAttribute('data-opp-edit'));
+    return true;
+  }
+  btn = closestEl(t, '[data-opp-del]');
+  if (btn) {
+    e.stopPropagation();
+    c.dialog = 'del';
+    c.dialogId = btn.getAttribute('data-opp-del');
+    S.menu = '';
+    oppPaintLayer();
+    return true;
+  }
+  btn = closestEl(t, '[data-opp-confirm-del]');
+  if (btn) {
+    oppDeleteOpening(c.dialogId);
+    return true;
+  }
+  btn = closestEl(t, '[data-opp-reopen]');
+  if (btn) {
+    e.stopPropagation();
+    c.dialog = 'date';
+    c.dialogId = btn.getAttribute('data-opp-reopen');
+    c.dateVal = '';
+    S.menu = '';
+    oppPaintLayer();
+    return true;
+  }
+  btn = closestEl(t, '[data-opp-save-date]');
+  if (btn) {
+    oppReadFields();
+    o = OPPS[c.dialogId];
+    if (o && c.dateVal) {
+      o.closesAt = c.dateVal + 'T17:00:00-04:00';
+      o.rolling = false;
+      o.editedAt = nowIso();
+      toast('Closing date updated.');
+    }
+    oppCloseDialog();
+    refreshUi();
+    return true;
+  }
+  btn = closestEl(t, '[data-opp-remind]');
+  if (btn) {
+    e.stopPropagation();
+    oppToggleRemind(btn.getAttribute('data-opp-remind'));
+    return true;
+  }
+  btn = closestEl(t, '[data-opp-hide]');
+  if (btn) {
+    e.stopPropagation();
+    id = btn.getAttribute('data-opp-hide');
+    if (S.hidden.indexOf(id) === -1) S.hidden.push(id);
+    S.menu = '';
+    toast('You will see fewer posts like this.', {
+      undo: function () {
+        S.hidden = S.hidden.filter(function (k) {
+          return k !== id;
+        });
+        render();
+      }
+    });
+    render();
+    return true;
+  }
+  btn = closestEl(t, '[data-opp-report]');
+  if (btn) {
+    e.stopPropagation();
+    c.dialog = 'report';
+    c.dialogId = btn.getAttribute('data-opp-report');
+    c.reportKind = 'opp';
+    c.reportReason = '';
+    S.menu = '';
+    oppPaintLayer();
+    return true;
+  }
+  btn = closestEl(t, '[data-opp-story-report]');
+  if (btn) {
+    e.stopPropagation();
+    c.dialog = 'report';
+    c.dialogId = btn.getAttribute('data-opp-story-report');
+    c.reportKind = 'story';
+    c.reportReason = '';
+    S.menu = '';
+    oppPaintLayer();
+    return true;
+  }
+  btn = closestEl(t, '[data-opp-reason]');
+  if (btn) {
+    c.reportReason = btn.getAttribute('data-opp-reason');
+    oppPaintLayer();
+    return true;
+  }
+  btn = closestEl(t, '[data-opp-send-report]');
+  if (btn) {
+    oppSendReport();
+    return true;
+  }
+  btn = closestEl(t, '[data-opp-story-edit]');
+  if (btn) {
+    e.stopPropagation();
+    item = feedById(btn.getAttribute('data-opp-story-edit'));
+    if (item && (item.mine || item.author === currentPosterId())) {
+      oppResetCompose(false);
+      c.mode = 'story';
+      c.editId = item.id;
+      c.storyBody = oppStoryBody(item);
+      c.topic = item.topic || hashTagLabel(item.cat);
+      c.photos = storyPhotos(item).slice();
+      c.poster = null;
+      c.posterAlt = '';
+      c.linkUrl = item.link && item.link.url && !c.photos.length ? item.link.url : '';
+      c.dialog = 'story';
+      S.menu = '';
+      oppPaintLayer();
+    }
+    return true;
+  }
+  btn = closestEl(t, '[data-opp-story-del]');
+  if (btn) {
+    e.stopPropagation();
+    c.dialog = 'del-story';
+    c.dialogId = btn.getAttribute('data-opp-story-del');
+    S.menu = '';
+    oppPaintLayer();
+    return true;
+  }
+  btn = closestEl(t, '[data-opp-confirm-del-story]');
+  if (btn) {
+    FEED = FEED.filter(function (x) {
+      return x.id !== c.dialogId;
+    });
+    oppCloseDialog();
+    if (NAV.length && NAV[NAV.length - 1].t === 'story' && NAV[NAV.length - 1].id === c.dialogId) {
+      closeSheet();
+    } else {
+      render();
+    }
+    toast('Story deleted.');
+    return true;
+  }
+  btn = closestEl(t, '[data-opp-pick]');
+  if (btn) {
+    e.stopPropagation();
+    c.topic = btn.getAttribute('data-opp-pick');
+    c.tagQ = '';
+    c.tagIx = -1;
+    oppPaintLayer();
+    return true;
+  }
+  btn = closestEl(t, '[data-opp-untag]');
+  if (btn) {
+    e.stopPropagation();
+    c.topic = '';
+    oppPaintLayer();
+    return true;
+  }
+  btn = closestEl(t, '[data-story-follow]');
+  if (btn) {
+    e.stopPropagation();
+    id = btn.getAttribute('data-story-follow');
+    if (
+      requirePathway({
+        type: 'follow',
+        id: id,
+        reason: 'Answer four questions first. This is the same quiz as My Pathway.'
+      })
+    ) {
+      return true;
+    }
+    if (isFollowing(id)) {
+      followSet(id, false);
+      toast('Unfollowed.');
+    } else {
+      followSet(id, true);
+      toast('Following. Their stories move up your feed.');
+    }
+    refreshUi();
+    return true;
+  }
+  btn = closestEl(t, '[data-story-photo]');
+  if (btn) {
+    e.stopPropagation();
+    item = feedById(btn.getAttribute('data-story-id')) || { photos: ensureOpp().photos };
+    storyOpenLight(storyPhotos(item).length ? storyPhotos(item) : item.photos || [], parseInt(btn.getAttribute('data-story-photo'), 10) || 0);
+    return true;
+  }
+  btn = closestEl(t, '[data-story-light-step]');
+  if (btn) {
+    e.stopPropagation();
+    ensureOpp().lightIx = (ensureOpp().lightIx || 0) + parseInt(btn.getAttribute('data-story-light-step'), 10);
+    storyPaintLight();
+    return true;
+  }
+  btn = closestEl(t, '[data-story-rm-photo]');
+  if (btn) {
+    e.stopPropagation();
+    i = parseInt(btn.getAttribute('data-story-rm-photo'), 10);
+    if (c.photos && !isNaN(i)) c.photos.splice(i, 1);
+    oppPaintLayer();
+    return true;
+  }
+  btn = closestEl(t, '[data-opp-light]');
+  if (btn) {
+    e.stopPropagation();
+    oppOpenLightbox(btn.getAttribute('data-url'), btn.getAttribute('data-alt') || '');
+    return true;
+  }
+  btn = closestEl(t, '[data-opp-light-x]');
+  if (btn) {
+    oppCloseLightbox();
+    return true;
+  }
+  btn = closestEl(t, '[data-opp-reply]');
+  if (btn) {
+    e.stopPropagation();
+    oppPostReply(btn.getAttribute('data-opp-reply'), btn.getAttribute('data-kind') || 'opp');
+    return true;
+  }
+  if (t && t.id === 'opp-light' && !closestEl(t, 'img')) {
+    oppCloseLightbox();
+    return true;
+  }
+  if (byId('qa-layer') && !byId('qa-layer').hidden && byId('qa-layer').querySelector('.opp-box') && !closestEl(t, '.opp-box')) {
+    if (byId('opp-sug') && !byId('opp-sug').hidden) {
+      byId('opp-sug').hidden = true;
+      return true;
+    }
+    oppCloseDialog();
+    return true;
+  }
+  return false;
+}
+
+function oppHandleInput(e) {
+  var c;
+  var file;
+  var reader;
+  var img;
+  var i;
+  var hint;
+  var need;
+  if (!e.target) return false;
+  if (e.target.id === 'opp-photos' && e.target.files && e.target.files.length) {
+    c = ensureOpp();
+    Array.prototype.forEach.call(e.target.files, function (f) {
+      var reader = new FileReader();
+      var img = new Image();
+      reader.onload = function () {
+        img.onload = function () {
+          if (!c.photos) c.photos = [];
+          c.photos.push({ url: reader.result, width: img.naturalWidth, height: img.naturalHeight, alt: '' });
+          c.linkUrl = '';
+          oppPaintLayer();
+        };
+        img.src = reader.result;
+      };
+      reader.readAsDataURL(f);
+    });
+    return true;
+  }
+  if (e.target.getAttribute && e.target.getAttribute('data-story-alt') != null) {
+    c = ensureOpp();
+    i = parseInt(e.target.getAttribute('data-story-alt'), 10);
+    if (c.photos && c.photos[i]) c.photos[i].alt = e.target.value;
+    oppSyncCompose();
+    hint = e.target.nextElementSibling;
+    if (hint && hint.className.indexOf('opp-hint') !== -1) {
+      hint.className = (e.target.value || '').trim().length < 10 ? 'opp-hint is-bad' : 'opp-hint';
+    }
+    return true;
+  }
+  if (e.target.id === 'opp-poster' && e.target.files && e.target.files[0]) {
+    c = ensureOpp();
+    file = e.target.files[0];
+    reader = new FileReader();
+    img = new Image();
+    reader.onload = function () {
+      img.onload = function () {
+        c.poster = { url: reader.result, width: img.naturalWidth, height: img.naturalHeight, alt: '' };
+        oppPaintLayer();
+      };
+      img.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+    return true;
+  }
+  if (
+    e.target.id === 'opp-title' ||
+    e.target.id === 'opp-desc' ||
+    e.target.id === 'opp-alt' ||
+    e.target.id === 'opp-link' ||
+    e.target.id === 'opp-who' ||
+    e.target.id === 'opp-where' ||
+    e.target.id === 'opp-when' ||
+    e.target.id === 'opp-closes' ||
+    e.target.id === 'opp-apply' ||
+    e.target.id === 'opp-story' ||
+    e.target.id === 'opp-new-date'
+  ) {
+    oppReadFields();
+    if (e.target.id === 'opp-closes' && ensureOpp().rolling) {
+      ensureOpp().rolling = false;
+    }
+    if (e.target.id === 'opp-story') {
+      e.target.style.height = 'auto';
+      e.target.style.height = Math.min(320, e.target.scrollHeight) + 'px';
+      need = storyNeedChars();
+      hint = byId('story-need');
+      if (hint) {
+        if (need) {
+          hint.hidden = false;
+          hint.textContent = need + ' more characters needed';
+        } else {
+          hint.hidden = true;
+        }
+      }
+    }
+    if (e.target.id === 'opp-link' && ensureOpp().mode === 'story' && oppParseLink(e.target.value) && ensureOpp().photos && ensureOpp().photos.length) {
+      ensureOpp().photos = [];
+      oppPaintLayer();
+      return true;
+    }
+    oppSyncCompose();
+    if (e.target.id === 'opp-link') {
+      var slot = byId('opp-link-prev');
+      var parsed = oppParseLink(e.target.value);
+      if (slot) slot.innerHTML = parsed ? oppLinkHtml(parsed) : '';
+    }
+    return true;
+  }
+  if (e.target.id === 'opp-rolling') {
+    oppReadFields();
+    oppPaintLayer();
+    return true;
+  }
+  if (e.target.id === 'opp-tag-q') {
+    ensureOpp().tagQ = e.target.value;
+    ensureOpp().tagIx = -1;
+    oppSyncTopicUi();
+    return true;
+  }
+  if (e.target.id === 'opp-reply') {
+    e.target.style.height = 'auto';
+    e.target.style.height = Math.min(220, Math.max(44, e.target.scrollHeight)) + 'px';
+    var postBtn = byId('opp-post');
+    if (postBtn) postBtn.disabled = !e.target.value.trim();
+    return true;
+  }
+  return false;
+}
+
+function oppHandleKey(e) {
+  var c = ensureOpp();
+  var sug = byId('opp-sug');
+  var opts;
+  var n;
+  if (e.target && e.target.id === 'opp-tag-q') {
+    opts = sug && !sug.hidden ? sug.querySelectorAll('[data-opp-pick]') : [];
+    n = opts.length;
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      e.stopPropagation();
+      if (sug) sug.hidden = true;
+      return true;
+    }
+    if (e.key === 'ArrowDown' && n) {
+      e.preventDefault();
+      c.tagIx = c.tagIx + 1 >= n ? 0 : c.tagIx + 1;
+      oppSyncTopicUi();
+      return true;
+    }
+    if (e.key === 'ArrowUp' && n) {
+      e.preventDefault();
+      c.tagIx = c.tagIx <= 0 ? n - 1 : c.tagIx - 1;
+      oppSyncTopicUi();
+      return true;
+    }
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      if (n) {
+        c.topic = (opts[c.tagIx >= 0 ? c.tagIx : 0] || opts[0]).getAttribute('data-opp-pick');
+        c.tagQ = '';
+        oppPaintLayer();
+      }
+      return true;
+    }
+    if (e.key === 'Backspace' && !e.target.value && c.topic) {
+      c.topic = '';
+      oppPaintLayer();
+      return true;
+    }
+  }
+  if (c.lightPhotos && c.lightPhotos.length && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) {
+    e.preventDefault();
+    e.stopPropagation();
+    c.lightIx = (c.lightIx || 0) + (e.key === 'ArrowRight' ? 1 : -1);
+    storyPaintLight();
+    return true;
+  }
+  if (e.key === 'Escape') {
+    if (c.lightUrl || (c.lightPhotos && c.lightPhotos.length)) {
+      e.preventDefault();
+      oppCloseLightbox();
+      return true;
+    }
+    if (sug && !sug.hidden) {
+      e.preventDefault();
+      sug.hidden = true;
+      return true;
+    }
+    if (S.menu) {
+      S.menu = '';
+      refreshUi();
+      return true;
+    }
+    if (c.dialog) {
+      e.preventDefault();
+      oppCloseDialog();
+      return true;
+    }
+  }
+  return false;
+}
+
+function oppAfterPaint() {
+  var top;
+  var root;
+  document.body.classList.toggle('opp-sheet-open', !!(NAV.length && (NAV[NAV.length - 1].t === 'opp' || NAV[NAV.length - 1].t === 'story')));
+  if (NAV.length && (NAV[NAV.length - 1].t === 'opp' || NAV[NAV.length - 1].t === 'story')) {
+    root = document.querySelector('.opp-sheet');
+    if (root && root.focus && document.activeElement === document.body) {
+      root.setAttribute('tabindex', '-1');
+      root.focus();
+    }
+  }
+  if (!(S.qa && S.qa.dialog)) oppPaintLayer();
+  if (ensureOpp().lightUrl) {
+    /* lightbox is independent of paint */
+  } else {
+    top = byId('opp-light');
+    if (top && !top.hidden && !ensureOpp().lightUrl) top.hidden = true;
+  }
+}
+
+function oppInit() {
+  if (oppInit._ready) return;
+  oppInit._ready = true;
+  if (!byId('opp-light')) {
+    var el = document.createElement('div');
+    el.id = 'opp-light';
+    el.className = 'opp-light';
+    el.hidden = true;
+    document.body.appendChild(el);
+  }
+  setInterval(function () {
+    if (oppOverlayOpen()) return;
+    if (S.view !== 'feed') return;
+    render();
+  }, 60000);
+}
+
 
 /* Views, pathway, wiring. Depends on app-core.js + data. ES5. No em/en dashes. */
 
@@ -12366,26 +17370,62 @@ function viewThread(v) {
   ensureReplyIds(item);
   if (item.mine && item.newReply) item.newReply = false;
   pushRecent('thread', item.id, item.title);
-  p = loadDetail('question', v.id);
-  return { crumb: '', title: 'QUESTION', html: renderSimpleDetail(p) };
+  return {
+    crumb: '',
+    title: 'Question',
+    html: qaThreadHtml(item),
+    after: function () {
+      var root = document.querySelector('.qa-sheet');
+      if (root && root.focus) {
+        root.setAttribute('tabindex', '-1');
+        root.focus();
+      }
+    }
+  };
 }
 
 function viewStory(v) {
   var item = feedById(v.id);
-  var p;
   if (!item) return { crumb: 'Story', title: 'Missing', html: '<p>Not found.</p>' };
-  pushRecent('story', item.id, item.title);
-  p = loadDetail('story', v.id);
-  return { crumb: 'Story', title: 'Story', html: renderSimpleDetail(p) };
+  pushRecent('story', item.id, item.title || 'Story');
+  if (typeof oppStorySheetHtml === 'function') {
+    return {
+      crumb: '',
+      title: 'Story',
+      html: oppStorySheetHtml(item),
+      after: function () {
+        var root = document.querySelector('.opp-sheet');
+        if (root && root.focus) {
+          root.setAttribute('tabindex', '-1');
+          root.focus();
+        }
+      }
+    };
+  }
+  return { crumb: 'Story', title: 'Story', html: renderSimpleDetail(loadDetail('story', v.id)) };
 }
 
 function viewOpp(v) {
   var o = OPPS[v.id];
-  var p;
+  var card;
   if (!o || !openingVisible(o)) return { crumb: 'Opportunity', title: 'Missing', html: '<p>Not found.</p>' };
   pushRecent('opp', o.id, o.name);
-  p = loadDetail('opp', v.id);
-  return { crumb: 'Opportunity', title: 'Opportunity', html: renderSimpleDetail(p) };
+  if (typeof oppSheetHtml === 'function' && typeof oppOpening === 'function') {
+    card = oppOpening(o.id);
+    return {
+      crumb: '',
+      title: 'Opportunity',
+      html: card ? oppSheetHtml(card) : '<p>Not found.</p>',
+      after: function () {
+        var root = document.querySelector('.opp-sheet');
+        if (root && root.focus) {
+          root.setAttribute('tabindex', '-1');
+          root.focus();
+        }
+      }
+    };
+  }
+  return { crumb: 'Opportunity', title: 'Opportunity', html: renderSimpleDetail(loadDetail('opp', v.id)) };
 }
 
 function viewSession(v) {
@@ -12433,6 +17473,10 @@ function composeSheetTitle() {
 
 function openCompose(seed, cat) {
   var types;
+  if (typeof oppOpenPost === 'function') {
+    oppOpenPost(seed, cat);
+    return;
+  }
   if (isVisitor()) {
     requirePathway({
       type: 'compose',
@@ -13626,8 +18670,7 @@ function renderChrome() {
   }
   var postBtn = byId('dock-post');
   if (postBtn) {
-    if (isVisitor()) postBtn.classList.add('is-locked');
-    else postBtn.classList.remove('is-locked');
+    postBtn.classList.remove('is-locked');
   }
   var pathDot = byId('path-dot');
   if (pathDot) pathDot.hidden = !!S.onboarded;
@@ -13745,6 +18788,9 @@ function render() {
   else main.innerHTML = renderFeed();
   renderChrome();
   restorePwSearch();
+  if (typeof qaAfterPaint === 'function') qaAfterPaint();
+  if (typeof qaInit === 'function') qaInit();
+  if (typeof oppInit === 'function') oppInit();
 }
 
 function openKind(kind, id) {
@@ -14189,12 +19235,14 @@ function wire() {
     var btn;
     var innerBtn = closestEl(t, 'button');
     var card = closestEl(t, '.clickable[data-open]');
-    if (S.menu && !closestEl(t, '.more-wrap')) {
+    if (typeof oppHandleClick === 'function' && oppHandleClick(e, t)) return;
+    if (typeof qaHandleClick === 'function' && qaHandleClick(e, t)) return;
+    if (S.menu && !closestEl(t, '.more-wrap') && !closestEl(t, '.qa-more')) {
       S.menu = '';
       if (NAV.length) paint();
       else render();
     }
-    if (card && (!innerBtn || innerBtn === card)) {
+    if (card && !closestEl(t, 'a') && !closestEl(t, '.opp-preview') && (!innerBtn || innerBtn === card)) {
       openKind(card.getAttribute('data-open'), card.getAttribute('data-id'));
       return;
     }
@@ -14259,7 +19307,11 @@ function wire() {
     btn = closestEl(t, '[data-hide]');
     if (btn) {
       e.stopPropagation();
-      hidePost(btn.getAttribute('data-hide'));
+      if (btn.getAttribute('data-hide').indexOf('thread:') === 0 && typeof qaHideWithUndo === 'function') {
+        qaHideWithUndo(btn.getAttribute('data-hide'));
+      } else {
+        hidePost(btn.getAttribute('data-hide'));
+      }
       return;
     }
 
@@ -14271,7 +19323,7 @@ function wire() {
 
     btn = closestEl(t, '[data-focus-reply]');
     if (btn) {
-      var box = byId('thread-reply');
+      var box = byId('qa-reply') || byId('thread-reply');
       if (box) {
         box.focus();
         if (box.scrollIntoView) box.scrollIntoView({ block: 'center' });
@@ -14766,6 +19818,8 @@ function wire() {
   });
 
   document.addEventListener('input', function (e) {
+    if (typeof oppHandleInput === 'function' && oppHandleInput(e)) return;
+    if (typeof qaHandleInput === 'function' && qaHandleInput(e)) return;
     if (e.target && e.target.id === 'q') {
       var pos = e.target.selectionStart;
       if (S.view === 'pathway') {
@@ -14824,6 +19878,10 @@ function wire() {
     }
     if (e.target && e.target.id === 'comp-cat') S.draftCat = e.target.value;
     if (e.target && e.target.id === 'comp-anon') S.anon = e.target.checked;
+    if (e.target && (e.target.id === 'opp-poster' || e.target.id === 'opp-photos')) {
+      if (typeof oppHandleInput === 'function') oppHandleInput(e);
+      return;
+    }
     if (e.target && e.target.id === 'comp-img') {
       f = e.target.files && e.target.files[0];
       if (!f) return;
@@ -14850,6 +19908,8 @@ function wire() {
   document.addEventListener('keydown', function (e) {
     var bar;
     var btn;
+    if (typeof oppHandleKey === 'function' && oppHandleKey(e)) return;
+    if (typeof qaHandleKey === 'function' && qaHandleKey(e)) return;
     if (e.target && e.target.id === 'thread-reply' && e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       bar = closestEl(e.target, '.reply-bar');

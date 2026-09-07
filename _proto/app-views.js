@@ -2239,26 +2239,62 @@ function viewThread(v) {
   ensureReplyIds(item);
   if (item.mine && item.newReply) item.newReply = false;
   pushRecent('thread', item.id, item.title);
-  p = loadDetail('question', v.id);
-  return { crumb: '', title: 'QUESTION', html: renderSimpleDetail(p) };
+  return {
+    crumb: '',
+    title: 'Question',
+    html: qaThreadHtml(item),
+    after: function () {
+      var root = document.querySelector('.qa-sheet');
+      if (root && root.focus) {
+        root.setAttribute('tabindex', '-1');
+        root.focus();
+      }
+    }
+  };
 }
 
 function viewStory(v) {
   var item = feedById(v.id);
-  var p;
   if (!item) return { crumb: 'Story', title: 'Missing', html: '<p>Not found.</p>' };
-  pushRecent('story', item.id, item.title);
-  p = loadDetail('story', v.id);
-  return { crumb: 'Story', title: 'Story', html: renderSimpleDetail(p) };
+  pushRecent('story', item.id, item.title || 'Story');
+  if (typeof oppStorySheetHtml === 'function') {
+    return {
+      crumb: '',
+      title: 'Story',
+      html: oppStorySheetHtml(item),
+      after: function () {
+        var root = document.querySelector('.opp-sheet');
+        if (root && root.focus) {
+          root.setAttribute('tabindex', '-1');
+          root.focus();
+        }
+      }
+    };
+  }
+  return { crumb: 'Story', title: 'Story', html: renderSimpleDetail(loadDetail('story', v.id)) };
 }
 
 function viewOpp(v) {
   var o = OPPS[v.id];
-  var p;
+  var card;
   if (!o || !openingVisible(o)) return { crumb: 'Opportunity', title: 'Missing', html: '<p>Not found.</p>' };
   pushRecent('opp', o.id, o.name);
-  p = loadDetail('opp', v.id);
-  return { crumb: 'Opportunity', title: 'Opportunity', html: renderSimpleDetail(p) };
+  if (typeof oppSheetHtml === 'function' && typeof oppOpening === 'function') {
+    card = oppOpening(o.id);
+    return {
+      crumb: '',
+      title: 'Opportunity',
+      html: card ? oppSheetHtml(card) : '<p>Not found.</p>',
+      after: function () {
+        var root = document.querySelector('.opp-sheet');
+        if (root && root.focus) {
+          root.setAttribute('tabindex', '-1');
+          root.focus();
+        }
+      }
+    };
+  }
+  return { crumb: 'Opportunity', title: 'Opportunity', html: renderSimpleDetail(loadDetail('opp', v.id)) };
 }
 
 function viewSession(v) {
@@ -2306,6 +2342,10 @@ function composeSheetTitle() {
 
 function openCompose(seed, cat) {
   var types;
+  if (typeof oppOpenPost === 'function') {
+    oppOpenPost(seed, cat);
+    return;
+  }
   if (isVisitor()) {
     requirePathway({
       type: 'compose',
@@ -3499,8 +3539,7 @@ function renderChrome() {
   }
   var postBtn = byId('dock-post');
   if (postBtn) {
-    if (isVisitor()) postBtn.classList.add('is-locked');
-    else postBtn.classList.remove('is-locked');
+    postBtn.classList.remove('is-locked');
   }
   var pathDot = byId('path-dot');
   if (pathDot) pathDot.hidden = !!S.onboarded;
@@ -3618,6 +3657,9 @@ function render() {
   else main.innerHTML = renderFeed();
   renderChrome();
   restorePwSearch();
+  if (typeof qaAfterPaint === 'function') qaAfterPaint();
+  if (typeof qaInit === 'function') qaInit();
+  if (typeof oppInit === 'function') oppInit();
 }
 
 function openKind(kind, id) {
@@ -4062,12 +4104,14 @@ function wire() {
     var btn;
     var innerBtn = closestEl(t, 'button');
     var card = closestEl(t, '.clickable[data-open]');
-    if (S.menu && !closestEl(t, '.more-wrap')) {
+    if (typeof oppHandleClick === 'function' && oppHandleClick(e, t)) return;
+    if (typeof qaHandleClick === 'function' && qaHandleClick(e, t)) return;
+    if (S.menu && !closestEl(t, '.more-wrap') && !closestEl(t, '.qa-more')) {
       S.menu = '';
       if (NAV.length) paint();
       else render();
     }
-    if (card && (!innerBtn || innerBtn === card)) {
+    if (card && !closestEl(t, 'a') && !closestEl(t, '.opp-preview') && (!innerBtn || innerBtn === card)) {
       openKind(card.getAttribute('data-open'), card.getAttribute('data-id'));
       return;
     }
@@ -4132,7 +4176,11 @@ function wire() {
     btn = closestEl(t, '[data-hide]');
     if (btn) {
       e.stopPropagation();
-      hidePost(btn.getAttribute('data-hide'));
+      if (btn.getAttribute('data-hide').indexOf('thread:') === 0 && typeof qaHideWithUndo === 'function') {
+        qaHideWithUndo(btn.getAttribute('data-hide'));
+      } else {
+        hidePost(btn.getAttribute('data-hide'));
+      }
       return;
     }
 
@@ -4144,7 +4192,7 @@ function wire() {
 
     btn = closestEl(t, '[data-focus-reply]');
     if (btn) {
-      var box = byId('thread-reply');
+      var box = byId('qa-reply') || byId('thread-reply');
       if (box) {
         box.focus();
         if (box.scrollIntoView) box.scrollIntoView({ block: 'center' });
@@ -4639,6 +4687,8 @@ function wire() {
   });
 
   document.addEventListener('input', function (e) {
+    if (typeof oppHandleInput === 'function' && oppHandleInput(e)) return;
+    if (typeof qaHandleInput === 'function' && qaHandleInput(e)) return;
     if (e.target && e.target.id === 'q') {
       var pos = e.target.selectionStart;
       if (S.view === 'pathway') {
@@ -4697,6 +4747,10 @@ function wire() {
     }
     if (e.target && e.target.id === 'comp-cat') S.draftCat = e.target.value;
     if (e.target && e.target.id === 'comp-anon') S.anon = e.target.checked;
+    if (e.target && (e.target.id === 'opp-poster' || e.target.id === 'opp-photos')) {
+      if (typeof oppHandleInput === 'function') oppHandleInput(e);
+      return;
+    }
     if (e.target && e.target.id === 'comp-img') {
       f = e.target.files && e.target.files[0];
       if (!f) return;
@@ -4723,6 +4777,8 @@ function wire() {
   document.addEventListener('keydown', function (e) {
     var bar;
     var btn;
+    if (typeof oppHandleKey === 'function' && oppHandleKey(e)) return;
+    if (typeof qaHandleKey === 'function' && qaHandleKey(e)) return;
     if (e.target && e.target.id === 'thread-reply' && e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       bar = closestEl(e.target, '.reply-bar');

@@ -200,14 +200,28 @@ function byId(id) {
   return document.getElementById(id);
 }
 
-function toast(msg) {
+function toast(msg, opts) {
   var el = byId('toast');
-  el.textContent = msg;
+  var btn;
+  opts = opts || {};
+  el.textContent = '';
+  el.appendChild(document.createTextNode(msg));
+  if (opts.undo) {
+    btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'toast-undo';
+    btn.textContent = 'Undo';
+    btn.onclick = function () {
+      el.hidden = true;
+      opts.undo();
+    };
+    el.appendChild(btn);
+  }
   el.hidden = false;
   clearTimeout(toast._t);
   toast._t = setTimeout(function () {
     el.hidden = true;
-  }, 3200);
+  }, opts.undo ? 6000 : 3200);
 }
 
 function stageIndex(key) {
@@ -325,6 +339,11 @@ function applyPrototypeRole(key) {
     S.me.verified = false;
     S.me.contactable = false;
     S.pw.name = 'Desk';
+  } else if (role === 'parent') {
+    S.me.id = '';
+    S.me.verified = false;
+    S.me.contactable = false;
+    S.pw.name = 'You';
   }
 }
 
@@ -724,12 +743,13 @@ function toggleSave(id) {
     return;
   }
   var i = S.saved.indexOf(id);
+  var item = feedById(id);
   if (i === -1) {
     S.saved.push(id);
-    toast('Saved for later.');
+    toast(item && item.kind === 'question' ? 'Saved. Find it under Saved questions.' : 'Saved for later.');
   } else {
     S.saved.splice(i, 1);
-    toast('Removed from saved.');
+    toast(item && item.kind === 'question' ? 'Removed from your saved questions.' : 'Removed from saved.');
   }
   paint();
   render();
@@ -790,6 +810,7 @@ function ensureReplyIds(item) {
 }
 
 function studentLabel() {
+  if (postingRole() === 'parent') return 'Parent, ' + (S.region || 'Region 4');
   if (S.onboarded && S.form) return S.form + ' student, ' + (S.region || 'Guyana');
   return 'Student';
 }
@@ -892,6 +913,8 @@ function hideSheetUi() {
   var scrim = byId('scrim');
   if (scrim) scrim.hidden = true;
   lockBody(false);
+  document.body.classList.remove('qa-thread-open');
+  document.body.classList.remove('opp-sheet-open');
 }
 
 function closeSheet() {
@@ -931,6 +954,7 @@ function paint() {
   byId('sheet-body').scrollTop = 0;
   if (out.after) out.after();
   renderChrome();
+  if (typeof qaAfterPaint === 'function') qaAfterPaint();
 }
 
 /* Feed avatars take the post kind colour so kinds are readable at a glance.
@@ -1416,48 +1440,11 @@ function mineFlagsHtml(item) {
 }
 
 function renderQuestionCard(item) {
-  var anon = !!item.anon || !item.author;
-  var a = item.author ? author(item.author) : null;
-  var name = anon ? item.who || studentLabel() : a && a.name ? a.name : youName();
-  var first = item.replies && item.replies[0] ? item.replies[0] : null;
-  var ra;
-  var nReplies = item.replies ? item.replies.length : 0;
-  var html =
-    '<article class="card feed-card kind-q clickable" ' +
-    cardClickAttrs('thread', item.id) +
-    '>' +
-    '<div class="card-head">' +
-    avatarHtml(a, anon, 'question') +
-    '<div class="meta">' +
-    nameWithBadge(name, anon ? null : a) +
-    '<div class="sub">' +
-    kindTimeHtml('Student Question', item.at, item.edited, 'question') +
-    '</div></div>' +
-    contactAffordance(anon ? null : item.author, item.mine) +
-    cardMoreHtml('thread', item.id, item.mine) +
-    '</div><div class="card-body">';
-  html += mineFlagsHtml(item);
-  if (item.cat) html += '<div class="card-cats">' + catChip(item.cat) + '</div>';
-  html += '<h3>' + esc(item.title) + '</h3>';
-  if (first) {
-    ra = first.a ? author(first.a) : null;
-    html +=
-      '<div class="reply-preview">' +
-      replyIdentityHtml(ra, first.who || 'Student', true, first.at || item.at) +
-      '<p class="clamp3">' +
-      esc(first.text) +
-      '</p></div>';
-  } else {
-    html += '<p class="reply-empty">No replies yet</p>';
-  }
-  html +=
-    '</div>' +
-    postEngageBar(item, 'thread', item.id, !!item.mine, false, nReplies) +
-    '</article>';
-  return html;
+  return qaRenderCard(item);
 }
 
 function renderStoryCard(item) {
+  if (typeof oppRenderStoryCard === 'function') return oppRenderStoryCard(item);
   var mine = !!item.mine;
   var anon = !!item.anon;
   var a = item.author ? author(item.author) : null;
@@ -1492,6 +1479,7 @@ function renderStoryCard(item) {
 }
 
 function renderOppCard(item) {
+  if (typeof oppRenderCard === 'function') return oppRenderCard(item);
   var o = OPPS[item.opp];
   var a;
   var html;
@@ -1801,6 +1789,7 @@ function renderFeed() {
       '</button>';
   }
   html += '</div>';
+  html += typeof qaFeedLeadHtml === 'function' ? qaFeedLeadHtml() : '';
   html += '<div class="stream">';
   for (i = 0; i < list.length; i++) {
     html += renderFeedCard(list[i]);

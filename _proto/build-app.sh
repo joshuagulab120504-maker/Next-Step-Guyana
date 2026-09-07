@@ -4,9 +4,14 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 OUT="$ROOT/app.html"
 CSS="$ROOT/_proto/shell.css"
+QACSS="$ROOT/_proto/qa.css"
+OPPCSS="$ROOT/_proto/opp.css"
+STORYCSS="$ROOT/_proto/story.css"
 HTML="$ROOT/_proto/shell.html"
 DATA="$ROOT/_proto/data.js"
 CORE="$ROOT/_proto/app-core.js"
+QA="$ROOT/_proto/qa.js"
+OPP="$ROOT/_proto/opp.js"
 VIEWS="$ROOT/_proto/app-views.js"
 
 {
@@ -24,11 +29,17 @@ VIEWS="$ROOT/_proto/app-views.js"
 <link rel="apple-touch-icon" href="logo.png"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet"/>
 <style>
 EOF
   # strip @import line from shell.css (fonts loaded via link)
   sed '/@import/d' "$CSS"
+  echo
+  cat "$QACSS"
+  echo
+  cat "$OPPCSS"
+  echo
+  cat "$STORYCSS"
   cat <<'EOF'
 </style>
 </head>
@@ -42,6 +53,10 @@ EOF
   cat "$DATA"
   echo
   cat "$CORE"
+  echo
+  cat "$QA"
+  echo
+  cat "$OPP"
   echo
   cat "$VIEWS"
   cat <<'EOF'

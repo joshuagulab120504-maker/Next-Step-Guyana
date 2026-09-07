@@ -436,7 +436,10 @@ var OPPS = {
     sess: ['s-tech', 's-clinic'],
     independent: false,
     state: 'live',
-    author: 'desk',
+    author: 'jerome',
+    rolling: true,
+    closesAt: null,
+    apply: 'Ask STEMGuyana or your school which learning pod or clubhouse serves your area.',
     checkedAt: '',
     checkedBy: '',
     source: '',
@@ -458,7 +461,8 @@ var OPPS = {
     ],
     season: 'Rolling intake. Levels take 6, 12 or 18 months',
     cost: 'Programme fees vary by award centre. Ask your Award Leader for the current figure',
-    who: 'Ages 14 to 25, open across neighbourhoods and abilities',
+    who: 'Ages 14 to 25, any school',
+    regions: 'Nationwide through schools',
     entry: [
       { b: 'Find an Award Leader', s: 'Ask your school, youth group or PYARG contacts who assesses in your area.' },
       { b: 'Pick Bronze first', s: 'Set challenges you can actually finish in six months across the four sections.' },
@@ -484,10 +488,19 @@ var OPPS = {
     sess: ['s-sport', 's-fork'],
     independent: true,
     state: 'live',
-    author: 'desk',
+    author: 'keisha',
+    rolling: false,
+    closesAt: '2026-09-12T17:00:00-04:00',
+    apply: 'Ask your Award Leader, or visit https://pyarg.org.gy',
+    link: {
+      url: 'https://pyarg.org.gy',
+      host: 'pyarg.org.gy',
+      title: "President's Youth Award Republic of Guyana",
+      description: 'Non-competitive award for ages 14 to 25 across service, skill, sport and adventure.'
+    },
     checkedAt: '',
     checkedBy: '',
-    source: '',
+    source: 'https://pyarg.org.gy',
     returnReason: '',
     images: []
   },
@@ -532,7 +545,10 @@ var OPPS = {
     sess: ['s-tech'],
     independent: true,
     state: 'live',
-    author: 'desk',
+    author: 'jerome',
+    rolling: false,
+    closesAt: '2026-10-12T17:00:00-04:00',
+    apply: 'Register as an independent competitor at https://caribbeanscience.org',
     checkedAt: '',
     checkedBy: '',
     source: '',
@@ -815,7 +831,10 @@ var OPPS = {
     sess: ['s-biz', 's-fork'],
     independent: true,
     state: 'live',
-    author: 'desk',
+    author: 'omar',
+    rolling: false,
+    closesAt: '2026-09-04T17:00:00-04:00',
+    apply: 'Register directly on the Blue Ocean site. No school sponsor required.',
     checkedAt: '',
     checkedBy: '',
     source: '',
@@ -1144,12 +1163,24 @@ var FEED = [
     kind: 'opportunity',
     at: '2026-09-03T10:00:00-04:00',
     cat: 'Technology',
-    author: 'desk',
+    author: 'jerome',
     opp: 'stem',
     stage: 'explore',
     res: ['sess-s-tech', 'sess-s-clinic', 'note-pod'],
     similar: ['cso', 'scratch'],
     text: 'STEMGuyana holiday pods are open for ages 8 to 18 in several regions. Coding, robotics and AI taster weeks, and there is no fee to join.'
+  },
+  {
+    id: 'f-pyarg',
+    kind: 'opportunity',
+    at: '2026-09-05T09:00:00-04:00',
+    cat: 'Sport and coaching',
+    author: 'keisha',
+    opp: 'pyarg',
+    stage: 'explore',
+    res: ['sess-s-sport', 'note-travel'],
+    similar: ['track', 'clinic'],
+    text: "President's Youth Award is open from age 14. Bronze, Silver and Gold over months of service, skill, sport and adventure."
   },
   {
     id: 'f3',
@@ -1170,7 +1201,16 @@ var FEED = [
     insp: 18,
     rel: ['q-bio', 'f5'],
     opp: 'clinic',
-    sess: 's-clinic'
+    sess: 's-clinic',
+    photos: [
+      { url: 'assets/hero-crop-520.jpg', alt: 'Students at desks with past papers open during a clinic.', width: 520, height: 347 },
+      { url: 'assets/hero-crop-760.jpg', alt: 'A mentor pointing at a worked Biology question on a page.', width: 760, height: 507 },
+      { url: 'assets/hero-wide-1100.jpg', alt: 'A classroom in Georgetown with students rewriting a mock paper.', width: 1100, height: 619 }
+    ],
+    replies: [
+      { a: 'keisha', text: 'Start the rebuild that week. I tell students the same thing after a bad PE assessment.' },
+      { a: null, who: 'Form 5 student, Region 4', text: 'I waited until Christmas and the paper did not move.' }
+    ]
   },
   {
     id: 'f4',
@@ -1234,7 +1274,13 @@ var FEED = [
     insp: 27,
     rel: ['q-cape', 'f9'],
     opp: 'sbb',
-    sess: 's-fork'
+    sess: 's-fork',
+    link: {
+      url: 'https://www.gtti.edu.gy',
+      host: 'gtti.edu.gy',
+      title: 'Government Technical Institute',
+      description: 'Electrical and technical programmes after CSEC, with named certificates and workshop hours.'
+    }
   },
   {
     id: 'q-cape',
@@ -1274,7 +1320,7 @@ var FEED = [
     kind: 'opportunity',
     at: '2026-09-02T10:00:00-04:00',
     cat: 'Technology',
-    author: 'desk',
+    author: 'jerome',
     opp: 'cso',
     stage: 'csec',
     res: ['sess-s-tech', 'note-self'],
@@ -1322,7 +1368,10 @@ var FEED = [
     insp: 31,
     rel: ['q-lethem', 'f15'],
     opp: 'track',
-    sess: 's-sport'
+    sess: 's-sport',
+    photos: [
+      { url: 'assets/hero-wide-1600.jpg', alt: 'A community sports field in the late afternoon, with students still training.', width: 1600, height: 900 }
+    ]
   },
   {
     id: 'f13',
@@ -1339,7 +1388,7 @@ var FEED = [
     kind: 'opportunity',
     at: '2026-08-30T10:00:00-04:00',
     cat: 'Business',
-    author: 'desk',
+    author: 'omar',
     opp: 'blue',
     stage: 'subject',
     res: ['sess-s-fork', 'opp-sbb'],
