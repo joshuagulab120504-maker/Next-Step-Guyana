@@ -883,7 +883,7 @@ function qaPostQuestion() {
   if (
     requirePathway({
       type: 'compose',
-      reason: 'Answer four questions first. This is the same quiz as My Pathway.'
+      reason: 'Start your pathway first.'
     })
   ) {
     return;
@@ -1142,7 +1142,7 @@ function qaHandleClick(e, t) {
     if (
       requirePathway({
         type: 'compose',
-        reason: 'Answer four questions first. This is the same quiz as My Pathway.'
+        reason: 'Start your pathway first.'
       })
     ) {
       return true;

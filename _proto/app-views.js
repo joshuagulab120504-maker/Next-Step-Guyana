@@ -1,28 +1,9 @@
 /* Views, pathway, wiring. Depends on app-core.js + data. ES5. No em/en dashes. */
 
-var SETUP_QS = [
-  {
-    q: 'Where are you in school right now?',
-    hint: 'This sets the shape of your timeline and which decisions are actually near.',
-    key: 'stage',
-    opts: [
-      { v: 'explore', label: 'Form 1 or 2', sub: 'Still working out what I like', form: 'Form 1 to 2' },
-      { v: 'subject', label: 'Form 3', sub: 'Choosing subjects this year', form: 'Form 3' },
-      { v: 'csec', label: 'Form 4 or 5', sub: 'CSEC is the thing in front of me', form: 'Form 4 to 5' },
-      { v: 'fork', label: 'Finished CSEC', sub: 'Deciding what comes next', form: 'After CSEC' }
-    ]
-  },
-  {
-    q: 'Which region are you in?',
-    hint: 'Sessions, travel costs and which programmes actually reach you all depend on this.',
-    key: 'region',
-    opts: [
-      { v: 'Region 4', label: 'Region 4', sub: 'Georgetown and East Coast' },
-      { v: 'Region 6', label: 'Region 6', sub: 'Berbice' },
-      { v: 'Region 3 or 2', label: 'Region 3 or 2', sub: 'West Demerara, Essequibo' },
-      { v: 'Region 9, 8, 7 or 1', label: 'Region 9, 8, 7 or 1', sub: 'Hinterland' }
-    ]
-  },
+/* Three of the old setup questions with copy worth keeping. Looked up by
+   key from renderPwWizardBody/handlePwClick as part of the merged
+   personality + pathway wizard below. */
+var PW_PSYCH_QS = [
   {
     q: 'When you picture life after school, which is closest?',
     hint: 'Not a commitment. It only decides which routes get compared first.',
@@ -58,29 +39,16 @@ var SETUP_QS = [
       { v: 'nothing', label: 'Nothing runs where I live', sub: '' },
       { v: 'time', label: 'Time, between school and home', sub: '' }
     ]
-  },
-  {
-    q: 'When something in front of you is broken, what do you do?',
-    hint: 'Last one. This shapes whose journeys reach you first.',
-    key: 'archetype',
-    opts: [
-      { v: 'The Artisan', label: 'Take it apart', sub: 'The Artisan' },
-      { v: 'The Steward', label: 'Check on whoever it affected', sub: 'The Steward' },
-      { v: 'The Advocate', label: 'Argue for a better rule', sub: 'The Advocate' },
-      { v: 'The Pioneer', label: 'Build the replacement', sub: 'The Pioneer' }
-    ]
-  },
-  {
-    q: 'Which describes you?',
-    hint: 'A student can ask immediately. Sharing experience or mentoring is checked by staff first.',
-    key: 'you',
-    opts: [
-      { v: 'student', label: 'I am a student', sub: '' },
-      { v: 'contributor', label: 'I have experience worth sharing', sub: '' },
-      { v: 'mentor', label: 'I want to mentor students', sub: '' }
-    ]
   }
 ];
+
+function pwPsychQ(key) {
+  var i;
+  for (i = 0; i < PW_PSYCH_QS.length; i++) {
+    if (PW_PSYCH_QS[i].key === key) return PW_PSYCH_QS[i];
+  }
+  return PW_PSYCH_QS[0];
+}
 
 var GOAL_LABEL = {
   uni: 'a university route',
@@ -157,16 +125,16 @@ function finishSetup() {
 }
 
 function renderSetup() {
-  ensurePw();
   return {
     crumb: 'Setup',
     title: 'Build my pathway',
-    html: renderPwWizardBody({ reason: S.setupReason }),
-    after: function () {
-      var backBtn = byId('sheet-back');
-      if (backBtn) backBtn.hidden = (S.pw.step || 0) < 1;
-    }
+    html: '<p class="hint">Open My Pathway to start.</p>'
   };
+}
+
+function renderPwWizard() {
+  if (typeof planRender === 'function') return planRender();
+  return '<div class="page-pw"></div>';
 }
 
 function pwReady() {
@@ -348,7 +316,7 @@ function searchCareers(q) {
   if (!query) return [];
   for (i = 0; i < CAREERS.length; i++) {
     c = CAREERS[i];
-    blob = (c.n + ' ' + c.route + ' ' + c.jobs + ' ' + c.gate + ' ' + c.dev + ' ' + c.csec).toLowerCase();
+    blob = (c.n + ' ' + c.route + ' ' + c.jobs + ' ' + c.gate + ' ' + c.dev + ' ' + c.csec + ' ' + (c.f13 || '') + ' ' + (c.steam || '')).toLowerCase();
     if (blob.indexOf(query) === -1) continue;
     if (c.n.toLowerCase().indexOf(query) !== -1) nameHits.push(i);
     else other.push(i);
@@ -411,7 +379,13 @@ function finishPwWizard() {
   var p = ensurePw();
   var pending = S.pendingAction;
   var fromSheet = inSetupSheet();
+  var profile = pwqBuildProfile(p);
+  var toastMsg;
   p.done = true;
+  p.primary = profile.primary;
+  p.secondary = profile.secondary;
+  p.flat = profile.flat;
+  p.archetype = profile.archetype;
   S.onboarded = true;
   S.hideJoinCard = true;
   S.role = S.role === 'visitor' ? 'student' : S.role;
@@ -420,26 +394,23 @@ function finishPwWizard() {
   S.region = regionShort(p.region);
   S.me.form = S.form;
   S.me.region = S.region;
+  S.goal = p.goal;
+  S.priority = p.priority;
+  S.blocker = p.blocker;
+  S.archetype = profile.archetype;
   if (!p.name) p.name = 'You';
   p.open = p.level;
-  if (p.clarity === 'exact') {
-    p.tab = 'explore';
-    p.sub = '';
-    p.focusQ = true;
-  } else if (p.clarity === 'field' && p.fields.length) {
-    p.tab = 'explore';
-    p.sub = 'field';
-    p.field = p.fields[0];
-  } else {
-    p.tab = 'me';
-    p.sub = '';
-    p.open = p.level;
-  }
+  p.tab = 'me';
+  p.sub = '';
+  p.focusQ = false;
   S.setupStep = 0;
   S.setupDraft = {};
   S.setupReason = '';
   S.pendingAction = null;
   S.unread = 0;
+  toastMsg = profile.archetype
+    ? 'Pathway built. You read as ' + profile.archetype + '.'
+    : 'Pathway built. Your timeline starts at ' + S.form + '.';
   if (pending) {
     hideSheetUi();
     runPendingAction(pending);
@@ -449,89 +420,213 @@ function finishPwWizard() {
     hideSheetUi();
     S.view = 'pathway';
     render();
-    toast('Pathway built. Your timeline starts at ' + S.form + '.');
+    toast(toastMsg);
     return;
   }
   render();
-  toast('Pathway built. Your timeline starts at ' + S.form + '.');
+  toast(toastMsg);
 }
 
-function renderPwWizardBody(opts) {
+/* Keeps p.step pointing at the same question after the flow's length
+   changes (the tiebreak step appears or disappears once ratings answer
+   how close the top two RIASEC scores are). Mirrors check.html's
+   anchorStep + rebuildFlow. Returns the live flow and current step id. */
+function pwWizAnchor(p) {
+  var oldFlow = p.flow || pwqFlow(p);
+  var prevId = oldFlow[p.step] || oldFlow[0];
+  var newFlow = pwqFlow(p);
+  var idx = newFlow.indexOf(prevId);
+  if (idx === -1) idx = Math.min(p.step || 0, newFlow.length - 1);
+  p.flow = newFlow;
+  p.step = idx;
+  return { flow: newFlow, id: newFlow[idx] };
+}
+
+function pwWizNext() {
   var p = ensurePw();
-  var step = p.step || 0;
+  var a = pwWizAnchor(p);
+  if (!pwqStepComplete(p, a.id)) return;
+  if (a.id === 'advice') {
+    finishPwWizard();
+    return;
+  }
+  p.step = Math.min(p.step + 1, a.flow.length - 1);
+  refreshUi();
+}
+
+function pwWizBack() {
+  var p = ensurePw();
+  pwWizAnchor(p);
+  p.step = Math.max(p.step - 1, 0);
+  refreshUi();
+}
+
+function pwLevelRegionHtml(items, isOn, attr) {
+  var html = '<div class="pw-opts">';
   var i;
-  var html;
-  var answered = false;
-  var q = [
-    { t: 'What level are you at right now?', h: 'This opens the line on the level you are in.' },
-    { t: 'Which region are you in?', h: 'Programmes, travel and intakes change by region.' },
-    { t: 'Which fields interest you most?', h: 'Pick as many as you like. You can skip this.' },
-    { t: 'How clear are you right now?', h: 'This only decides where we land you first.' }
-  ][step];
-  opts = opts || {};
-  html = '<div class="pw-wiz">';
-  if (opts.reason) {
-    html += '<p class="setup-reason">' + esc(opts.reason) + '</p>';
+  for (i = 0; i < items.length; i++) {
+    html +=
+      '<button type="button" class="pw-opt' +
+      (isOn(items[i]) ? ' on' : '') +
+      '" data-' +
+      attr +
+      '="' +
+      esc(items[i].v) +
+      '">' +
+      esc(items[i].t || items[i].label) +
+      '</button>';
   }
-  html +=
-    '<p class="eyebrow">QUESTION ' +
-    (step + 1) +
-    ' OF 4</p>' +
-    '<div class="pw-seg">';
-  for (i = 0; i < 4; i++) {
-    html += '<i' + (i <= step ? ' class="on"' : '') + '></i>';
+  html += '</div>';
+  return html;
+}
+
+/* Single-answer question. key identifies which p field this writes to
+   (goal, priority, blocker, pressure, conditions, recover, advice); one
+   click handler reads both attributes for all of them. */
+function pwSingleHtml(items, key, current) {
+  var html = '<div class="pw-opts">';
+  var i, it;
+  for (i = 0; i < items.length; i++) {
+    it = items[i];
+    html +=
+      '<button type="button" class="pw-opt' +
+      (current === it.v ? ' on' : '') +
+      '" data-pw-single="' +
+      key +
+      '" data-pw-val="' +
+      esc(it.v) +
+      '">' +
+      esc(it.t || it.label) +
+      (it.sub ? '<span class="pw-opt-sub">' + esc(it.sub) + '</span>' : '') +
+      '</button>';
   }
-  html +=
-    '</div><h2>' +
-    esc(q.t) +
-    '</h2><p class="hint">' +
-    esc(q.h) +
-    '</p>';
-  if (step === 0) {
-    html += '<div class="pw-opts two">';
-    for (i = 0; i < LEVELS.length; i++) {
-      html +=
-        '<button type="button" class="pw-opt' +
-        (p.level === LEVELS[i].k ? ' on' : '') +
-        '" data-pw-level="' +
-        esc(LEVELS[i].k) +
-        '">' +
-        esc(LEVELS[i].n) +
-        '</button>';
+  html += '</div>';
+  return html;
+}
+
+/* Multi-answer question (extra activities, concerns). key + optional max
+   are read from the buttons by one shared click handler. */
+function pwMultiHtml(items, key, arr, max) {
+  var html = '<div class="pw-opts">';
+  var i, it;
+  for (i = 0; i < items.length; i++) {
+    it = items[i];
+    html +=
+      '<button type="button" class="pw-opt' +
+      (arr.indexOf(it.v) !== -1 ? ' on' : '') +
+      '" data-pw-multi="' +
+      key +
+      '" data-pw-val="' +
+      esc(it.v) +
+      '"' +
+      (max ? ' data-pw-max="' + max + '"' : '') +
+      '>' +
+      esc(it.t || it.label) +
+      '</button>';
+  }
+  html += '</div>';
+  return html;
+}
+
+function pwRateItemHtml(item, val, idx, attr) {
+  var html = '<div class="pw-rate-item"><p>' + esc(item.t) + '</p><div class="pw-rate-row" role="group" aria-label="' + esc(item.t) + '">';
+  var v;
+  for (v = 1; v <= 4; v++) {
+    html +=
+      '<button type="button" class="pw-rate-btn' +
+      (val === v ? ' on' : '') +
+      '" data-' +
+      attr +
+      '="' +
+      idx +
+      '" data-pw-val="' +
+      v +
+      '" aria-pressed="' +
+      (val === v ? 'true' : 'false') +
+      '" aria-label="' +
+      esc(item.t) +
+      ': ' +
+      esc(PWQ_RATE_LABEL[v]) +
+      '">' +
+      esc(PWQ_RATE_LABEL[v]) +
+      '</button>';
+  }
+  html += '</div></div>';
+  return html;
+}
+
+function pwStepTitle(p, id) {
+  if (id === 'level') return { t: 'What level are you at right now?', h: 'This opens the line on the level you are in.' };
+  if (id === 'region') return { t: 'Which region are you in?', h: 'Programmes, travel and intakes change by region.' };
+  if (id === 'r0' || id === 'r1' || id === 'r2' || id === 'r3') {
+    return { t: 'Would you enjoy doing this?', h: 'Tap the one that is true for you, not the one that sounds good. Twelve of these, in threes.' };
+  }
+  if (id === 'tiebreak') {
+    return {
+      t: 'Four more, to settle it.',
+      h: 'These separate ' + PWQ_DIM_NAME[p.tbDims[0]] + ' from ' + PWQ_DIM_NAME[p.tbDims[1]] + '. Same scale.'
+    };
+  }
+  if (id === 'curiosity') return { t: 'Which fields interest you most?', h: 'Tap in order of interest. Your first pick shapes part of your result.' };
+  if (id === 'clarity') return { t: 'How clear are you right now?', h: 'This only decides where we land you first.' };
+  if (id === 'goal' || id === 'priority' || id === 'blocker') {
+    var q = pwPsychQ(id);
+    return { t: q.q, h: q.hint };
+  }
+  if (id === 'pressure') return { t: "When something important is not going to plan, what do you actually do?", h: 'What happens, not what should.' };
+  if (id === 'conditions') return { t: 'When do you do your best work?', h: 'There is no better answer here.' };
+  if (id === 'recover') return { t: 'After a long week, what actually helps you recover?', h: 'Not what you think you should say.' };
+  if (id === 'extra') return { t: 'What are you into outside of class?', h: 'Any that apply, or none. This shapes what we suggest, not your archetype.' };
+  if (id === 'concerns') return { t: 'What concerns you most about your future?', h: 'Up to three. This decides what we show you first.' };
+  if (id === 'advice') return { t: 'Who do you talk to about decisions like this?', h: 'Last one. There is no wrong answer.' };
+  return { t: '', h: '' };
+}
+
+function pwStepBodyHtml(p, id) {
+  var i, start, items, val, html;
+  if (id === 'level') {
+    return pwLevelRegionHtml(LEVELS.map(function (l) { return { v: l.k, t: l.n }; }), function (o) { return p.level === o.v; }, 'pw-level');
+  }
+  if (id === 'region') {
+    return pwLevelRegionHtml(REGIONS.map(function (r) { return { v: r.k, t: r.n }; }), function (o) { return p.region === o.v; }, 'pw-region');
+  }
+  if (id === 'r0' || id === 'r1' || id === 'r2' || id === 'r3') {
+    start = pwqRateStart(id);
+    html = '';
+    for (i = 0; i < 3; i++) {
+      html += pwRateItemHtml(PWQ_ITEMS[start + i], p.ratings[start + i], start + i, 'pw-rate');
     }
-    html += '</div>';
-    answered = !!p.level;
-  } else if (step === 1) {
-    html += '<div class="pw-opts">';
-    for (i = 0; i < REGIONS.length; i++) {
-      html +=
-        '<button type="button" class="pw-opt' +
-        (p.region === REGIONS[i].k ? ' on' : '') +
-        '" data-pw-region="' +
-        esc(REGIONS[i].k) +
-        '">' +
-        esc(REGIONS[i].n) +
-        '</button>';
+    return html;
+  }
+  if (id === 'tiebreak') {
+    items = pwqGetTiebreakItems(p.tbDims[0], p.tbDims[1]);
+    html = '';
+    for (i = 0; i < items.length; i++) {
+      val = p.tbRatings ? p.tbRatings[i] : null;
+      html += pwRateItemHtml(items[i], val, i, 'pw-tbrate');
     }
-    html += '</div>';
-    answered = !!p.region;
-  } else if (step === 2) {
-    html += '<div class="pw-opts">';
+    return html;
+  }
+  if (id === 'curiosity') {
+    html = '<div class="pw-opts">';
     for (i = 0; i < FIELDS.length; i++) {
+      var rank = p.fields.indexOf(FIELDS[i].k);
       html +=
         '<button type="button" class="pw-opt' +
-        (p.fields.indexOf(FIELDS[i].k) !== -1 ? ' on' : '') +
+        (rank !== -1 ? ' on' : '') +
         '" data-pw-field="' +
         esc(FIELDS[i].k) +
         '">' +
         esc(FIELDS[i].n) +
+        (rank !== -1 ? '<span class="pw-rank-badge">' + (rank + 1) + '</span>' : '') +
         '</button>';
     }
     html += '</div>';
-    answered = true;
-  } else {
-    html += '<div class="pw-opts">';
-    html +=
+    return html;
+  }
+  if (id === 'clarity') {
+    return (
+      '<div class="pw-opts">' +
       '<button type="button" class="pw-opt' +
       (p.clarity === 'exact' ? ' on' : '') +
       '" data-pw-clarity="exact">I know exactly what I want</button>' +
@@ -540,11 +635,49 @@ function renderPwWizardBody(opts) {
       '" data-pw-clarity="field">I know the field, not the job</button>' +
       '<button type="button" class="pw-opt' +
       (p.clarity === 'none' ? ' on' : '') +
-      '" data-pw-clarity="none">No idea yet</button></div>';
-    answered = !!p.clarity;
+      '" data-pw-clarity="none">No idea yet</button></div>'
+    );
   }
+  if (id === 'goal' || id === 'priority' || id === 'blocker') {
+    return pwSingleHtml(pwPsychQ(id).opts, id, p[id]);
+  }
+  if (id === 'pressure') return pwSingleHtml(PWQ_PRESSURE_OPTS, 'pressure', p.pressure);
+  if (id === 'conditions') return pwSingleHtml(PWQ_CONDITIONS_OPTS, 'conditions', p.conditions);
+  if (id === 'recover') return pwSingleHtml(PWQ_RECOVER_OPTS, 'recover', p.recover);
+  if (id === 'advice') return pwSingleHtml(PWQ_ADVICE_OPTS, 'advice', p.advice);
+  if (id === 'extra') return pwMultiHtml(PWQ_EXTRA_OPTS, 'extra', p.extra, 0);
+  if (id === 'concerns') return pwMultiHtml(PWQ_CONCERN_OPTS, 'concerns', p.concerns, 3);
+  return '';
+}
+
+function renderPwWizardBody(opts) {
+  var p = ensurePw();
+  var a = pwWizAnchor(p);
+  var id = a.id;
+  var title = pwStepTitle(p, id);
+  var answered = pwqStepComplete(p, id);
+  var pct = Math.round(((p.step + 1) / a.flow.length) * 100);
+  var html;
+  opts = opts || {};
+  html = '<div class="pw-wiz">';
+  if (opts.reason) {
+    html += '<p class="setup-reason">' + esc(opts.reason) + '</p>';
+  }
+  html +=
+    '<p class="eyebrow">QUESTION ' +
+    (p.step + 1) +
+    ' OF ' +
+    a.flow.length +
+    '</p>' +
+    '<div class="pw-track"><i style="width:' + pct + '%"></i></div>' +
+    '<h2>' +
+    esc(title.t) +
+    '</h2><p class="hint">' +
+    esc(title.h) +
+    '</p>' +
+    pwStepBodyHtml(p, id);
   html += '<div class="pw-foot">';
-  if (step > 0) {
+  if (p.step > 0) {
     html += '<button type="button" class="btn g" data-pw-back="1">Back</button>';
   } else {
     html += '<span></span>';
@@ -553,18 +686,18 @@ function renderPwWizardBody(opts) {
     '<button type="button" class="btn" data-pw-next="1"' +
     (answered ? '' : ' disabled') +
     '>' +
-    (step === 3 ? 'Create my pathway' : 'Continue') +
+    (id === 'advice' ? 'Create my pathway' : 'Continue') +
     '</button></div>';
-  if (step === 2 && !p.fields.length) {
-    html += '<p class="pw-skip">You can continue without picking a field.</p>';
+  if (id === 'extra' && !p.extra.length) {
+    html += '<p class="pw-skip">You can continue without picking any.</p>';
+  }
+  if (id === 'concerns' && !p.concerns.length) {
+    html += '<p class="pw-skip">You can continue without picking any.</p>';
   }
   html += '</div>';
   return html;
 }
 
-function renderPwWizard() {
-  return '<div class="page-pw">' + renderPwWizardBody() + '</div>';
-}
 
 function renderPwQueue() {
   var html;
@@ -820,11 +953,59 @@ function renderPwConsidering() {
   return html;
 }
 
+function pwArchMeta() {
+  var name = String(S.archetype || '');
+  var key = name.replace(/^The\s+/, '');
+  var a;
+  if (typeof PLAN_ARCH !== 'undefined') {
+    a = PLAN_ARCH[key] || PLAN_ARCH[name];
+    if (a) return { tint: a.tint, ink: a.deep, desc: a.line };
+  }
+  if (typeof PWQ_ARCH_COLOR !== 'undefined' && PWQ_ARCH_COLOR[name]) {
+    return {
+      tint: PWQ_ARCH_COLOR[name].tintBg,
+      ink: PWQ_ARCH_COLOR[name].tintInk,
+      desc: (typeof PWQ_ARCH_DESC !== 'undefined' && PWQ_ARCH_DESC[name]) || ''
+    };
+  }
+  return { tint: '#eef2f5', ink: '#3a4654', desc: '' };
+}
+
+function pwArchChipHtml() {
+  var c;
+  if (!S.archetype) return '';
+  c = pwArchMeta();
+  return (
+    '<span class="pw-chip pw-arch" style="background:' +
+    c.tint +
+    ';color:' +
+    c.ink +
+    ';border-color:transparent">' +
+    esc(S.archetype) +
+    '</span>'
+  );
+}
+
+function pwArchLineHtml() {
+  var c;
+  if (S.archetype) {
+    c = pwArchMeta();
+    return '<p class="pw-arch-line">' + esc(c.desc) + '</p>';
+  }
+  if (S.pw.done && S.pw.flat) {
+    return (
+      '<p class="pw-arch-line pw-arch-flat">Your answers came out fairly even across every area, so we could not name an archetype. Retake the quiz from Edit my profile whenever you like.</p>'
+    );
+  }
+  return '';
+}
+
 function renderPwStudent() {
+  if (typeof renderMpPathway === 'function') return renderMpPathway();
   var dest = destCareer();
   var facts = dest ? careerFacts(dest) : null;
   var sm = dest ? subjectMatch(dest) : { have: 0, total: 0 };
-  var chips = '';
+  var chips = pwArchChipHtml();
   var i;
   var html;
   for (i = 0; i < S.pw.fields.length; i++) {
@@ -841,7 +1022,9 @@ function renderPwStudent() {
     esc(regionShort(S.pw.region)) +
     '</p><div class="pw-chips">' +
     chips +
-    '</div></div></div><div class="pw-rule"></div>';
+    '</div></div></div>' +
+    pwArchLineHtml() +
+    '<div class="pw-rule"></div>';
   if (dest) {
     html +=
       '<p class="toward">Working toward</p><p class="destn">' +
@@ -916,8 +1099,10 @@ function renderPwMentor() {
     '</p><div class="pw-chips"><span class="pw-chip pw-role">' +
     esc(S.role === 'contributor' ? 'Contributor' : 'Mentor') +
     '</span>' +
+    pwArchChipHtml() +
     chips +
-    '</div></div></div>';
+    '</div></div></div>' +
+    pwArchLineHtml();
   if (S.pw.about) html += '<p class="destd">' + esc(S.pw.about) + '</p>';
   html +=
     '<p class="pw-stats">' +
@@ -1006,7 +1191,11 @@ function renderPwExplore() {
   }
   html +=
     '</div><section class="pw-sec"><h2>Browse by field</h2>' +
-    '<p class="pw-note">Eleven fields, 145 careers. A career can sit in more than one.</p><div class="pw-fgrid">';
+    '<p class="pw-note">' +
+    FIELDS.length +
+    ' fields, ' +
+    CAREERS.length +
+    ' careers. A career can sit in more than one.</p><div class="pw-fgrid">';
   fields = sortedFields();
   for (i = 0; i < fields.length; i++) {
     f = fields[i];
@@ -1211,6 +1400,7 @@ function renderCareerSheet() {
     { k: 'csec', n: 'Forms 4 and 5 CSEC', v: c.csec },
     { k: 'cape', n: 'Form 6 CAPE', v: c.cape },
     { k: 'f13', n: 'In Forms 1 to 3', v: c.f13 },
+    { k: 'steam', n: 'STEAM focus', v: c.steam },
     { k: 'gate', n: 'Professional gate', v: c.gate },
     { k: 'dev', n: 'Recent change', v: c.dev },
     { k: 'jobs', n: 'First jobs', v: c.jobs }
@@ -1273,7 +1463,7 @@ function renderCareerSheet() {
     html += '</div>';
   }
   html +=
-    '<p class="pw-note">Checked 9 August 2026 against the Guyana Student Career Pathways Guide. ' +
+    '<p class="pw-note">Checked 7 September 2026 against the Guyana Student Career Pathways Guide. ' +
     (c.src
       ? '<a href="' +
         esc(c.src) +
@@ -1448,58 +1638,59 @@ function renderPwOverlays() {
   return '<div class="pw-overlay open" id="pw-sheet" style="visibility:visible">' + body + '</div>';
 }
 
+function renderPwSubtabs() {
+  var onMe = S.pw.tab !== 'explore';
+  return (
+    '<div class="pw-subtabs" role="tablist" aria-label="My Pathway">' +
+    '<button type="button" role="tab" aria-selected="' +
+    (onMe ? 'true' : 'false') +
+    '" class="' +
+    (onMe ? 'on' : '') +
+    '" data-pw-tab="me">My pathway</button>' +
+    '<button type="button" role="tab" aria-selected="' +
+    (onMe ? 'false' : 'true') +
+    '" class="' +
+    (onMe ? '' : 'on') +
+    '" data-pw-tab="explore">Explore</button></div>'
+  );
+}
+
 function renderPathway() {
   var html;
+  var mpShell;
   ensurePw();
   if (!S.pw.done) return renderPwWizard();
-  html = '<div class="page-pw">';
+  mpShell =
+    !(pwIsGuide() && S.role !== 'admin') &&
+    S.pw.sub !== 'field' &&
+    S.pw.sub !== 'card' &&
+    S.pw.sub !== 'routes' &&
+    S.pw.sub !== 'queue' &&
+    S.pw.sub !== 'add' &&
+    (S.pw.sub === 'edit' || S.pw.tab !== 'explore');
+  html = '<div class="page-pw' + (mpShell ? ' is-mp' : '') + '">';
   if (S.pw.sub === 'edit') {
     html += renderPwQueue();
-    html += pwIsGuide() && S.role !== 'admin' ? renderPwEditMentor() : renderPwEditStudent();
+    if (pwIsGuide() && S.role !== 'admin') html += renderPwEditMentor();
+    else {
+      html += renderPwSubtabs();
+      html +=
+        '<div class="pw-backrow"><button type="button" class="pw-back" data-pw-sub="">Back to my line</button></div>';
+      html += typeof renderMpProfile === 'function' ? renderMpProfile() : renderPwEditStudent();
+    }
     html += renderPwOverlays() + '</div>';
     return html;
   }
-  if (S.pw.sub === 'field') {
-    html += renderPwQueue() + renderPwField() + renderPwOverlays() + '</div>';
+  if (typeof exDeep === 'function' && exDeep()) {
+    html += renderExPage() + renderPwOverlays() + '</div>';
     return html;
   }
-  html += renderPwQueue();
-  html +=
-    '<div class="pw-subtabs"><button type="button" class="' +
-    (S.pw.tab === 'me' ? 'on' : '') +
-    '" data-pw-tab="me">My pathway</button><button type="button" class="' +
-    (S.pw.tab === 'explore' ? 'on' : '') +
-    '" data-pw-tab="explore">Explore</button></div>';
-  if (S.pw.tab === 'explore') html += renderPwExplore();
+  html += renderPwSubtabs();
+  if (S.pw.tab === 'explore') html += typeof renderExPage === 'function' ? renderExPage() : renderPwExplore();
   else if (pwIsGuide() && S.role !== 'admin') html += renderPwMentor();
   else html += renderPwStudent();
   html += renderPwOverlays() + '</div>';
   return html;
-}
-
-function advanceSetupStep() {
-  if (S.setupStep >= SETUP_QS.length - 1) {
-    finishSetup();
-    return;
-  }
-  S.setupStep += 1;
-  if (NAV.length && NAV[NAV.length - 1].t === 'setup') {
-    NAV[NAV.length - 1] = { t: 'setup', id: String(S.setupStep) };
-    paint();
-    return;
-  }
-  render();
-}
-
-function backSetupStep() {
-  if (S.setupStep < 1) return;
-  S.setupStep -= 1;
-  if (NAV.length && NAV[NAV.length - 1].t === 'setup') {
-    NAV[NAV.length - 1] = { t: 'setup', id: String(S.setupStep) };
-    paint();
-    return;
-  }
-  render();
 }
 
 function syncReplyComposer(el) {
@@ -2363,7 +2554,7 @@ function openCompose(seed, cat) {
   if (isVisitor()) {
     requirePathway({
       type: 'compose',
-      reason: 'Answer four questions first. This is the same quiz as My Pathway.'
+      reason: 'Start your pathway first.'
     });
     return;
   }
@@ -2988,7 +3179,7 @@ function viewProfile() {
       '</button>';
   }
   html +=
-    '<button type="button" class="btn" data-nav="pathway">My Pathways</button></div>';
+    '<button type="button" class="btn" data-nav="pathway">My Pathway</button></div>';
   return { crumb: 'Profile', title: 'You', html: html };
 }
 
@@ -2998,7 +3189,7 @@ function viewPostgate() {
     title: 'Build your pathway to post',
     html:
       '<div class="detail post-gate"><h2>Build your pathway to post</h2>' +
-      '<p>Four questions. The same quiz as My Pathway. It tells us which openings fit your form.</p>' +
+      '<p>Open My Pathway to finish the plan. Then you can post.</p>' +
       '<button type="button" class="btn" data-open="setup" data-id="0">Build my pathway</button></div>'
   };
 }
@@ -3532,9 +3723,7 @@ function renderChrome() {
       (navKey === 'alerts' && (S.view === 'sessions' || sheetTop === 'session' || sheetTop === 'book' || sheetTop === 'opp'));
     if (on) {
       navs[i].classList.add('on');
-      if (navs[i].closest && navs[i].closest('#dock')) {
-        navs[i].setAttribute('aria-current', 'page');
-      }
+      navs[i].setAttribute('aria-current', 'page');
     } else {
       navs[i].classList.remove('on');
       navs[i].removeAttribute('aria-current');
@@ -3839,9 +4028,14 @@ function render() {
   renderChrome();
   restorePwSearch();
   if (typeof qaAfterPaint === 'function') qaAfterPaint();
+  if (typeof planAfterPaint === 'function') planAfterPaint();
+  if (typeof mpAfterPaint === 'function') mpAfterPaint();
+  if (typeof exAfterPaint === 'function') exAfterPaint();
   if (typeof qaInit === 'function') qaInit();
   if (typeof oppInit === 'function') oppInit();
   if (typeof sessInit === 'function') sessInit();
+  if (typeof planInit === 'function') planInit();
+  if (typeof mpInit === 'function') mpInit();
 }
 
 function openKind(kind, id) {
@@ -3905,11 +4099,10 @@ function openKind(kind, id) {
   }
   if (kind === 'setup') {
     if (!S.pendingAction) S.setupReason = '';
-    S.setupDraft = {};
-    S.setupStep = 0;
-    ensurePw();
-    S.pw.step = 0;
-    id = '0';
+    hideSheetUi();
+    S.view = 'pathway';
+    render();
+    return;
   }
   go({ t: map[kind], id: id });
 }
@@ -4012,20 +4205,53 @@ function handlePwClick(t) {
     refreshUi();
     return true;
   }
+  btn = closestEl(t, '[data-pw-rate]');
+  if (btn) {
+    ix = parseInt(btn.getAttribute('data-pw-rate'), 10);
+    S.pw.ratings[ix] = parseInt(btn.getAttribute('data-pw-val'), 10);
+    refreshUi();
+    return true;
+  }
+  btn = closestEl(t, '[data-pw-tbrate]');
+  if (btn) {
+    ix = parseInt(btn.getAttribute('data-pw-tbrate'), 10);
+    if (!S.pw.tbRatings) S.pw.tbRatings = [null, null, null, null];
+    S.pw.tbRatings[ix] = parseInt(btn.getAttribute('data-pw-val'), 10);
+    refreshUi();
+    return true;
+  }
+  btn = closestEl(t, '[data-pw-single]');
+  if (btn) {
+    key = btn.getAttribute('data-pw-single');
+    S.pw[key] = btn.getAttribute('data-pw-val');
+    refreshUi();
+    return true;
+  }
+  btn = closestEl(t, '[data-pw-multi]');
+  if (btn) {
+    key = btn.getAttribute('data-pw-multi');
+    var mval = btn.getAttribute('data-pw-val');
+    var max = parseInt(btn.getAttribute('data-pw-max'), 10) || 0;
+    ix = S.pw[key].indexOf(mval);
+    if (ix !== -1) {
+      S.pw[key].splice(ix, 1);
+    } else if (max && S.pw[key].length >= max) {
+      toast('Choose up to ' + max + '.');
+      return true;
+    } else {
+      S.pw[key].push(mval);
+    }
+    refreshUi();
+    return true;
+  }
   btn = closestEl(t, '[data-pw-next]');
   if (btn) {
-    if (S.pw.step >= 3) {
-      finishPwWizard();
-      return true;
-    }
-    S.pw.step += 1;
-    refreshUi();
+    pwWizNext();
     return true;
   }
   btn = closestEl(t, '[data-pw-back]');
   if (btn) {
-    if (S.pw.step > 0) S.pw.step -= 1;
-    refreshUi();
+    pwWizBack();
     return true;
   }
   btn = closestEl(t, '[data-pw-tab]');
@@ -4298,6 +4524,9 @@ function wire() {
     var btn;
     var innerBtn = closestEl(t, 'button');
     var card = closestEl(t, '.clickable[data-open]');
+    if (typeof mpHandleClick === 'function' && mpHandleClick(e, t)) return;
+    if (typeof exHandleClick === 'function' && exHandleClick(e, t)) return;
+    if (typeof planHandleClick === 'function' && planHandleClick(e, t)) return;
     if (typeof sessHandleClick === 'function' && sessHandleClick(e, t)) return;
     if (typeof oppHandleClick === 'function' && oppHandleClick(e, t)) return;
     if (typeof qaHandleClick === 'function' && qaHandleClick(e, t)) return;
@@ -4467,7 +4696,7 @@ function wire() {
       return;
     }
 
-    if (t.id === 'dock-post' || closestEl(t, '#dock-post')) {
+    if (t.id === 'dock-post' || closestEl(t, '#dock-post') || t.id === 'nav-post' || closestEl(t, '#nav-post')) {
       if (NAV.length && NAV[NAV.length - 1].t === 'compose') {
         closeSheet();
       } else {
@@ -4587,29 +4816,10 @@ function wire() {
       return;
     }
 
-    btn = closestEl(t, '[data-setup-key]');
-    if (btn) {
-      var key = btn.getAttribute('data-setup-key');
-      var val = btn.getAttribute('data-setup-val');
-      var form = btn.getAttribute('data-setup-form');
-      S.setupDraft[key] = val;
-      if (form) S.setupDraft.form = form;
-      if (key === 'stage') S.setupDraft.stage = val;
-      advanceSetupStep();
-      return;
-    }
-
-    btn = closestEl(t, '[data-setup-back]');
-    if (btn) {
-      backSetupStep();
-      return;
-    }
-
     if ((t.id === 'sheet-back' || closestEl(t, '#sheet-back')) && NAV.length && NAV[NAV.length - 1].t === 'setup') {
       ensurePw();
       if (S.pw.step > 0) {
-        S.pw.step -= 1;
-        paint();
+        pwWizBack();
         return;
       }
     }
@@ -4890,6 +5100,8 @@ function wire() {
   });
 
   document.addEventListener('input', function (e) {
+    if (typeof mpHandleInput === 'function' && mpHandleInput(e)) return;
+    if (typeof exHandleInput === 'function' && exHandleInput(e)) return;
     if (typeof sessHandleInput === 'function' && sessHandleInput(e)) return;
     if (typeof oppHandleInput === 'function' && oppHandleInput(e)) return;
     if (typeof qaHandleInput === 'function' && qaHandleInput(e)) return;

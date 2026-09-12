@@ -125,12 +125,51 @@ function emptyPw() {
     stepDid: '',
     stepLed: '',
     focusQ: false,
-    qPos: 0
+    qPos: 0,
+    firstName: '',
+    planPhase: 'landing',
+    planStep: 0,
+    planPicks: [null, null, null, null, null, null],
+    planTiePick: '',
+    planTied: [],
+    planAnswers: {},
+    planDeckI: 0,
+    planDeckStop: false,
+    planSeed: '',
+    planResult: null,
+    planCal: null,
+    /* Personality half of the wizard (ported from check.html). */
+    ratings: [null, null, null, null, null, null, null, null, null, null, null, null],
+    tbRatings: null,
+    tbDims: null,
+    goal: '',
+    priority: '',
+    blocker: '',
+    pressure: '',
+    conditions: '',
+    recover: '',
+    extra: [],
+    concerns: [],
+    advice: '',
+    archetype: '',
+    primary: '',
+    secondary: '',
+    flat: false,
+    quote: '',
+    quoteWho: '',
+    lineStage: '',
+    lineGoals: null,
+    mpSkills: null,
+    mpAch: null,
+    mpAct: null,
+    mpSubj: null,
+    mpUi: null
   };
 }
 
 function ensurePw() {
   if (!S.pw) S.pw = emptyPw();
+  normalizePwFields();
   return S.pw;
 }
 
@@ -179,10 +218,44 @@ function seedMentorRoute(id) {
   }
 }
 
+function knownFieldKey(k) {
+  if (k === 'sports') return 'education';
+  if (k === 'law') return 'public';
+  var i;
+  for (i = 0; i < FIELDS.length; i++) if (FIELDS[i].k === k) return k;
+  return '';
+}
+
 function fieldByKey(k) {
   var i;
-  for (i = 0; i < FIELDS.length; i++) if (FIELDS[i].k === k) return FIELDS[i];
+  var key = knownFieldKey(k) || k;
+  for (i = 0; i < FIELDS.length; i++) if (FIELDS[i].k === key) return FIELDS[i];
   return FIELDS[0];
+}
+
+function normalizePwFields() {
+  var p = S.pw;
+  var out = [];
+  var seen = {};
+  var i;
+  var k;
+  if (!p) return;
+  for (i = 0; i < (p.fields || []).length; i++) {
+    k = knownFieldKey(p.fields[i]);
+    if (k && !seen[k]) {
+      seen[k] = 1;
+      out.push(k);
+    }
+  }
+  p.fields = out;
+  if (p.mentorField) {
+    k = knownFieldKey(p.mentorField);
+    if (k) p.mentorField = k;
+  }
+  if (p.field) {
+    k = knownFieldKey(p.field);
+    if (k) p.field = k;
+  }
 }
 
 var DUP_MAP = [
@@ -353,6 +426,7 @@ function applyPrototypeRole(key) {
     S.pw.region = '';
     S.pw.fields = [];
     S.pw.clarity = '';
+    if (typeof planResetInstrument === 'function') planResetInstrument();
     return;
   }
   S.onboarded = true;
@@ -757,14 +831,16 @@ function requireAccount(action) {
 
 function requirePathway(action) {
   ensurePw();
+  if (!isVisitor() && S.onboarded) return false;
   if (S.pw.done && !isVisitor()) return false;
   S.pendingAction = action || null;
   S.setupReason =
     (action && action.reason) || 'We need your form to hold you a place.';
   S.setupDraft = {};
   S.setupStep = 0;
-  S.pw.step = 0;
-  go({ t: 'setup', id: '0' });
+  hideSheetUi();
+  S.view = 'pathway';
+  render();
   return true;
 }
 
@@ -839,7 +915,7 @@ function renderJoinCard() {
   return (
     '<article class="feed-card kind-join">' +
     '<div class="join-body">' +
-    '<p class="join-lead">You\'re seeing posts for every form. Answer four questions and see only what applies to yours.</p>' +
+    '<p class="join-lead">You\'re seeing posts for every form. Finish onboarding to see only what applies to yours.</p>' +
     '<div class="card-actions">' +
     '<button type="button" class="btn" data-open="setup" data-id="0">Build my pathway</button>' +
     '<button type="button" class="btn quiet" data-dismiss-join="1">Not now</button>' +
@@ -1045,11 +1121,29 @@ function openSheet() {
 }
 
 function setView(v) {
+  var p;
   hideSheetUi();
   if (v === 'sessions' || v === 'happening' || v === 'notifications') v = 'alerts';
+  if (v === 'pathway' && S.view && S.view !== 'pathway') S.planReturnView = S.view;
   S.view = v;
   if (v === 'pathway' || v === 'alerts') S.unread = 0;
+  if (v === 'pathway') {
+    p = ensurePw();
+    if (p.done) {
+      p.tab = 'me';
+      p.sub = '';
+      if (p.mpUi) {
+        p.mpUi.quoteEdit = '';
+        p.mpUi.detailsEdit = false;
+        p.mpUi.aboutEdit = false;
+        p.mpUi.formKind = '';
+        p.mpUi.comboExam = '';
+        p.mpUi.comboQ = '';
+      }
+    }
+  }
   render();
+  if (v === 'pathway' && typeof window !== 'undefined' && window.scrollTo) window.scrollTo(0, 0);
 }
 
 function paint() {

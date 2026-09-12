@@ -1830,7 +1830,7 @@ function oppPaintLayer() {
   if (c.dialog === 'who') {
     html += '<h2 id="qa-dlg-title">Post</h2>';
     html +=
-      '<p class="qa-sub">Look at posting as a student or parent, or as a mentor or collaborator. You do not need to finish the four questions first.</p>';
+      '<p class="qa-sub">Look at posting as a student or parent, or as a mentor or collaborator. You do not need to finish the pathway plan first.</p>';
     html += oppWhoHtml();
     html += '<div class="qa-dlg-actions"><button type="button" class="qa-keep" data-opp-cancel="1">Cancel</button></div>';
   } else if (c.dialog === 'picker') {
@@ -2069,7 +2069,7 @@ function oppToggleRemind(id) {
     requirePathway({
       type: 'remind',
       id: id,
-      reason: 'Answer four questions first. This is the same quiz as My Pathway.'
+      reason: 'Start your pathway first.'
     })
   ) {
     return;
@@ -2160,7 +2160,7 @@ function oppPostReply(id, kind) {
     requirePathway({
       type: 'reply',
       id: id,
-      reason: 'Answer four questions first. This is the same quiz as My Pathway.'
+      reason: 'Start your pathway first.'
     })
   ) {
     return;
@@ -2513,7 +2513,7 @@ function oppHandleClick(e, t) {
       requirePathway({
         type: 'follow',
         id: id,
-        reason: 'Answer four questions first. This is the same quiz as My Pathway.'
+        reason: 'Start your pathway first.'
       })
     ) {
       return true;

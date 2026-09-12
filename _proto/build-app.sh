@@ -8,9 +8,16 @@ QACSS="$ROOT/_proto/qa.css"
 OPPCSS="$ROOT/_proto/opp.css"
 STORYCSS="$ROOT/_proto/story.css"
 SESSCSS="$ROOT/_proto/sess.css"
+PLANCSS="$ROOT/_proto/planner.css"
+PWMECSS="$ROOT/_proto/pw-me.css"
+EXCSS="$ROOT/_proto/explore.css"
+EXSEED="$ROOT/_proto/careers.json"
+EXJS="$ROOT/_proto/explore.js"
 HTML="$ROOT/_proto/shell.html"
 DATA="$ROOT/_proto/data.js"
 CORE="$ROOT/_proto/app-core.js"
+PLAN="$ROOT/_proto/planner.js"
+PWME="$ROOT/_proto/pw-me.js"
 QA="$ROOT/_proto/qa.js"
 OPP="$ROOT/_proto/opp.js"
 SESS="$ROOT/_proto/sess.js"
@@ -44,6 +51,12 @@ EOF
   cat "$STORYCSS"
   echo
   cat "$SESSCSS"
+  echo
+  cat "$PLANCSS"
+  echo
+  cat "$PWMECSS"
+  echo
+  cat "$EXCSS"
   cat <<'EOF'
 </style>
 </head>
@@ -56,7 +69,16 @@ EOF
 EOF
   cat "$DATA"
   echo
+  echo "var EX_SEED ="
+  cat "$EXSEED"
+  echo ";"
   cat "$CORE"
+  echo
+  cat "$PLAN"
+  echo
+  cat "$PWME"
+  echo
+  cat "$EXJS"
   echo
   cat "$QA"
   echo

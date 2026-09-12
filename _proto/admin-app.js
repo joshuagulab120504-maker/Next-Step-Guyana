@@ -335,6 +335,17 @@
     var list = effectiveCareers();
     var out = [];
     var i;
+    var q = state.store.careerQueue || [];
+    for (i = 0; i < q.length; i++) {
+      if (q[i].status && q[i].status !== 'pending') continue;
+      if (state.query && !matchQ((q[i].career || '') + ' ' + (q[i].summary || ''), state.query)) continue;
+      out.push({
+        id: 'cq:' + (q[i].id || i),
+        title: (q[i].career || 'Career card') + ' · review',
+        meta: (q[i].type || 'edit') + (q[i].who ? ' · ' + q[i].who : ''),
+        tags: ['career-card', 'queue']
+      });
+    }
     for (i = 0; i < list.length; i++) {
       var c = list[i];
       var hay = [c.id, c.name, c.category, c.does, (c.csecSubjects || []).join(' ')].join(' ');
@@ -749,7 +760,73 @@
     return editorShell(s.t || id, html);
   }
 
+  function renderCareerQueueEditor(id) {
+    var key = String(id || '').replace(/^cq:/, '');
+    var q = state.store.careerQueue || [];
+    var row = null;
+    var i;
+    for (i = 0; i < q.length; i++) {
+      if (String(q[i].id) === key || String(i) === key) row = q[i];
+    }
+    if (!row) return '<div class="editor-empty"><h3>Missing queue item</h3></div>';
+    var diff = row.summary || row.text || '';
+    if (!diff && row.before != null) {
+      try {
+        diff = JSON.stringify(row.before) + ' → ' + JSON.stringify(row.after);
+      } catch (e) {
+        diff = String(row.field || 'edit');
+      }
+    }
+    return editorShell(
+      (row.career || 'Career card') + ' review',
+      '<div class="form-grid"><p class="full">' +
+        esc((row.type || 'edit') + ' · ' + (row.who || '') + ' · career card') +
+        '</p><pre class="full" style="white-space:pre-wrap">' +
+        esc(diff) +
+        '</pre><div class="form-actions full"><button type="button" class="btn solid" data-cq-approve="' +
+        esc(key) +
+        '">Approve</button><button type="button" class="btn danger" data-cq-reject="' +
+        esc(key) +
+        '">Reject</button></div></div>'
+    );
+  }
+
+  function applyCareerQueue(key, ok) {
+    var q = state.store.careerQueue || [];
+    var i;
+    var row;
+    for (i = 0; i < q.length; i++) {
+      if (String(q[i].id) === String(key) || String(i) === String(key)) {
+        row = q[i];
+        break;
+      }
+    }
+    if (!row) return;
+    if (ok) {
+      if (!state.store.careerFieldEdits) state.store.careerFieldEdits = {};
+      if (row.type === 'draft' && row.payload) {
+        state.store.careerUpserts[row.payload.id] = row.payload;
+      } else if (row.field === 'details' && row.after) {
+        if (!state.store.careerFieldEdits[row.careerId]) state.store.careerFieldEdits[row.careerId] = {};
+        state.store.careerFieldEdits[row.careerId].title = row.after.title;
+        state.store.careerFieldEdits[row.careerId].status = row.after.status;
+        state.store.careerFieldEdits[row.careerId].fields = row.after.fields;
+      } else if (row.field) {
+        if (!state.store.careerFieldEdits[row.careerId]) state.store.careerFieldEdits[row.careerId] = {};
+        state.store.careerFieldEdits[row.careerId][row.field] = row.after !== undefined ? row.after : (row.payload && row.payload.value);
+      }
+      row.status = 'approved';
+    } else {
+      row.status = 'rejected';
+    }
+    saveStore();
+    state.selected = null;
+    toast(ok ? 'Approved.' : 'Rejected.');
+    render();
+  }
+
   function renderCareerEditor(id) {
+    if (String(id || '').indexOf('cq:') === 0) return renderCareerQueueEditor(id);
     var list = effectiveCareers();
     var c = null;
     var i;
@@ -1428,7 +1505,7 @@
       stages: { title: 'Pathway stages', sub: 'Form milestones and the next decision copy on My Pathway.' },
       topics: { title: 'Topics', sub: 'Browse chips and category labels across the app.' },
       slots: { title: 'Pathway slots', sub: 'Optional extras students can add during pathway setup.' },
-      careers: { title: 'Careers library', sub: 'Full career pathways dataset (search and patch).' },
+      careers: { title: 'Careers library', sub: 'Career cards, last-verified dates, and the career-card review queue.' },
       schools: { title: 'Schools library', sub: 'Secondary school directory used by setup and filters.' }
     };
     return map[state.section] || { title: 'Admin', sub: '' };
@@ -1706,6 +1783,16 @@
       }
       if (e.target.id === 'btn-new') {
         createNew();
+        return;
+      }
+      t = e.target.closest('[data-cq-approve]');
+      if (t) {
+        applyCareerQueue(t.getAttribute('data-cq-approve'), true);
+        return;
+      }
+      t = e.target.closest('[data-cq-reject]');
+      if (t) {
+        applyCareerQueue(t.getAttribute('data-cq-reject'), false);
         return;
       }
       if (e.target.id === 'btn-logout') {

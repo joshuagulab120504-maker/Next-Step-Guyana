@@ -1,33 +1,43 @@
 <div id="app-splash" class="app-splash" role="status" aria-label="Next Step Guyana">
   <button type="button" class="splash-continue" id="splash-continue" aria-label="Continue to What's Steppin'">
-    <span class="splash-logo"><img src="logo.png" alt=""></span>
+    <span class="splash-logo"><img src="logo.png" alt="Next Step Guyana"></span>
     <span class="splash-rule" aria-hidden="true"></span>
   </button>
 </div>
 <div id="app">
   <header class="top">
-    <div class="top-inner">
-      <a class="brand" href="./app.html" id="logo" data-nav="feed" aria-label="What's Steppin' home">
-        <span class="logo-tile"><img src="logo.png" alt=""></span>
-        <span class="wordmark"><b>NEXT STEP</b><small>GUYANA</small></span>
-      </a>
-      <div class="top-search">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
-        <input type="search" id="top-q" placeholder="Search" aria-label="Search Next Step" autocomplete="off"/>
+    <div class="top-band">
+      <div class="top-inner">
+        <a class="brand" href="./app.html" id="logo" data-nav="feed" aria-label="What's Steppin' home">
+          <span class="logo-tile"><img src="logo.png" alt="Next Step Guyana"></span>
+          <span class="wordmark"><b>NEXT STEP</b><small>GUYANA</small></span>
+        </a>
+        <div class="top-search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+          <input type="search" id="top-q" placeholder="Search" aria-label="Search Next Step" autocomplete="off"/>
+        </div>
+        <button type="button" class="top-av" id="arch-pill" data-open="profile" data-id="you" aria-label="Your profile">
+          <span class="av" aria-hidden="true">You</span>
+        </button>
       </div>
-      <button type="button" class="top-av" id="arch-pill" data-open="profile" data-id="you" aria-label="Your profile">
-        <span class="av" aria-hidden="true">You</span>
-      </button>
+      <div class="gold-rule" aria-hidden="true"></div>
     </div>
-    <div class="gold-rule" aria-hidden="true"></div>
+    <div class="plan-askbar" id="plan-askbar" hidden>
+      <div class="plan-askbar-inner">
+        <p class="plan-askbar-lab" id="plan-askbar-lab">Part 1</p>
+        <div class="plan-askbar-track" aria-hidden="true"><i id="plan-askbar-fill"></i></div>
+        <button type="button" class="plan-askbar-exit" data-plan-exit="1">Save and exit</button>
+      </div>
+    </div>
   </header>
 
   <div class="shell">
     <aside class="rail left" id="left-rail">
       <nav class="lnav" aria-label="Primary">
-        <button type="button" class="on" id="nav-feed" data-nav="feed">Feed</button>
+        <button type="button" class="on" id="nav-feed" data-nav="feed" aria-current="page">Feed</button>
         <button type="button" id="nav-community" data-nav="community">Community</button>
         <button type="button" id="nav-pathway" data-nav="pathway">My Pathway</button>
+        <button type="button" id="nav-post">Post</button>
         <button type="button" id="nav-alerts" data-nav="alerts">Alerts</button>
       </nav>
 
@@ -72,9 +82,9 @@
       </span>
       Post
     </button>
-    <button type="button" class="dock-item" id="dock-pathway" data-tab="pathway" data-nav="pathway" aria-label="My Pathways">
+    <button type="button" class="dock-item" id="dock-pathway" data-tab="pathway" data-nav="pathway" aria-label="My Pathway">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.25"/><path d="M5.2 19.5c.9-3.3 3.5-5.3 6.8-5.3s5.9 2 6.8 5.3"/></svg>
-      My Pathways
+      My Pathway
       <span class="path-dot" id="path-dot" hidden aria-hidden="true"></span>
     </button>
     <button type="button" class="dock-item" id="dock-alerts" data-tab="notifications" data-nav="alerts" aria-label="Alerts">

@@ -1532,70 +1532,70 @@ var SLOTS = [
 /* CAREERSV3:BEGIN */
 var BUCKETS = {
   "science": {
-    "explore": "Use science clubs, health fairs, first-aid activities, laboratory demonstrations and careful observation of health and environmental work. Protect strong English and Mathematics foundations.",
-    "csec": "English A, Mathematics, Biology, Chemistry, Physics or Integrated Science; Human and Social Biology is useful for many care routes but is not accepted as a substitute for Biology by every programme.",
-    "cape": "Biology, Chemistry, Physics, Pure or Applied Mathematics, Environmental Science, Food and Nutrition and Communication Studies, depending on the intended programme.",
-    "after": "UG science/health programmes, Ministry of Health training, approved regional programmes, supervised clinical training and professional registration where required."
+    "explore": "Build English, Mathematics, laboratory habits, digital literacy, observation and ethical service through safe science, health and first-aid activities.",
+    "csec": "Protect Biology, Chemistry and Mathematics; add Physics or Integrated Science according to the intended programme. Human and Social Biology is useful but is not accepted as a Biology substitute everywhere.",
+    "cape": "Use CAPE sciences for highly competitive degree routes. Ministry of Health training, UG and recognised regional routes have different entry gates and professional-registration requirements.",
+    "after": "Use CAPE sciences for highly competitive degree routes. Ministry of Health training, UG and recognised regional routes have different entry gates and professional-registration requirements."
   },
   "trade": {
-    "explore": "Try practical projects safely, learn measurement and tool care, practise numeracy, join school TVET activities and observe qualified workers. Never substitute unsafe informal work for supervised training.",
-    "csec": "English A and Mathematics plus the most relevant technical subject: Industrial Technology, Technical Drawing, Information Technology, EDPM, Agricultural Science, Home Economics, Food and Nutrition or an available CVQ/SCCP occupational area.",
-    "cape": "CAPE is not required for many direct TVET routes. Useful options include Building and Mechanical Engineering, Electrical and Electronic Engineering Technology, Design and Technology, Green Engineering, Entrepreneurship and Management of Business.",
-    "after": "School CVQ/SCCP, BIT, practical instruction centres, technical institutes, Carnegie, GSA, apprenticeship, employer training and competency/licensing routes."
+    "explore": "Learn measurement, tool care, safety and practical problem-solving only through supervised projects.",
+    "csec": "Keep English and Mathematics; add the most relevant technical subject or CVQ/SCCP area available at the school.",
+    "cape": "CAPE is optional for many trades. TVET, BIT, CVQ, apprenticeship and employer training can be more direct than a degree; verify competency level and progression.",
+    "after": "CAPE is optional for many trades. TVET, BIT, CVQ, apprenticeship and employer training can be more direct than a degree; verify competency level and progression."
   },
   "education": {
-    "explore": "Tutor peers, read widely, practise presentations, volunteer with supervised youth activities and note whether the student enjoys explaining, planning and supporting learning.",
-    "csec": "English A, Mathematics, Information Technology and strong passes in the subject areas the student may later teach. Social Studies, Human and Social Biology and a modern language can be useful.",
-    "cape": "Communication Studies, Caribbean Studies and the academic subjects to be taught; Sociology, Literatures in English, History, Mathematics, sciences and Information Technology may support specialisations.",
-    "after": "CPCE teacher education, UG education/humanities routes, specialist training and supervised teaching or education-support roles."
-  },
-  "sports": {
-    "explore": "Play more than one sport, learn rules and injury prevention, maintain academics, record verified results and develop teamwork rather than specialising too early.",
-    "csec": "English A, Mathematics, Physical Education and Sport, Biology or Human and Social Biology, Information Technology and Principles of Business.",
-    "cape": "Physical Education and Sport, Biology, Communication Studies, Caribbean Studies, Entrepreneurship or Management of Business.",
-    "after": "Club and federation pathways, coaching/officiating credentials, sport administration, tertiary study and health-science routes for sports medicine and rehabilitation."
+    "explore": "Tutor, communicate, organise and serve in supervised settings; learn safeguarding.",
+    "csec": "Keep English, Mathematics, IT and strong results in the subjects the student may teach or the sciences/social sciences relevant to the helping profession.",
+    "cape": "CPCE is central for teacher preparation; UG and current GOAL programmes may support education, psychology, social work and community pathways. Regulated roles still require recognised training and supervised practice.",
+    "after": "CPCE is central for teacher preparation; UG and current GOAL programmes may support education, psychology, social work and community pathways. Regulated roles still require recognised training and supervised practice."
   },
   "engineering": {
-    "explore": "Build and test small projects, practise measurement and drawing, strengthen algebra and science, learn safe workshop behaviour and join robotics, CAD or problem-solving activities where available.",
-    "csec": "English A, Mathematics, Physics, Chemistry or Integrated Science, Technical Drawing, Information Technology and Additional Mathematics where available.",
-    "cape": "Pure and/or Applied Mathematics, Physics, Chemistry, Building and Mechanical Engineering, Electrical and Electronic Engineering Technology, Green Engineering, Design and Technology or Computer Science.",
-    "after": "UG engineering/built-environment routes, technical institutes, GTEE/CVQ pathways, approved aviation/maritime training and profession-specific experience or registration."
-  },
-  "creative": {
-    "explore": "Make original work, keep dated drafts, learn copyright and consent, perform or exhibit safely, practise communication and begin a portfolio without abandoning core academics.",
-    "csec": "English A, Visual Arts, Music, Theatre Arts, Information Technology, EDPM and Principles of Business, selected according to the medium.",
-    "cape": "Art and Design, Digital Media, Animation and Game Design, Performing Arts, Literatures in English, Communication Studies, Entrepreneurship or Information Technology.",
-    "after": "Portfolio-based work, apprenticeships, CVQ/TVET production routes, UG communication/technology studies, specialist regional study and entrepreneurship."
+    "explore": "Strengthen algebra, measurement, drawing, science, design and safe workshop habits.",
+    "csec": "Mathematics and Physics are the safest foundations; add Chemistry, Technical Drawing, IT and Additional Mathematics where available.",
+    "cape": "CAPE Mathematics/Physics supports degree entry; technical certificates and associate routes support technician work. Match the qualification to civil, mechanical, electrical, industrial, mining, petroleum, construction or renewable-energy work.",
+    "after": "CAPE Mathematics/Physics supports degree entry; technical certificates and associate routes support technician work. Match the qualification to civil, mechanical, electrical, industrial, mining, petroleum, construction or renewable-energy work."
   },
   "tech": {
-    "explore": "Learn safe and responsible computing, build small programs or digital projects, understand privacy and security, practise logical thinking and document work in a portfolio.",
-    "csec": "English A, Mathematics, Information Technology, Physics, EDPM and Additional Mathematics where available.",
-    "cape": "Computer Science, Information Technology, Pure or Applied Mathematics, Physics, Digital Media, Animation and Game Design or Electrical and Electronic Engineering Technology.",
-    "after": "UG computer-science/IT/information-systems routes, technical institutes, vendor training, portfolios, internships and progressively responsible technical work."
+    "explore": "Build small, safe digital projects and practise logic, privacy, troubleshooting and documentation.",
+    "csec": "Keep English, Mathematics and IT; Physics, EDPM and Additional Mathematics are valuable where offered.",
+    "cape": "Compare UG computing programmes, current GOAL options, technical/vendor training and portfolio routes. A qualification should be supported by working projects and experience.",
+    "after": "Compare UG computing programmes, current GOAL options, technical/vendor training and portfolio routes. A qualification should be supported by working projects and experience."
   },
   "business": {
-    "explore": "Practise budgeting, spreadsheets, selling ethically, teamwork, record-keeping and public speaking. Run small supervised projects rather than taking financial risks.",
-    "csec": "English A, Mathematics, Principles of Accounts, Principles of Business, Economics, EDPM, Office Administration and Information Technology.",
-    "cape": "Accounting, Economics, Management of Business, Entrepreneurship, Financial Services Studies, Logistics and Supply Chain Operations, Law, Information Technology and Communication Studies.",
-    "after": "UG SEBI and social-science routes, technical/business diplomas, employer apprenticeships, professional qualifications and responsible entrepreneurship."
+    "explore": "Practise budgeting, spreadsheets, communication, teamwork and ethical supervised enterprise.",
+    "csec": "Keep English and Mathematics; add POA, POB, Economics, EDPM, Office Administration and IT where possible.",
+    "cape": "UG SEBI, GOAL's current business catalogue, technical diplomas, apprenticeships and professional qualifications serve different goals. Avoid taking financial risks merely to “prove” entrepreneurship.",
+    "after": "UG SEBI, GOAL's current business catalogue, technical diplomas, apprenticeships and professional qualifications serve different goals. Avoid taking financial risks merely to “prove” entrepreneurship."
   },
   "public": {
-    "explore": "Join service, debate, student leadership, cadet or community activities; build fitness where relevant; learn civics, ethics, teamwork and accurate record-keeping.",
-    "csec": "English A, Mathematics, Social Studies, Caribbean History, Geography, Information Technology, Physical Education and a modern language, depending on the role.",
-    "cape": "Communication Studies, Caribbean Studies, Law, Sociology, History, Geography, Economics, Information Technology and relevant sciences.",
-    "after": "Vacancy-specific government recruitment, UG/CPCE/technical qualifications, uniformed-service selection and training, or public-policy and community-development routes."
-  },
-  "law": {
-    "explore": "Read widely, write evidence-based arguments, debate respectfully, learn source checking and observe civic, cultural and community institutions.",
-    "csec": "English A, English B, Caribbean History, Social Studies, Geography, Religious Education, Economics and a modern language. Mathematics remains valuable even where it is not a formal entry requirement.",
-    "cape": "Law, Communication Studies, Caribbean Studies, History, Sociology, Literatures in English, Economics, Geography and modern languages.",
-    "after": "UG law, social-science and humanities routes, regional professional education, public-service recruitment, research, communication and community work."
+    "explore": "Build writing, civics, ethics, leadership, research, service and fitness where relevant.",
+    "csec": "English, Mathematics, Social Studies, History, Geography and IT preserve broad options; add sciences for technical public-service roles.",
+    "cape": "Law and professional roles require formal study; government and uniformed jobs use vacancy-specific recruitment. No single CSEC rule covers the entire public service.",
+    "after": "Law and professional roles require formal study; government and uniformed jobs use vacancy-specific recruitment. No single CSEC rule covers the entire public service."
   },
   "agri": {
-    "explore": "Grow or monitor a small supervised project, record inputs and results, learn soil/water/animal welfare basics, visit farms or agroprocessors and treat agriculture as science plus business.",
-    "csec": "English A, Mathematics, Agricultural Science, Biology, Chemistry or Integrated Science, Geography, Food and Nutrition and Principles of Business.",
-    "cape": "Agricultural Science, Biology, Chemistry, Environmental Science, Geography, Food and Nutrition, Entrepreneurship, Green Engineering and Communication Studies.",
-    "after": "GSA, UG agriculture/forestry/science routes, school CVQ, BIT/TVET, farm or fisheries training, research/extension work and agribusiness."
+    "explore": "Complete supervised crop, livestock, fisheries or environmental projects and record inputs, results and costs.",
+    "csec": "Keep English, Mathematics, Agricultural Science and Biology; add Chemistry/Integrated Science, Geography, Food and Nutrition or POB.",
+    "cape": "GSA, UG, CVQ/TVET and extension/employer routes lead to different skill levels. Treat agriculture as science, technology and business,not only manual work.",
+    "after": "GSA, UG, CVQ/TVET and extension/employer routes lead to different skill levels. Treat agriculture as science, technology and business,not only manual work."
+  },
+  "transport": {
+    "explore": "Strengthen Mathematics, Geography, English, IT, organisation, safety and accurate record-keeping.",
+    "csec": "Choose Physics/technical subjects for aviation, maritime and vehicle routes; choose business, IT and Geography for logistics and supply chains.",
+    "cape": "Use UG/GOAL study where a degree fits, or GCAA/MARAD licensing, TVET and employer training where operational competence controls entry.",
+    "after": "Use UG/GOAL study where a degree fits, or GCAA/MARAD licensing, TVET and employer training where operational competence controls entry."
+  },
+  "creative": {
+    "explore": "Produce original work, keep drafts, learn consent/copyright and start a portfolio.",
+    "csec": "English, Visual Arts, Music, Theatre Arts, IT, EDPM and POB can support different media.",
+    "cape": "Portfolios, apprenticeships, TVET and enterprise may matter as much as a degree. UG or GOAL study should be chosen for the specific craft, technology or business capability it adds.",
+    "after": "Portfolios, apprenticeships, TVET and enterprise may matter as much as a degree. UG or GOAL study should be chosen for the specific craft, technology or business capability it adds."
+  },
+  "hospitality": {
+    "explore": "Practise communication, customer care, geography, food safety, organisation and supervised events.",
+    "csec": "English, Mathematics, Food and Nutrition, Family and Resource Management, Geography, POB and IT are useful.",
+    "cape": "Carnegie, TVET/CVQ, work attachment and current UG/GOAL-related business or hospitality study provide different routes. Experience and service quality are essential for progression.",
+    "after": "Carnegie, TVET/CVQ, work attachment and current UG/GOAL-related business or hospitality study provide different routes. Experience and service quality are essential for progression."
   }
 };
 
@@ -1611,12 +1611,15 @@ var CAREERS = [
     "cape": "Accounting, Economics, Management of Business, Entrepreneurship, Financial Services Studies, Logistics and Supply Chain Operations or Information Technology.",
     "route": "BSc Accountancy or related SEBI route, followed where desired by ACCA or another recognised professional qualification. The Institute of Chartered Accountants of Guyana admits qualified members of recognised overseas accountancy bodies; Guyana does not operate a separate local chartered-accountant examination.",
     "gate": "",
-    "dev": "UG's accountancy programme received ACCA accreditation for 2026,2030, with four exemptions reported for qualifying graduates from 2026.",
+    "dev": "UG's accountancy programme received ACCA accreditation for 2026 to 2030, with four exemptions reported for qualifying graduates from 2026.",
     "jobs": "accounts assistant, audit associate, tax assistant, finance officer and internal-audit trainee.",
+    "steam": "Communication/design + Mathematics + digital technology. This is preparation guidance, not an admission rule.",
     "src": "https://sebi.uog.edu.gy/srms/departments/246/programmes/865/details",
     "tr": [
+      "cape",
       "degree"
-    ]
+    ],
+    "id": "accountant-auditor"
   },
   {
     "n": "Actuary / Statistician / Quantitative-Risk Analyst",
@@ -1633,10 +1636,13 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "statistical assistant, risk analyst trainee, insurance analyst, data analyst and research assistant.",
+    "steam": "Communication/design + Mathematics + digital technology. This is preparation guidance, not an admission rule.",
     "src": "https://registry.uog.edu.gy/srms/departments",
     "tr": [
+      "cape",
       "degree"
-    ]
+    ],
+    "id": "actuary-statistician-quantitative-risk-analyst"
   },
   {
     "n": "Agricultural Engineer / Smart-Farming Technician",
@@ -1654,12 +1660,15 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "irrigation assistant, machinery/precision-agriculture technician, farm-technology assistant and engineering trainee.",
+    "steam": "Science + Technology + Engineering + Mathematics. This is preparation guidance, not an admission rule.",
     "src": "https://agriculture.gov.gy/gsa/",
     "tr": [
+      "cape",
       "degree",
       "tvet",
       "agri"
-    ]
+    ],
+    "id": "agricultural-engineer-smart-farming-technician"
   },
   {
     "n": "Agricultural Scientist / Agronomist",
@@ -1674,12 +1683,15 @@ var CAREERS = [
     "route": "UG's BSc Agriculture accepts five CSEC subjects including English and Mathematics plus the published science combination. Guyana School of Agriculture offers certificate/diploma routes with different entry requirements and may provide an articulation route. First jobs include extension, crop/livestock production, research assistance, quality assurance and agribusiness.",
     "gate": "",
     "dev": "",
-    "jobs": "",
+    "jobs": "extension, crop/livestock production, research assistance, quality assurance and agribusiness",
+    "steam": "Science + Technology + Mathematics, supported by enterprise skills. This is preparation guidance, not an admission rule.",
     "src": "https://registry.uog.edu.gy/srms/departments/60/programmes/772/details",
     "tr": [
+      "cape",
       "degree",
       "agri"
-    ]
+    ],
+    "id": "agricultural-scientist-agronomist"
   },
   {
     "n": "Agroprocessing / Food-Production Operator",
@@ -1696,11 +1708,14 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "processing/packaging operator, production assistant, quality assistant and small food-business operator.",
+    "steam": "Communication/design + Mathematics + digital technology. This is preparation guidance, not an admission rule.",
     "src": "https://education.gov.gy/en/index.php/media2/news-events/7312-vocational-education-deserves-equal-respect",
     "tr": [
+      "cape",
       "tvet",
       "agri"
-    ]
+    ],
+    "id": "agroprocessing-food-production-operator"
   },
   {
     "n": "Agroprocessor / Food-Production Technician",
@@ -1718,12 +1733,15 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "production assistant, quality-control assistant, food-processing technician, packaging operator and small agroprocessing entrepreneur.",
+    "steam": "Science + Technology + Engineering + Mathematics. This is preparation guidance, not an admission rule.",
     "src": "https://education.gov.gy/en/index.php/media2/news-events/7312-vocational-education-deserves-equal-respect",
     "tr": [
+      "cape",
       "degree",
       "tvet",
       "agri"
-    ]
+    ],
+    "id": "agroprocessor-food-production-technician"
   },
   {
     "n": "Air-Traffic Controller",
@@ -1731,19 +1749,22 @@ var CAREERS = [
     "b": [
       "engineering",
       "tech",
-      "public"
+      "public",
+      "transport"
     ],
     "f13": "strengthen Mathematics, Geography, science, English, concentration and calm decision-making.",
-    "csec": "",
+    "csec": "Mathematics, Physics, Geography, IT and strong spoken/written English are useful.",
     "cape": "",
     "route": "the GCAA publishes a minimum licensing age of 21, completion of approved training, supervised operational experience and a Class 3 medical assessment. Guyana's Civil Aviation Training School trains ATC and aviation personnel and attained ICAO TRAINAIR PLUS Gold Standard status in 2026, but vacancies and trainee intakes are competitive and not continuously open.",
-    "gate": "the GCAA publishes a minimum licensing age of 21, completion of approved training, supervised operational experience and a Class 3 medical assessment.",
+    "gate": "",
     "dev": "",
     "jobs": "",
+    "steam": "Science + Technology + Engineering + Mathematics. This is preparation guidance, not an admission rule.",
     "src": "https://www.gcaa-gy.org/licensing-and-certification.html",
     "tr": [
       "degree"
-    ]
+    ],
+    "id": "air-traffic-controller"
   },
   {
     "n": "Aircraft Maintenance / Aeronautical Engineering",
@@ -1751,7 +1772,8 @@ var CAREERS = [
     "b": [
       "trade",
       "engineering",
-      "tech"
+      "tech",
+      "transport"
     ],
     "f13": "Strengthen algebra, measurement, drawing and science through supervised design, CAD, model-building or problem-solving projects.",
     "csec": "English A, Mathematics, Physics, Chemistry or Integrated Science, Technical Drawing, Information Technology and Additional Mathematics where available.",
@@ -1760,10 +1782,13 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "",
+    "steam": "Science + Technology + Engineering + Mathematics. This is preparation guidance, not an admission rule.",
     "src": "",
     "tr": [
+      "cape",
       "tvet"
-    ]
+    ],
+    "id": "aircraft-maintenance-aeronautical-engineering"
   },
   {
     "n": "Appliance / Consumer-Electronics Repair Technician",
@@ -1778,11 +1803,13 @@ var CAREERS = [
     "route": "Useful foundations include Mathematics, Physics, Electronics, IT, soldering and safe troubleshooting. BIT/private-provider availability varies. First jobs include electronics-repair assistant, appliance technician trainee and phone/device-repair worker. Electrical isolation, batteries and data privacy should be included.",
     "gate": "",
     "dev": "",
-    "jobs": "",
+    "jobs": "electronics-repair assistant, appliance technician trainee and phone/device-repair worker",
+    "steam": "Science + Technology + Engineering + Mathematics. This is preparation guidance, not an admission rule.",
     "src": "",
     "tr": [
       "tvet"
-    ]
+    ],
+    "id": "appliance-consumer-electronics-repair-technician"
   },
   {
     "n": "Aquaculture / Fish-Handling and Processing Worker",
@@ -1799,10 +1826,13 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "aquaculture/farm assistant, fish-processing worker, cold-chain/quality assistant and fisheries data assistant.",
+    "steam": "Science + Technology + Mathematics, supported by enterprise skills. This is preparation guidance, not an admission rule.",
     "src": "https://education.gov.gy/en/index.php/media2/external-news/5695-aquaculture-training-empowers-teachers-to-prepare-students-for-work-2",
     "tr": [
+      "cape",
       "tvet"
-    ]
+    ],
+    "id": "aquaculture-fish-handling-and-processing-worker"
   },
   {
     "n": "Architect",
@@ -1818,19 +1848,22 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "",
+    "steam": "Science + Technology + Engineering + Mathematics. This is preparation guidance, not an admission rule.",
     "src": "https://registry.uog.edu.gy/srms/departments/70/programmes/905/details",
     "tr": [
+      "cape",
       "degree",
       "port"
-    ]
+    ],
+    "id": "architect"
   },
   {
     "n": "Audio Production / Event Production Professional",
     "s": "portfolio",
     "b": [
-      "creative",
       "tech",
-      "business"
+      "business",
+      "creative"
     ],
     "f13": "explore music, drama, public speaking, school events, basic audio/video editing and safe equipment handling.",
     "csec": "Music, Theatre Arts, Visual Arts, English, IT, Physics and business subjects can all contribute. Build a portfolio through school concerts, assemblies, podcasts, recordings or community events.",
@@ -1839,10 +1872,13 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "production assistant, stagehand, sound assistant, lighting assistant, event coordinator and freelance audio editor.",
+    "steam": "Arts/design + Technology + communication, supported by Mathematics. This is preparation guidance, not an admission rule.",
     "src": "https://education.gov.gy/en/index.php/media2/external-news/7262-ug-facilities-fees-abolished-january-2025-min-manickchand",
     "tr": [
-      "tvet"
-    ]
+      "tvet",
+      "port"
+    ],
+    "id": "audio-production-event-production-professional"
   },
   {
     "n": "Auto-Electrical / Vehicle-Electronics Technician",
@@ -1850,7 +1886,8 @@ var CAREERS = [
     "b": [
       "trade",
       "engineering",
-      "tech"
+      "tech",
+      "transport"
     ],
     "f13": "Develop numeracy, measurement, tool safety, practical problem-solving and supervised project experience.",
     "csec": "English A, Mathematics and the most relevant technical, CVQ, SCCP, science, drawing, IT or home-economics subjects available at the school.",
@@ -1858,18 +1895,21 @@ var CAREERS = [
     "route": "Start with electrical/electronic and automotive foundations, then add batteries, charging/starting systems, sensors, diagnostics and safe hybrid/EV procedures. Training availability varies by provider. First jobs include auto-electrician assistant and diagnostic technician trainee; general mechanic training should not be presented as full auto-electrical competence.",
     "gate": "",
     "dev": "",
-    "jobs": "",
+    "jobs": "auto-electrician assistant and diagnostic technician trainee; general mechanic training should not be presented as full auto-electrical competence",
+    "steam": "Science + Technology + Engineering + Mathematics. This is preparation guidance, not an admission rule.",
     "src": "",
     "tr": [
       "tvet"
-    ]
+    ],
+    "id": "auto-electrical-vehicle-electronics-technician"
   },
   {
     "n": "Automotive Mechanic / Motor-Vehicle Technician",
     "s": "confirmed",
     "b": [
       "trade",
-      "engineering"
+      "engineering",
+      "transport"
     ],
     "f13": "Develop numeracy, measurement, drawing, tool safety and supervised practical problem-solving; keep evidence of completed projects.",
     "csec": "English A, Mathematics and the most relevant Industrial Technology, Technical Drawing, Information Technology, science or available CVQ/SCCP occupational subject. Mathematics, Physics, Mechanical Technology, Electrical Technology, IT and English.",
@@ -1878,10 +1918,12 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "workshop assistant, service technician trainee and motor-vehicle mechanic. Light vehicle, diesel, diagnostics and heavy equipment are different competency tracks.",
+    "steam": "Science + Technology + Engineering + Mathematics. This is preparation guidance, not an admission rule.",
     "src": "https://tvet.gov.gy/programs?institution=74",
     "tr": [
       "tvet"
-    ]
+    ],
+    "id": "automotive-mechanic-motor-vehicle-technician"
   },
   {
     "n": "Banker / Banking Operations",
@@ -1896,11 +1938,14 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "bank teller, customer-service representative, credit assistant, operations clerk, analyst trainee and apprenticeship placements.",
+    "steam": "Communication/design + Mathematics + digital technology. This is preparation guidance, not an admission rule.",
     "src": "https://sebi.uog.edu.gy/sebi-glance",
     "tr": [
+      "cape",
       "degree",
       "tvet"
-    ]
+    ],
+    "id": "banker-banking-operations"
   },
   {
     "n": "Biomedical-Equipment / Medical-Technology Technician",
@@ -1918,29 +1963,35 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "biomedical-equipment assistant, maintenance trainee, calibration/support assistant and hospital technology-support worker.",
+    "steam": "Science + Mathematics, supported by Technology and communication. This is preparation guidance, not an admission rule.",
     "src": "https://registry.uog.edu.gy/engineering-technology",
     "tr": [
+      "cape",
       "degree"
-    ]
+    ],
+    "id": "biomedical-equipment-medical-technology-technician"
   },
   {
     "n": "Boat Master / Local Seafarer",
     "s": "confirmed",
     "b": [
       "trade",
-      "engineering"
+      "engineering",
+      "transport"
     ],
     "f13": "Develop numeracy, measurement, tool safety, practical problem-solving and supervised project experience.",
     "csec": "English A, Mathematics and the most relevant technical, CVQ, SCCP, science, drawing, IT or home-economics subjects available at the school.",
     "cape": "CAPE is optional for many direct vocational routes; relevant engineering, design, technology, business or entrepreneurship subjects can support progression.",
-    "route": "MARAD licenses and certifies local seafarers and publishes forms/checklists for Bowman/Bow-Woman credentials, Harbour licences, River Master/Navigation certificates and Boat Master Grades 1,3, among other categories. Exact sea-service, medical, training, examination, fee and nationality requirements vary by licence and must come from the corresponding current checklist.",
+    "route": "MARAD licenses and certifies local seafarers and publishes forms/checklists for Bowman/Bow-Woman credentials, Harbour licences, River Master/Navigation certificates and Boat Master Grades 1 to 3, among other categories. Exact sea-service, medical, training, examination, fee and nationality requirements vary by licence and must come from the corresponding current checklist.",
     "gate": "",
     "dev": "",
     "jobs": "",
+    "steam": "Science + Technology + Engineering + Mathematics. This is preparation guidance, not an admission rule.",
     "src": "https://marad.gov.gy/seafarer-licensing",
     "tr": [
-      "degree"
-    ]
+      "tvet"
+    ],
+    "id": "boat-master-local-seafarer"
   },
   {
     "n": "Caregiver / Childcare or Patient-Care Worker",
@@ -1957,11 +2008,14 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "patient-care assistant, home-care aide, nursery/childcare assistant and elder-care worker.",
+    "steam": "Communication/design + Mathematics + digital technology. This is preparation guidance, not an admission rule.",
     "src": "https://health.gov.gy/training-opportunities/",
     "tr": [
+      "cape",
       "tvet",
       "health"
-    ]
+    ],
+    "id": "caregiver-childcare-or-patient-care-worker"
   },
   {
     "n": "Carpenter / Joiner / Cabinetmaker",
@@ -1978,18 +2032,21 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "carpenter's assistant, joiner, cabinet/furniture-production worker and installation assistant.",
+    "steam": "Science + Technology + Engineering + Mathematics. This is preparation guidance, not an admission rule.",
     "src": "https://tvet.gov.gy/programs",
     "tr": [
       "tvet"
-    ]
+    ],
+    "id": "carpenter-joiner-cabinetmaker"
   },
   {
     "n": "Chef / Culinary Professional",
     "s": "confirmed",
     "b": [
       "trade",
+      "business",
       "creative",
-      "business"
+      "hospitality"
     ],
     "f13": "Practise food safety, measurement, costing and supervised preparation; document recipes and service projects without using unsafe equipment unsupervised.",
     "csec": "English A, Mathematics, Food and Nutrition, Family and Resource Management, Integrated Science and Principles of Business.",
@@ -1998,10 +2055,12 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "",
+    "steam": "Communication/design + Mathematics + digital technology. This is preparation guidance, not an admission rule.",
     "src": "https://carnegieguyana.com/programme/catering-and-hospitality/",
     "tr": [
       "tvet"
-    ]
+    ],
+    "id": "chef-culinary-professional"
   },
   {
     "n": "Chemical / Process Engineer",
@@ -2018,18 +2077,20 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "laboratory/process assistant, production technician and quality assistant; professional engineering work requires appropriate degree-level preparation and experience.",
+    "steam": "Science + Technology + Engineering + Mathematics. This is preparation guidance, not an admission rule.",
     "src": "https://www.turkeyenonline.uog.edu.gy/srms/student/prospective/about_applying/offeredprogs.php",
     "tr": [
+      "cape",
       "degree",
       "tvet"
-    ]
+    ],
+    "id": "chemical-process-engineer"
   },
   {
     "n": "Civil / Public Servant",
     "s": "varies",
     "b": [
-      "public",
-      "law"
+      "public"
     ],
     "f13": "Build communication, fitness where relevant, civic knowledge, teamwork, service and accurate record-keeping through supervised school or community activities.",
     "csec": "English A, Mathematics, Social Studies, Caribbean History, Geography, Information Technology and Physical Education or a modern language where relevant.",
@@ -2038,10 +2099,12 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "",
+    "steam": "Communication/design + Mathematics + digital technology. This is preparation guidance, not an admission rule.",
     "src": "",
     "tr": [
-      "degree"
-    ]
+      "cape"
+    ],
+    "id": "civil-public-servant"
   },
   {
     "n": "Civil, Mechanical and Electrical Engineer",
@@ -2057,10 +2120,13 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "",
+    "steam": "Science + Technology + Engineering + Mathematics. This is preparation guidance, not an admission rule.",
     "src": "https://uog.edu.gy/srms/departments/71/programmes/1180/details",
     "tr": [
+      "cape",
       "degree"
-    ]
+    ],
+    "id": "civil-mechanical-and-electrical-engineer"
   },
   {
     "n": "Cloud, Systems, Database or Network Administrator",
@@ -2076,17 +2142,19 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "help-desk technician, network assistant, systems-support technician, database assistant and cloud-support trainee.",
+    "steam": "Technology + Mathematics, supported by design and communication. This is preparation guidance, not an admission rule.",
     "src": "https://registry.uog.edu.gy/srms/departments/7/programmes/805/details",
     "tr": [
+      "cape",
       "degree"
-    ]
+    ],
+    "id": "cloud-systems-database-or-network-administrator"
   },
   {
     "n": "Coach, Official and Sports Administrator",
     "s": "varies",
     "b": [
       "education",
-      "sports",
       "business"
     ],
     "f13": "Develop safely in more than one activity, record verified performance, learn rules and injury prevention, and protect academic options.",
@@ -2096,18 +2164,20 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "",
+    "steam": "Communication/design + Mathematics + digital technology. This is preparation guidance, not an admission rule.",
     "src": "",
     "tr": [
-      "degree"
-    ]
+      "cape"
+    ],
+    "id": "coach-official-and-sports-administrator"
   },
   {
     "n": "Content Creator / Digital-Media Entrepreneur",
     "s": "portfolio",
     "b": [
-      "creative",
       "tech",
-      "business"
+      "business",
+      "creative"
     ],
     "f13": "Build safe, documented digital projects; practise logic, mathematics, typing, privacy and responsible use of technology.",
     "csec": "English A, Mathematics, Information Technology, EDPM, Physics and Additional Mathematics where available.",
@@ -2116,18 +2186,21 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "",
+    "steam": "Arts/design + Technology + communication, supported by Mathematics. This is preparation guidance, not an admission rule.",
     "src": "",
     "tr": [
-      "degree"
-    ]
+      "cape"
+    ],
+    "id": "content-creator-digital-media-entrepreneur"
   },
   {
     "n": "Cook / Baker / Pastry or Commercial-Food Worker",
     "s": "confirmed",
     "b": [
       "trade",
+      "business",
       "creative",
-      "business"
+      "hospitality"
     ],
     "f13": "Practise food safety, measurement, costing and supervised preparation; document recipes and service projects without using unsafe equipment unsupervised.",
     "csec": "English A, Mathematics, Food and Nutrition, Family and Resource Management, Integrated Science and Principles of Business. Food and Nutrition, Mathematics, English, business subjects and science.",
@@ -2136,18 +2209,20 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "kitchen assistant, cook, baker/pastry assistant, catering assistant and food-service worker. Chef is normally an experience-based progression.",
+    "steam": "Communication/design + Mathematics + digital technology. This is preparation guidance, not an admission rule.",
     "src": "https://tvet.gov.gy/programs?institution=71",
     "tr": [
       "tvet"
-    ]
+    ],
+    "id": "cook-baker-pastry-or-commercial-food-worker"
   },
   {
     "n": "Cosmetologist / Beautician / Wellness Services",
     "s": "varies",
     "b": [
       "trade",
-      "creative",
-      "business"
+      "business",
+      "creative"
     ],
     "f13": "Create original work, keep dated drafts, learn consent and copyright, and build a portfolio while maintaining core academics.",
     "csec": "English A plus the relevant creative subjects: Visual Arts, Music, Theatre Arts, Information Technology, EDPM and Principles of Business.",
@@ -2156,18 +2231,21 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "",
+    "steam": "Technology + Mathematics, supported by design and communication. This is preparation guidance, not an admission rule.",
     "src": "",
     "tr": [
+      "cape",
       "tvet"
-    ]
+    ],
+    "id": "cosmetologist-beautician-wellness-services"
   },
   {
     "n": "Cosmetologist / Hair or Beauty-Service Worker",
     "s": "confirmed",
     "b": [
       "trade",
-      "creative",
-      "business"
+      "business",
+      "creative"
     ],
     "f13": "Create original work, keep dated drafts, learn consent and copyright, and build a portfolio while maintaining core academics.",
     "csec": "English A plus the relevant creative subjects: Visual Arts, Music, Theatre Arts, Information Technology, EDPM and Principles of Business.",
@@ -2176,28 +2254,13 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "",
+    "steam": "Technology + Mathematics, supported by design and communication. This is preparation guidance, not an admission rule.",
     "src": "https://tvet.gov.gy/programs?institution=71",
     "tr": [
+      "cape",
       "tvet"
-    ]
-  },
-  {
-    "n": "Cricketer",
-    "s": "portfolio",
-    "b": [
-      "sports"
     ],
-    "f13": "Develop safely in more than one activity, record verified performance, learn rules and injury prevention, and protect academic options.",
-    "csec": "English A, Mathematics, Physical Education and Sport, Biology or Human and Social Biology, Information Technology and Principles of Business.",
-    "cape": "Physical Education and Sport, Biology, Communication Studies, Entrepreneurship or Management of Business. The current organisation is Cricket West Indies, not the West Indies Cricket Board.",
-    "route": "The current organisation is Cricket West Indies, not the West Indies Cricket Board. Its Republic Bank Five for Fun programme targets primary-school children, principally ages 7,11, and feeds a later U13/U15/U17/U19 structure. Progression remains selection-based through school, club, county, Guyana and regional cricket. Students should check the current age-group and regional competition structure.",
-    "gate": "",
-    "dev": "",
-    "jobs": "",
-    "src": "https://www.windiescricket.com/news/season-4-of-republic-bank-cricket-west-indies-five-for-fun-cricket-programme-launched-in-guyana/",
-    "tr": [
-      "port"
-    ]
+    "id": "cosmetologist-hair-or-beauty-service-worker"
   },
   {
     "n": "Crop / Livestock or Farm-Operations Worker",
@@ -2213,11 +2276,14 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "farm assistant, crop/livestock worker, nursery assistant and agricultural-machinery assistant. Agricultural Scientist / Agronomist is the related degree-level pathway.",
+    "steam": "Science + Technology + Mathematics, supported by enterprise skills. This is preparation guidance, not an admission rule.",
     "src": "https://education.gov.gy/en/index.php/media2/external-news/5053-job-ready-technical-skills-for-all-secondary-students-in-the-future",
     "tr": [
+      "cape",
       "tvet",
       "agri"
-    ]
+    ],
+    "id": "crop-livestock-or-farm-operations-worker"
   },
   {
     "n": "Customer-Service / Retail or Banking-Operations Worker",
@@ -2233,10 +2299,13 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "customer-service representative, cashier, retail associate, teller trainee and sales assistant. The vacancy controls cash-handling, background and subject requirements.",
+    "steam": "Communication/design + Mathematics + digital technology. This is preparation guidance, not an admission rule.",
     "src": "https://tvet.gov.gy/programs?institution=67",
     "tr": [
+      "cape",
       "tvet"
-    ]
+    ],
+    "id": "customer-service-retail-or-banking-operations-worker"
   },
   {
     "n": "Customs Officer / GRA Officer",
@@ -2244,7 +2313,7 @@ var CAREERS = [
     "b": [
       "business",
       "public",
-      "law"
+      "transport"
     ],
     "f13": "Build communication, fitness where relevant, civic knowledge, teamwork, service and accurate record-keeping through supervised school or community activities.",
     "csec": "English A, Mathematics, Social Studies, Caribbean History, Geography, Information Technology and Physical Education or a modern language where relevant.",
@@ -2253,10 +2322,12 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "",
+    "steam": "Communication/design + Mathematics + digital technology. This is preparation guidance, not an admission rule.",
     "src": "https://gra.gov.gy/careers/",
     "tr": [
-      "degree"
-    ]
+      "cape"
+    ],
+    "id": "customs-officer-gra-officer"
   },
   {
     "n": "Cybersecurity Analyst",
@@ -2271,10 +2342,13 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "IT-support or network roles, security-operations trainee and junior governance/risk/compliance work,not automatically “cybersecurity engineer.”",
+    "steam": "Technology + Mathematics, supported by design and communication. This is preparation guidance, not an admission rule.",
     "src": "https://fns.uog.edu.gy/department-computer-science/our-programmes/associate-science-asc-information-technology",
     "tr": [
+      "cape",
       "degree"
-    ]
+    ],
+    "id": "cybersecurity-analyst"
   },
   {
     "n": "Data Analyst / GIS Technician",
@@ -2291,10 +2365,13 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "data assistant, monitoring-and-evaluation assistant, GIS technician, survey-data clerk and junior analyst.",
+    "steam": "Science + Technology + Engineering + Mathematics. This is preparation guidance, not an admission rule.",
     "src": "https://fees.uog.edu.gy/certificate-geographic-information-systems-2023-2024",
     "tr": [
+      "cape",
       "degree"
-    ]
+    ],
+    "id": "data-analyst-gis-technician"
   },
   {
     "n": "Data Scientist / Artificial-Intelligence or Machine-Learning Specialist",
@@ -2312,10 +2389,13 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "data assistant, junior analyst, software developer, database assistant or research assistant, followed by specialised modelling work.",
+    "steam": "Science + Technology + Engineering + Mathematics. This is preparation guidance, not an admission rule.",
     "src": "https://registry.uog.edu.gy/srms/departments/7/programmes/804/details",
     "tr": [
+      "cape",
       "degree"
-    ]
+    ],
+    "id": "data-scientist-artificial-intelligence-or-machine-learning-specialist"
   },
   {
     "n": "Dentex / Dental Assistant / Dental Technician",
@@ -2330,10 +2410,12 @@ var CAREERS = [
     "gate": "the Guyana Dental Council registers dental practitioners, dentist extenders and dental technicians.",
     "dev": "",
     "jobs": "supervised dental-assisting, community-dental and technical roles; the actual title must match the completed credential and council category.",
+    "steam": "Science + Mathematics, supported by Technology and communication. This is preparation guidance, not an admission rule.",
     "src": "https://health.gov.gy/training-opportunities/",
     "tr": [
-      "degree"
-    ]
+      "cape"
+    ],
+    "id": "dentex-dental-assistant-dental-technician"
   },
   {
     "n": "Dentist",
@@ -2348,17 +2430,19 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "",
+    "steam": "Science + Mathematics, supported by Technology and communication. This is preparation guidance, not an admission rule.",
     "src": "https://www.turkeyenonline.uog.edu.gy/srms/student/prospective/about_applying/offeredprogs.php",
     "tr": [
+      "cape",
       "degree"
-    ]
+    ],
+    "id": "dentist"
   },
   {
     "n": "Diplomat / Foreign Service Officer",
     "s": "confirmed",
     "b": [
-      "public",
-      "law"
+      "public"
     ],
     "f13": "Read widely, write evidence-based arguments, debate respectfully and join supervised civic, service or communication activities.",
     "csec": "English A, English B, Social Studies, Caribbean History, Geography, Economics and a modern language; Mathematics remains useful.",
@@ -2367,11 +2451,14 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "",
+    "steam": "Communication/design + Mathematics + digital technology. This is preparation guidance, not an admission rule.",
     "src": "https://registry.uog.edu.gy/srms/departments/66/programmes/96/details",
     "tr": [
+      "cape",
       "degree",
       "service"
-    ]
+    ],
+    "id": "diplomat-foreign-service-officer"
   },
   {
     "n": "Disaster-Risk / Emergency-Management Professional",
@@ -2388,10 +2475,13 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "emergency-planning assistant, GIS/data assistant, logistics assistant, community-preparedness worker and response-agency trainee.",
+    "steam": "Communication/design + Mathematics + digital technology. This is preparation guidance, not an admission rule.",
     "src": "https://www.turkeyenonline.uog.edu.gy/srms/student/prospective/about_applying/offeredprogs.php",
     "tr": [
+      "cape",
       "degree"
-    ]
+    ],
+    "id": "disaster-risk-emergency-management-professional"
   },
   {
     "n": "Draughtsperson / CAD or BIM Technician",
@@ -2399,8 +2489,8 @@ var CAREERS = [
     "b": [
       "trade",
       "engineering",
-      "creative",
-      "tech"
+      "tech",
+      "creative"
     ],
     "f13": "Strengthen algebra, measurement, drawing and science through supervised design, CAD, model-building or problem-solving projects.",
     "csec": "English A, Mathematics, Physics, Chemistry or Integrated Science, Technical Drawing, Information Technology and Additional Mathematics where available. Technical Drawing, Mathematics, English, IT, Physics and Visual Arts.",
@@ -2409,10 +2499,14 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "CAD technician, drawing-office assistant, architectural technician and BIM trainee.",
+    "steam": "Science + Technology + Engineering + Mathematics. This is preparation guidance, not an admission rule.",
     "src": "https://registry.uog.edu.gy/srms/departments/70/programmes/884/details",
     "tr": [
-      "degree"
-    ]
+      "cape",
+      "degree",
+      "port"
+    ],
+    "id": "draughtsperson-cad-or-bim-technician"
   },
   {
     "n": "Early-Childhood / Childcare Worker",
@@ -2427,11 +2521,14 @@ var CAREERS = [
     "route": "Current TVET listings include Early Childhood Development Level I. Helpful subjects include English, Human and Social Biology, Social Studies and Family and Resource Management. First jobs include childcare/nursery assistant; teacher status requires an approved teacher-education route; see Teacher.",
     "gate": "",
     "dev": "",
-    "jobs": "",
+    "jobs": "childcare/nursery assistant; teacher status requires an approved teacher-education route; see Teacher",
+    "steam": "Communication/design + Mathematics + digital technology. This is preparation guidance, not an admission rule.",
     "src": "https://tvet.gov.gy/programs?institution=71",
     "tr": [
+      "cape",
       "tvet"
-    ]
+    ],
+    "id": "early-childhood-childcare-worker"
   },
   {
     "n": "Economics and Supply Chain",
@@ -2447,17 +2544,19 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "",
+    "steam": "Communication/design + Mathematics + digital technology. This is preparation guidance, not an admission rule.",
     "src": "https://www.turkeyenonline.uog.edu.gy/srms/student/prospective/about_applying/offeredprogs.php",
     "tr": [
+      "cape",
       "degree"
-    ]
+    ],
+    "id": "economics-and-supply-chain"
   },
   {
     "n": "Elected Office / Politics",
     "s": "portfolio",
     "b": [
-      "public",
-      "law"
+      "public"
     ],
     "f13": "Read widely, write evidence-based arguments, debate respectfully and join supervised civic, service or communication activities.",
     "csec": "English A, English B, Social Studies, Caribbean History, Geography, Economics and a modern language; Mathematics remains useful.",
@@ -2466,10 +2565,13 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "",
+    "steam": "Communication/design + Mathematics + digital technology. This is preparation guidance, not an admission rule.",
     "src": "",
     "tr": [
+      "cape",
       "degree"
-    ]
+    ],
+    "id": "elected-office-politics"
   },
   {
     "n": "Electrician / Electrical-Installation Technician",
@@ -2485,10 +2587,12 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "electrical-installation assistant, maintenance electrician trainee and electrical technician.",
+    "steam": "Science + Technology + Engineering + Mathematics. This is preparation guidance, not an admission rule.",
     "src": "https://tvet.gov.gy/programs?institution=74",
     "tr": [
       "tvet"
-    ]
+    ],
+    "id": "electrician-electrical-installation-technician"
   },
   {
     "n": "Emergency Medical Technician / Emergency Services Technician",
@@ -2504,10 +2608,12 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "ambulance/emergency-service roles after training, registration and employer selection.",
+    "steam": "Science + Technology + Engineering + Mathematics. This is preparation guidance, not an admission rule.",
     "src": "https://www.alliedhealthguyana.com/about",
     "tr": [
-      "degree"
-    ]
+      "cape"
+    ],
+    "id": "emergency-medical-technician-emergency-services-technician"
   },
   {
     "n": "Entrepreneur / Business Owner",
@@ -2522,10 +2628,13 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "",
+    "steam": "Communication/design + Mathematics + digital technology. This is preparation guidance, not an admission rule.",
     "src": "https://sbb.gov.gy/",
     "tr": [
+      "cape",
       "degree"
-    ]
+    ],
+    "id": "entrepreneur-business-owner"
   },
   {
     "n": "Environmental Scientist / Conservationist",
@@ -2542,18 +2651,21 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "",
+    "steam": "Science + Technology + Mathematics, supported by enterprise skills. This is preparation guidance, not an admission rule.",
     "src": "https://fees.uog.edu.gy/srms/departments/8/programmes/863/details",
     "tr": [
+      "cape",
       "degree"
-    ]
+    ],
+    "id": "environmental-scientist-conservationist"
   },
   {
     "n": "Fashion Designer / Garment Producer",
     "s": "portfolio",
     "b": [
       "trade",
-      "creative",
-      "business"
+      "business",
+      "creative"
     ],
     "f13": "Create original work, keep dated drafts, learn consent and copyright, and build a portfolio while maintaining core academics.",
     "csec": "English A plus the relevant creative subjects: Visual Arts, Music, Theatre Arts, Information Technology, EDPM and Principles of Business.",
@@ -2562,18 +2674,21 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "",
+    "steam": "Arts/design + Technology + communication, supported by Mathematics. This is preparation guidance, not an admission rule.",
     "src": "",
     "tr": [
+      "cape",
       "tvet"
-    ]
+    ],
+    "id": "fashion-designer-garment-producer"
   },
   {
     "n": "Filmmaker / Video Producer / Sound Professional",
     "s": "portfolio",
     "b": [
-      "creative",
       "tech",
-      "business"
+      "business",
+      "creative"
     ],
     "f13": "Create original work, keep dated drafts, learn consent and copyright, and build a portfolio while maintaining core academics.",
     "csec": "English A plus the relevant creative subjects: Visual Arts, Music, Theatre Arts, Information Technology, EDPM and Principles of Business.",
@@ -2582,10 +2697,13 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "",
+    "steam": "Arts/design + Technology + communication, supported by Mathematics. This is preparation guidance, not an admission rule.",
     "src": "",
     "tr": [
+      "cape",
       "port"
-    ]
+    ],
+    "id": "filmmaker-video-producer-sound-professional"
   },
   {
     "n": "Firefighter",
@@ -2601,10 +2719,13 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "",
+    "steam": "Communication/design + Mathematics + digital technology. This is preparation guidance, not an admission rule.",
     "src": "https://gfire.moha.gov.gy/locations/",
     "tr": [
+      "cape",
       "service"
-    ]
+    ],
+    "id": "firefighter"
   },
   {
     "n": "Fisheries / Aquaculture Technician",
@@ -2621,10 +2742,13 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "hatchery/farm assistant, fisheries data assistant, processing/quality assistant, aquaculture technician and fisheries-inspector trainee, subject to vacancy qualifications.",
+    "steam": "Science + Technology + Engineering + Mathematics. This is preparation guidance, not an admission rule.",
     "src": "https://education.gov.gy/en/index.php/media2/external-news/5695-aquaculture-training-empowers-teachers-to-prepare-students-for-work-2",
     "tr": [
-      "degree"
-    ]
+      "cape",
+      "tvet"
+    ],
+    "id": "fisheries-aquaculture-technician"
   },
   {
     "n": "Flight Dispatcher / Aviation-Operations Professional",
@@ -2632,7 +2756,8 @@ var CAREERS = [
     "b": [
       "engineering",
       "tech",
-      "business"
+      "business",
+      "transport"
     ],
     "f13": "develop Mathematics, Geography, English, IT, teamwork and attention to detail.",
     "csec": "Mathematics, English, Geography, Physics, IT and business subjects are useful.",
@@ -2641,17 +2766,21 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "flight-operations assistant, ground-operations agent, airport customer-service or cargo assistant and dispatcher trainee.",
+    "steam": "Communication/design + Mathematics + digital technology. This is preparation guidance, not an admission rule.",
     "src": "https://www.gcaa-gy.org/licensing-and-certification.html",
     "tr": [
+      "cape",
       "degree"
-    ]
+    ],
+    "id": "flight-dispatcher-aviation-operations-professional"
   },
   {
     "n": "Food-and-Drink / Bar-Service Worker",
     "s": "confirmed",
     "b": [
       "trade",
-      "business"
+      "business",
+      "hospitality"
     ],
     "f13": "Practise food safety, measurement, costing and supervised preparation; document recipes and service projects without using unsafe equipment unsupervised.",
     "csec": "English A, Mathematics, Food and Nutrition, Family and Resource Management, Integrated Science and Principles of Business.",
@@ -2659,29 +2788,13 @@ var CAREERS = [
     "route": "Routes include CVQ Food and Drinks Service or Bar Service, hospitality training and employer onboarding. First jobs include server, bar-service assistant and banquet/catering worker. Students and providers must follow age restrictions for alcohol-related duties.",
     "gate": "",
     "dev": "",
-    "jobs": "",
+    "jobs": "server, bar-service assistant and banquet/catering worker",
+    "steam": "Communication/design + Mathematics + digital technology. This is preparation guidance, not an admission rule.",
     "src": "https://tvet.gov.gy/programs?institution=71",
     "tr": [
       "tvet"
-    ]
-  },
-  {
-    "n": "Footballer",
-    "s": "portfolio",
-    "b": [
-      "sports"
     ],
-    "f13": "Develop safely in more than one activity, record verified performance, learn rules and injury prevention, and protect academic options.",
-    "csec": "English A, Mathematics, Physical Education and Sport, Biology or Human and Social Biology, Information Technology and Principles of Business.",
-    "cape": "Physical Education and Sport, Biology, Communication Studies, Entrepreneurship or Management of Business.",
-    "route": "Progression may run through school/private academies, GFF youth competitions, clubs, the Elite League and national teams. In 2026 the GFF launched a Youth Ensemble programme across U13, U15 and U17 levels and nine regional associations. Selection and sustained performance,not academic qualifications,control progression.",
-    "gate": "",
-    "dev": "",
-    "jobs": "",
-    "src": "https://www.guyanafootball.org/gff-fifa-youth-ensemble-programme-officially-kicks-off-in-historic-first-for-youth-football-in-guyana/",
-    "tr": [
-      "port"
-    ]
+    "id": "food-and-drink-bar-service-worker"
   },
   {
     "n": "Forester",
@@ -2697,19 +2810,22 @@ var CAREERS = [
     "route": "The current BSc Forestry page allows a direct CSEC route as well as other entry routes; a Forestry diploma is not universally required first. First jobs include forestry inventory, compliance, conservation, community forestry and private-sector operations.",
     "gate": "",
     "dev": "",
-    "jobs": "",
+    "jobs": "forestry inventory, compliance, conservation, community forestry and private-sector operations",
+    "steam": "Science + Technology + Mathematics, supported by enterprise skills. This is preparation guidance, not an admission rule.",
     "src": "https://faf.uog.edu.gy/srms/departments/61/programmes/862/details",
     "tr": [
+      "cape",
       "degree"
-    ]
+    ],
+    "id": "forester"
   },
   {
     "n": "Game / Animation / Interactive-Media Developer",
     "s": "confirmed",
     "b": [
-      "creative",
       "tech",
-      "business"
+      "business",
+      "creative"
     ],
     "f13": "Create original work, keep dated drafts, learn consent and copyright, and build a portfolio while maintaining core academics.",
     "csec": "English A plus the relevant creative subjects: Visual Arts, Music, Theatre Arts, Information Technology, EDPM and Principles of Business.",
@@ -2718,19 +2834,21 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "junior animator, asset creator, web/interactivity developer, video editor and game-development portfolio work.",
+    "steam": "Technology + Mathematics, supported by design and communication. This is preparation guidance, not an admission rule.",
     "src": "https://www.cxc.org/syllabus-downloads/",
     "tr": [
       "cape",
       "degree"
-    ]
+    ],
+    "id": "game-animation-interactive-media-developer"
   },
   {
     "n": "Garment Maker / Tailor or Fashion-Production Worker",
     "s": "confirmed",
     "b": [
       "trade",
-      "creative",
-      "business"
+      "business",
+      "creative"
     ],
     "f13": "Develop numeracy, measurement, drawing, tool safety and supervised practical problem-solving; keep evidence of completed projects.",
     "csec": "English A, Mathematics and the most relevant Industrial Technology, Technical Drawing, Information Technology, science or available CVQ/SCCP occupational subject.",
@@ -2739,10 +2857,12 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "sewing-machine operator, garment-production assistant, alteration/tailoring assistant and self-employed maker.",
+    "steam": "Arts/design + Technology + communication, supported by Mathematics. This is preparation guidance, not an admission rule.",
     "src": "https://tvet.gov.gy/programs?institution=71",
     "tr": [
       "tvet"
-    ]
+    ],
+    "id": "garment-maker-tailor-or-fashion-production-worker"
   },
   {
     "n": "GDF Officer Cadet",
@@ -2753,15 +2873,18 @@ var CAREERS = [
     "f13": "Build communication, fitness where relevant, civic knowledge, teamwork, service and accurate record-keeping through supervised school or community activities.",
     "csec": "English A, Mathematics, Social Studies, Caribbean History, Geography, Information Technology and Physical Education or a modern language where relevant.",
     "cape": "Communication Studies, Caribbean Studies, Law, Sociology, History, Geography, Economics, Information Technology or relevant sciences.",
-    "route": "The current GDF enlistment page publishes officer-cadet eligibility of 18,25 and academic routes including five Grades I/II in one sitting or six across two sittings, including English and Mathematics, or accepted technical qualifications. It lists local training and overseas possibilities including Sandhurst, Dartmouth and Brazil.",
+    "route": "The current GDF enlistment page publishes officer-cadet eligibility of 18 to 25 and academic routes including five Grades I/II in one sitting or six across two sittings, including English and Mathematics, or accepted technical qualifications. It lists local training and overseas possibilities including Sandhurst, Dartmouth and Brazil.",
     "gate": "",
     "dev": "",
     "jobs": "",
+    "steam": "Science + Technology + Engineering + Mathematics. This is preparation guidance, not an admission rule.",
     "src": "https://gdf.mil.gy/enlist/",
     "tr": [
+      "cape",
       "service",
       "port"
-    ]
+    ],
+    "id": "gdf-officer-cadet"
   },
   {
     "n": "GDF Soldier / Enlisted Rank",
@@ -2772,14 +2895,17 @@ var CAREERS = [
     "f13": "Build communication, fitness where relevant, civic knowledge, teamwork, service and accurate record-keeping through supervised school or community activities.",
     "csec": "English A, Mathematics, Social Studies, Caribbean History, Geography, Information Technology and Physical Education or a modern language where relevant.",
     "cape": "Communication Studies, Caribbean Studies, Law, Sociology, History, Geography, Economics, Information Technology or relevant sciences.",
-    "route": "The current enlistment page publishes soldier information, so it is no longer accurate to call the minimum unpublished. However, GDF pages are internally inconsistent: the main page states 18,25 and “good Primary Education,” while the FAQ currently shows a wider age range and at least secondary education. Use the active recruitment notice or confirm with GDF before encoding a hard rule.",
+    "route": "The current enlistment page publishes soldier information, so it is no longer accurate to call the minimum unpublished. However, GDF pages are internally inconsistent: the main page states 18 to 25 and “good Primary Education,” while the FAQ currently shows a wider age range and at least secondary education. Use the active recruitment notice or confirm with GDF before encoding a hard rule.",
     "gate": "",
     "dev": "",
     "jobs": "",
+    "steam": "Communication/design + Mathematics + digital technology. This is preparation guidance, not an admission rule.",
     "src": "https://gdf.mil.gy/enlist/",
     "tr": [
+      "cape",
       "service"
-    ]
+    ],
+    "id": "gdf-soldier-enlisted-rank"
   },
   {
     "n": "Geographer / GIS / Land-Valuation Professional",
@@ -2797,10 +2923,13 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "",
+    "steam": "Technology + Mathematics, supported by design and communication. This is preparation guidance, not an admission rule.",
     "src": "https://registry.uog.edu.gy/srms/departments/243/programmes/886/details",
     "tr": [
+      "cape",
       "degree"
-    ]
+    ],
+    "id": "geographer-gis-land-valuation-professional"
   },
   {
     "n": "Geologist / Mining Professional",
@@ -2815,18 +2944,21 @@ var CAREERS = [
     "route": "UG currently offers BSc Applied and Exploration Geology. Technical and safety training may also be available through mining-sector institutions, but an unsourced claim that “over 90% of trainees secure jobs” has been removed. First jobs include field/laboratory assistant, junior geologist, mine technician and regulatory roles, subject to vacancy requirements.",
     "gate": "",
     "dev": "",
-    "jobs": "",
+    "jobs": "field/laboratory assistant, junior geologist, mine technician and regulatory roles, subject to vacancy requirements",
+    "steam": "Technology + Mathematics, supported by design and communication. This is preparation guidance, not an admission rule.",
     "src": "https://registry.uog.edu.gy/srms/departments/254/programmes/1165/details",
     "tr": [
+      "cape",
       "degree"
-    ]
+    ],
+    "id": "geologist-mining-professional"
   },
   {
     "n": "Graphic Designer / UX Designer / Animator",
     "s": "portfolio",
     "b": [
-      "creative",
-      "tech"
+      "tech",
+      "creative"
     ],
     "f13": "Create original work, keep dated drafts, learn consent and copyright, and build a portfolio while maintaining core academics.",
     "csec": "English A plus the relevant creative subjects: Visual Arts, Music, Theatre Arts, Information Technology, EDPM and Principles of Business.",
@@ -2835,19 +2967,22 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "",
+    "steam": "Arts/design + Technology + communication, supported by Mathematics. This is preparation guidance, not an admission rule.",
     "src": "",
     "tr": [
+      "cape",
       "degree",
       "port"
-    ]
+    ],
+    "id": "graphic-designer-ux-designer-animator"
   },
   {
     "n": "Graphic-Arts / Print-Production Worker",
     "s": "confirmed",
     "b": [
       "trade",
-      "creative",
-      "tech"
+      "tech",
+      "creative"
     ],
     "f13": "Create original work, keep dated drafts, learn consent and copyright, and build a portfolio while maintaining core academics.",
     "csec": "English A plus the relevant creative subjects: Visual Arts, Music, Theatre Arts, Information Technology, EDPM and Principles of Business.",
@@ -2855,12 +2990,15 @@ var CAREERS = [
     "route": "Graphic Arts is offered through school/practical-centre TVET in some locations. Helpful subjects include Visual Arts, IT, English and business. First jobs include print-shop assistant, layout/production assistant and sign/graphics trainee; UX and higher-level digital design remain portfolio and technology pathways; see Graphic Designer / UX Designer / Animator.",
     "gate": "",
     "dev": "",
-    "jobs": "",
+    "jobs": "print-shop assistant, layout/production assistant and sign/graphics trainee; UX and higher-level digital design remain portfolio and technology pathways; see Graphic Designer / UX",
+    "steam": "Arts/design + Technology + communication, supported by Mathematics. This is preparation guidance, not an admission rule.",
     "src": "https://dpi.gov.gy/minister-of-education-commissions-us1-9m-hopetown-practical-instructional-centre/",
     "tr": [
+      "cape",
       "tvet",
       "port"
-    ]
+    ],
+    "id": "graphic-arts-print-production-worker"
   },
   {
     "n": "Guidance Counsellor / School Psychologist",
@@ -2876,10 +3014,12 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "",
+    "steam": "Science + Mathematics, supported by Technology and communication. This is preparation guidance, not an admission rule.",
     "src": "",
     "tr": [
-      "degree"
-    ]
+      "cape"
+    ],
+    "id": "guidance-counsellor-school-psychologist"
   },
   {
     "n": "Health-Information / Medical-Records Professional",
@@ -2896,10 +3036,13 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "records clerk, patient-information assistant, coding/data assistant and health-information trainee.",
+    "steam": "Science + Mathematics, supported by Technology and communication. This is preparation guidance, not an admission rule.",
     "src": "https://registry.uog.edu.gy/srms/departments/7/programmes/805/details",
     "tr": [
+      "cape",
       "degree"
-    ]
+    ],
+    "id": "health-information-medical-records-professional"
   },
   {
     "n": "Heavy-Equipment / Agricultural-Machinery Mechanic",
@@ -2907,7 +3050,8 @@ var CAREERS = [
     "b": [
       "trade",
       "engineering",
-      "agri"
+      "agri",
+      "transport"
     ],
     "f13": "Develop numeracy, measurement, drawing, tool safety and supervised practical problem-solving; keep evidence of completed projects.",
     "csec": "English A, Mathematics and the most relevant Industrial Technology, Technical Drawing, Information Technology, science or available CVQ/SCCP occupational subject.",
@@ -2915,11 +3059,13 @@ var CAREERS = [
     "route": "This is a maintenance career, not the same as operating machinery. The TVET Hub lists Agricultural Machinery Service and Repairs and Heavy Equipment Maintenance at current institutions. First jobs include maintenance assistant, diesel/heavy-equipment technician trainee and agricultural-machinery mechanic.",
     "gate": "",
     "dev": "",
-    "jobs": "",
+    "jobs": "maintenance assistant, diesel/heavy-equipment technician trainee and agricultural-machinery mechanic",
+    "steam": "Science + Technology + Engineering + Mathematics. This is preparation guidance, not an admission rule.",
     "src": "https://tvet.gov.gy/programs?institution=68",
     "tr": [
       "tvet"
-    ]
+    ],
+    "id": "heavy-equipment-agricultural-machinery-mechanic"
   },
   {
     "n": "Heavy-Equipment Operator",
@@ -2927,7 +3073,8 @@ var CAREERS = [
     "b": [
       "trade",
       "engineering",
-      "agri"
+      "agri",
+      "transport"
     ],
     "f13": "Develop numeracy, measurement, drawing, tool safety and supervised practical problem-solving; keep evidence of completed projects.",
     "csec": "English A, Mathematics and the most relevant Industrial Technology, Technical Drawing, Information Technology, science or available CVQ/SCCP occupational subject.",
@@ -2936,17 +3083,20 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "",
+    "steam": "Science + Technology + Engineering + Mathematics. This is preparation guidance, not an admission rule.",
     "src": "https://dpi.gov.gy/9331-women-trained-through-bit-over-five-years/",
     "tr": [
       "tvet"
-    ]
+    ],
+    "id": "heavy-equipment-operator"
   },
   {
     "n": "Hospitality / Tourism-Operations Worker",
     "s": "varies",
     "b": [
       "trade",
-      "business"
+      "business",
+      "hospitality"
     ],
     "f13": "Practise budgeting, spreadsheets, communication, ethical selling, teamwork and accurate records through low-risk supervised projects.",
     "csec": "English A, Mathematics, Principles of Accounts, Principles of Business, Economics, EDPM, Office Administration and Information Technology as available.",
@@ -2954,17 +3104,21 @@ var CAREERS = [
     "route": "TVET routes include housekeeping, food-and-drink service, bar service, cookery and other provider-specific tourism/hospitality programmes. First jobs include front-of-house, guest-service, lodge, food-service and operations assistant. Tour guiding and tourism-business licensing are separate pathways; see Tour Guide / Tourism Officer.",
     "gate": "",
     "dev": "",
-    "jobs": "",
+    "jobs": "front-of-house, guest-service, lodge, food-service and operations assistant",
+    "steam": "Communication/design + Mathematics + digital technology. This is preparation guidance, not an admission rule.",
     "src": "",
     "tr": [
+      "cape",
       "tvet"
-    ]
+    ],
+    "id": "hospitality-tourism-operations-worker"
   },
   {
     "n": "Hotel / Resort Manager",
     "s": "confirmed",
     "b": [
-      "business"
+      "business",
+      "hospitality"
     ],
     "f13": "Practise budgeting, spreadsheets, communication, ethical selling, teamwork and accurate records through low-risk supervised projects.",
     "csec": "English A, Mathematics, Principles of Accounts, Principles of Business, Economics, EDPM, Office Administration and Information Technology as available.",
@@ -2973,18 +3127,22 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "",
+    "steam": "Communication/design + Mathematics + digital technology. This is preparation guidance, not an admission rule.",
     "src": "https://www.turkeyenonline.uog.edu.gy/srms/student/prospective/about_applying/offeredprogs.php",
     "tr": [
+      "cape",
       "degree",
       "tvet"
-    ]
+    ],
+    "id": "hotel-resort-manager"
   },
   {
     "n": "Housekeeping / Accommodation-Services Worker",
     "s": "confirmed",
     "b": [
       "trade",
-      "business"
+      "business",
+      "hospitality"
     ],
     "f13": "Develop numeracy, measurement, drawing, tool safety and supervised practical problem-solving; keep evidence of completed projects.",
     "csec": "English A, Mathematics and the most relevant Industrial Technology, Technical Drawing, Information Technology, science or available CVQ/SCCP occupational subject. English, Mathematics, Food and Nutrition, Family and Resource Management and business subjects.",
@@ -2993,17 +3151,18 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "room attendant, housekeeping assistant, laundry worker and accommodation-services trainee.",
+    "steam": "Communication/design + Mathematics + digital technology. This is preparation guidance, not an admission rule.",
     "src": "https://tvet.gov.gy/programs?institution=71",
     "tr": [
       "tvet"
-    ]
+    ],
+    "id": "housekeeping-accommodation-services-worker"
   },
   {
     "n": "Human Resources Professional",
     "s": "varies",
     "b": [
-      "business",
-      "law"
+      "business"
     ],
     "f13": "Practise budgeting, spreadsheets, communication, ethical selling, teamwork and accurate records through low-risk supervised projects.",
     "csec": "English A, Mathematics, Principles of Accounts, Principles of Business, Economics, EDPM, Office Administration and Information Technology as available.",
@@ -3012,10 +3171,12 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "",
+    "steam": "Communication/design + Mathematics + digital technology. This is preparation guidance, not an admission rule.",
     "src": "",
     "tr": [
-      "degree"
-    ]
+      "cape"
+    ],
+    "id": "human-resources-professional"
   },
   {
     "n": "ICT / Data-Processing Support Worker",
@@ -3031,17 +3192,19 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "computer-lab assistant, data-processing clerk, junior help-desk assistant and digital-services trainee.",
+    "steam": "Technology + Mathematics, supported by design and communication. This is preparation guidance, not an admission rule.",
     "src": "",
     "tr": [
+      "cape",
       "tvet"
-    ]
+    ],
+    "id": "ict-data-processing-support-worker"
   },
   {
     "n": "Immigration Officer",
     "s": "varies",
     "b": [
-      "public",
-      "law"
+      "public"
     ],
     "f13": "Build communication, fitness where relevant, civic knowledge, teamwork, service and accurate record-keeping through supervised school or community activities.",
     "csec": "English A, Mathematics, Social Studies, Caribbean History, Geography, Information Technology and Physical Education or a modern language where relevant.",
@@ -3050,10 +3213,13 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "",
+    "steam": "Communication/design + Mathematics + digital technology. This is preparation guidance, not an admission rule.",
     "src": "https://moha.gov.gy/list-of-agencies/",
     "tr": [
+      "cape",
       "service"
-    ]
+    ],
+    "id": "immigration-officer"
   },
   {
     "n": "Industrial / Manufacturing Engineer",
@@ -3070,10 +3236,13 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "production trainee, quality assistant, maintenance planner, process-improvement analyst and industrial-engineering technician.",
+    "steam": "Science + Technology + Engineering + Mathematics. This is preparation guidance, not an admission rule.",
     "src": "https://registry.uog.edu.gy/srms/departments/72/programmes/857/details",
     "tr": [
+      "cape",
       "degree"
-    ]
+    ],
+    "id": "industrial-manufacturing-engineer"
   },
   {
     "n": "Instrumentation / Process or Production Technician",
@@ -3090,17 +3259,19 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "instrumentation trainee, plant/process-operator trainee, production technician and maintenance technician.",
+    "steam": "Science + Technology + Engineering + Mathematics. This is preparation guidance, not an admission rule.",
     "src": "",
     "tr": [
-      "degree"
-    ]
+      "tvet"
+    ],
+    "id": "instrumentation-process-or-production-technician"
   },
   {
     "n": "Insurance / AML / Compliance Professional",
     "s": "varies",
     "b": [
       "business",
-      "law"
+      "public"
     ],
     "f13": "build numeracy, written communication, digital literacy and careful record-keeping.",
     "csec": "Mathematics, English, Principles of Accounts, Principles of Business and Economics are useful; work on spreadsheet and report-writing skills.",
@@ -3109,18 +3280,20 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "underwriting assistant, claims assistant, compliance assistant, KYC/onboarding officer and risk or audit trainee.",
+    "steam": "Communication/design + Mathematics + digital technology. This is preparation guidance, not an admission rule.",
     "src": "",
     "tr": [
       "degree"
-    ]
+    ],
+    "id": "insurance-aml-compliance-professional"
   },
   {
     "n": "Interior-Decoration Worker",
     "s": "confirmed",
     "b": [
       "trade",
-      "creative",
-      "business"
+      "business",
+      "creative"
     ],
     "f13": "Create original work, keep dated drafts, learn consent and copyright, and build a portfolio while maintaining core academics.",
     "csec": "English A plus the relevant creative subjects: Visual Arts, Music, Theatre Arts, Information Technology, EDPM and Principles of Business.",
@@ -3129,10 +3302,13 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "",
+    "steam": "Arts/design + Technology + communication, supported by Mathematics. This is preparation guidance, not an admission rule.",
     "src": "https://tvet.gov.gy/programs?institution=71",
     "tr": [
+      "cape",
       "tvet"
-    ]
+    ],
+    "id": "interior-decoration-worker"
   },
   {
     "n": "IT Support / Network Technician",
@@ -3147,18 +3323,19 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "help-desk technician, desktop-support assistant, network technician and systems-support trainee.",
+    "steam": "Science + Technology + Engineering + Mathematics. This is preparation guidance, not an admission rule.",
     "src": "https://fns.uog.edu.gy/department-computer-science/our-programmes/associate-science-asc-information-technology",
     "tr": [
+      "cape",
       "degree"
-    ]
+    ],
+    "id": "it-support-network-technician"
   },
   {
     "n": "Journalist / Broadcaster / Communications Professional",
     "s": "confirmed",
     "b": [
-      "creative",
-      "public",
-      "law"
+      "creative"
     ],
     "f13": "Create original work, keep dated drafts, learn consent and copyright, and build a portfolio while maintaining core academics.",
     "csec": "English A plus the relevant creative subjects: Visual Arts, Music, Theatre Arts, Information Technology, EDPM and Principles of Business.",
@@ -3167,11 +3344,14 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "",
+    "steam": "Arts/design + Technology + communication, supported by Mathematics. This is preparation guidance, not an admission rule.",
     "src": "https://fss.uog.edu.gy/srms/departments/198/programmes/555/details",
     "tr": [
+      "cape",
       "degree",
       "port"
-    ]
+    ],
+    "id": "journalist-broadcaster-communications-professional"
   },
   {
     "n": "Laboratory Scientist / Researcher",
@@ -3188,10 +3368,13 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "",
+    "steam": "Science + Mathematics, supported by Technology and communication. This is preparation guidance, not an admission rule.",
     "src": "",
     "tr": [
+      "cape",
       "degree"
-    ]
+    ],
+    "id": "laboratory-scientist-researcher"
   },
   {
     "n": "Land Surveyor",
@@ -3207,17 +3390,19 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "",
+    "steam": "Science + Technology + Engineering + Mathematics. This is preparation guidance, not an admission rule.",
     "src": "",
     "tr": [
+      "cape",
       "degree"
-    ]
+    ],
+    "id": "land-surveyor"
   },
   {
     "n": "Lawyer / Attorney-at-Law",
     "s": "confirmed",
     "b": [
-      "public",
-      "law"
+      "public"
     ],
     "f13": "Read widely, write evidence-based arguments, debate respectfully and join supervised civic, service or communication activities.",
     "csec": "English A, English B, Social Studies, Caribbean History, Geography, Economics and a modern language; Mathematics remains useful. English, History, Communication Studies and other writing-intensive subjects.",
@@ -3226,19 +3411,20 @@ var CAREERS = [
     "gate": "the current regional arrangement gives 25 Guyanese UG graduates annual direct access to the Hugh Wooding Law School two-year Legal Education Certificate; other routes may require the Council of Legal Education entrance process.",
     "dev": "a regional law school in Guyana was at the design-tender stage in July 2026. It is not yet an operating substitute for Hugh Wooding, but the government says it is intended to remove the present cap.",
     "jobs": "",
+    "steam": "Communication/design + Mathematics + digital technology. This is preparation guidance, not an admission rule.",
     "src": "https://fss.uog.edu.gy/srms/departments/62/programmes/571/details",
     "tr": [
       "cape",
       "degree"
-    ]
+    ],
+    "id": "lawyer-attorney-at-law"
   },
   {
     "n": "Lecturer / Academic Researcher",
     "s": "varies",
     "b": [
       "science",
-      "education",
-      "law"
+      "education"
     ],
     "f13": "Read, explain ideas, tutor peers and volunteer in supervised youth activities to test interest in teaching and support work.",
     "csec": "English A, Mathematics, Information Technology and strong passes in the subjects the student may later teach.",
@@ -3247,19 +3433,20 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "",
+    "steam": "Science + Technology + Engineering + Mathematics. This is preparation guidance, not an admission rule.",
     "src": "",
     "tr": [
-      "degree"
-    ]
+      "cape"
+    ],
+    "id": "lecturer-academic-researcher"
   },
   {
     "n": "Librarian / Archivist / Museum or Heritage Professional",
     "s": "varies",
     "b": [
       "education",
-      "creative",
       "tech",
-      "law"
+      "creative"
     ],
     "f13": "Create original work, keep dated drafts, learn consent and copyright, and build a portfolio while maintaining core academics.",
     "csec": "English A plus the relevant creative subjects: Visual Arts, Music, Theatre Arts, Information Technology, EDPM and Principles of Business.",
@@ -3268,17 +3455,20 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "library assistant, records assistant, archive assistant, museum education assistant and collections/digitisation trainee.",
+    "steam": "Communication/design + Mathematics + digital technology. This is preparation guidance, not an admission rule.",
     "src": "",
     "tr": [
-      "degree"
-    ]
+      "cape"
+    ],
+    "id": "librarian-archivist-museum-or-heritage-professional"
   },
   {
     "n": "Logistics, Port and Transportation Professional",
     "s": "confirmed",
     "b": [
       "engineering",
-      "business"
+      "business",
+      "transport"
     ],
     "f13": "build Mathematics, Geography, English, IT, teamwork and organised record-keeping.",
     "csec": "Mathematics, English, Geography, EDPM/IT, Principles of Accounts, Principles of Business and Economics are useful.",
@@ -3287,11 +3477,14 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "warehouse or inventory clerk, logistics assistant, procurement assistant, shipping-documentation clerk, cargo assistant and port-operations trainee.",
+    "steam": "Technology + Mathematics, supported by design and communication. This is preparation guidance, not an admission rule.",
     "src": "https://www.turkeyenonline.uog.edu.gy/srms/student/prospective/about_applying/offeredprogs.php",
     "tr": [
+      "cape",
       "degree",
       "tvet"
-    ]
+    ],
+    "id": "logistics-port-and-transportation-professional"
   },
   {
     "n": "Machinist / Millwright / Industrial-Maintenance Technician",
@@ -3307,18 +3500,19 @@ var CAREERS = [
     "route": "machining, mechanical, industrial-engineering or maintenance training followed by supervised plant experience. No single continuously available national route was confirmed for all three titles. First jobs include machine-shop assistant, mechanical-maintenance trainee and millwright helper.",
     "gate": "",
     "dev": "",
-    "jobs": "",
+    "jobs": "machine-shop assistant, mechanical-maintenance trainee and millwright helper",
+    "steam": "Science + Technology + Engineering + Mathematics. This is preparation guidance, not an admission rule.",
     "src": "",
     "tr": [
-      "degree"
-    ]
+      "tvet"
+    ],
+    "id": "machinist-millwright-industrial-maintenance-technician"
   },
   {
     "n": "Magistrate / Judge",
     "s": "varies",
     "b": [
-      "public",
-      "law"
+      "public"
     ],
     "f13": "Read widely, write evidence-based arguments, debate respectfully and join supervised civic, service or communication activities.",
     "csec": "English A, English B, Social Studies, Caribbean History, Geography, Economics and a modern language; Mathematics remains useful.",
@@ -3327,10 +3521,12 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "",
+    "steam": "Technology + Mathematics, supported by design and communication. This is preparation guidance, not an admission rule.",
     "src": "",
     "tr": [
-      "degree"
-    ]
+      "cape"
+    ],
+    "id": "magistrate-judge"
   },
   {
     "n": "Marine Biologist / Blue-Economy Professional",
@@ -3346,17 +3542,20 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "",
+    "steam": "Technology + Mathematics, supported by design and communication. This is preparation guidance, not an admission rule.",
     "src": "https://uog.edu.gy/press-release-ug-opens-pioneering-institute-marine-and-riverine-ecologies-and-economies-berbice",
     "tr": [
+      "cape",
       "degree"
-    ]
+    ],
+    "id": "marine-biologist-blue-economy-professional"
   },
   {
     "n": "Marketing / Advertising Professional",
     "s": "confirmed",
     "b": [
-      "creative",
-      "business"
+      "business",
+      "creative"
     ],
     "f13": "Create original work, keep dated drafts, learn consent and copyright, and build a portfolio while maintaining core academics.",
     "csec": "English A plus the relevant creative subjects: Visual Arts, Music, Theatre Arts, Information Technology, EDPM and Principles of Business. English, business subjects, visual arts and information technology.",
@@ -3365,11 +3564,14 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "marketing assistant, sales-development representative, communications assistant, social-media coordinator and junior designer.",
+    "steam": "Communication/design + Mathematics + digital technology. This is preparation guidance, not an admission rule.",
     "src": "https://www.sebi.uog.edu.gy/srms/departments/248/programmes/869/details",
     "tr": [
+      "cape",
       "degree",
       "port"
-    ]
+    ],
+    "id": "marketing-advertising-professional"
   },
   {
     "n": "Mason / Concrete or Construction-Finishing Worker",
@@ -3385,16 +3587,20 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "mason's assistant, block/concrete worker, tiling or finishing trainee. Site supervision is an experienced role, not an automatic Level 1 outcome.",
+    "steam": "Science + Technology + Engineering + Mathematics. This is preparation guidance, not an admission rule.",
     "src": "https://dpi.gov.gy/225m-beterverwagting-practical-instructional-centre-commissioned/",
     "tr": [
+      "cape",
       "tvet"
-    ]
+    ],
+    "id": "mason-concrete-or-construction-finishing-worker"
   },
   {
     "n": "Medex / Community Health Worker",
     "s": "confirmed",
     "b": [
-      "science"
+      "science",
+      "education"
     ],
     "f13": "strengthen English, Mathematics, Biology/Human and Social Biology and community-service skills.",
     "csec": "for the direct Medex alternative pathway, preserve English, Mathematics and at least one accepted science. The current Ministry page publishes five CSEC subjects for this route.",
@@ -3403,10 +3609,13 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "community health work and supervised public-health assignments. The Ministry describes progression from Community Health Worker toward Nursing Assistant, Registered Nurse",
+    "steam": "Science + Mathematics, supported by Technology and communication. This is preparation guidance, not an admission rule.",
     "src": "https://health.gov.gy/training-opportunities/",
     "tr": [
+      "cape",
       "health"
-    ]
+    ],
+    "id": "medex-community-health-worker"
   },
   {
     "n": "Medical Doctor",
@@ -3421,11 +3630,13 @@ var CAREERS = [
     "gate": "registration with the Medical Council of Guyana, supervised internship and the appropriate institutional/full-registration steps.",
     "dev": "",
     "jobs": "supervised internship and public/private hospital appointments; employment, bond and placement terms depend on the intake and sponsor.",
+    "steam": "Science + Mathematics, supported by Technology and communication. This is preparation guidance, not an admission rule.",
     "src": "https://registry.uog.edu.gy/srms/departments/259/programmes/1169/details",
     "tr": [
       "cape",
       "degree"
-    ]
+    ],
+    "id": "medical-doctor"
   },
   {
     "n": "Medical Laboratory and Environmental Health",
@@ -3441,10 +3652,13 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "",
+    "steam": "Science + Mathematics, supported by Technology and communication. This is preparation guidance, not an admission rule.",
     "src": "https://health.gov.gy/training-opportunities/",
     "tr": [
+      "cape",
       "degree"
-    ]
+    ],
+    "id": "medical-laboratory-and-environmental-health"
   },
   {
     "n": "Mining Engineer / Mineral-Processing Technician",
@@ -3462,17 +3676,20 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "mine technician trainee, sampling assistant, plant/process assistant, survey assistant and health-and-safety trainee.",
+    "steam": "Science + Technology + Engineering + Mathematics. This is preparation guidance, not an admission rule.",
     "src": "https://www.turkeyenonline.uog.edu.gy/srms/student/prospective/about_applying/offeredprogs.php",
     "tr": [
+      "cape",
       "degree"
-    ]
+    ],
+    "id": "mining-engineer-mineral-processing-technician"
   },
   {
     "n": "Musician / Performing Artist",
     "s": "portfolio",
     "b": [
-      "creative",
-      "business"
+      "business",
+      "creative"
     ],
     "f13": "Create original work, keep dated drafts, learn consent and copyright, and build a portfolio while maintaining core academics.",
     "csec": "English A plus the relevant creative subjects: Visual Arts, Music, Theatre Arts, Information Technology, EDPM and Principles of Business.",
@@ -3481,18 +3698,21 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "",
+    "steam": "Arts/design + Technology + communication, supported by Mathematics. This is preparation guidance, not an admission rule.",
     "src": "",
     "tr": [
+      "cape",
       "port"
-    ]
+    ],
+    "id": "musician-performing-artist"
   },
   {
     "n": "NGO / International-Organisation Professional",
     "s": "varies",
     "b": [
+      "education",
       "business",
-      "public",
-      "law"
+      "public"
     ],
     "f13": "Read widely, write evidence-based arguments, debate respectfully and join supervised civic, service or communication activities.",
     "csec": "English A, English B, Social Studies, Caribbean History, Geography, Economics and a modern language; Mathematics remains useful.",
@@ -3501,10 +3721,13 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "",
+    "steam": "Communication/design + Mathematics + digital technology. This is preparation guidance, not an admission rule.",
     "src": "",
     "tr": [
+      "cape",
       "degree"
-    ]
+    ],
+    "id": "ngo-international-organisation-professional"
   },
   {
     "n": "Nurse / Midwife",
@@ -3519,11 +3742,14 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "",
+    "steam": "Science + Mathematics, supported by Technology and communication. This is preparation guidance, not an admission rule.",
     "src": "https://health.gov.gy/training-opportunities/",
     "tr": [
+      "cape",
       "degree",
       "health"
-    ]
+    ],
+    "id": "nurse-midwife"
   },
   {
     "n": "Nutritionist / Dietitian / Food Scientist",
@@ -3539,11 +3765,14 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "",
+    "steam": "Science + Mathematics, supported by Technology and communication. This is preparation guidance, not an admission rule.",
     "src": "https://fns.uog.edu.gy/srms/departments/5/programmes/895/details",
     "tr": [
+      "cape",
       "degree",
       "tvet"
-    ]
+    ],
+    "id": "nutritionist-dietitian-food-scientist"
   },
   {
     "n": "Occupational Safety and Health Officer",
@@ -3559,10 +3788,13 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "safety assistant, site-safety representative and HSE trainee; “HSE manager” is an experienced role.",
+    "steam": "Science + Mathematics, supported by Technology and communication. This is preparation guidance, not an admission rule.",
     "src": "https://www.turkeyenonline.uog.edu.gy/srms/student/prospective/about_applying/offeredprogs.php",
     "tr": [
+      "cape",
       "degree"
-    ]
+    ],
+    "id": "occupational-safety-and-health-officer"
   },
   {
     "n": "Ocean-Going Ship's Officer / Maritime Professional",
@@ -3570,7 +3802,8 @@ var CAREERS = [
     "b": [
       "trade",
       "engineering",
-      "business"
+      "business",
+      "transport"
     ],
     "f13": "Practise budgeting, spreadsheets, communication, ethical selling, teamwork and accurate records through low-risk supervised projects.",
     "csec": "English A, Mathematics, Principles of Accounts, Principles of Business, Economics, EDPM, Office Administration and Information Technology as available.",
@@ -3579,10 +3812,12 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "",
+    "steam": "Science + Technology + Engineering + Mathematics. This is preparation guidance, not an admission rule.",
     "src": "",
     "tr": [
-      "degree"
-    ]
+      "cape"
+    ],
+    "id": "ocean-going-ship-s-officer-maritime-professional"
   },
   {
     "n": "Office Administration / Customer Service / Sales",
@@ -3598,11 +3833,13 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "receptionist, administrative assistant, records/data clerk, customer-service representative, retail associate and sales assistant.",
+    "steam": "Communication/design + Mathematics + digital technology. This is preparation guidance, not an admission rule.",
     "src": "https://education.gov.gy/en/index.php/media2/external-news/5053-job-ready-technical-skills-for-all-secondary-students-in-the-future",
     "tr": [
       "degree",
       "tvet"
-    ]
+    ],
+    "id": "office-administration-customer-service-sales"
   },
   {
     "n": "Office Clerk / Business-Administration or Data-Operations Worker",
@@ -3618,17 +3855,21 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "office clerk, records assistant, data-entry operator, administrative assistant and inventory clerk.",
+    "steam": "Technology + Mathematics, supported by design and communication. This is preparation guidance, not an admission rule.",
     "src": "https://tvet.gov.gy/programs?institution=73",
     "tr": [
+      "cape",
       "tvet"
-    ]
+    ],
+    "id": "office-clerk-business-administration-or-data-operations-worker"
   },
   {
     "n": "Older-Adult / Care-Support Worker",
     "s": "confirmed",
     "b": [
       "science",
-      "trade"
+      "trade",
+      "education"
     ],
     "f13": "Develop numeracy, measurement, drawing, tool safety and supervised practical problem-solving; keep evidence of completed projects.",
     "csec": "English A, Mathematics and the most relevant Industrial Technology, Technical Drawing, Information Technology, science or available CVQ/SCCP occupational subject.",
@@ -3636,12 +3877,14 @@ var CAREERS = [
     "route": "Current TVET listings include Care of the Older Adult Level 2, while the Ministry of Health lists Patient Care Assistant training. First jobs include care assistant and home-support worker. A vocational care certificate is not a nursing licence.",
     "gate": "",
     "dev": "",
-    "jobs": "",
+    "jobs": "care assistant and home-support worker",
+    "steam": "Communication/design + Mathematics + digital technology. This is preparation guidance, not an admission rule.",
     "src": "https://tvet.gov.gy/programs?institution=71",
     "tr": [
       "tvet",
       "health"
-    ]
+    ],
+    "id": "older-adult-care-support-worker"
   },
   {
     "n": "Optometrist",
@@ -3656,11 +3899,14 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "",
+    "steam": "Science + Mathematics, supported by Technology and communication. This is preparation guidance, not an admission rule.",
     "src": "https://cms.uog.edu.gy/school-medicine/bachelor-science-optometry",
     "tr": [
+      "cape",
       "degree",
       "health"
-    ]
+    ],
+    "id": "optometrist"
   },
   {
     "n": "Other Protective and Emergency Careers",
@@ -3676,10 +3922,13 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "",
+    "steam": "Communication/design + Mathematics + digital technology. This is preparation guidance, not an admission rule.",
     "src": "",
     "tr": [
+      "cape",
       "service"
-    ]
+    ],
+    "id": "other-protective-and-emergency-careers"
   },
   {
     "n": "Painter / Decorator / Furniture Finisher",
@@ -3695,18 +3944,19 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "painter's assistant, decorator, furniture finisher and surface-preparation worker.",
+    "steam": "Arts/design + Technology + communication, supported by Mathematics. This is preparation guidance, not an admission rule.",
     "src": "https://tvet.gov.gy/programs",
     "tr": [
       "tvet"
-    ]
+    ],
+    "id": "painter-decorator-furniture-finisher"
   },
   {
     "n": "Paralegal / Legal Clerk / Court Administrator",
     "s": "varies",
     "b": [
       "business",
-      "public",
-      "law"
+      "public"
     ],
     "f13": "Build communication, fitness where relevant, civic knowledge, teamwork, service and accurate record-keeping through supervised school or community activities.",
     "csec": "English A, Mathematics, Social Studies, Caribbean History, Geography, Information Technology and Physical Education or a modern language where relevant.",
@@ -3715,10 +3965,12 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "legal clerk, registry clerk, case-file assistant, court administrative assistant and compliance assistant, subject to vacancy requirements.",
+    "steam": "Communication/design + Mathematics + digital technology. This is preparation guidance, not an admission rule.",
     "src": "https://registry.uog.edu.gy/srms/departments/62/programmes/571/details",
     "tr": [
-      "degree"
-    ]
+      "cape"
+    ],
+    "id": "paralegal-legal-clerk-court-administrator"
   },
   {
     "n": "Petroleum Engineer / Petroleum Technician",
@@ -3735,10 +3987,13 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "",
+    "steam": "Science + Technology + Engineering + Mathematics. This is preparation guidance, not an admission rule.",
     "src": "https://registry.uog.edu.gy/srms/departments/254/programmes/898/details",
     "tr": [
+      "cape",
       "degree"
-    ]
+    ],
+    "id": "petroleum-engineer-petroleum-technician"
   },
   {
     "n": "Pharmacist / Pharmacy Technician",
@@ -3753,11 +4008,13 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "",
+    "steam": "Science + Mathematics, supported by Technology and communication. This is preparation guidance, not an admission rule.",
     "src": "https://cms.uog.edu.gy/department-pharmacy/bachelor-science-pharmacy",
     "tr": [
       "cape",
       "degree"
-    ]
+    ],
+    "id": "pharmacist-pharmacy-technician"
   },
   {
     "n": "Physiotherapist / Rehabilitation Professional",
@@ -3772,17 +4029,21 @@ var CAREERS = [
     "gate": "Physiotherapist, Physical Therapist, Occupational Therapist, Rehabilitation Assistant and Speech-Language/Audiology categories are regulated by the Allied Health Professions Council.",
     "dev": "",
     "jobs": "",
+    "steam": "Science + Mathematics, supported by Technology and communication. This is preparation guidance, not an admission rule.",
     "src": "https://registry.uog.edu.gy/srms/departments/259/programmes/1154/details",
     "tr": [
+      "cape",
       "degree"
-    ]
+    ],
+    "id": "physiotherapist-rehabilitation-professional"
   },
   {
     "n": "Pilot",
     "s": "confirmed",
     "b": [
       "engineering",
-      "tech"
+      "tech",
+      "transport"
     ],
     "f13": "Strengthen algebra, measurement, drawing and science through supervised design, CAD, model-building or problem-solving projects.",
     "csec": "English A, Mathematics, Physics, Chemistry or Integrated Science, Technical Drawing, Information Technology and Additional Mathematics where available.",
@@ -3791,10 +4052,12 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "",
+    "steam": "Science + Technology + Engineering + Mathematics. This is preparation guidance, not an admission rule.",
     "src": "https://aslgy.com/about/company",
     "tr": [
-      "degree"
-    ]
+      "cape"
+    ],
+    "id": "pilot"
   },
   {
     "n": "Plumber / Pipefitter",
@@ -3810,10 +4073,12 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "plumbing assistant, maintenance plumber and water-services installer. Industrial pipefitting requires additional drawing, material, pressure-system and safety competencies.",
+    "steam": "Science + Technology + Engineering + Mathematics. This is preparation guidance, not an admission rule.",
     "src": "https://tvet.gov.gy/programs?institution=73",
     "tr": [
       "tvet"
-    ]
+    ],
+    "id": "plumber-pipefitter"
   },
   {
     "n": "Police Officer",
@@ -3828,10 +4093,13 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "",
+    "steam": "Communication/design + Mathematics + digital technology. This is preparation guidance, not an admission rule.",
     "src": "",
     "tr": [
+      "cape",
       "service"
-    ]
+    ],
+    "id": "police-officer"
   },
   {
     "n": "Policy Analyst / Development Planner / Monitoring-and-Evaluation Professional",
@@ -3839,8 +4107,7 @@ var CAREERS = [
     "b": [
       "tech",
       "business",
-      "public",
-      "law"
+      "public"
     ],
     "f13": "Build communication, fitness where relevant, civic knowledge, teamwork, service and accurate record-keeping through supervised school or community activities.",
     "csec": "English A, Mathematics, Social Studies, Caribbean History, Geography, Information Technology and Physical Education or a modern language where relevant.",
@@ -3849,10 +4116,13 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "programme assistant, research assistant, monitoring assistant, policy-support officer and project officer.",
+    "steam": "Communication/design + Mathematics + digital technology. This is preparation guidance, not an admission rule.",
     "src": "https://registry.uog.edu.gy/social-sciences",
     "tr": [
+      "cape",
       "service"
-    ]
+    ],
+    "id": "policy-analyst-development-planner-monitoring-and-evaluation-professional"
   },
   {
     "n": "Prison Officer and Civilian Prison-Service Careers",
@@ -3867,11 +4137,14 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "",
+    "steam": "Communication/design + Mathematics + digital technology. This is preparation guidance, not an admission rule.",
     "src": "https://gps.moha.gov.gy/recruitment-board/",
     "tr": [
+      "cape",
       "service",
       "port"
-    ]
+    ],
+    "id": "prison-officer-and-civilian-prison-service-careers"
   },
   {
     "n": "Project / Operations Manager",
@@ -3889,10 +4162,13 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "project assistant, operations assistant, scheduler, procurement assistant and site/office coordinator, progressing after demonstrated delivery experience.",
+    "steam": "Communication/design + Mathematics + digital technology. This is preparation guidance, not an admission rule.",
     "src": "",
     "tr": [
+      "cape",
       "tvet"
-    ]
+    ],
+    "id": "project-operations-manager"
   },
   {
     "n": "Psychologist / Clinical Psychologist",
@@ -3908,16 +4184,20 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "",
+    "steam": "Science + Mathematics, supported by Technology and communication. This is preparation guidance, not an admission rule.",
     "src": "https://health.gov.gy/allied-health-professions-council/",
     "tr": [
+      "cape",
       "degree"
-    ]
+    ],
+    "id": "psychologist-clinical-psychologist"
   },
   {
     "n": "Public-Health / Epidemiology or Health-Promotion Professional",
     "s": "confirmed",
     "b": [
       "science",
+      "education",
       "public"
     ],
     "f13": "Strengthen Mathematics, English and laboratory science; practise first aid, ethical service and careful observation through supervised activities.",
@@ -3927,10 +4207,13 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "public-health assistant, environmental-health assistant, community-health worker, surveillance/data assistant and health-promotion assistant",
+    "steam": "Science + Mathematics, supported by Technology and communication. This is preparation guidance, not an admission rule.",
     "src": "https://registry.uog.edu.gy/srms/departments/305/programmes/1030/details",
     "tr": [
+      "cape",
       "degree"
-    ]
+    ],
+    "id": "public-health-epidemiology-or-health-promotion-professional"
   },
   {
     "n": "Quantity Surveyor / Construction Manager",
@@ -3946,10 +4229,13 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "estimating assistant, site/project assistant, measurement technician and junior construction coordinator; senior titles require experience.",
+    "steam": "Science + Technology + Engineering + Mathematics. This is preparation guidance, not an admission rule.",
     "src": "https://fot.uog.edu.gy/department-architecture-0",
     "tr": [
+      "cape",
       "degree"
-    ]
+    ],
+    "id": "quantity-surveyor-construction-manager"
   },
   {
     "n": "Radiographer / Medical-Imaging or Sonography Professional",
@@ -3964,10 +4250,13 @@ var CAREERS = [
     "gate": "Radiographer, Medical Imaging Technologist, Sonographer, Ultrasound Sonographer and X-ray Technician are AHPC categories.",
     "dev": "",
     "jobs": "",
+    "steam": "Science + Mathematics, supported by Technology and communication. This is preparation guidance, not an admission rule.",
     "src": "https://health.gov.gy/training-opportunities/",
     "tr": [
+      "cape",
       "degree"
-    ]
+    ],
+    "id": "radiographer-medical-imaging-or-sonography-professional"
   },
   {
     "n": "Real-Estate / Property / Facilities Professional",
@@ -3975,8 +4264,7 @@ var CAREERS = [
     "b": [
       "engineering",
       "business",
-      "public",
-      "law"
+      "public"
     ],
     "f13": "Build communication, fitness where relevant, civic knowledge, teamwork, service and accurate record-keeping through supervised school or community activities.",
     "csec": "English A, Mathematics, Social Studies, Caribbean History, Geography, Information Technology and Physical Education or a modern language where relevant.",
@@ -3985,10 +4273,13 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "property assistant, facilities assistant, valuation trainee, leasing/records assistant and site-services coordinator.",
+    "steam": "Communication/design + Mathematics + digital technology. This is preparation guidance, not an admission rule.",
     "src": "https://www.turkeyenonline.uog.edu.gy/srms/student/prospective/about_applying/offeredprogs.php",
     "tr": [
+      "cape",
       "degree"
-    ]
+    ],
+    "id": "real-estate-property-facilities-professional"
   },
   {
     "n": "Refrigeration / Air-Conditioning or HVAC Technician",
@@ -4004,18 +4295,18 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "refrigeration assistant, AC-service technician and facilities-maintenance trainee. Electrical and refrigerant safety are essential.",
+    "steam": "Science + Technology + Engineering + Mathematics. This is preparation guidance, not an admission rule.",
     "src": "https://tvet.gov.gy/program-details?program=65",
     "tr": [
       "tvet"
-    ]
+    ],
+    "id": "refrigeration-air-conditioning-or-hvac-technician"
   },
   {
     "n": "Religious Vocation",
     "s": "portfolio",
     "b": [
-      "education",
-      "public",
-      "law"
+      "education"
     ],
     "f13": "Read widely, write evidence-based arguments, debate respectfully and join supervised civic, service or communication activities.",
     "csec": "English A, English B, Social Studies, Caribbean History, Geography, Economics and a modern language; Mathematics remains useful.",
@@ -4024,10 +4315,13 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "",
+    "steam": "Communication/design + Mathematics + digital technology. This is preparation guidance, not an admission rule.",
     "src": "",
     "tr": [
+      "cape",
       "tvet"
-    ]
+    ],
+    "id": "religious-vocation"
   },
   {
     "n": "Renewable-Energy / Energy-Systems Engineer",
@@ -4044,11 +4338,14 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "solar installation trainee, energy technician, engineering assistant, energy-audit assistant and maintenance trainee.",
+    "steam": "Science + Technology + Engineering + Mathematics. This is preparation guidance, not an admission rule.",
     "src": "https://fot.uog.edu.gy/srms/departments/72/programmes/861/details",
     "tr": [
+      "cape",
       "degree",
       "tvet"
-    ]
+    ],
+    "id": "renewable-energy-energy-systems-engineer"
   },
   {
     "n": "Respiratory Therapist",
@@ -4058,15 +4355,18 @@ var CAREERS = [
     ],
     "f13": "Strengthen Mathematics, English and laboratory science; practise first aid, ethical service and careful observation through supervised activities.",
     "csec": "English A, Mathematics, Biology, Chemistry and Physics or Integrated Science; Human and Social Biology is useful where accepted.",
-    "cape": "Biology and Chemistry are the safest science pair for many health routes; add Physics or Mathematics according to the target programme. UG currently lists a BSc Respiratory Therapy, introduced from 2024,2025.",
-    "route": "UG currently lists a BSc Respiratory Therapy, introduced from 2024,2025. Check the current admission page and allied-health registration requirements.",
+    "cape": "Biology and Chemistry are the safest science pair for many health routes; add Physics or Mathematics according to the target programme. UG currently lists a BSc Respiratory Therapy, introduced from 2024 to 2025.",
+    "route": "UG currently lists a BSc Respiratory Therapy, introduced from 2024 to 2025. Check the current admission page and allied-health registration requirements.",
     "gate": "",
     "dev": "",
     "jobs": "",
+    "steam": "Science + Mathematics, supported by Technology and communication. This is preparation guidance, not an admission rule.",
     "src": "https://cms.uog.edu.gy/srms/departments/257/programmes/1157/details",
     "tr": [
+      "cape",
       "degree"
-    ]
+    ],
+    "id": "respiratory-therapist"
   },
   {
     "n": "Rigger / Scaffolder / Industrial Pipefitter",
@@ -4082,10 +4382,12 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "",
+    "steam": "Science + Technology + Engineering + Mathematics. This is preparation guidance, not an admission rule.",
     "src": "",
     "tr": [
       "tvet"
-    ]
+    ],
+    "id": "rigger-scaffolder-industrial-pipefitter"
   },
   {
     "n": "Robotics / Automation / Mechatronics Technician",
@@ -4102,17 +4404,20 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "instrumentation trainee, automation assistant, industrial-maintenance technician and controls-support trainee.",
+    "steam": "Science + Technology + Engineering + Mathematics. This is preparation guidance, not an admission rule.",
     "src": "https://registry.uog.edu.gy/engineering-technology",
     "tr": [
-      "degree"
-    ]
+      "tvet"
+    ],
+    "id": "robotics-automation-mechatronics-technician"
   },
   {
     "n": "Small-Engine / Generator or Marine-Engine Mechanic",
     "s": "varies",
     "b": [
       "trade",
-      "engineering"
+      "engineering",
+      "transport"
     ],
     "f13": "Develop numeracy, measurement, drawing, tool safety and supervised practical problem-solving; keep evidence of completed projects.",
     "csec": "English A, Mathematics and the most relevant Industrial Technology, Technical Drawing, Information Technology, science or available CVQ/SCCP occupational subject.",
@@ -4121,18 +4426,18 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "",
+    "steam": "Science + Technology + Engineering + Mathematics. This is preparation guidance, not an admission rule.",
     "src": "",
     "tr": [
       "tvet"
-    ]
+    ],
+    "id": "small-engine-generator-or-marine-engine-mechanic"
   },
   {
     "n": "Social Worker",
     "s": "confirmed",
     "b": [
-      "education",
-      "public",
-      "law"
+      "education"
     ],
     "f13": "Read widely, write evidence-based arguments, debate respectfully and join supervised civic, service or communication activities.",
     "csec": "English A, English B, Social Studies, Caribbean History, Geography, Economics and a modern language; Mathematics remains useful.",
@@ -4141,10 +4446,13 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "",
+    "steam": "Communication/design + Mathematics + digital technology. This is preparation guidance, not an admission rule.",
     "src": "",
     "tr": [
+      "cape",
       "degree"
-    ]
+    ],
+    "id": "social-worker"
   },
   {
     "n": "Software / Web / Mobile Developer",
@@ -4159,10 +4467,14 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "junior developer, web assistant, software-support trainee and freelance project work. A qualification alone is not a portfolio or job guarantee.",
+    "steam": "Technology + Mathematics, supported by design and communication. This is preparation guidance, not an admission rule.",
     "src": "https://www.turkeyenonline.uog.edu.gy/srms/student/prospective/about_applying/offeredprogs.php",
     "tr": [
-      "degree"
-    ]
+      "cape",
+      "degree",
+      "port"
+    ],
+    "id": "software-web-mobile-developer"
   },
   {
     "n": "Solar / Photovoltaic Technician",
@@ -4179,10 +4491,12 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "PV roof/fitter assistant, solar-installation technician trainee and system-maintenance assistant.",
+    "steam": "Science + Technology + Engineering + Mathematics. This is preparation guidance, not an admission rule.",
     "src": "https://tvet.gov.gy/programs?institution=68",
     "tr": [
       "tvet"
-    ]
+    ],
+    "id": "solar-photovoltaic-technician"
   },
   {
     "n": "Special Education / Early Childhood Teacher",
@@ -4198,11 +4512,14 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "",
+    "steam": "Communication/design + Mathematics + digital technology. This is preparation guidance, not an admission rule.",
     "src": "https://uog.edu.gy/srms/departments/56/programmes/1176/details",
     "tr": [
+      "cape",
       "degree",
       "teach"
-    ]
+    ],
+    "id": "special-education-early-childhood-teacher"
   },
   {
     "n": "Specialist Doctor",
@@ -4217,17 +4534,19 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "",
+    "steam": "Science + Mathematics, supported by Technology and communication. This is preparation guidance, not an admission rule.",
     "src": "https://www.turkeyenonline.uog.edu.gy/srms/student/prospective/about_applying/offeredprogs.php",
     "tr": [
+      "cape",
       "degree"
-    ]
+    ],
+    "id": "specialist-doctor"
   },
   {
     "n": "Sports Medicine and Rehabilitation",
     "s": "varies",
     "b": [
-      "science",
-      "sports"
+      "science"
     ],
     "f13": "Develop safely in more than one activity, record verified performance, learn rules and injury prevention, and protect academic options.",
     "csec": "English A, Mathematics, Physical Education and Sport, Biology or Human and Social Biology, Information Technology and Principles of Business.",
@@ -4236,10 +4555,13 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "",
+    "steam": "A balanced mix of Science, Technology, Arts/communication and Mathematics. This is preparation guidance, not an admission rule.",
     "src": "",
     "tr": [
+      "cape",
       "port"
-    ]
+    ],
+    "id": "sports-medicine-and-rehabilitation"
   },
   {
     "n": "Teacher",
@@ -4254,19 +4576,22 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "",
+    "steam": "Communication/design + Mathematics + digital technology. This is preparation guidance, not an admission rule.",
     "src": "https://cpce.edu.gy/entry-requirements/",
     "tr": [
+      "cape",
       "degree",
       "teach"
-    ]
+    ],
+    "id": "teacher"
   },
   {
     "n": "Textile / Art-and-Craft Production Worker",
     "s": "confirmed",
     "b": [
       "trade",
-      "creative",
-      "business"
+      "business",
+      "creative"
     ],
     "f13": "Create original work, keep dated drafts, learn consent and copyright, and build a portfolio while maintaining core academics.",
     "csec": "English A plus the relevant creative subjects: Visual Arts, Music, Theatre Arts, Information Technology, EDPM and Principles of Business.",
@@ -4275,18 +4600,22 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "",
+    "steam": "Arts/design + Technology + communication, supported by Mathematics. This is preparation guidance, not an admission rule.",
     "src": "https://tvet.gov.gy/",
     "tr": [
+      "cape",
       "tvet",
       "port"
-    ]
+    ],
+    "id": "textile-art-and-craft-production-worker"
   },
   {
     "n": "Tour Guide / Tourism Officer",
     "s": "confirmed",
     "b": [
+      "business",
       "creative",
-      "business"
+      "hospitality"
     ],
     "f13": "Create original work, keep dated drafts, learn consent and copyright, and build a portfolio while maintaining core academics.",
     "csec": "English A plus the relevant creative subjects: Visual Arts, Music, Theatre Arts, Information Technology, EDPM and Principles of Business.",
@@ -4295,50 +4624,38 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "",
+    "steam": "Arts/design + Technology + communication, supported by Mathematics. This is preparation guidance, not an admission rule.",
     "src": "https://license.guyanatourism.com/",
     "tr": [
+      "cape",
       "degree",
       "tvet"
-    ]
-  },
-  {
-    "n": "Track and Field / Other Competitive Sports",
-    "s": "portfolio",
-    "b": [
-      "sports"
     ],
-    "f13": "Develop safely in more than one activity, record verified performance, learn rules and injury prevention, and protect academic options.",
-    "csec": "English A, Mathematics, Physical Education and Sport, Biology or Human and Social Biology, Information Technology and Principles of Business.",
-    "cape": "Physical Education and Sport, Biology, Communication Studies, Entrepreneurship or Management of Business. School competition, clubs, national associations and performance standards form the route.",
-    "route": "School competition, clubs, national associations and performance standards form the route. Add basketball, boxing, swimming, cycling, volleyball, rugby and other sports separately rather than treating track and field as the only alternative to cricket and football.",
-    "gate": "",
-    "dev": "",
-    "jobs": "",
-    "src": "",
-    "tr": [
-      "degree"
-    ]
+    "id": "tour-guide-tourism-officer"
   },
   {
     "n": "TV / Video-Production Assistant",
     "s": "confirmed",
     "b": [
       "trade",
-      "creative",
-      "tech"
+      "tech",
+      "creative"
     ],
     "f13": "Create original work, keep dated drafts, learn consent and copyright, and build a portfolio while maintaining core academics.",
     "csec": "English A plus the relevant creative subjects: Visual Arts, Music, Theatre Arts, Information Technology, EDPM and Principles of Business.",
     "cape": "Art and Design, Digital Media, Animation and Game Design, Performing Arts, Literatures in English, Communication Studies or Entrepreneurship.",
-    "route": "The TVET Hub currently lists CVQ Level 1 Technical Assistance in TV and Video Production. Helpful subjects include English, IT, Visual Arts, Theatre Arts and Physics. First jobs include camera/production assistant, lighting or audio assistant and editing trainee; see the Creative Industry index for portfolio progression.",
+    "route": "The TVET Hub currently lists CVQ Level 1 Technical Assistance in TV and Video Production. Helpful subjects include English, IT, Visual Arts, Theatre Arts and Physics. First jobs include camera/production assistant, lighting or audio assistant and editing trainee; see the Creative Industries index for portfolio progression.",
     "gate": "",
     "dev": "",
-    "jobs": "",
+    "jobs": "camera/production assistant, lighting or audio assistant and editing trainee; see the Creative Industries index for portfolio progression",
+    "steam": "Arts/design + Technology + communication, supported by Mathematics. This is preparation guidance, not an admission rule.",
     "src": "https://tvet.gov.gy/programs",
     "tr": [
+      "cape",
       "tvet",
       "port"
-    ]
+    ],
+    "id": "tv-video-production-assistant"
   },
   {
     "n": "Urban Planning, Housing and GIS",
@@ -4355,10 +4672,13 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "",
+    "steam": "Technology + Mathematics, supported by design and communication. This is preparation guidance, not an admission rule.",
     "src": "https://uog.edu.gy/srms/departments/243/programmes/1203/details",
     "tr": [
+      "cape",
       "degree"
-    ]
+    ],
+    "id": "urban-planning-housing-and-gis"
   },
   {
     "n": "Veterinarian",
@@ -4374,18 +4694,21 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "",
+    "steam": "Science + Mathematics, supported by Technology and communication. This is preparation guidance, not an admission rule.",
     "src": "",
     "tr": [
+      "cape",
       "degree",
       "agri"
-    ]
+    ],
+    "id": "veterinarian"
   },
   {
     "n": "Visual Artist / Photographer / Craft Artist",
     "s": "portfolio",
     "b": [
-      "creative",
-      "business"
+      "business",
+      "creative"
     ],
     "f13": "Create original work, keep dated drafts, learn consent and copyright, and build a portfolio while maintaining core academics.",
     "csec": "English A plus the relevant creative subjects: Visual Arts, Music, Theatre Arts, Information Technology, EDPM and Principles of Business.",
@@ -4394,11 +4717,14 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "",
+    "steam": "Arts/design + Technology + communication, supported by Mathematics. This is preparation guidance, not an admission rule.",
     "src": "",
     "tr": [
+      "cape",
       "degree",
       "port"
-    ]
+    ],
+    "id": "visual-artist-photographer-craft-artist"
   },
   {
     "n": "Welder / Fabricator / Metalworker",
@@ -4414,18 +4740,19 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "welding assistant, fabricator, metalworker and structural-welding trainee. Processes, positions, coded tests and inspection requirements must be stored separately.",
+    "steam": "Science + Technology + Engineering + Mathematics. This is preparation guidance, not an admission rule.",
     "src": "https://tvet.gov.gy/programs?institution=72",
     "tr": [
       "tvet"
-    ]
+    ],
+    "id": "welder-fabricator-metalworker"
   },
   {
     "n": "Writer / Editor / Publisher",
     "s": "portfolio",
     "b": [
-      "creative",
       "business",
-      "law"
+      "creative"
     ],
     "f13": "Create original work, keep dated drafts, learn consent and copyright, and build a portfolio while maintaining core academics.",
     "csec": "English A plus the relevant creative subjects: Visual Arts, Music, Theatre Arts, Information Technology, EDPM and Principles of Business.",
@@ -4434,10 +4761,13 @@ var CAREERS = [
     "gate": "",
     "dev": "",
     "jobs": "editorial assistant, communications assistant, copywriter, reporter trainee, proofreader and independent creator.",
+    "steam": "Arts/design + Technology + communication, supported by Mathematics. This is preparation guidance, not an admission rule.",
     "src": "",
     "tr": [
+      "cape",
       "port"
-    ]
+    ],
+    "id": "writer-editor-publisher"
   }
 ];
 /* CAREERSV3:END */
@@ -4445,15 +4775,15 @@ var CAREERS = [
 var FIELDS = [
   { k: 'science', n: 'Science and Medicine', g: 'S', c: 'science' },
   { k: 'trade', n: 'Trade and TVET', g: 'T', c: 'trade' },
-  { k: 'education', n: 'Education', g: 'E', c: 'education' },
-  { k: 'sports', n: 'Sports', g: 'P', c: 'sports' },
-  { k: 'engineering', n: 'Engineering', g: 'N', c: 'engineering' },
-  { k: 'creative', n: 'Creative Industry', g: 'C', c: 'creative' },
+  { k: 'education', n: 'Education and Community', g: 'E', c: 'education' },
+  { k: 'engineering', n: 'Engineering and Energy', g: 'N', c: 'engineering' },
   { k: 'tech', n: 'Technology', g: 'K', c: 'tech' },
-  { k: 'business', n: 'Business and Enterprise', g: 'B', c: 'business' },
-  { k: 'public', n: 'Public Service', g: 'U', c: 'public' },
-  { k: 'law', n: 'Law and Humanities', g: 'L', c: 'law' },
-  { k: 'agri', n: 'Agriculture', g: 'A', c: 'agri' }
+  { k: 'business', n: 'Business and Entrepreneurship', g: 'B', c: 'business' },
+  { k: 'public', n: 'Public Service and Law', g: 'U', c: 'public' },
+  { k: 'agri', n: 'Agriculture and Environment', g: 'A', c: 'agri' },
+  { k: 'transport', n: 'Transport and Logistics', g: 'R', c: 'transport' },
+  { k: 'creative', n: 'Creative Industries', g: 'C', c: 'creative' },
+  { k: 'hospitality', n: 'Hospitality and Tourism', g: 'H', c: 'hospitality' }
 ];
 
 var LEVELS = [
@@ -4672,6 +5002,7 @@ var PW_SUGGEST_FIELDS = [
   { k: 'csec', n: 'Forms 4 and 5 CSEC' },
   { k: 'cape', n: 'Form 6 CAPE' },
   { k: 'f13', n: 'In Forms 1 to 3' },
+  { k: 'steam', n: 'STEAM focus' },
   { k: 'gate', n: 'Professional gate' },
   { k: 'dev', n: 'Recent change' },
   { k: 'jobs', n: 'First jobs' }

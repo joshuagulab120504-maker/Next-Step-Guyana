@@ -61,6 +61,8 @@
       slots: null,
       careerUpserts: {},
       careerDeletes: [],
+      careerFieldEdits: {},
+      careerQueue: [],
       schoolUpserts: {},
       schoolDeletes: []
     };
@@ -115,6 +117,8 @@
     out.slots = saved.slots || seed.slots;
     out.careerUpserts = saved.careerUpserts || {};
     out.careerDeletes = saved.careerDeletes || [];
+    out.careerFieldEdits = saved.careerFieldEdits || {};
+    out.careerQueue = saved.careerQueue || [];
     out.schoolUpserts = saved.schoolUpserts || {};
     out.schoolDeletes = saved.schoolDeletes || [];
     return out;
