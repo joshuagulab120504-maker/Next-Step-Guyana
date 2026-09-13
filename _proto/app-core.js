@@ -630,7 +630,7 @@ function roleBadgeHtml(a) {
 function authorRoleLabel(a) {
   if (!a || !a.role) return '';
   if (a.role === 'mentor') return 'Mentor';
-  if (a.role === 'contributor') return 'Collaborator';
+  if (a.role === 'contributor') return 'Contributor';
   if (a.role === 'admin') return 'Next Step team';
   return '';
 }
@@ -1127,6 +1127,13 @@ function setView(v) {
   if (v === 'pathway' && S.view && S.view !== 'pathway') S.planReturnView = S.view;
   S.view = v;
   if (v === 'pathway' || v === 'alerts') S.unread = 0;
+  if (v === 'community' && typeof ensurePod === 'function') {
+    ensurePod();
+    S.pod.tab = 'pods';
+    S.pod.sub = '';
+    S.pod.podId = '';
+    S.pod.threadId = '';
+  }
   if (v === 'pathway') {
     p = ensurePw();
     if (p.done) {
@@ -1357,6 +1364,8 @@ function searchHay(item) {
     a = author(item.journey);
     parts.push(a.name, jour.hook || '', jour.now || '', jour.place || '', jour.field || '', jour.quote || '');
   }
+  if (item.podName) parts.push(item.podName);
+  if (item.shoutout) parts.push('shoutout');
   return parts.join(' ').toLowerCase();
 }
 
@@ -1367,8 +1376,13 @@ function filteredFeed() {
   for (i = 0; i < FEED.length; i++) {
     item = FEED[i];
     ok = true;
-    if (S.filter === 'questions' && item.kind !== 'question') ok = false;
-    if (S.filter === 'stories' && item.kind !== 'story') ok = false;
+    if (S.filter === 'questions') {
+      if (item.shoutout && item.shoutType === 'thought') ok = false;
+      else if (item.kind !== 'question') ok = false;
+    }
+    if (S.filter === 'stories') {
+      if (!(item.shoutout && item.shoutType === 'thought') && item.kind !== 'story') ok = false;
+    }
     if (S.filter === 'opportunities' && item.kind !== 'opportunity') ok = false;
     if (S.filter === 'sessions' && item.kind !== 'session') ok = false;
     if (S.filter === 'journeys' && item.kind !== 'journey') ok = false;
@@ -1971,6 +1985,9 @@ function renderFeed() {
       '</button>';
   }
   html += '</div>';
+  if (S.filter === 'opportunities' || S.filter === 'sessions' || S.filter === 'journeys') {
+    html += '<p class="pod-feed-note">Those do not come from pods.</p>';
+  }
   html += typeof qaFeedLeadHtml === 'function' ? qaFeedLeadHtml() : '';
   html += '<div class="stream">';
   for (i = 0; i < list.length; i++) {
@@ -2413,8 +2430,9 @@ function personIds() {
   return ids;
 }
 
-function personSearchHay(p) {
-  return [p.name, p.career, p.title, p.region].join(' ').toLowerCase();
+function personSearchHay(p, id) {
+  var pods = typeof podAnswersInLine === 'function' && id ? podAnswersInLine(id) : '';
+  return [p.name, p.career, p.title, p.region, p.role, p.role === 'mentor' ? 'mentor' : 'contributor', pods].join(' ').toLowerCase();
 }
 
 function personMatches(id) {
@@ -2426,7 +2444,7 @@ function personMatches(id) {
   if (S.commRole === 'contributors' && p.role !== 'contributor') return false;
   if (S.commCareer && p.career !== S.commCareer) return false;
   q = (S.commQ || '').trim().toLowerCase();
-  if (q && personSearchHay(p).indexOf(q) === -1) return false;
+  if (q && personSearchHay(p, id).indexOf(q) === -1) return false;
   return true;
 }
 
@@ -2494,6 +2512,9 @@ function personCardHtml(id) {
     '<span class="pcard-title">' +
     esc(p.title) +
     '</span>' +
+    (typeof podAnswersInLine === 'function' && podAnswersInLine(id)
+      ? '<span class="pcard-pods">' + esc(podAnswersInLine(id)) + '</span>'
+      : '') +
     '</button>' +
     followPersonBtn(id, 'pcard-follow') +
     '</article>';

@@ -55,6 +55,9 @@ function qaTimeAgo(iso) {
 }
 
 function qaAsker(item) {
+  if (item && item.shoutout && item.anon) {
+    return 'a student, ' + (item.askedAt || item.form || 'Form 4') + ', ' + (item.region || 'Region 4');
+  }
   return item.asker || item.who || studentLabel();
 }
 
@@ -214,7 +217,10 @@ function qaTileHtml() {
 
 function qaMetaLine(item) {
   var t = qaTimeAgo(item.at || item.createdAt);
-  var html = kindOpenBtn('question', 'Question');
+  var html =
+    item && item.shoutType === 'thought'
+      ? kindOpenBtn('story', 'Thought')
+      : kindOpenBtn('question', 'Question');
   if (qaOwnsQuestion(item)) {
     html += ' · <span class="qa-yours">Your question</span>';
     if (t) html += ' ' + esc(t);
@@ -310,7 +316,9 @@ function qaIdentityHtml(item, withMenu) {
   return (
     '<div class="qa-id">' +
     qaTileHtml() +
-    '<div class="ident-name"><div class="qa-ask-name"><span class="ident-text">' +
+    '<div class="ident-name">' +
+    (item && item.shoutout ? '<span class="qa-shout">Shoutout</span>' : '') +
+    '<div class="qa-ask-name"><span class="ident-text">' +
     esc(qaAsker(item)) +
     '</span></div><p class="qa-ask-meta">' +
     qaMetaLine(item) +
@@ -332,8 +340,11 @@ function qaTopicsHtml(item, clickable) {
   var tags = qaTopics(item);
   var i;
   var html;
-  if (!tags.length) return '';
   html = '<div class="qa-topics">';
+  if (item && item.shoutout && item.podName) {
+    html += '<span class="qa-podtag">' + esc(item.podName) + '</span>';
+  }
+  if (!tags.length && !(item && item.shoutout && item.podName)) return '';
   for (i = 0; i < tags.length; i++) {
     html +=
       '<button type="button" class="qa-chip"' +
@@ -435,12 +446,24 @@ function qaEngageHtml(item, inThread) {
     (saved ? 'Saved' : 'Save') +
     '</span></button>';
   if (!inThread) {
-    html +=
-      '<button type="button" class="opp-primary" data-open="thread" data-id="' +
-      esc(item.id) +
-      '">' +
-      (n > 0 ? 'View answers' : qaIsMentor() ? 'Answer' : 'View answers') +
-      '</button>';
+    if (item && item.shoutout && item.podThreadId) {
+      html +=
+        '<button type="button" class="opp-primary" data-pod-open-thread="' +
+        esc(item.podThreadId) +
+        '" data-pod-pod="' +
+        esc(item.podId || '') +
+        '">Open the thread · ' +
+        n +
+        (n === 1 ? ' message' : ' messages') +
+        '</button>';
+    } else {
+      html +=
+        '<button type="button" class="opp-primary" data-open="thread" data-id="' +
+        esc(item.id) +
+        '">' +
+        (n > 0 ? 'View answers' : qaIsMentor() ? 'Answer' : 'View answers') +
+        '</button>';
+    }
   }
   html += '</div>';
   return html;

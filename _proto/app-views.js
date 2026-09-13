@@ -3350,6 +3350,7 @@ function renderCommTools() {
 }
 
 function renderCommunity() {
+  if (typeof renderPodCommunity === 'function') return renderPodCommunity();
   if (S.commRole === 'likeme') S.commRole = 'all';
   var dir = filteredPeople();
   var followed = followedPeople();
@@ -4031,6 +4032,7 @@ function render() {
   if (typeof planAfterPaint === 'function') planAfterPaint();
   if (typeof mpAfterPaint === 'function') mpAfterPaint();
   if (typeof exAfterPaint === 'function') exAfterPaint();
+  if (typeof podAfterPaint === 'function') podAfterPaint();
   if (typeof qaInit === 'function') qaInit();
   if (typeof oppInit === 'function') oppInit();
   if (typeof sessInit === 'function') sessInit();
@@ -4051,6 +4053,10 @@ function openKind(kind, id) {
   if (kind === 'topic') {
     openTopicPage(id);
     return;
+  }
+  if (kind === 'thread' && typeof podOpenFromFeed === 'function') {
+    var shout = feedById(id);
+    if (shout && shout.shoutout && shout.podThreadId && podOpenFromFeed(shout)) return;
   }
   var map = {
     thread: 'thread',
@@ -4526,6 +4532,7 @@ function wire() {
     var card = closestEl(t, '.clickable[data-open]');
     if (typeof mpHandleClick === 'function' && mpHandleClick(e, t)) return;
     if (typeof exHandleClick === 'function' && exHandleClick(e, t)) return;
+    if (typeof podHandleClick === 'function' && podHandleClick(e, t)) return;
     if (typeof planHandleClick === 'function' && planHandleClick(e, t)) return;
     if (typeof sessHandleClick === 'function' && sessHandleClick(e, t)) return;
     if (typeof oppHandleClick === 'function' && oppHandleClick(e, t)) return;
@@ -5102,6 +5109,7 @@ function wire() {
   document.addEventListener('input', function (e) {
     if (typeof mpHandleInput === 'function' && mpHandleInput(e)) return;
     if (typeof exHandleInput === 'function' && exHandleInput(e)) return;
+    if (typeof podHandleInput === 'function' && podHandleInput(e)) return;
     if (typeof sessHandleInput === 'function' && sessHandleInput(e)) return;
     if (typeof oppHandleInput === 'function' && oppHandleInput(e)) return;
     if (typeof qaHandleInput === 'function' && qaHandleInput(e)) return;
@@ -5162,6 +5170,7 @@ function wire() {
       else S.pw.subjects[gname].grade = e.target.value;
       return;
     }
+    if (typeof podHandleInput === 'function' && podHandleInput(e)) return;
     if (e.target && e.target.id === 'comp-cat') S.draftCat = e.target.value;
     if (e.target && e.target.id === 'comp-anon') S.anon = e.target.checked;
     if (e.target && (e.target.id === 'opp-poster' || e.target.id === 'opp-photos' || e.target.id === 'sess-poster')) {
@@ -5196,6 +5205,7 @@ function wire() {
     var bar;
     var btn;
     if (typeof sessHandleKey === 'function' && sessHandleKey(e)) return;
+    if (typeof podHandleKey === 'function' && podHandleKey(e)) return;
     if (typeof oppHandleKey === 'function' && oppHandleKey(e)) return;
     if (typeof qaHandleKey === 'function' && qaHandleKey(e)) return;
     if (e.target && e.target.id === 'thread-reply' && e.key === 'Enter' && !e.shiftKey) {

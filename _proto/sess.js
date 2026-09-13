@@ -144,7 +144,7 @@ function sessModel(src) {
       initials: oppInitials(a),
       kind: kind,
       verified: !!(a && a.verified),
-      role: kind === 'collaborator' ? 'Collaborator' : 'Mentor',
+      role: kind === 'collaborator' ? 'Contributor' : 'Mentor',
       pos: (a && a.pos) || ''
     },
     createdAt: (item && item.at) || s.createdAt || s.startsAt || '',
@@ -923,7 +923,7 @@ function sessComposePreview() {
       initials: oppInitials(a),
       kind: kind,
       verified: !!(a && a.verified),
-      role: kind === 'collaborator' ? 'Collaborator' : 'Mentor',
+      role: kind === 'collaborator' ? 'Contributor' : 'Mentor',
       pos: a.pos || ''
     },
     createdAt: c.createdAt || nowIso(),

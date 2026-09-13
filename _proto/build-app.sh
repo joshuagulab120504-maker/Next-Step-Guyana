@@ -11,8 +11,10 @@ SESSCSS="$ROOT/_proto/sess.css"
 PLANCSS="$ROOT/_proto/planner.css"
 PWMECSS="$ROOT/_proto/pw-me.css"
 EXCSS="$ROOT/_proto/explore.css"
+PODCSS="$ROOT/_proto/pod.css"
 EXSEED="$ROOT/_proto/careers.json"
 EXJS="$ROOT/_proto/explore.js"
+PODJS="$ROOT/_proto/pod.js"
 HTML="$ROOT/_proto/shell.html"
 DATA="$ROOT/_proto/data.js"
 CORE="$ROOT/_proto/app-core.js"
@@ -57,6 +59,8 @@ EOF
   cat "$PWMECSS"
   echo
   cat "$EXCSS"
+  echo
+  cat "$PODCSS"
   cat <<'EOF'
 </style>
 </head>
@@ -85,6 +89,8 @@ EOF
   cat "$OPP"
   echo
   cat "$SESS"
+  echo
+  cat "$PODJS"
   echo
   cat "$VIEWS"
   cat <<'EOF'

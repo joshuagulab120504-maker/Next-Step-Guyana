@@ -142,7 +142,7 @@ function oppOpening(src) {
       initials: oppInitials(a),
       kind: kind,
       verified: true,
-      role: kind === 'collaborator' ? 'Collaborator' : 'Mentor',
+      role: kind === 'collaborator' ? 'Contributor' : 'Mentor',
       pos: a.pos || ''
     },
     createdAt: (item && item.at) || o.createdAt || '',
@@ -597,7 +597,7 @@ function oppStoryAuthor(item) {
       initials: oppInitials(a || { name: youName(), init: 'YO' }),
       kind: kind,
       verified: !!(a && a.verified),
-      role: kind === 'collaborator' ? 'Collaborator' : 'Mentor',
+      role: kind === 'collaborator' ? 'Contributor' : 'Mentor',
       pos: (a && a.pos) || ''
     },
     createdAt: item.at || item.createdAt || '',
@@ -1285,7 +1285,7 @@ function oppComposePreviewOpening() {
       initials: oppInitials(a),
       kind: kind,
       verified: !!(a && a.verified),
-      role: kind === 'collaborator' ? 'Collaborator' : 'Mentor',
+      role: kind === 'collaborator' ? 'Contributor' : 'Mentor',
       pos: a.pos || ''
     },
     createdAt: nowIso(),
